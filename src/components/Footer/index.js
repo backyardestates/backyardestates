@@ -3,7 +3,6 @@ import Link from 'next/link'
 export default function Footer() {
   return (
     <footer>
-      <p>This is the footer</p>
       <h3>Floor plans</h3>
       <ul><li><Link href="#">Estate 350</Link></li>
       <li><Link href="#">Estate 450</Link></li>
@@ -21,6 +20,11 @@ export default function Footer() {
       <li><Link href="/about-us/our-team">Our team</Link></li>
       <li><Link href="/about-us/our-process">Our process</Link></li>
       <li><Link href="/contact-us">Contact us</Link></li></ul>
+      <ul>
+        <li>© 2023 Backyard Estates. All Rights Reserved.</li>
+        <li><Link href="/legal/privacy-policy">Privacy policy</Link></li>
+      <li><Link href="/legal/terms-of-use">Terms of use</Link></li>
+      </ul>
     </footer>
   )
 }
