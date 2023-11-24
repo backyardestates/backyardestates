@@ -10,28 +10,33 @@ export default function PrivacyPolicy() {
             </p>
             <p>
                 Thank you for choosing to be part of our community at Backyard
-                Estates (<strong>“Company“, “we“, “us“, “our“</strong>). We are
-                committed to protecting your personal information and your right
-                to privacy. If you have any questions or concerns about this
-                privacy notice, or our practices with regards to your personal
-                information, please contact us at{' '}
+                Estates (
+                <strong>
+                    &ldquo;Company&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;,
+                    &ldquo;our&rdquo;
+                </strong>
+                ). We are committed to protecting your personal information and
+                your right to privacy. If you have any questions or concerns
+                about this privacy notice, or our practices with regards to your
+                personal information, please contact us at{' '}
                 <a href="mailto:support@backyardestates.com">
                     support@backyardestates.com
                 </a>
                 .
             </p>
             <p>
-                When you visit our website backyardestates.com (the “
-                <strong>Website</strong>“), and more generally, use any of our
-                services (the <strong>“Services“</strong>), which include the
-                Website, we appreciate that you are trusting us with your
-                personal information. We take your privacy very seriously. In
-                this privacy notice, we seek to explain to you in the clearest
-                way possible what information we collect, how we use it and what
-                rights you have in relation to it. We hope you take some time to
-                read through it carefully, as it is important. If there are any
-                terms in this privacy notice that you do not agree with, please
-                discontinue use of our Services immediately.
+                When you visit our website backyardestates.com (the
+                <strong>&ldquo;Website&rdquo;</strong>), and more generally, use
+                any of our services (the <strong>&ldquo;Services&rdquo;</strong>
+                ), which include the Website, we appreciate that you are
+                trusting us with your personal information. We take your privacy
+                very seriously. In this privacy notice, we seek to explain to
+                you in the clearest way possible what information we collect,
+                how we use it and what rights you have in relation to it. We
+                hope you take some time to read through it carefully, as it is
+                important. If there are any terms in this privacy notice that
+                you do not agree with, please discontinue use of our Services
+                immediately.
             </p>
             <p>
                 This privacy notice applies to all information collected through
@@ -99,10 +104,10 @@ export default function PrivacyPolicy() {
             <h3 id="#infocollect">1. WHAT INFORMATION DO WE COLLECT?</h3>
             <h4>Personal information you disclose to us</h4>
             <p>
-                <strong>
-                    <em>In Short:</em>
-                </strong>{' '}
-                <em>We collect personal information that you provide to us.</em>
+                <em>
+                    <strong>In Short:</strong> We collect personal information
+                    that you provide to us.
+                </em>
             </p>
             <p>
                 We collect personal information that you voluntarily provide to
@@ -163,7 +168,8 @@ export default function PrivacyPolicy() {
                     usage, pages and files viewed, searches and other actions
                     you take such as which features you use), device event
                     information (such as system activity, error reports
-                    (sometimes called ‘crash dumps’) and hardware settings).
+                    (sometimes called &ldquo;crash dumps&rdquo;) and hardware
+                    settings).
                 </li>
                 <li>
                     <em>Device Data.</em> We collect device data such as
@@ -177,7 +183,7 @@ export default function PrivacyPolicy() {
                 </li>
                 <li>
                     <em>Location Data.</em> We collect location data such as
-                    information about your device’s location, which can be
+                    information about your device&rsquo;s location, which can be
                     either precise or imprecise. How much information we collect
                     depends on the type and settings of the device you use to
                     access the Website. For example, we may use GPS and other
@@ -250,8 +256,10 @@ export default function PrivacyPolicy() {
                     obtaining information about us or our Website, subscribing
                     to marketing or otherwise contacting us, we will collect
                     personal information from you. You can opt-out of our
-                    marketing emails at any time (see the “
-                    <a href="./#privacyrights">WHAT ARE YOUR PRIVACY RIGHTS</a>”
+                    marketing emails at any time (see the{' '}
+                    <a href="./#privacyrights">
+                        &ldquo;WHAT ARE YOUR PRIVACY RIGHTS&rdquo;
+                    </a>
                     below).
                 </li>
                 <li>
@@ -347,7 +355,6 @@ export default function PrivacyPolicy() {
                     <em>In Short: </em>
                 </strong>
                 <em>
-                    {' '}
                     We keep your information for as long as necessary to fulfill
                     the purposes outlined in this privacy notice unless
                     otherwise required by law.
@@ -436,10 +443,10 @@ export default function PrivacyPolicy() {
             <h3 id="DNT">7. CONTROLS FOR DO-NOT-TRACK FEATURES</h3>
             <p>
                 Most web browsers and some mobile operating systems and mobile
-                applications include a Do-Not-Track (“DNT”) feature or setting
-                you can activate to signal your privacy preference not to have
-                data about your online browsing activities monitored and
-                collected. At this stage no uniform technology standard for
+                applications include a Do-Not-Track (&ldquo;DNT&rdquo;) feature
+                or setting you can activate to signal your privacy preference
+                not to have data about your online browsing activities monitored
+                and collected. At this stage no uniform technology standard for
                 recognizing and implementing DNT signals has been finalized. As
                 such, we do not currently respond to DNT browser signals or any
                 other mechanism that automatically communicates your choice not
@@ -455,23 +462,23 @@ export default function PrivacyPolicy() {
                     <em>In Short: </em>
                 </strong>
                 <em>
-                    {' '}
                     Yes, if you are a resident of California, you are granted
                     specific rights regarding access to your personal
                     information.
                 </em>
             </p>
             <p>
-                California Civil Code Section 1798.83, also known as the “Shine
-                The Light” law, permits our users who are California residents
-                to request and obtain from us, once a year and free of charge,
-                information about categories of personal information (if any) we
-                disclosed to third parties for direct marketing purposes and the
-                names and addresses of all third parties with which we shared
-                personal information in the immediately preceding calendar year.
-                If you are a California resident and would like to make such a
-                request, please submit your request in writing to us using the
-                contact information provided below.
+                California Civil Code Section 1798.83, also known as the
+                &ldquo;Shine The Light&rdquo; law, permits our users who are
+                California residents to request and obtain from us, once a year
+                and free of charge, information about categories of personal
+                information (if any) we disclosed to third parties for direct
+                marketing purposes and the names and addresses of all third
+                parties with which we shared personal information in the
+                immediately preceding calendar year. If you are a California
+                resident and would like to make such a request, please submit
+                your request in writing to us using the contact information
+                provided below.
             </p>
             <p>
                 If you are under 18 years of age, reside in California, and have
@@ -486,7 +493,10 @@ export default function PrivacyPolicy() {
                 our systems (e.g. backups, etc.).
             </p>
             <h3>CCPA Privacy Notice</h3>
-            <p>The California Code of Regulations defines a “resident” as:</p>
+            <p>
+                The California Code of Regulations defines a
+                &ldquo;resident&rdquo; as:
+            </p>
             <ol>
                 <li>
                     every individual who is in the State of California for other
@@ -498,11 +508,14 @@ export default function PrivacyPolicy() {
                     transitory purpose
                 </li>
             </ol>
-            <p>All other individuals are defined as “non-residents.”</p>
             <p>
-                If this definition of “resident” applies to you, we must adhere
-                to certain rights and obligations regarding your personal
-                information.
+                All other individuals are defined as
+                &ldquo;non-residents.&rdquo;
+            </p>
+            <p>
+                If this definition of &ldquo;resident&rdquo; applies to you, we
+                must adhere to certain rights and obligations regarding your
+                personal information.
             </p>
             <p>
                 <strong>
@@ -681,7 +694,8 @@ export default function PrivacyPolicy() {
                                 Inferences drawn from any of the collected
                                 personal information listed above to create a
                                 profile or summary about, for example, an
-                                individual’s preferences and characteristics
+                                individual&rsquo;s preferences and
+                                characteristics
                             </p>
                         </td>
                         <td>
@@ -759,7 +773,7 @@ export default function PrivacyPolicy() {
             </p>
 
             <p>
-                <u>Right to request deletion of the data – Request to delete</u>
+                <u>Right to request deletion of the data - Request to delete</u>
             </p>
 
             <p>
@@ -774,7 +788,7 @@ export default function PrivacyPolicy() {
             </p>
 
             <p>
-                <u>Right to be informed – Request to know</u>
+                <u>Right to be informed - Request to know</u>
             </p>
 
             <p>Depending on the circumstances, you have a right to know:</p>
@@ -811,8 +825,8 @@ export default function PrivacyPolicy() {
 
             <p>
                 <u>
-                    Right to Non-Discrimination for the Exercise of a Consumer’s
-                    Privacy Rights
+                    Right to Non-Discrimination for the Exercise of a
+                    Consumer&rsquo;s Privacy Rights
                 </u>
             </p>
 
@@ -894,10 +908,10 @@ export default function PrivacyPolicy() {
             </p>
             <p>
                 We may update this privacy notice from time to time. The updated
-                version will be indicated by an updated “Revised” date and the
-                updated version will be effective as soon as it is accessible.
-                If we make material changes to this privacy notice, we may
-                notify you either by prominently posting a notice of such
+                version will be indicated by an updated &ldquo;Revised&rdquo;
+                date and the updated version will be effective as soon as it is
+                accessible. If we make material changes to this privacy notice,
+                we may notify you either by prominently posting a notice of such
                 changes or by directly sending you a notification. We encourage
                 you to review this privacy notice frequently to be informed of
                 how we are protecting your information.
