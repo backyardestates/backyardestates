@@ -1,0 +1,91 @@
+.root {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2rem;
+    border-top: 1rem solid #ad8d5f;
+    color: white;
+    background: #36484b;
+    padding: 2rem;
+}
+
+.contact {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.columnLeft {
+    grid-column-start: 1;
+    grid-column-end: 5;
+}
+
+.columnRight {
+    padding-top: 3rem;
+    grid-column-start: 7;
+    grid-column-end: 13;
+}
+
+.root ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.root ul li {
+    margin: 0;
+    padding: 0 0 0.5rem 0;
+}
+
+.root ul li a {
+    text-decoration: none;
+    color: white;
+}
+
+.display3 {
+    margin: 0 0 1rem 0;
+    padding: 0;
+    color: var(--color-neutral-300, #ababab);
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+}
+
+.columnRightTop {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2rem;
+}
+.columnRightBottom {
+    padding-top: 3rem;
+}
+
+.linkColumn {
+    grid-column: span 2;
+}
+
+.legal {
+    display: flex;
+    gap: 2rem;
+}
+
+.legal li,
+.legal li a {
+    color: #ababab !important;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 300;
+}
+
+.intro {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.75rem;
+}

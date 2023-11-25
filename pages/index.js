@@ -1,8 +1,11 @@
 // import Link from 'next/link'
+import '../src/layouts/global.css'
 import Layout from '../src/layouts/Page'
 
 export default function Home() {
-  return (
-    <Layout><h1>Homepage</h1></Layout>
-  )
+    return (
+        <Layout>
+            <h1>Homepage</h1>
+        </Layout>
+    )
 }
