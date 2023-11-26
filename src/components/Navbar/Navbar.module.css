@@ -1,0 +1,39 @@
+.root {
+    padding: 1.5rem 2rem;
+    background: white;
+    box-shadow: 0px 4px 16px 0px rgba(54, 72, 75, 0.15);
+    display: flex;
+    /* border: 5px solid gray; */
+}
+
+.links {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* border: 1px solid green; */
+}
+
+.links li a {
+    text-decoration: none;
+    color: #5e5e5e;
+    font-weight: 700;
+}
+
+.left {
+    /* display: flex; */
+    flex-grow: 1;
+    /* justify-content: flex-start; */
+    /* border: 1px solid red; */
+}
+
+.right {
+    display: flex;
+    flex-grow: 1;
+    /* justify-self: flex-end; */
+    justify-content: flex-end;
+    /* border: 1px solid blue; */
+}
