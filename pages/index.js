@@ -1,5 +1,3 @@
-// import Link from 'next/link'
-import '../src/layouts/global.css'
 import Layout from '../src/layouts/Page'
 
 export default function Home() {
