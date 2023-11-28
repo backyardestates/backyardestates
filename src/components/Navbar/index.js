@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import Logo from '../Logo'
 import style from './Navbar.module.css'
+import Button from '../Button'
 
 export default function Navbar() {
     return (
-        <div className="container">
-            <nav className={style.root}>
+        <nav className={style.root}>
+            <div className={style.container}>
                 <div className={style.left}>
                     <Logo />
                 </div>
@@ -24,31 +25,40 @@ export default function Navbar() {
                     </li>
                 </ul>
                 <div className={style.right}>
-                    <Link
-                        href="/talk-to-an-adu-specialist"
-                        className="btn-primary"
-                    >
+                    <Button href="/talk-to-an-adu-specialist">
                         Talk to an ADU specialist
+                    </Button>
+                    <div className={style.menu}>
+                        <span>Menu</span>
                         <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
+                            width="20"
+                            height="28"
+                            viewBox="0 0 20 28"
                             fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
                         >
-                            <g opacity="0.5">
-                                <path
-                                    d="M9 18L15 12L9 6"
-                                    stroke="white"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </g>
+                            <path
+                                d="M0 6H20"
+                                stroke="#5E5E5E"
+                                strokeWidth="2"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M0 14H20"
+                                stroke="#5E5E5E"
+                                strokeWidth="2"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M0 22H20"
+                                stroke="#5E5E5E"
+                                strokeWidth="2"
+                                strokeLinejoin="round"
+                            />
                         </svg>
-                    </Link>
+                    </div>
                 </div>
-            </nav>
-        </div>
+            </div>
+        </nav>
     )
 }

@@ -1,48 +1,11 @@
+:root {
+    --breakpoint-fluid: 960px;
+    --breakpoint-fixed: 1440px;
+}
+
 body {
     display: flex;
     margin: 0;
     padding: 0;
     background: #f7f7f7;
-}
-
-/* mobile */
-/* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
-    .container {
-        border-top: 16px solid red;
-    }
-}
-
-/* fluid */
-@media only screen and (min-width: 900px) {
-    .container {
-        border-top: 16px solid green;
-        /* width: 100%; */
-    }
-}
-
-/* fixed */
-@media only screen and (min-width: 1400px) {
-    .container {
-        border-top: 16px solid blue;
-        margin: 0 auto;
-        width: 90rem;
-    }
-}
-
-.btn-primary {
-    display: inline-block;
-    color: white !important;
-    margin: 0;
-    padding: 1rem;
-    border-radius: 1.5rem;
-    background: #1da3ba;
-    text-decoration: none;
-
-    display: flex;
-    height: 3rem;
-    padding: 0rem 1rem 0rem 1.5rem;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
 }
