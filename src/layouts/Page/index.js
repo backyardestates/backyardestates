@@ -1,5 +1,4 @@
 import { Roboto } from 'next/font/google'
-import style from './Page.module.css'
 
 const roboto = Roboto({
     subsets: ['latin'],
