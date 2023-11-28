@@ -7,7 +7,7 @@
 }
 .container {
     display: flex;
-    border-top: 16px solid red;
+    /* border-top: 16px solid red; */
     width: 100%;
 }
 .links {
@@ -33,17 +33,30 @@
     flex-grow: 1;
     justify-content: flex-end;
 }
+
 .menu {
     display: flex;
     gap: 0.75rem;
     align-items: center;
 }
 
+/* .cta {
+    visibility: visible;
+} */
+
+.cta {
+    display: none;
+}
+
 /* Mobile XS */
 @media only screen and (min-width: 475px) {
     .container {
-        border-top: 16px solid green;
+        /* border-top: 16px solid pink; */
         width: 100%;
+    }
+
+    .cta {
+        display: block;
     }
 }
 
@@ -63,6 +76,9 @@
     .menu {
         display: none;
     }
+    .cta {
+        display: block;
+    }
 }
 
 /* fixed */
@@ -81,5 +97,8 @@
     }
     .menu {
         display: none;
+    }
+    .cta {
+        display: block;
     }
 }

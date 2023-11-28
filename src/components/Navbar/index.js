@@ -25,9 +25,12 @@ export default function Navbar() {
                     </li>
                 </ul>
                 <div className={style.right}>
-                    <Button href="/talk-to-an-adu-specialist">
-                        Talk to an ADU specialist
-                    </Button>
+                    <div className={style.cta}>
+                        <Button href="/talk-to-an-adu-specialist">
+                            Talk to an ADU specialist
+                        </Button>
+                    </div>
+
                     <div className={style.menu}>
                         <span>Menu</span>
                         <svg

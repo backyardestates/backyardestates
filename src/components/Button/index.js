@@ -3,7 +3,7 @@ import style from './Button.module.css'
 
 export default function Button({ children, href = '#' }) {
     return (
-        <Link href={href} className={style.root}>
+        <Link href={href} className={style.root} id="cta">
             <span>{children}</span>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
