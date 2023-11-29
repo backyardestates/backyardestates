@@ -1,0 +1,7 @@
+.root {
+    margin: 3rem 0 0 0;
+    padding: 1rem;
+    background: magenta;
+    color: white;
+    border-radius: var(--radius);
+}
