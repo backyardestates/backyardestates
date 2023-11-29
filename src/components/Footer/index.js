@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import style from './Footer.module.css'
+import Newsletter from '../Newsletter'
 
 export default function Footer() {
     return (
@@ -85,7 +86,7 @@ export default function Footer() {
                             (818) 208-3113
                         </li>
                     </ul>
-                    <div>Newsletter subscription</div>
+                    <Newsletter />
                 </div>
                 <div className={style.columnRight}>
                     <div className={style.columnRightTop}>
