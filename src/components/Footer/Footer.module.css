@@ -1,11 +1,9 @@
 .root {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 2rem;
     border-top: 1rem solid #ad8d5f;
     color: white;
     background: #36484b;
-    padding: 2rem;
+
+    /* width: 100%; */
 }
 
 .contact {
@@ -88,4 +86,38 @@
     font-size: 1.25rem;
     font-weight: 400;
     line-height: 1.75rem;
+}
+
+.container {
+    border-top: 16px solid red;
+    /* width: 100%; */
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2rem;
+    padding: 2rem;
+}
+
+/* Mobile XS */
+@media only screen and (min-width: 475px) {
+    .container {
+        border-top: 16px solid red;
+        /* width: 100%; */
+    }
+}
+
+/* fluid */
+@media only screen and (min-width: 960px) {
+    .container {
+        border-top: 16px solid green;
+        /* width: 100%; */
+    }
+}
+
+/* fixed */
+@media only screen and (min-width: 1400px) {
+    .container {
+        border-top: 16px solid blue;
+        margin: 0 auto;
+        width: 90rem;
+    }
 }
