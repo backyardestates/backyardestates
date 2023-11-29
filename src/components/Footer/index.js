@@ -2,7 +2,11 @@ import Link from 'next/link'
 import style from './Footer.module.css'
 import Newsletter from '../Newsletter'
 
-export default function Footer() {
+// import fs from 'fs'
+// import path from 'path'
+// import matter from 'gray-matter'
+
+export default function Footer({ estates }) {
     return (
         <footer className={style.root}>
             <div className={style.container}>
@@ -94,28 +98,44 @@ export default function Footer() {
                             <h3 className={style.display3}>Floor plans</h3>
                             <ul>
                                 <li>
-                                    <Link href="#">Estate 350</Link>
+                                    <Link href="/floor-plans/estate-350">
+                                        Estate 350
+                                    </Link>
                                 </li>
                                 <li>
-                                    <Link href="#">Estate 450</Link>
+                                    <Link href="/floor-plans/estate-450">
+                                        Estate 450
+                                    </Link>
                                 </li>
                                 <li>
-                                    <Link href="#">Estate 500</Link>
+                                    <Link href="/floor-plans/estate-500">
+                                        Estate 500
+                                    </Link>
                                 </li>
                                 <li>
-                                    <Link href="#">Estate 750</Link>
+                                    <Link href="/floor-plans/estate-750">
+                                        Estate 750
+                                    </Link>
                                 </li>
                                 <li>
-                                    <Link href="#">Estate 750+</Link>
+                                    <Link href="/floor-plans/estate-750-plus">
+                                        Estate 750+
+                                    </Link>
                                 </li>
                                 <li>
-                                    <Link href="#">Estate 800</Link>
+                                    <Link href="/floor-plans/estate-800">
+                                        Estate 800
+                                    </Link>
                                 </li>
                                 <li>
-                                    <Link href="#">Estate 900</Link>
+                                    <Link href="/floor-plans/estate-900">
+                                        Estate 900
+                                    </Link>
                                 </li>
                                 <li>
-                                    <Link href="#">Estate 1200</Link>
+                                    <Link href="/floor-plans/estate-1200">
+                                        Estate 1200
+                                    </Link>
                                 </li>
                             </ul>
                         </div>
@@ -174,3 +194,21 @@ export default function Footer() {
         </footer>
     )
 }
+/*
+export async function getStaticProps() {
+    const files = fs.readdirSync(path.join('data'))
+
+    const estates = files.map((filename) => {
+        const slug = filename.replace('.md', '')
+        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
+
+        const { data: frontmatter } = matter(markdown)
+        return {
+            slug,
+            frontmatter,
+        }
+    })
+    // console.log(estates)
+    return { props: { estates } }
+}
+*/

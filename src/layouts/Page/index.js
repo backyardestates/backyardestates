@@ -74,43 +74,6 @@ export default function Page({ children }) {
                     Id velit ut tortor pretium viverra suspendisse. Erat
                     imperdiet sed euismod nisi porta.
                 </p>
-                <p>
-                    Eu feugiat pretium nibh ipsum consequat nisl vel pretium.
-                    Massa sapien faucibus et molestie ac feugiat. Ullamcorper a
-                    lacus vestibulum sed arcu non odio euismod lacinia. Lobortis
-                    elementum nibh tellus molestie nunc non blandit massa enim.
-                    Metus aliquam eleifend mi in nulla posuere sollicitudin.
-                    Vulputate ut pharetra sit amet aliquam id diam maecenas
-                    ultricies. Hac habitasse platea dictumst vestibulum rhoncus
-                    est pellentesque. Diam vulputate ut pharetra sit.
-                    Consectetur libero id faucibus nisl tincidunt eget nullam
-                    non nisi. Amet tellus cras adipiscing enim eu turpis
-                    egestas. Pharetra vel turpis nunc eget. Mattis aliquam
-                    faucibus purus in massa tempor nec. Lacus luctus accumsan
-                    tortor posuere ac ut consequat. Lectus sit amet est placerat
-                    in egestas. Nec nam aliquam sem et tortor consequat. Velit
-                    aliquet sagittis id consectetur purus ut faucibus pulvinar.
-                    Eu turpis egestas pretium aenean pharetra magna ac.
-                </p>
-                <p>
-                    Congue nisi vitae suscipit tellus mauris a diam. Tempus
-                    imperdiet nulla malesuada pellentesque elit. Netus et
-                    malesuada fames ac turpis egestas sed. Etiam erat velit
-                    scelerisque in dictum non consectetur a. Pharetra magna ac
-                    placerat vestibulum lectus mauris ultrices eros. Mattis
-                    molestie a iaculis at erat. Morbi leo urna molestie at
-                    elementum eu. Est lorem ipsum dolor sit amet. Odio aenean
-                    sed adipiscing diam donec adipiscing tristique risus.
-                    Aliquam purus sit amet luctus. Sit amet porttitor eget dolor
-                    morbi non arcu risus quis. Nec ultrices dui sapien eget mi
-                    proin sed libero enim. Congue nisi vitae suscipit tellus
-                    mauris a diam maecenas. Tristique senectus et netus et
-                    malesuada fames. Ipsum nunc aliquet bibendum enim facilisis.
-                    Ut porttitor leo a diam sollicitudin tempor id eu nisl.
-                    Tincidunt ornare massa eget egestas purus viverra accumsan
-                    in nisl. Ac turpis egestas integer eget. Dignissim cras
-                    tincidunt lobortis feugiat vivamus at augue eget arcu.
-                </p>
             </main>
             <Footer />
         </div>

@@ -13,7 +13,7 @@ export default function Navbar() {
                 </div>
                 <ul className={style.links}>
                     <li>
-                        <Link href="#">Floor plans</Link>
+                        <Link href="/floor-plans">Floor plans</Link>
                     </li>
                     <li>
                         <Link href="/pricing">Pricing</Link>
