@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Logo from '../Logo'
 import style from './Navbar.module.css'
 import Button from '../Button'
+import Dropdown from '../Dropdown'
 
 export default function Navbar() {
     return (
@@ -18,7 +19,28 @@ export default function Navbar() {
                         <Link href="/pricing">Pricing</Link>
                     </li>
                     <li>
-                        <Link href="#">Company</Link>
+                        <Dropdown label="Company">
+                            <ul>
+                                <li>
+                                    <Link href="/about-us">About us</Link>
+                                </li>
+                                <li>
+                                    <Link href="/about-us/our-team">
+                                        Our team
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/about-us/our-process">
+                                        Our process
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/roi">
+                                        Return On Investment (ROI)
+                                    </Link>
+                                </li>
+                            </ul>
+                        </Dropdown>
                     </li>
                     <li>
                         <Link href="/contact-us">Contact us</Link>
