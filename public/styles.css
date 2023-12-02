@@ -1,14 +1,73 @@
 :root {
+    --color-white: #fff;
+    --color-blue: #1da3ba;
     --radius: 0.25rem;
+
+    --color-neutral-100: #dedede;
+    --color-neutral-500: #787878;
+    --color-neutral-700: #454545;
+}
+
+html {
+    font-family: var(--font-sans);
 }
 
 body {
     margin: 0;
     padding: 0;
-    background: #f7f7f7;
+    background: #fff;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
     margin: 0;
     padding: 0;
+    /* color: var(--color-white, #fff); */
+    /* text-align: center; */
+    /* leading-trim: both; */
+    /* text-edge: cap; */
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+h2 {
+    color: #ad8d5f;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.5rem; /* 75% */
+}
+
+p.intro {
+    font-family: var(--font-sans);
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 2.25rem; /* 150% */
+}
+
+p.small-caps {
+    color: var(--color-neutral-500, #787878);
+    text-align: center;
+    leading-trim: both;
+    text-edge: cap;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5rem; /* 150% */
+    font-variant: all-small-caps;
+    letter-spacing: 0.1rem;
 }
