@@ -1,0 +1,16 @@
+.root {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    /* height: 3rem; */
+    margin: 0;
+    padding: 0;
+    /* background: var(--color-blue); */
+    color: var(--color-blue);
+    /* border-radius: 1.5rem; */
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-weight: 600;
+}
