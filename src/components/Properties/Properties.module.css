@@ -1,0 +1,17 @@
+.root {
+    /* display: flex; */
+    /* gap: 2rem; */
+    /* justify-content: center; */
+    margin: 0;
+    padding: 6rem;
+    /* border: 1px solid red; */
+}
+
+.properties {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin: 0 0 3rem 0;
+    /* padding: 6rem; */
+    /* border: 1px solid red; */
+}

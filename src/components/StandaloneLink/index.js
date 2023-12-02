@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import style from './StandaloneLink.module.css'
 
-export default function Testimonial({ href, children }) {
+export default function Testimonial({ href = '#', children }) {
     return (
         <Link href={href} className={style.root}>
             <span>{children}</span>
