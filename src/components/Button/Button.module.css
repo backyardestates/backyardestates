@@ -1,15 +1,36 @@
-.root {
-    display: flex;
-    align-self: center;
+.base {
+    display: inline-flex;
+    /* align-self: flex-start; */
+    /* justify-self: center; */
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
     height: 3rem;
     margin: 0;
     padding: 0rem 1rem 0rem 1.5rem;
-    background: var(--color-blue);
-    color: var(--color-white);
     border-radius: 1.5rem;
     text-decoration: none;
     font-family: var(--font-sans);
+}
+
+.primary {
+    composes: base;
+    background-color: var(--color-brand-light-blue);
+    color: var(--color-white);
+}
+
+.primary svg {
+    opacity: 0.5;
+    stroke: white;
+}
+
+.secondary {
+    composes: base;
+    background-color: var(--color-white);
+    color: var(--color-brand-light-blue);
+}
+
+.secondary svg {
+    opacity: 0.5;
+    stroke: var(--color-brand-light-blue);
 }

@@ -1,0 +1,45 @@
+.root {
+    display: flex;
+    gap: 2rem;
+    grid-column-start: 3;
+    grid-column-end: 11;
+}
+
+.image {
+    border-radius: 1rem;
+}
+
+.content {
+}
+
+.display2 {
+    margin: 0 0 1rem 0;
+    padding: 0;
+    text-align: left;
+    font-family: var(--font-serif);
+}
+
+.small_caps {
+    margin: 0 0 1rem 0;
+    padding: 0;
+    color: var(--color-neutral-500, #787878);
+    /* text-align: center; */
+    leading-trim: both;
+    text-edge: cap;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5rem; /* 150% */
+    font-variant: all-small-caps;
+    letter-spacing: 0.1rem;
+}
+
+.body {
+    color: var(--color-neutral-500);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem;
+}
