@@ -38,7 +38,7 @@ export default function Footer({ estates }) {
                         Backyard Estates
                     </div>
                     <p className={style.intro}>
-                        Premier Accessory Dwelling Unit (adu) builder for the
+                        Premier Accessory Dwelling Unit (ADU) builder for the
                         greater Los Angeles area.
                     </p>
                     <ul>

@@ -3,6 +3,8 @@
     color: white;
     background: #36484b;
     width: 100vw;
+    margin: 0;
+    padding: 3rem 0;
 }
 
 .container {
@@ -11,7 +13,9 @@
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 2rem;
-    padding: 2rem;
+    /* padding: 2rem; */
+
+    font-family: var(--font-sans);
 }
 
 .contact {
@@ -97,6 +101,7 @@
 .root ul li a {
     text-decoration: none;
     color: white;
+    font-family: var(--font-sans);
 }
 
 .display3 {
@@ -108,6 +113,7 @@
     font-weight: 700;
     letter-spacing: 0.1rem;
     text-transform: uppercase;
+    font-family: var(--font-sans);
 }
 
 .legal {
@@ -132,9 +138,12 @@
 }
 
 .intro {
+    margin: 1rem 0 1.5rem 0;
+    padding: 0;
     font-size: 1.25rem;
-    font-weight: 400;
+    font-weight: 300;
     line-height: 1.75rem;
+    /* opacity: 0.75; */
 }
 
 /* Mobile XS */
