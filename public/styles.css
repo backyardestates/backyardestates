@@ -3,9 +3,17 @@
     --color-blue: #1da3ba;
     --radius: 0.25rem;
 
+    --color-neutral-0: #f7f7f7;
+    --color-neutral-50: #ebebeb;
     --color-neutral-100: #dedede;
+    --color-neutral-200: #c4c4c4;
+    --color-neutral-300: #ababab;
+    --color-neutral-400: #dedede;
     --color-neutral-500: #787878;
+    --color-neutral-600: #dedede;
     --color-neutral-700: #454545;
+    --color-neutral-800: #dedede;
+    --color-neutral-900: #dedede;
 
     --color-brand-dark-blue: #36484b;
     --color-brand-light-blue: #1da4ba;
@@ -73,4 +81,62 @@ p.small-caps {
     line-height: 1.5rem; /* 150% */
     font-variant: all-small-caps;
     letter-spacing: 0.1rem;
+}
+
+table {
+    margin: 3rem 0 6rem 0;
+    padding: 0;
+    /* border: 1px solid red; */
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-sans);
+    color: var(--color-neutral-500);
+}
+
+th {
+    /* border: 1px solid pink; */
+    /* width: 100%; */
+}
+
+tr td.left {
+    text-align: left;
+}
+
+thead th:nth-child(1) {
+    width: 20%;
+}
+
+thead th:nth-child(2) {
+    width: 20%;
+}
+
+thead th:nth-child(3) {
+    width: 20%;
+}
+
+thead th:nth-child(4) {
+    width: 20%;
+}
+
+thead th:nth-child(5) {
+    width: 20%;
+}
+
+th {
+    background-color: var(--color-neutral-0);
+}
+
+th,
+td {
+    border: 1px solid var(--color-neutral-100);
+    padding: 1rem;
+}
+
+td {
+    text-align: center;
+}
+
+tfoot td {
+    vertical-align: top;
 }

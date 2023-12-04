@@ -16,7 +16,7 @@ import {
     faHouseLaptop,
 } from '@fortawesome/pro-regular-svg-icons'
 import { faArrowDown } from '@fortawesome/pro-light-svg-icons'
-import Pill from '@/components/Pill'
+// import Pill from '@/components/Pill'
 import Phase from '@/components/Phase'
 
 export default function OurProcess() {
