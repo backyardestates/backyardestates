@@ -8,8 +8,6 @@ import {
 } from '@fortawesome/pro-regular-svg-icons'
 import style from './AboutUs.module.css'
 
-console.log(faCheck)
-
 export default function AboutUs() {
     return (
         <Layout

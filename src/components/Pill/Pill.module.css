@@ -1,0 +1,11 @@
+.base {
+    display: inline-block;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-sans);
+    color: var(--color-brand-light-blue);
+    border-radius: 2rem;
+    border: 2px solid var(--color-brand-light-blue);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
