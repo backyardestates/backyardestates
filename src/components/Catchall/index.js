@@ -13,6 +13,10 @@ export default function Catchall() {
             <Button isPrimary={false} href="/talk-to-an-adu-specialist">
                 Talk to an ADU Specialist
             </Button>
+            <p className={style.cta}>
+                Or, call <a href="tel:+18182083113">(818) 208-3113</a> to
+                Schedule a free ADU assessment today!
+            </p>
         </div>
     )
 }

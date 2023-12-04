@@ -1,0 +1,91 @@
+.content {
+    grid-column-start: 3;
+    grid-column-end: 11;
+}
+
+.benefit {
+    margin: 0 0 6rem 0;
+    padding: 4rem 6rem;
+    background-color: #ad8d5f;
+    border-radius: 1rem;
+}
+
+.benefit h2 {
+    color: var(--color-white);
+    margin-bottom: 1.75rem;
+}
+
+.benefit p {
+    color: var(--color-white);
+    /* color: var(--color-neutral-500, #787878); */
+    text-align: center;
+    leading-trim: both;
+    text-edge: cap;
+    font-family: var(--font-sans);
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem; /* 150% */
+    font-variant: all-small-caps;
+    letter-spacing: 0.2rem;
+    opacity: 0.75;
+}
+
+.pros_and_cons {
+    display: flex;
+    margin: 0 0 0 0;
+    padding: 4rem 0rem 4rem 6rem;
+    background-color: rgba(24, 194, 223, 0.08);
+    border-radius: 1rem;
+}
+
+.pros_and_cons > * {
+    flex: 1;
+}
+
+.pros,
+.cons {
+    margin: 0;
+    padding: 0;
+    /* border: 5px solid red; */
+}
+
+.pros {
+    border-right: 3px solid var(--color-brand-light-blue);
+}
+
+.cons {
+    padding-left: 6rem;
+}
+
+.pros_and_cons h3 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.5rem; /* 150% */
+    color: var(--color-brand-light-blue);
+    margin-bottom: 2.5rem;
+}
+
+.pros_and_cons ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-brand-dark-blue);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem; /* 150% */
+}
+
+.pros_and_cons ul li {
+    margin: 0;
+    padding: 0 0 0.5rem 0;
+}
+
+.icon {
+    /* border: 1px solid red; */
+    margin-right: 0.75rem;
+}

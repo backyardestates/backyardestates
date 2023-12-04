@@ -2,6 +2,10 @@ import { Roboto, Roboto_Slab } from 'next/font/google'
 import style from './Page.module.css'
 import Masthead from '@/components/Masthead'
 
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
 const roboto = Roboto({
     variable: '--font-sans',
     subsets: ['latin'],
