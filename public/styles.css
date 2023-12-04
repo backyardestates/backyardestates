@@ -40,15 +40,11 @@ p {
 h1 {
     margin: 0;
     padding: 0;
-    /* color: var(--color-white, #fff); */
-    /* text-align: center; */
-    /* leading-trim: both; */
-    /* text-edge: cap; */
     font-family: var(--font-serif);
     font-size: 3rem;
     font-style: normal;
     font-weight: 700;
-    line-height: normal;
+    line-height: 1.25em;
 }
 
 h2 {
@@ -58,7 +54,7 @@ h2 {
     font-size: 2rem;
     font-style: normal;
     font-weight: 600;
-    line-height: 1.5rem; /* 75% */
+    line-height: 1.25em;
 }
 
 p.intro {

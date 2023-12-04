@@ -10,6 +10,7 @@ import {
     faVialCircleCheck,
     faRulerCombined,
 } from '@fortawesome/pro-light-svg-icons'
+import CallToAction from '@/components/CallToAction'
 
 export default function Pricing() {
     return (
@@ -211,8 +212,11 @@ export default function Pricing() {
                         </li>
                     </ul>
                 </div>
-                <div className={style.call_to_action}>
-                    <h3>Potential Return on investment (ROI)</h3>
+                <CallToAction
+                    title="Potential Return on investment (ROI)"
+                    ctaLabel="Explore ADU rental advantages"
+                    ctaUrl="/roi"
+                >
                     <p>
                         Accessory Dwelling Units (ADU&rsquo;s) are a compelling
                         investment opportunity. There&rsquo;s never been a
@@ -221,10 +225,7 @@ export default function Pricing() {
                         specialists ready to help maximize your property rental
                         potential.
                     </p>
-                    <StandaloneLink href="/roi">
-                        Explore ADU rental advantages
-                    </StandaloneLink>
-                </div>
+                </CallToAction>
             </div>
         </Layout>
     )

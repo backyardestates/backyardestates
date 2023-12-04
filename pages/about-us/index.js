@@ -16,7 +16,7 @@ export default function AboutUs() {
         >
             <div className={style.content}>
                 <Chunk
-                    image="/render.png"
+                    image="/render.jpg"
                     title="Design, plans, and permitting"
                     imagePriority={true}
                 >
@@ -40,7 +40,7 @@ export default function AboutUs() {
                     </p>
                 </Chunk>
                 <Chunk
-                    image="/community.png"
+                    image="/community.jpg"
                     imageRight={true}
                     title="Value to the community"
                 >
@@ -61,7 +61,7 @@ export default function AboutUs() {
                         factor in lifetime financial security.
                     </p>
                 </Chunk>
-                <Chunk image="/client.png" title="Why Backyard Estates">
+                <Chunk image="/client.jpg" title="Why Backyard Estates">
                     <p>
                         We are experts in the ADU industry and provide the
                         following:
@@ -90,7 +90,7 @@ export default function AboutUs() {
                     </ul>
                 </Chunk>
                 <div className={style.benefit}>
-                    <h2>Simply choose your floor plan and design options</h2>
+                    <h2>Simply choose a floor plan and design package</h2>
                     <p>Backyard Estates will handle everything else</p>
                 </div>
                 <div className={style.pros_and_cons}>
