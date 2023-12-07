@@ -1,5 +1,5 @@
+import { useInView } from 'react-intersection-observer'
 import { Roboto, Roboto_Slab } from 'next/font/google'
-import style from './Homepage.module.css'
 
 const roboto = Roboto({
     variable: '--font-sans',
@@ -24,10 +24,13 @@ import Footer from '../../components/Footer'
 import Hero from '../../components/Hero'
 
 export default function Homepage({ children }) {
+    const { ref, inView } = useInView()
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
-            <Navbar />
-            <Hero />
+            <Navbar isHomepage={true} mode={inView ? 'dark' : 'light'} />
+            <div ref={ref}>
+                <Hero />
+            </div>
             <main>{children}</main>
             <Footer />
         </div>

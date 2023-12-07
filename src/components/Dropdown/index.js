@@ -3,10 +3,10 @@ import style from './Dropdown.module.css'
 
 import { useState } from 'react'
 
-export default function Dropdown({ label, children }) {
+export default function Dropdown({ isHomepage = false, label, children }) {
     const [visibility, setVisibility] = useState(false)
     return (
-        <div className={style.dropdown}>
+        <div className={isHomepage ? style.dark : style.light}>
             <button
                 type="button"
                 className={style.btn}

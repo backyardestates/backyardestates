@@ -2,6 +2,28 @@
     position: relative;
 }
 
+.btn {
+    all: unset;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.light {
+    composes: dropdown;
+
+    & .btn {
+        color: var(--color-neutral-500);
+    }
+}
+
+.dark {
+    composes: dropdown;
+
+    & .btn {
+        color: var(--color-white);
+    }
+}
+
 .dropdown_menu {
     position: absolute;
     left: 0;
@@ -37,11 +59,7 @@
 .dropdown_menu_hidden ul li a,
 .dropdown_menu ul li a {
     white-space: nowrap;
-}
-
-.btn {
-    all: unset;
-    cursor: pointer;
-    color: #5e5e5e;
+    text-decoration: none;
+    color: var(--color-neutral-500);
     font-weight: 700;
 }

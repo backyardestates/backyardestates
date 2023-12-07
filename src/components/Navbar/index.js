@@ -4,22 +4,35 @@ import style from './Navbar.module.css'
 import Button from '../Button'
 import Dropdown from '../Dropdown'
 
-export default function Navbar() {
+export default function Navbar({ isHomepage = false, mode = 'light' }) {
     return (
-        <nav className={style.root}>
+        <nav
+            className={
+                isHomepage && mode !== 'light' ? style.homepage : style.page
+            }
+        >
             <div className={style.container}>
                 <div className={style.left}>
-                    <Logo />
+                    <Logo
+                        mode={isHomepage && mode !== 'light' ? 'dark' : 'light'}
+                    />
                 </div>
                 <ul className={style.links}>
                     <li>
-                        <Link href="/floor-plans">Floor plans</Link>
+                        <Link href="/floor-plans" className={style.link}>
+                            Floor plans
+                        </Link>
                     </li>
                     <li>
-                        <Link href="/pricing">Pricing</Link>
+                        <Link href="/pricing" className={style.link}>
+                            Pricing
+                        </Link>
                     </li>
                     <li>
-                        <Dropdown label="Company">
+                        <Dropdown
+                            isHomepage={isHomepage && mode !== 'light'}
+                            label="Company"
+                        >
                             <ul>
                                 <li>
                                     <Link href="/about-us">About us</Link>
@@ -43,12 +56,17 @@ export default function Navbar() {
                         </Dropdown>
                     </li>
                     <li>
-                        <Link href="/contact-us">Contact us</Link>
+                        <Link href="/contact-us" className={style.link}>
+                            Contact us
+                        </Link>
                     </li>
                 </ul>
                 <div className={style.right}>
                     <div className={style.cta}>
-                        <Button href="/talk-to-an-adu-specialist">
+                        <Button
+                            isPrimary={isHomepage && mode == 'light'}
+                            href="/talk-to-an-adu-specialist"
+                        >
                             Talk to an ADU specialist
                         </Button>
                     </div>

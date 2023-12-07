@@ -1,31 +1,22 @@
 import Link from 'next/link'
 import style from './Logo.module.css'
 
-export default function Logo() {
+export default function Logo({ mode = 'light' }) {
     return (
-        <div className={style.root}>
-            <Link href="/">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="39"
-                    height="32"
-                    viewBox="0 0 39 32"
-                    fill="none"
-                >
-                    <g clipPath="url(#clip0_302_871)">
-                        <path
-                            d="M22.9128 0L7.11044 11.3803V21.9456H3.04125V10.2125L13.199 2.5364L11.4533 0.261547L0 8.67364V24.9869H21.6354V11.5507L17.7609 7.28075L22.7911 3.78331L35.2785 13.6856V28.9588H31.0207V22.1159H26.5258V28.9588H7.11044V32H38.3197V12.2136L22.9128 0ZM18.5942 12.7246V21.9456H10.1517V12.901L15.2731 9.06292L18.5942 12.7246Z"
-                            fill="#1DA4BA"
-                        />
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_302_871">
-                            <rect width="38.3197" height="32" fill="white" />
-                        </clipPath>
-                    </defs>
-                </svg>
-                <span>Backyard Estates</span>
-            </Link>
-        </div>
+        <Link href="/" className={mode === 'light' ? style.light : style.dark}>
+            <svg
+                id="Layer_1"
+                data-name="Layer 1"
+                xmlns="http://www.w3.org/2000/svg"
+                width="40"
+                height="40"
+                viewBox="0 0 40 40"
+                className={style.logo}
+                fill="black"
+            >
+                <path d="m23.837,1.014L7.235,12.816v10.362h-3.133v-10.993l7.851-5.711.829.905,3.338-2.475-3.617-3.904L0,10.097v17.183h23.025v-14.229l-3.67-3.993,4.32-2.961,12.222,9.566v14.559h-3.324v-6.347h-5.58v6.347h-15.655v-1.742h-4.103v5.844h32.765V13.663L23.837,1.014Zm-4.914,22.164h-7.585v-8.293l4.643-3.435,2.942,3.201v8.528Z" />
+            </svg>
+            <span className={style.logotype}>Backyard Estates</span>
+        </Link>
     )
 }

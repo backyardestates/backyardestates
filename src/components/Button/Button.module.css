@@ -8,7 +8,7 @@
     height: 3rem;
     margin: 0;
     padding: 0rem 1rem 0rem 1.5rem;
-    border-radius: 1.5rem;
+    border-radius: 3rem;
     text-decoration: none;
     font-family: var(--font-sans);
 }
@@ -26,11 +26,12 @@
 
 .secondary {
     composes: base;
-    background-color: var(--color-white);
-    color: var(--color-brand-light-blue);
+    background-color: none;
+    color: var(--color-white);
+    border: 2px solid var(--color-white-subtle);
 }
 
 .secondary svg {
     opacity: 0.5;
-    stroke: var(--color-brand-light-blue);
+    stroke: var(--color-white);
 }
