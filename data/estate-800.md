@@ -3,11 +3,11 @@ title: 'Estate 800'
 date: '2023-11-28'
 order: 'F'
 city: 'Chino'
-bed: 1
+bed: 2
 bath: 2
-sqft: 350
+sqft: 800
 img: 'estate800-fpo.png'
-price: '175,000'
+price: '299,000'
 ---
 
 Content

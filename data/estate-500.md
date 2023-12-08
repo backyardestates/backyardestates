@@ -3,11 +3,11 @@ title: 'Estate 500'
 date: '2023-11-28'
 order: 'C'
 city: 'Chino'
-bed: 1
-bath: 2
-sqft: 350
+bed: 2
+bath: 1
+sqft: 500
 img: 'estate500-fpo.png'
-price: '175,000'
+price: '219,000'
 ---
 
 Content
