@@ -1,0 +1,7 @@
+.content {
+    grid-column-start: 3;
+    grid-column-end: 11;
+    border: 2px dashed magenta;
+    color: magenta;
+    font-family: var(--font-sans);
+}

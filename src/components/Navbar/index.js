@@ -64,7 +64,10 @@ export default function Navbar({ isHomepage = false, mode = 'light' }) {
                 <div className={style.right}>
                     <div className={style.cta}>
                         <Button
-                            isPrimary={isHomepage && mode == 'light'}
+                            isPrimary={
+                                (isHomepage && mode == 'light') ||
+                                (!isHomepage && mode == 'light')
+                            }
                             href="/talk-to-an-adu-specialist"
                         >
                             Talk to an ADU specialist

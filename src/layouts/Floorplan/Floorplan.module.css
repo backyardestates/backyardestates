@@ -1,0 +1,18 @@
+.root {
+    display: grid;
+    column-gap: 2rem;
+    row-gap: 6rem;
+    grid-template-columns: repeat(12, 1fr);
+    margin: 0;
+    padding: 6rem 0 6rem 0;
+    z-index: 1;
+    /* border: 5px solid red; */
+}
+
+/* fixed */
+@media only screen and (min-width: 1440px) {
+    .root {
+        margin: 0 auto;
+        width: 1440px;
+    }
+}
