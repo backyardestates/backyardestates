@@ -1,4 +1,5 @@
-import style from './WhyChoose.module.css'
+import Benefit from '../Benefit'
+import style from './Benefits.module.css'
 
 export default function WhyChoose() {
     return (
@@ -12,21 +13,21 @@ export default function WhyChoose() {
                 </p>
             </div>
             <div className={style.benefits}>
-                <div className={`${style.benefit} ${style.b1}`}>
-                    Were meticulous planners
-                </div>
-                <div className={`${style.benefit} ${style.b2}`}>
-                    Were affordable
-                </div>
-                <div className={`${style.benefit} ${style.b3}`}>
+                <Benefit position={0} type="process">
+                    We&rsquo;re meticulous planners
+                </Benefit>
+                <Benefit position={1} type="price" subtle>
+                    We&rsquo;re affordable
+                </Benefit>
+                <Benefit position={2} type="architecture">
                     We aim for beauty
-                </div>
-                <div className={`${style.benefit} ${style.b4}`}>
+                </Benefit>
+                <Benefit position={3} type="timeline">
                     We eliminate delays
-                </div>
-                <div className={`${style.benefit} ${style.b5}`}>
-                    Were quicker
-                </div>
+                </Benefit>
+                <Benefit position={4} type="timeline" subtle>
+                    We&rsquo;re quicker
+                </Benefit>
             </div>
         </div>
     )
