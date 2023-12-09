@@ -1,0 +1,41 @@
+.base {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0 0 0.5rem 0;
+    align-items: center;
+}
+
+.content {
+    display: flex;
+    /* height: 3.5rem; */
+    padding: 0.75rem 1.5rem;
+    margin: 0;
+    align-items: center;
+
+    justify-content: center;
+    gap: 1rem;
+    flex-shrink: 0;
+
+    font-family: var(--font-sans);
+
+    border-radius: 0.5rem;
+    border: 2px solid var(--color-brand-light-blue);
+
+    color: var(--color-brand-dark-blue);
+}
+
+.explanation {
+    display: none;
+}
+
+.icon {
+    color: var(--color-brand-light-blue);
+}
+
+.arrow {
+    margin: 0;
+    padding: 0;
+    color: var(--color-brand-light-blue);
+    transform: translateY(-3px);
+}

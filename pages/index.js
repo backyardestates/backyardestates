@@ -3,6 +3,7 @@ import Testimonials from '@/components/Testimonials'
 import Properties from '@/components/Properties'
 import Benefits from '@/components/Benefits'
 import style from './Homepage.module.css'
+import Process from '@/components/Process'
 
 export default function Home() {
     return (
@@ -10,7 +11,7 @@ export default function Home() {
             <Testimonials />
             <Properties />
             <Benefits />
-            <div className={style.content}>Process placeholder</div>
+            <Process />
             <div className={style.content}>
                 Explore our floorplans placeholder
             </div>
