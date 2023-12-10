@@ -1,0 +1,26 @@
+.base {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.title,
+.explanation {
+    max-width: 37.5rem;
+}
+
+.explanation {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 1.5rem;
+    text-align: center;
+}
+
+.theme_beige {
+    color: var(--color-brand-beige);
+}
