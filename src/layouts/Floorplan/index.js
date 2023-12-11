@@ -1,6 +1,8 @@
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import style from './Floorplan.module.css'
 
+import Floorplans from '@/components/Floorplans'
+
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
@@ -33,12 +35,10 @@ export default function Page({ title, explanation, children }) {
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
             <Navbar />
 
-            <main className={style.root}>
-                {children}
-                <RelatedContent />
-                <Catchall />
-            </main>
-
+            <main className={style.root}>{children}</main>
+            <Floorplans showNav={false} />
+            <RelatedContent />
+            <Catchall />
             <Footer />
         </div>
     )

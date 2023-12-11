@@ -1,6 +1,5 @@
 .content {
-    grid-column-start: 1;
-    grid-column-end: 13;
+    grid-column: span 12;
     /* border: 5px solid red; */
 }
 

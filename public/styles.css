@@ -18,6 +18,9 @@
 
     --color-brand-dark-blue: #36484b;
     --color-brand-light-blue: #1da4ba;
+
+    --color-brand-beige: hsla(35, 32%, 53%, 1);
+    --color-brand-beige-subtle: hsla(35, 32%, 53%, 0.1);
 }
 
 * {
@@ -54,7 +57,7 @@ h1 {
 
 h2 {
     color: #ad8d5f;
-    text-align: center;
+    /* text-align: center; */
     font-family: var(--font-serif);
     font-size: 2rem;
     font-style: normal;

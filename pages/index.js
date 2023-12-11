@@ -4,6 +4,7 @@ import Properties from '@/components/Properties'
 import Benefits from '@/components/Benefits'
 import style from './Homepage.module.css'
 import Process from '@/components/Process'
+import Floorplans from '@/components/Floorplans'
 
 export default function Home() {
     return (
@@ -12,9 +13,7 @@ export default function Home() {
             <Properties />
             <Benefits />
             <Process />
-            <div className={style.content}>
-                Explore our floorplans placeholder
-            </div>
+            <Floorplans />
         </Layout>
     )
 }

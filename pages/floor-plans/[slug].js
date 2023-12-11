@@ -5,6 +5,7 @@ import style from './FloorPlan.module.css'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import Floorplans from '@/components/Floorplans'
 
 export default function FloorPlan({ frontmatter }) {
     const title = frontmatter.title
@@ -32,7 +33,6 @@ export default function FloorPlan({ frontmatter }) {
             </div>
             <div className={style.content}>Video placeholder</div>
             <div className={style.content}>Customer story placeholder</div>
-            <div className={style.content}>Take a look inside placeholder</div>
         </Layout>
     )
 }

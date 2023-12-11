@@ -1,11 +1,19 @@
 import Link from 'next/link'
 import style from './Button.module.css'
 
-export default function Button({ isPrimary = true, children, href = '#' }) {
+export default function Button({
+    theme = 'blue',
+    isPrimary = true,
+    children,
+    href = '#',
+}) {
+    // const theme =
     return (
         <Link
             href={href}
-            className={isPrimary ? style.primary : style.secondary}
+            className={`${isPrimary ? style.primary : style.secondary} ${
+                theme === 'blue' ? style.theme_blue : style.theme_beige
+            }`}
             id="cta"
         >
             <span>{children}</span>

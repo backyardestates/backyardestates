@@ -1,9 +1,18 @@
 import Link from 'next/link'
 import style from './StandaloneLink.module.css'
 
-export default function Testimonial({ href = '#', children }) {
+export default function StandaloneLink({
+    theme = 'blue',
+    href = '#',
+    children,
+}) {
     return (
-        <Link href={href} className={style.root}>
+        <Link
+            href={href}
+            className={`${style.base} ${
+                theme === 'blue' ? style.theme_blue : style.theme_beige
+            }`}
+        >
             <span>{children}</span>
             <svg
                 xmlns="http://www.w3.org/2000/svg"

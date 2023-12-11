@@ -1,16 +1,26 @@
-.root {
-    display: flex;
-    align-self: center;
-    justify-content: center;
+.base {
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    /* height: 3rem; */
     margin: 0;
     padding: 0;
-    /* background: var(--color-blue); */
-    color: var(--color-blue);
-    /* border-radius: 1.5rem; */
-    text-decoration: none;
     font-family: var(--font-sans);
     font-weight: 600;
+    text-decoration: none;
+}
+
+.theme_blue {
+    color: var(--color-brand-light-blue);
+}
+
+.theme_beige svg path {
+    stroke: var(--color-brand-light-blue);
+}
+
+.theme_beige {
+    color: var(--color-brand-beige);
+}
+
+.theme_beige svg path {
+    stroke: var(--color-brand-beige);
 }
