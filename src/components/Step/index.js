@@ -1,25 +1,35 @@
+import { useState } from 'react'
+
 import style from './Step.module.css'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowDown } from '@fortawesome/pro-regular-svg-icons'
 
 import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
+import Tooltip from '../Tooltip'
 export default function Step({
     title = 'Step title',
-    explanation = 'Lobortis feugiat vivamus at augue eget arcu dictum varius duis at consectetur lorem donec massa sapien faucibus et molestie ac feugiat sed lectus vestibulum',
+    explanation = 'Lobortis feugiat vivamus at augue eget arcu dictum varius duis at consectetur lorem donec massa',
     showArrow = true,
 }) {
+    const [showTooltip, setShowTooltip] = useState(false)
+
     return (
         <div className={style.base}>
             <div className={style.content}>
                 <p>
+                    <span>{showTooltip ? 'Y' : 'N'}</span>
                     <strong>{title}</strong>
                 </p>
                 <p className={style.explanation}>{explanation}</p>
-                <FontAwesomeIcon
-                    icon={faCircleQuestion}
-                    className={style.icon}
-                />
+                <div className={style.iconHolder}>
+                    <FontAwesomeIcon
+                        icon={faCircleQuestion}
+                        className={style.icon}
+                        onClick={() => setShowTooltip(!showTooltip)}
+                    />
+                    <Tooltip show={showTooltip}>{explanation}</Tooltip>
+                </div>
             </div>
 
             {showArrow && (
