@@ -18,7 +18,6 @@ export default function Step({
         <div className={style.base}>
             <div className={style.content}>
                 <p>
-                    <span>{showTooltip ? 'Y' : 'N'}</span>
                     <strong>{title}</strong>
                 </p>
                 <p className={style.explanation}>{explanation}</p>
@@ -26,7 +25,8 @@ export default function Step({
                     <FontAwesomeIcon
                         icon={faCircleQuestion}
                         className={style.icon}
-                        onClick={() => setShowTooltip(!showTooltip)}
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
                     />
                     <Tooltip show={showTooltip}>{explanation}</Tooltip>
                 </div>

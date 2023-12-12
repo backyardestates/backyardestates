@@ -1,4 +1,7 @@
 .base {
+    /* display: flex;
+    flex-direction: column;
+    align-items: center; */
     margin: 0;
     padding: 0 0 6rem 0;
     background-color: rgba(24, 194, 223, 0.08);
@@ -110,6 +113,7 @@
 }
 
 .cta {
+    margin: auto;
     grid-column: span 12;
 }
 
