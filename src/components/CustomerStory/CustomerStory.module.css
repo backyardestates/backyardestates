@@ -1,0 +1,128 @@
+.base {
+    display: flex;
+    gap: 9rem;
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* padding: 3rem; */
+    /* background-color: rgba(255, 0, 255, 0.1); */
+    grid-column-start: 2;
+    grid-column-end: 12;
+    /* aspect-ratio: 16/9; */
+    /* border-radius: 1rem; */
+    font-family: var(--font-sans);
+    /* color: rgba(255, 0, 255, 1); */
+}
+
+.columnLeft,
+.columnRight {
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* justify-content: center; */
+    /* border: 5px solid magenta; */
+    flex: 1;
+    /* border: 1px solid magenta; */
+}
+
+.quote {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--color-neutral-500);
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 2.25rem; /* 150% */
+}
+
+.paragraph {
+    margin-bottom: 1rem;
+    color: var(--color-neutral-500, #787878);
+
+    /* Body/Regular */
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 1.5rem; /* 150% */
+}
+
+.information {
+    display: flex;
+    justify-content: flex-end;
+    /* border: 5px solid lime; */
+    flex: 1;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 0 auto 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    list-style: none;
+    color: var(--color-neutral-500);
+    line-height: 0.75rem;
+}
+
+.information li {
+    margin: 0;
+    padding: 0;
+}
+
+.customer {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    /* border: 3px solid green; */
+}
+
+.portrait {
+    /* border: 3px solid magenta; */
+}
+
+.details {
+    width: 100%;
+    /* border: 3px solid blue; */
+}
+
+.detailsRow {
+    display: flex;
+    width: 100%;
+    margin-bottom: 1rem;
+    /* border: 3px solid magenta; */
+}
+
+.location {
+    margin: 0;
+    padding: 0;
+    color: var(--color-neutral-500);
+
+    /* Body/Regular */
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 1.5rem; /* 150% */
+}
+
+.estate {
+    margin: 0;
+    padding: 0;
+    color: var(--color-black);
+
+    /* Body/Regular */
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.5rem; /* 150% */
+}
+
+.name {
+    color: var(--color-neutral-500);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 1.5rem; /* 100% */
+    margin-bottom: 1rem;
+}
