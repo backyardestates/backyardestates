@@ -1,10 +1,16 @@
 import Link from 'next/link'
 import style from './StandaloneLink.module.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+    faArrowRight,
+    faArrowDownToLine,
+} from '@fortawesome/pro-solid-svg-icons'
 
 export default function StandaloneLink({
     theme = 'blue',
     href = '#',
     children,
+    icon = 'arrow',
 }) {
     return (
         <Link
@@ -14,28 +20,10 @@ export default function StandaloneLink({
             }`}
         >
             <span>{children}</span>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="17"
-                height="17"
-                viewBox="0 0 17 17"
-                fill="none"
-            >
-                <path
-                    d="M3.83331 8.5H13.1666"
-                    stroke="#1DA3BA"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-                <path
-                    d="M8.5 3.83337L13.1667 8.50004L8.5 13.1667"
-                    stroke="#1DA3BA"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
+
+            <FontAwesomeIcon
+                icon={icon === 'arrow' ? faArrowRight : faArrowDownToLine}
+            />
         </Link>
     )
 }

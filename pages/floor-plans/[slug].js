@@ -1,11 +1,14 @@
 import Layout from '../../src/layouts/Floorplan'
 import StandaloneLink from '@/components/StandaloneLink'
 import style from './FloorPlan.module.css'
+import Divider from '@/components/Divider'
 
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import Floorplans from '@/components/Floorplans'
+import VideoPlayer from '@/components/VideoPlayer'
+import CustomerStory from '@/components/CustomerStory'
 
 export default function FloorPlan({ frontmatter }) {
     const title = frontmatter.title
@@ -18,21 +21,31 @@ export default function FloorPlan({ frontmatter }) {
         <Layout>
             <div className={style.content}>
                 <h1>{title}</h1>
-                <p>
+                <p className={style.intro}>
                     This modern open floor plan with one bedroom is perfect for
                     family members or rental income
                 </p>
+
                 <ul className={style.information}>
-                    <li>{`${bed} Bed`}</li>
+                    <li>{bed === 'Studio' ? `${bed}` : `${bed} Bed`}</li>
+                    <li>
+                        <Divider />
+                    </li>
                     <li>{`${bath} Bath`}</li>
+                    <li>
+                        <Divider />
+                    </li>
                     <li>{`${sqft} sq. ft.`}</li>
                 </ul>
-                <h3>all-in-price starts at</h3>
-                <p>{`$${price}`}</p>
-                <StandaloneLink>Download floor plan</StandaloneLink>
+
+                <h3 className={style.subhead}>all-in-price starts at</h3>
+                <p className={style.price}>{`$${price}`}</p>
+                <StandaloneLink icon="download">
+                    Download floor plan
+                </StandaloneLink>
             </div>
-            <div className={style.content}>Video placeholder</div>
-            <div className={style.content}>Customer story placeholder</div>
+            <VideoPlayer />
+            <CustomerStory />
         </Layout>
     )
 }

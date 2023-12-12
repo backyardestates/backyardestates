@@ -1,6 +1,7 @@
 :root {
     --color-white: #fff;
     --color-white-subtle: rgba(255, 255, 255, 0.5);
+    --color-black: #000;
     --color-blue: #1da3ba;
     --radius: 0.25rem;
 
