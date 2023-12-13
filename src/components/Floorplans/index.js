@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import Image from 'next/image'
 import SectionTitle from '@/components/SectionTitle'
 import StandaloneLink from '@/components/StandaloneLink'
@@ -5,8 +7,13 @@ import Divider from '@/components/Divider'
 
 import style from './Floorplans.module.css'
 import Button from '../Button'
+import VideoPlayer from '../VideoPlayer'
 
 export default function Floorplans({ showNav = false }) {
+    // const showVideo = true
+
+    const [showVideo, setShowVideo] = useState(true)
+
     const estates = [
         { title: 'Estate 350', number: '350' },
         { title: 'Estate 450', number: '450' },
@@ -41,8 +48,8 @@ export default function Floorplans({ showNav = false }) {
                     </ul>
                 )}
 
-                <div className={style.comp}>
-                    <div className={style.container}>
+                <div className={style.container}>
+                    <div className={style.columns}>
                         <div className={style.columnLeft}>
                             <h2>Estate 350</h2>
                             <ul className={style.information}>
@@ -77,27 +84,47 @@ export default function Floorplans({ showNav = false }) {
                             </StandaloneLink>
                         </div>
                         <div className={style.columnRight}>
-                            <Image
-                                src="/images/fpo-video.png"
-                                alt="Placeholder"
-                                width={640}
-                                height={360}
-                                style={{
-                                    maxWidth: '100%',
-                                    height: 'auto',
-                                    aspectRatio: '16 / 9',
-                                }}
-                                className={style.img}
-                            />
+                            {!showVideo && (
+                                <Image
+                                    src="/images/fpo-video.png"
+                                    alt="Placeholder"
+                                    width={640}
+                                    height={360}
+                                    className={style.img}
+                                />
+                            )}
+                            {showVideo && (
+                                <VideoPlayer
+                                    style={
+                                        showVideo
+                                            ? { display: 'block' }
+                                            : { display: 'none' }
+                                    }
+                                />
+                            )}
                         </div>
                     </div>
                     <div className={style.buttonGroup}>
-                        <div className={style.buttonGroupButtonLeft}>
+                        <button
+                            className={
+                                showVideo
+                                    ? style.buttonGroupButtonLeft_selected
+                                    : style.buttonGroupButtonLeft
+                            }
+                            onClick={() => setShowVideo(!showVideo)}
+                        >
                             Walkthrough
-                        </div>
-                        <div className={style.buttonGroupButtonRight}>
+                        </button>
+                        <button
+                            className={
+                                showVideo
+                                    ? style.buttonGroupButtonRight
+                                    : style.buttonGroupButtonRight_selected
+                            }
+                            onClick={() => setShowVideo(!showVideo)}
+                        >
                             Floor plan
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>

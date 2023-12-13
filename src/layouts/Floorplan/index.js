@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import style from './Floorplan.module.css'
 
@@ -29,11 +30,17 @@ import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 import Catchall from '@/components/Catchall'
 import RelatedContent from '@/components/RelatedContent'
+import Menu from '@/components/Menu'
 
-export default function Page({ title, explanation, children }) {
+export default function Floorplan({ title, explanation, children }) {
+    const [showMenu, setShowMenu] = useState(false)
+    function toggleMenu() {
+        setShowMenu(!showMenu)
+    }
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
-            <Navbar />
+            <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
+            <Navbar toggleMenu={toggleMenu} />
 
             <main className={style.root}>{children}</main>
             <Floorplans showNav={false} />

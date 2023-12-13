@@ -6,6 +6,18 @@
     /* color: #000; */
     text-decoration: none;
     height: 3rem;
+
+    font-family: var(--font-sans);
+}
+
+.base_show {
+    composes: base;
+    display: flex;
+}
+
+.base_hide {
+    composes: base;
+    display: none;
 }
 
 .light,

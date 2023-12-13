@@ -4,7 +4,11 @@ import style from './Navbar.module.css'
 import Button from '../Button'
 import Dropdown from '../Dropdown'
 
-export default function Navbar({ isHomepage = false, mode = 'light' }) {
+export default function Navbar({
+    toggleMenu,
+    isHomepage = false,
+    mode = 'light',
+}) {
     return (
         <nav
             className={
@@ -74,7 +78,12 @@ export default function Navbar({ isHomepage = false, mode = 'light' }) {
                         </Button>
                     </div>
 
-                    <div className={style.menu}>
+                    <div
+                        className={style.menu}
+                        onClick={() => {
+                            toggleMenu()
+                        }}
+                    >
                         <span>Menu</span>
                         <svg
                             width="20"

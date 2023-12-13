@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import style from './Page.module.css'
 import Masthead from '@/components/Masthead'
@@ -27,11 +28,17 @@ export const metadata = {
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 import Catchall from '@/components/Catchall'
+import Menu from '@/components/Menu'
 
 export default function Page({ title, explanation, children }) {
+    const [showMenu, setShowMenu] = useState(false)
+    function toggleMenu() {
+        setShowMenu(!showMenu)
+    }
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
-            <Navbar />
+            <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
+            <Navbar toggleMenu={toggleMenu} />
             <Masthead title={title} explanation={explanation} />
             <main className={style.root}>
                 {children}

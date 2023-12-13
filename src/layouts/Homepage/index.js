@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { useInView } from 'react-intersection-observer'
 import { Roboto, Roboto_Slab } from 'next/font/google'
 
@@ -19,15 +21,26 @@ export const metadata = {
         'Backyard Estates - Premier Accessory Dwelling Unit (ADU) builder for the greater Los Angeles area.',
 }
 
-import Navbar from '../../components/Navbar'
-import Footer from '../../components/Footer'
-import Hero from '../../components/Hero'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
+import Hero from '@/components/Hero'
+import Menu from '@/components/Menu'
 
 export default function Homepage({ children }) {
     const { ref, inView } = useInView()
+    const [showMenu, setShowMenu] = useState(false)
+
+    function toggleMenu() {
+        setShowMenu(!showMenu)
+    }
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
-            <Navbar isHomepage={true} mode={inView ? 'dark' : 'light'} />
+            <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
+            <Navbar
+                toggleMenu={toggleMenu}
+                isHomepage={true}
+                mode={inView ? 'dark' : 'light'}
+            />
             <div ref={ref}>
                 <Hero />
             </div>
