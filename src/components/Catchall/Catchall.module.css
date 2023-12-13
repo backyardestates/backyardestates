@@ -1,12 +1,14 @@
 .root {
     background-color: var(--color-brand-light-blue);
-    margin: 0 auto;
+    margin: 0 auto 6rem auto;
     padding: 6rem 0;
     text-align: center;
     width: 80vh;
 
     border-radius: 0.75rem;
     /* grid-column: 2 / 12; */
+    grid-column-start: 3;
+    grid-column-end: 11;
 }
 
 .display2 {

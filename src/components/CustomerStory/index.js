@@ -2,6 +2,7 @@ import Image from 'next/image'
 import style from './CustomerStory.module.css'
 import Divider from '@/components/Divider'
 import StandaloneLink from '../StandaloneLink'
+import Carousel from '../Carousel'
 
 export default function CustomerStory() {
     const bed = 'Studio'
@@ -72,7 +73,9 @@ export default function CustomerStory() {
                     </p>
                 </div>
             </div>
-            <div className={style.columnRight}>Carousel</div>
+            <div className={style.columnRight}>
+                <Carousel />
+            </div>
         </div>
     )
 }
