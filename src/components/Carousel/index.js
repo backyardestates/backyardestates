@@ -19,7 +19,8 @@ export default function Carousel() {
     }
 
     useEffect(() => {
-        imgWidth = img.current.offsetWidth
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        imgWidth = img.current ? img.current.offsetWidth : 0
         // console.log('width', img.current ? img.current.offsetWidth : 0)
         switch (position) {
             case 0:
@@ -70,7 +71,7 @@ export default function Carousel() {
                     consectetur adipiscing elit, sed do eiusmod tempor
                     incididunt ut labore et dolore magna aliqua.
                 </p>
-                <p className={style.folio}>01 / 07</p>
+                <p className={style.folio}>01 / 02</p>
             </div>
         </div>
     )
