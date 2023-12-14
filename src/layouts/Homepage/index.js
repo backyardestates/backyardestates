@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { useInView } from 'react-intersection-observer'
 import { Roboto, Roboto_Slab } from 'next/font/google'
+import Head from 'next/head'
 
 const roboto = Roboto({
     variable: '--font-sans',
@@ -33,8 +34,15 @@ export default function Homepage({ children }) {
     function toggleMenu() {
         setShowMenu(!showMenu)
     }
+
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
+            <Head>
+                <meta
+                    name="viewport"
+                    content="width=device-width; initial-scale=1.0"
+                />
+            </Head>
             <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
             <Navbar
                 toggleMenu={toggleMenu}

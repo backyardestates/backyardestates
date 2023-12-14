@@ -1,7 +1,6 @@
 .base {
     display: inline-flex;
     align-self: center;
-    /* justify-self: center; */
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
@@ -17,6 +16,7 @@
     composes: base;
     background-color: var(--color-brand-light-blue);
     color: var(--color-white);
+    border: 2px solid var(--color-brand-light-blue);
 }
 
 .primary svg {
@@ -38,8 +38,10 @@
 
 .theme_blue {
     background-color: var(--color-brand-light-blue);
+    border-color: var(--color-brand-light-blue);
 }
 
 .theme_beige {
     background-color: var(--color-brand-beige);
+    border-color: var(--color-brand-beige);
 }

@@ -2,11 +2,13 @@
     margin: 0;
     padding: 6rem 0;
     background-color: rgba(24, 194, 223, 0.08);
+    width: 100%;
+    overflow: hidden;
 }
 
 .content {
-    width: 40rem;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
     padding: 4rem 0 8rem 0;
 }
 
@@ -36,4 +38,17 @@
     margin: 0 auto;
     padding: 0 2rem;
     width: 1440px;
+}
+
+/* fixed */
+@media only screen and (min-width: 1440px) {
+    /* .root {
+        width: 1440px;
+    } */
+
+    .content {
+        width: 40rem;
+        margin: 0 auto;
+        padding: 4rem 0 8rem 0;
+    }
 }

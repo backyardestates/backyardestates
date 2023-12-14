@@ -4,13 +4,14 @@
     align-items: center;
     margin: 0;
     padding: 6rem;
-    /* border: 1px solid red; */
+    width: 100%;
+    overflow: hidden;
 }
 
 .properties {
     display: flex;
     gap: 2rem;
-    justify-content: center;
+    justify-content: flex-start;
     margin: 0 0 3rem 0;
     /* padding: 6rem; */
     /* border: 1px solid red; */

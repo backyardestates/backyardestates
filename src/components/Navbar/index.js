@@ -79,12 +79,14 @@ export default function Navbar({
                     </div>
 
                     <div
-                        className={style.menu}
+                        className={
+                            isHomepage ? style.menu_dark : style.menu_light
+                        }
                         onClick={() => {
                             toggleMenu()
                         }}
                     >
-                        <span>Menu</span>
+                        <span className={style.label}>Menu</span>
                         <svg
                             width="20"
                             height="28"
@@ -97,18 +99,21 @@ export default function Navbar({
                                 stroke="#5E5E5E"
                                 strokeWidth="2"
                                 strokeLinejoin="round"
+                                className={style.icon_hamburger_bar}
                             />
                             <path
                                 d="M0 14H20"
                                 stroke="#5E5E5E"
                                 strokeWidth="2"
                                 strokeLinejoin="round"
+                                className={style.icon_hamburger_bar}
                             />
                             <path
                                 d="M0 22H20"
                                 stroke="#5E5E5E"
                                 strokeWidth="2"
                                 strokeLinejoin="round"
+                                className={style.icon_hamburger_bar}
                             />
                         </svg>
                     </div>

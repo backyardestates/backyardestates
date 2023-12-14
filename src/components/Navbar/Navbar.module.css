@@ -12,7 +12,7 @@
 .link {
     text-decoration: none;
     color: var(--color-white);
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .homepage {
@@ -64,11 +64,40 @@
     display: flex;
     gap: 0.75rem;
     align-items: center;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    opacity: 0.75;
 }
 
-/* .cta {
-    visibility: visible;
-} */
+.menu:hover {
+    /* background-color: var(--color-neutral-100); */
+    opacity: 1;
+    cursor: pointer;
+}
+
+.menu_light {
+    composes: menu;
+
+    & .label {
+        color: var(--color-neutral-500);
+    }
+
+    & .icon_hamburger_bar {
+        stroke: var(--color-neutral-500);
+    }
+}
+
+.menu_dark {
+    composes: menu;
+
+    & .label {
+        color: var(--color-white);
+    }
+
+    & .icon_hamburger_bar {
+        stroke: var(--color-white);
+    }
+}
 
 .cta {
     display: none;

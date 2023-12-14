@@ -5,15 +5,17 @@
     margin: 0;
     padding: 0 0 6rem 0;
     background-color: rgba(24, 194, 223, 0.08);
+    width: 100%;
+    overflow: hidden;
 }
 
 .content {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 3rem;
-    margin: 0 auto;
+    margin: 0;
     padding: 0;
-    width: 1440px;
+    width: 100%;
 }
 
 .display2 {
@@ -147,4 +149,16 @@
     line-height: normal;
     font-variant: all-small-caps;
     letter-spacing: 0.125rem;
+}
+
+/* fixed */
+@media only screen and (min-width: 1440px) {
+    .content {
+        /* display: grid; */
+        /* grid-template-columns: repeat(12, 1fr); */
+        /* gap: 3rem; */
+        margin: 0 auto;
+        /* padding: 0; */
+        width: 1440px;
+    }
 }
