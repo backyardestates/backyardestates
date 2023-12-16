@@ -31,6 +31,9 @@
 }
 
 .columnLeft {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     /* border: 1px solid green; */
     grid-column-start: 1;
     grid-column-end: 13;

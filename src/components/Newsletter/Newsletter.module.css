@@ -1,7 +1,89 @@
-.root {
-    margin: 3rem 0 0 0;
-    padding: 1rem;
-    background: magenta;
+.base {
+    margin: 0;
+    padding: 0;
+    /* background: magenta; */
     color: white;
-    border-radius: var(--radius);
+    /* border-radius: var(--radius); */
+}
+
+.paragraph {
+    margin: 0 0 1rem 0;
+    padding: 0;
+}
+
+.container {
+    display: inline-flex;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border: 2px solid var(--color-white);
+    border-radius: 0.5rem;
+}
+
+.success {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    /* gap: 0; */
+    margin: 0;
+    padding: 0 1.5rem;
+    border: 2px solid green;
+    background-color: green;
+    color: white;
+    border-radius: 0.5rem;
+    height: 3rem;
+}
+
+.input {
+    height: 3rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+}
+
+.inputEmail {
+    composes: input;
+    margin: 0;
+    padding: 0 3rem 0 1.5rem;
+    background-color: var(--color-brand-dark-blue);
+    border: none;
+    color: var(--color-white);
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+}
+
+.inputEmail::placeholder {
+    color: var(--color-neutral-200);
+    overflow: visible;
+}
+
+.inputButton {
+    composes: input;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin: 0;
+    padding: 0 1.5rem;
+    background-color: var(--color-white);
+    border: none;
+    border-top-right-radius: 0.3rem;
+    border-bottom-right-radius: 0.3rem;
+}
+
+.inputButton:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.inputEmail:disabled,
+.inputButton:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.icon {
+    display: none;
+}
+
+.success {
+    display: none;
 }
