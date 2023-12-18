@@ -59,11 +59,6 @@ export default function Navbar({
                             </ul>
                         </Dropdown>
                     </li>
-                    <li>
-                        <Link href="/contact-us" className={style.link}>
-                            Contact us
-                        </Link>
-                    </li>
                 </ul>
                 <div className={style.right}>
                     <div className={style.cta}>

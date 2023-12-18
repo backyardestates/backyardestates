@@ -1,8 +1,12 @@
-import { useState } from 'react'
-
-import { useInView } from 'react-intersection-observer'
 import { Roboto, Roboto_Slab } from 'next/font/google'
+import style from './LeadForm.module.css'
+// import Masthead from '@/components/Masthead'
+
 import Head from 'next/head'
+
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
 
 const roboto = Roboto({
     variable: '--font-sans',
@@ -21,20 +25,17 @@ export const metadata = {
     description:
         'Backyard Estates - Premier Accessory Dwelling Unit (ADU) builder for the greater Los Angeles area.',
 }
+import Logo from '@/components/Logo'
 
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
-import Hero from '@/components/Hero'
-import Menu from '@/components/Menu'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faXmark } from '@fortawesome/pro-solid-svg-icons'
 
-export default function Homepage({ children }) {
-    const { ref, inView } = useInView()
-    const [showMenu, setShowMenu] = useState(false)
+function goBack() {
+    // console.log('Go back one page')
+    history.back()
+}
 
-    function toggleMenu() {
-        setShowMenu(!showMenu)
-    }
-
+export default function LeadForm({ children }) {
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
             <Head>
@@ -43,17 +44,17 @@ export default function Homepage({ children }) {
                     content="width=device-width, initial-scale=1.0"
                 />
             </Head>
-            <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
-            <Navbar
-                toggleMenu={toggleMenu}
-                isHomepage={true}
-                mode={inView ? 'dark' : 'light'}
-            />
-            <div ref={ref}>
-                <Hero />
+            <div className={style.topBar}>
+                <Logo />
+                <FontAwesomeIcon
+                    icon={faXmark}
+                    size="xl"
+                    className={style.icon}
+                    onClick={goBack}
+                />
             </div>
-            <main>{children}</main>
-            <Footer />
+
+            <main className={style.root}>{children}</main>
         </div>
     )
 }

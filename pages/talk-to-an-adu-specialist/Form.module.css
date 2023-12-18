@@ -1,7 +1,137 @@
 .content {
-    grid-column-start: 3;
-    grid-column-end: 11;
-    border: 2px dashed magenta;
-    color: magenta;
+    margin: 0;
+    padding: 0 1.5rem;
+    grid-column: span 12;
     font-family: var(--font-sans);
+}
+
+.content h1 {
+    margin: 0 0 2rem 0;
+    padding: 0;
+    color: var(--color-brand-dark-blue);
+    font-size: 2rem;
+}
+
+.content fieldset,
+.content div.field {
+    margin: 0 0 1.25rem 0;
+    padding: 0;
+    border: none;
+    /* border: 2px solid magenta; */
+}
+
+.content fieldset legend,
+.content div.field > label {
+    margin: 0 0 0.5rem 0;
+    /* padding: 0; */
+    /* border: none; */
+    font-weight: 600;
+    display: block;
+    /* border: 2px solid magenta; */
+    color: var(--color-brand-dark-blue);
+}
+
+.textfield {
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--color-neutral-200);
+    border-radius: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 400;
+    width: 100%;
+    height: 3rem;
+    color: var(--color-brand-dark-blue);
+}
+
+.option {
+    margin: 0 0 0.5rem 0;
+    padding: 0;
+    display: inline-flex;
+    gap: 3rem;
+    align-items: center;
+    /* border: 2px solid pink; */
+}
+
+.option_label {
+    padding-left: 0.5rem;
+    display: inline-block;
+    font-weight: 400;
+    color: var(--color-neutral-500);
+    /* border: 2px solid pink; */
+}
+
+.input {
+    height: 3rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+}
+
+.inputButton {
+    composes: input;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin: 0;
+    padding: 0 1.5rem;
+    background-color: var(--color-brand-light-blue);
+    color: var(--color-white);
+    border: none;
+    border-radius: 1.5rem;
+}
+
+.inputButton:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.inputEmail:disabled,
+.inputButton:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.legal_print {
+    margin: 2rem 0 0 0;
+    padding: 0;
+    font-size: 0.75rem;
+    line-height: 150%;
+    color: var(--color-neutral-300);
+}
+
+.legal_print a {
+    font-size: 0.75rem;
+    line-height: 120%;
+    color: var(--color-neutral-300);
+}
+
+.success {
+    /* display: inline-flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* gap: 0; */
+    margin: 0;
+    padding: 1.5rem;
+    border: 2px solid green;
+    background-color: green;
+    color: white;
+    border-radius: 0.5rem;
+    /* height: 3rem; */
+}
+
+.icon {
+    display: none;
+}
+
+.success {
+    display: none;
+}
+
+/* fixed */
+@media only screen and (min-width: 1400px) {
+    .content {
+        grid-column-start: 5;
+        grid-column-end: 9;
+        /* font-family: var(--font-sans); */
+    }
 }

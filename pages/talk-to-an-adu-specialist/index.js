@@ -1,134 +1,270 @@
-import AddressValidationForm from '@/components/AddressForm'
-import Layout from '../../src/layouts/Page'
+import { useState, useRef } from 'react'
+import Link from 'next/link'
+import Layout from '../../src/layouts/LeadForm'
 import style from './Form.module.css'
 
-export async function createPerson(e) {
-    e.preventDefault()
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
 
-    const lead = {
-        name: `${e.target.firstname.value} ${e.target.lastname.value}`,
-        email: [{ value: e.target.email.value }],
-        phone: [{ value: e.target.mobile.value }],
-    }
-
-    const address = e.target.address.value
-
-    const res = await fetch(
-        `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/persons?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
-        {
-            method: 'POST',
-            body: JSON.stringify(lead),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-    )
-    const data = await res.json()
-    // console.log(data)
-    SubmitLead(data.data, address)
-}
-
-export async function SubmitLead(d, a) {
-    const lead = {
-        title: 'Ray Elder',
-        person_id: d.id,
-        '2d53fd586f7bec45cffbae211118af378a38a61d': d.first_name,
-        '30a2b54f80758dab86a35c127fb7fd2d70ba36c0': d.last_name,
-        '80ecccdf8f5ceabad89d411094abbc61248f16c8': d.phone[0].value,
-        '47f338d18c478ccd45a1b19afb8629561a7f714e': a,
-        // prettier-ignore
-        'bbb72730be7b5833fef926f0ab0636961bdb0050': d.primary_email,
-    }
-
-    const res = await fetch(
-        `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/leads?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
-        {
-            method: 'POST',
-            body: JSON.stringify(lead),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-    )
-    const data = await res.json()
-}
-
-// AIzaSyAD3TF6-wY8SaFf_rjZf8rsWHb11MhlYq0
+import AddressAutocomplete from '@/components/AddressAutocomplete'
 
 export default function LeadForm({ data }) {
-    // getCustomFields()
+    const [address, setAddress] = useState('Not set yet')
+
+    const formRef = useRef()
+    const messageRef = useRef()
+
+    async function createPerson(e) {
+        e.preventDefault()
+
+        e.target.fields.disabled = true
+        e.target.btn.firstChild.innerText = 'Submitting...'
+        e.target.btn.lastChild.style.display = 'block'
+
+        const names = e.target.name.value.split(' ')
+
+        const person = {
+            name: e.target.name.value,
+            email: [{ value: e.target.email.value }],
+            phone: [{ value: e.target.mobile.value }],
+        }
+
+        const lead = {
+            name: e.target.name.value,
+            address: e.target.selectedAddress.value,
+            firstname: names[0],
+            lastname: names[names.length - 1],
+            email: [{ value: e.target.email.value }],
+            phone: [{ value: e.target.mobile.value }],
+            source: e.target.source.value,
+        }
+
+        const res = await fetch(
+            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/persons?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
+            {
+                method: 'POST',
+                body: JSON.stringify(person),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
+        const data = await res.json()
+
+        createLead(data.data, lead)
+    }
+
+    async function createLead(d, lead) {
+        let source = null
+
+        switch (lead.source) {
+            case 'ADU Event':
+                source = 58
+                break
+            case 'Open House':
+                source = 59
+                break
+            case 'Referral':
+                source = 60
+                break
+            case 'Search':
+                source = 61
+                break
+            case 'Social Media':
+                source = 28
+                break
+            default:
+                source = 56
+        }
+
+        const submittedLead = {
+            title: `${d.first_name} ${d.last_name}`,
+            person_id: d.id,
+            '2d53fd586f7bec45cffbae211118af378a38a61d': d.first_name,
+            '30a2b54f80758dab86a35c127fb7fd2d70ba36c0': d.last_name,
+            '80ecccdf8f5ceabad89d411094abbc61248f16c8': d.phone[0].value,
+            // prettier-ignore
+            "fd49bc4881f7bdffdeaa1868171df24bea5925fe": source,
+
+            '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
+            // prettier-ignore
+            "bbb72730be7b5833fef926f0ab0636961bdb0050": d.primary_email,
+        }
+
+        const res = await fetch(
+            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/leads?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
+            {
+                method: 'POST',
+                body: JSON.stringify(submittedLead),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
+        const data = await res.json()
+
+        if (data.success) {
+            formRef.current.style.display = 'none'
+            messageRef.current.style.display = 'block'
+        }
+    }
+
+    async function getAllFields(e) {
+        e.preventDefault()
+
+        const res = await fetch(
+            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/dealFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`
+        )
+        const data = await res.json()
+
+        if (!data) {
+            console.log('Porblem')
+        } else {
+            console.log(data)
+        }
+    }
+
     return (
-        <Layout
-            title="Talk to an ADU specialist"
-            explanation="Aliquet risus feugiat in ante metus dictum at tempor commodo ullamcorper a lacus vestibulum sed arcu non odio euismod lacinia at quis risus sed vulputate odio."
-        >
-            <div className={style.content} onSubmit={createPerson}>
-                <form>
-                    <div>
-                        <label htmlFor="address">Address</label>
-                        <input
-                            type="text"
-                            name="address"
-                            id="address"
-                            required
-                            defaultValue="32532 Campo Dr"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="firstname">First name</label>
-                        <input
-                            type="text"
-                            name="firstname"
-                            id="firstname"
-                            required
-                            defaultValue="Ray"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="lastname">Last name</label>
-                        <input
-                            type="text"
-                            name="lastname"
-                            id="lastname"
-                            required
-                            defaultValue="Elder"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="email">Enter your email </label>
-                        <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            required
-                            defaultValue="hello@rayelder.com"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="mobile">Mobile phone</label>
-                        <input
-                            type="text"
-                            name="mobile"
-                            id="mobile"
-                            required
-                            defaultValue="8018503070"
-                        />
-                    </div>
-                    <div>
-                        <input type="submit" value="Submit" />
-                    </div>
-                </form>
+        <Layout>
+            <div className={style.content}>
+                <h1>Talk to an ADU specialist</h1>
+                <div ref={formRef}>
+                    <form onSubmit={createPerson}>
+                        <fieldset id="fields">
+                            <AddressAutocomplete setAddress={setAddress} />
+                            <input
+                                type="hidden"
+                                id="selectedAddress"
+                                name="selectedAddress"
+                                value={address}
+                            />
+                            <div className={style.field}>
+                                <label htmlFor="firstname">Full name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    id="name"
+                                    required
+                                    className={style.textfield}
+                                    data-1p-ignore
+                                    // defaultValue="Raymond Elder"
+                                />
+                            </div>
+                            <div className={style.field}>
+                                <label htmlFor="email">Email address</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    required
+                                    className={style.textfield}
+                                    data-1p-ignore
+                                    // defaultValue="hello@rayelder.com"
+                                />
+                            </div>
+                            <div className={style.field}>
+                                <label htmlFor="mobile">Mobile phone</label>
+                                <input
+                                    type="text"
+                                    name="mobile"
+                                    id="mobile"
+                                    required
+                                    className={style.textfield}
+                                    // defaultValue="8018503070"
+                                />
+                            </div>
+                            <div className={style.field}>
+                                <label>How did you hear about us?</label>
+                                <label className={style.option}>
+                                    <input
+                                        type="radio"
+                                        name="source"
+                                        value="ADU Event"
+                                        required
+                                    />
+                                    <span className={style.option_label}>
+                                        ADU event
+                                    </span>
+                                </label>
+                                <label className={style.option}>
+                                    <input
+                                        type="radio"
+                                        name="source"
+                                        value="Open House"
+                                    />
+                                    <span className={style.option_label}>
+                                        Open house
+                                    </span>
+                                </label>
+                                <label className={style.option}>
+                                    <input
+                                        type="radio"
+                                        name="source"
+                                        value="Referral"
+                                    />
+                                    <span className={style.option_label}>
+                                        Referral
+                                    </span>
+                                </label>
+                                <label className={style.option}>
+                                    <input
+                                        type="radio"
+                                        name="source"
+                                        value="Search"
+                                    />
+                                    <span className={style.option_label}>
+                                        Search
+                                    </span>
+                                </label>
+                                <label className={style.option}>
+                                    <input
+                                        type="radio"
+                                        name="source"
+                                        value="Social Media"
+                                    />
+                                    <span className={style.option_label}>
+                                        Social media
+                                    </span>
+                                </label>
+                            </div>
+                        </fieldset>
+                        <button id="btn" className={style.inputButton}>
+                            <span>Submit</span>
+                            <FontAwesomeIcon
+                                icon={faSpinnerThird}
+                                size="lg"
+                                spin
+                                style={{
+                                    '--fa-primary-color': '#fff',
+                                    '--fa-secondary-color': '#fff',
+                                    '--fa-secondary-opacity': '0.25',
+                                }}
+                                className={style.icon}
+                            />
+                        </button>
+                        <p className={style.legal_print}>
+                            By clicking &ldquo;Submit,&rdquo; I give my
+                            electronic signature and consent that Backyard
+                            Estates may contact me with offers at the phone
+                            number above, including by text message, autodialer
+                            or prerecorded message. Consent not required for
+                            purchase. Message & data rates may apply. Promotion
+                            is subject to local service pricing, and may not
+                            apply to some services. I have read and understand
+                            the{' '}
+                            <Link href="/legal/privacy-policy">
+                                Privacy Policy
+                            </Link>{' '}
+                            and agree to recieve commerical communication from
+                            Backyard Estates via email (optional)
+                        </p>
+                    </form>
+                </div>
+                <div ref={messageRef} id="success" className={style.success}>
+                    <h3>Thank you!</h3>
+                    <p>Someone from our team will contact you soon.</p>
+                </div>
             </div>
         </Layout>
     )
-}
-
-export async function getCustomFields() {
-    // console.log(lead)
-
-    const res = await fetch(
-        `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/dealFields:(key,name)?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`
-    )
-    const data = await res.json()
-    console.log(data)
 }

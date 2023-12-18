@@ -192,21 +192,3 @@ export default function Footer({ estates }) {
         </footer>
     )
 }
-/*
-export async function getStaticProps() {
-    const files = fs.readdirSync(path.join('data'))
-
-    const estates = files.map((filename) => {
-        const slug = filename.replace('.md', '')
-        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
-
-        const { data: frontmatter } = matter(markdown)
-        return {
-            slug,
-            frontmatter,
-        }
-    })
-    // console.log(estates)
-    return { props: { estates } }
-}
-*/

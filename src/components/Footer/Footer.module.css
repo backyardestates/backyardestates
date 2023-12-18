@@ -9,12 +9,12 @@
 
 .container {
     /* border-top: 16px solid pink; */
+    margin: 0;
+    padding: 0 1.5rem;
     width: 100%;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 2rem;
-    /* padding: 2rem; */
-
     font-family: var(--font-sans);
 }
 
