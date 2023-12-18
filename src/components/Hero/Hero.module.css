@@ -43,7 +43,7 @@
 /* fixed */
 @media only screen and (min-width: 1440px) {
     .content {
-        width: 1440px;
+        max-width: 40rem;
         margin: 0 auto;
     }
 }
