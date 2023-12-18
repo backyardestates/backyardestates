@@ -4,6 +4,8 @@ import { useInView } from 'react-intersection-observer'
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import Head from 'next/head'
 
+import style from './Homepage.module.css'
+
 const roboto = Roboto({
     variable: '--font-sans',
     subsets: ['latin'],
@@ -32,6 +34,11 @@ export default function Homepage({ children }) {
     const [showMenu, setShowMenu] = useState(false)
 
     function toggleMenu() {
+        if (!showMenu) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
         setShowMenu(!showMenu)
     }
 
@@ -49,7 +56,7 @@ export default function Homepage({ children }) {
                 isHomepage={true}
                 mode={inView ? 'dark' : 'light'}
             />
-            <div ref={ref}>
+            <div ref={ref} className={style.wrapper}>
                 <Hero />
             </div>
             <main>{children}</main>

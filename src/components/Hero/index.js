@@ -1,9 +1,9 @@
 import Button from '../Button'
 import style from './Hero.module.css'
 
-export default function Hero({ children }) {
+export default function Hero() {
     return (
-        <div className={style.root}>
+        <div className={style.base}>
             <div className={style.content}>
                 <h1>Build a backyard ADU to bring parents closer</h1>
                 <p className={style.intro}>
