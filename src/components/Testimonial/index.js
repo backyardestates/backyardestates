@@ -23,7 +23,7 @@ export default function Testimonial({
                 <p className={style.small_caps}>{location}</p>
                 <p className={style.quote}>&ldquo;{children}&rdquo;</p>
                 <StandaloneLink href="#">{`${name}'s story`}</StandaloneLink>
-                <p className={style.floor_plan}>Estate 350</p>
+                <p className={style.floor_plan}>{floorplan}</p>
                 <p className={style.small_caps}>Floor plan</p>
             </div>
         </div>

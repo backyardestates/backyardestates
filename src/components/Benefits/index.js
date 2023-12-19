@@ -12,21 +12,22 @@ export default function WhyChoose() {
                     everything, so you don&apos;t have to worry.
                 </p>
             </div>
+
             <div className={style.benefits}>
-                <Benefit position={0} type="process">
-                    We&rsquo;re meticulous planners
+                <Benefit position={0} type="?">
+                    Effortless experience
                 </Benefit>
-                <Benefit position={1} type="price" subtle>
-                    We&rsquo;re affordable
+                <Benefit position={1} type="?" subtle>
+                    Superior quality
                 </Benefit>
-                <Benefit position={2} type="architecture">
-                    We aim for beauty
+                <Benefit position={2} type="Pricing">
+                    Transparent pricing
                 </Benefit>
-                <Benefit position={3} type="timeline">
-                    We eliminate delays
+                <Benefit position={3} type="?">
+                    Over 100 years of experience
                 </Benefit>
                 <Benefit position={4} type="timeline" subtle>
-                    We&rsquo;re quicker
+                    Swift move-in
                 </Benefit>
             </div>
         </div>

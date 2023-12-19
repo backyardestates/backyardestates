@@ -10,7 +10,6 @@ export default function Process() {
                 <h2 className={style.display2}>
                     We deliver on-time and within budget
                 </h2>
-
                 <div className={style.timeline}>
                     <div className={style.timelineStart}>Start</div>
                     <div className={style.timelineMiddle}>~ 12 months</div>
@@ -18,25 +17,25 @@ export default function Process() {
                 </div>
                 <div className={style.column}>
                     <p className={style.small_caps}>Phase 1</p>
-                    <p className={style.weeks}>4-5 weeks</p>
-                    <Step title="Initial phone call" />
-                    <Step title="Property review" />
-                    <Step title="Site visit and design" />
-                    <Step title="Proposal" showArrow={false} />
+                    <p className={style.weeks}>2-3 weeks</p>
+                    <Step title="Virtual site visit" />
+                    <Step title="Formal property analysis" />
+                    <Step title="Proposal review" />
+                    <Step title="Sign your ADU agreement" showArrow={false} />
                 </div>
                 <div className={style.column}>
                     <p className={style.small_caps}>Phase 2</p>
                     <p className={style.weeks}>8-16 weeks</p>
-                    <Step title="Financing" />
-                    <Step title="Permitting" />
-                    <Step title="Manufacturing" showArrow={false} />
+                    <Step title="Site Visit" />
+                    <Step title="Permit submittal" />
+                    <Step title="Permit approval" showArrow={false} />
                 </div>
                 <div className={style.column}>
                     <p className={style.small_caps}>Phase 3</p>
-                    <p className={style.weeks}>12-16 weeks</p>
-                    <Step title="Site preparation" />
-                    <Step title="Construction" />
-                    <Step title="Certificate of occupancy" showArrow={false} />
+                    <p className={style.weeks}>12-14 weeks</p>
+                    <Step title="Pre-construction" />
+                    <Step title="Home build" />
+                    <Step title="Move in" showArrow={false} />
                 </div>
                 <div className={style.cta}>
                     <StandaloneLink>Download process PDF</StandaloneLink>
