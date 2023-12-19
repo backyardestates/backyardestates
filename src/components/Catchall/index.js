@@ -3,7 +3,7 @@ import style from './Catchall.module.css'
 
 export default function Catchall() {
     return (
-        <div className={style.root}>
+        <div className={style.base}>
             <h2 className={style.display2}>Start your ADU journey today</h2>
             <p className={style.intro}>
                 Expand your income and livable space. Backyard Estates provides

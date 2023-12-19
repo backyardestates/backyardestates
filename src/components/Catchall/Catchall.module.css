@@ -1,36 +1,31 @@
-.root {
+.base {
     background-color: var(--color-brand-light-blue);
-    margin: 0 auto 6rem auto;
-    padding: 6rem 0;
+    margin: 0 1.5rem;
+    padding: 2rem 1rem;
     text-align: center;
-    width: 80vh;
-
     border-radius: 0.75rem;
-    /* grid-column: 2 / 12; */
-    grid-column-start: 3;
-    grid-column-end: 11;
+    grid-column: span 12;
 }
 
 .display2 {
     margin: 0 0 1rem 0;
     padding: 0;
-    /* text-align: left; */
     font-family: var(--font-serif);
     color: white;
-    width: 38rem;
+    max-width: 38rem;
     padding: 0;
     margin: 0 auto 2rem auto;
 }
 
 .intro {
     font-family: var(--font-sans);
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-style: normal;
-    font-weight: 300;
-    line-height: 2.25rem; /* 150% */
+    font-weight: 400;
+    line-height: 1.5em;
     opacity: 0.75;
     color: var(--color-white);
-    width: 38rem;
+    max-width: 38rem;
     padding: 0;
     margin: 0 auto 2rem auto;
 }
@@ -40,15 +35,29 @@
     font-size: 1rem;
     font-style: normal;
     font-weight: 400;
-    line-height: 2.25rem; /* 150% */
+    line-height: 1.6em;
     color: var(--color-white);
-    width: 38rem;
+    max-width: 38rem;
     padding: 0;
     margin: 2rem auto 2rem auto;
     opacity: 0.75;
 }
 
 .cta a {
-    /* font-family: var(--font-sans); */
     color: var(--color-white);
+}
+
+/* fixed */
+@media only screen and (min-width: 1440px) {
+    .base {
+        margin: 0;
+        padding: 6rem 0;
+        grid-column-start: 3;
+        grid-column-end: 11;
+    }
+
+    .intro {
+        font-size: 1.5rem;
+        font-weight: 300;
+    }
 }
