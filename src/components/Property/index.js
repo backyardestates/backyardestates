@@ -5,7 +5,7 @@ import PropertyInformation from '@/components/PropertyInformation'
 
 export default function Property({
     floorplan,
-    url = '/floor-plans/estate-350',
+    url = 'estate-350',
     img = 'estate350-fpo.png',
     title = 'Estate 350',
     city = 'Arcadia',
@@ -13,6 +13,7 @@ export default function Property({
     bath = 1,
     sqft = 350,
 }) {
+    // console.log(floorplan)
     url = `/floor-plans/${floorplan.slug}`
     // const title = estate.frontmatter.title
     // const bed = estate.frontmatter.bed
@@ -33,7 +34,7 @@ export default function Property({
                 <p>
                     <strong>{title}</strong>
                 </p>
-                <PropertyInformation floorplan={floorplan} />
+                <PropertyInformation floorplan={floorplan.frontmatter} />
             </div>
         </Link>
     )
