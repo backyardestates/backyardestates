@@ -2,10 +2,26 @@ import { useState } from 'react'
 import ButtonTag from '@/components/ButtonTag'
 import style from './ButtonTags.module.css'
 
-export default function ButtonTags({ tags, selectedID, setSelected }) {
+export default function ButtonTags({
+    tags,
+    selectedID,
+    setSelected,
+    showAll = false,
+}) {
     return (
         <div className={style.base}>
             <ul className={style.tags}>
+                {showAll && (
+                    <li key={99}>
+                        <ButtonTag
+                            id={99}
+                            label="All"
+                            setSelected={setSelected}
+                            // setChosen={setChosen}
+                            selectedID={selectedID}
+                        />
+                    </li>
+                )}
                 {tags.map((tag, index) => (
                     <li key={index}>
                         <ButtonTag

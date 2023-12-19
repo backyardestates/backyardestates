@@ -10,13 +10,11 @@ import Divider from '@/components/Divider'
 // import Floorplans from '@/components/Floorplans'
 import VideoPlayer from '@/components/VideoPlayer'
 import CustomerStory from '@/components/CustomerStory'
+import PropertyInformation from '@/components/PropertyInformation'
 
-export default function FloorPlan({ frontmatter }) {
-    const title = frontmatter.title
-    const bed = frontmatter.bed
-    const bath = frontmatter.bath
-    const sqft = frontmatter.sqft
-    const price = frontmatter.price
+export default function FloorPlan({ floorplan }) {
+    const title = floorplan.title
+    const price = floorplan.price
 
     return (
         <Layout>
@@ -26,19 +24,7 @@ export default function FloorPlan({ frontmatter }) {
                     This modern open floor plan with one bedroom is perfect for
                     family members or rental income
                 </p>
-
-                <ul className={style.information}>
-                    <li>{bed === 'Studio' ? `${bed}` : `${bed} Bed`}</li>
-                    <li>
-                        <Divider />
-                    </li>
-                    <li>{`${bath} Bath`}</li>
-                    <li>
-                        <Divider />
-                    </li>
-                    <li>{`${sqft} sq. ft.`}</li>
-                </ul>
-
+                <PropertyInformation floorplan={floorplan} />
                 <h3 className={style.subhead}>all-in-price starts at</h3>
                 <p className={style.price}>{`$${price}`}</p>
                 <StandaloneLink icon="download">
@@ -76,13 +62,13 @@ export async function getStaticProps({ params: { slug } }) {
 
     // console.log(markdownWithMeta)
 
-    const { data: frontmatter, content } = matter(markdownWithMeta)
+    const { data: floorplan, content } = matter(markdownWithMeta)
 
     // console.log(frontmatter)
 
     return {
         props: {
-            frontmatter,
+            floorplan,
         },
     }
 }

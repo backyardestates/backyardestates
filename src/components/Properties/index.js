@@ -9,7 +9,7 @@ export default function Properties({ data }) {
                 {data.map((estate, index) => (
                     <Property
                         key={index}
-                        floorplan={estate}
+                        floorplan={estate.frontmatter}
                         img={estate.frontmatter.img}
                         title={estate.frontmatter.title}
                         bed={estate.frontmatter.bed}

@@ -37,7 +37,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
                         <div className={style.columnLeft}>
                             <h2>{selectedFloorplan.frontmatter.title}</h2>
                             <PropertyInformation
-                                floorplan={selectedFloorplan}
+                                floorplan={selectedFloorplan.frontmatter}
                             />
                             <p>
                                 Interdum velit euismod in pellentesque massa
@@ -46,8 +46,11 @@ export default function Floorplans({ showNav = false, floorplans }) {
                                 dictum at tempor commodo ullamcorper a lacus
                                 vestibulum sed arcu
                             </p>
-                            <StandaloneLink theme="beige" href="#">
-                                Download floor plan
+                            <StandaloneLink
+                                theme="beige"
+                                href={`/floor-plans/${selectedFloorplan.slug}`}
+                            >
+                                View floor plan
                             </StandaloneLink>
                         </div>
                         <div className={style.columnRight}>

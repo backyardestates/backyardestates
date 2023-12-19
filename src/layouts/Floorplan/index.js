@@ -52,7 +52,7 @@ export default function Floorplan({ children }) {
             <main className={style.root}>{children}</main>
             {/* <Floorplans showNav={false} /> */}
             {/* <RelatedContent /> */}
-            <div className={style.root}>
+            <div className={style.catchall}>
                 <Catchall />
             </div>
 

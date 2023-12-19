@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import style from './Card.module.css'
 import Image from 'next/image'
+import PropertyInformation from '../PropertyInformation'
 
 export default function Card({ estate }) {
     const url = `/floor-plans/${estate.slug}`
@@ -23,17 +24,10 @@ export default function Card({ estate }) {
                 style={{ maxWidth: '100%', height: 'auto' }}
             />
             <div className={style.content}>
-                <ul className={style.information}>
-                    <li>{`${bed} Bed`}</li>
-                    <li>{`${bath} Bath`}</li>
-                    <li>{`${sqft} sq. ft.`}</li>
-                </ul>
-                <h3></h3>
                 <p className={style.location}>
                     <strong>{title}</strong>
-                    <br />
-                    {`${city}, CA`}
                 </p>
+                <PropertyInformation floorplan={estate.frontmatter} />
             </div>
         </Link>
     )

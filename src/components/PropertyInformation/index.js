@@ -3,9 +3,9 @@ import Divider from '@/components/Divider'
 import style from './PropertyInformation.module.css'
 
 export default function PropertyInformation({ floorplan }) {
-    const bed = floorplan.frontmatter.bed
-    const bath = floorplan.frontmatter.bath
-    const sqft = floorplan.frontmatter.sqft
+    const bed = floorplan.bed
+    const bath = floorplan.bath
+    const sqft = floorplan.sqft
 
     return (
         <ul className={style.base}>
