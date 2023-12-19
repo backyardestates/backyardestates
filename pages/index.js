@@ -28,7 +28,7 @@ export default function Home({ estates }) {
             <Properties data={estates} />
             <Benefits />
             <Process />
-            <Floorplans />
+            <Floorplans showNav={true} floorplans={estates} />
         </Layout>
     )
 }

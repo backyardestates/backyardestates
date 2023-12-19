@@ -8,27 +8,15 @@ import Divider from '@/components/Divider'
 import style from './Floorplans.module.css'
 import Button from '../Button'
 import VideoPlayer from '../VideoPlayer'
+import PropertyInformation from '../PropertyInformation'
+import ButtonTag from '../ButtonTag'
+import ButtonTags from '../ButtonTags'
 
-export default function Floorplans({ showNav = false }) {
-    // const showVideo = true
-
+export default function Floorplans({ showNav = false, floorplans }) {
+    const [selected, setSelected] = useState(0)
     const [showVideo, setShowVideo] = useState(true)
 
-    const estates = [
-        { title: 'Estate 350', number: '350' },
-        { title: 'Estate 450', number: '450' },
-        { title: 'Estate 500', number: '500' },
-        { title: 'Estate 750', number: '750' },
-        { title: 'Estate 750+', number: '750plus' },
-        { title: 'Estate 800', number: '800' },
-        { title: 'Estate 950', number: '950' },
-        { title: 'Estate 1200', number: '1200' },
-    ]
-
-    const bed = 'Studio'
-    const bath = 1
-    const sqft = 350
-    const price = 175
+    let selectedFloorplan = floorplans[selected]
     return (
         <div className={style.base}>
             <SectionTitle
@@ -37,41 +25,20 @@ export default function Floorplans({ showNav = false }) {
             />
             <div className={style.content}>
                 {showNav && (
-                    <ul className={style.tags}>
-                        {estates.map((estate, index) => (
-                            <li key={index}>
-                                <button className={style.tag}>
-                                    {estate.title}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                    <ButtonTags
+                        tags={floorplans}
+                        selectedID={selected}
+                        setSelected={setSelected}
+                    />
                 )}
 
                 <div className={style.container}>
                     <div className={style.columns}>
                         <div className={style.columnLeft}>
-                            <h2>Estate 350</h2>
-                            <ul className={style.information}>
-                                <li>
-                                    {bed === 'Studio' ? `${bed}` : `${bed} Bed`}
-                                </li>
-                                <li>
-                                    <Divider />
-                                </li>
-                                <li>{`${bath} Bath`}</li>
-                                <li>
-                                    <Divider />
-                                </li>
-                                <li>{`${sqft} sq. ft.`}</li>
-                                <li>
-                                    <Divider />
-                                </li>
-                                <li>
-                                    Starting at{' '}
-                                    <strong>{`$${price},000`}</strong>
-                                </li>
-                            </ul>
+                            <h2>{selectedFloorplan.frontmatter.title}</h2>
+                            <PropertyInformation
+                                floorplan={selectedFloorplan}
+                            />
                             <p>
                                 Interdum velit euismod in pellentesque massa
                                 placerat duis ultricies lacus sed turpis
@@ -128,7 +95,11 @@ export default function Floorplans({ showNav = false }) {
                     </div>
                 </div>
             </div>
-            <Button theme="beige">Talk to an ADU specialist</Button>
+            <div className={style.centered}>
+                <Button href="/talk-to-an-adu-specialist" theme="beige">
+                    Talk to an ADU specialist
+                </Button>
+            </div>
         </div>
     )
 }
