@@ -4,13 +4,11 @@ import matter from 'gray-matter'
 
 import Layout from '../../src/layouts/Floorplan'
 import StandaloneLink from '@/components/StandaloneLink'
-import style from './FloorPlan.module.css'
-import Divider from '@/components/Divider'
-
-// import Floorplans from '@/components/Floorplans'
 import VideoPlayer from '@/components/VideoPlayer'
 import CustomerStory from '@/components/CustomerStory'
 import PropertyInformation from '@/components/PropertyInformation'
+
+import style from './FloorPlan.module.css'
 
 export default function FloorPlan({ floorplan }) {
     const title = floorplan.title
