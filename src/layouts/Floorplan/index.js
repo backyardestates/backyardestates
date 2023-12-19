@@ -31,19 +31,26 @@ import Footer from '../../components/Footer'
 import Catchall from '@/components/Catchall'
 import RelatedContent from '@/components/RelatedContent'
 import Menu from '@/components/Menu'
+import Head from 'next/head'
 
-export default function Floorplan({ title, explanation, children }) {
+export default function Floorplan({ children }) {
     const [showMenu, setShowMenu] = useState(false)
     function toggleMenu() {
         setShowMenu(!showMenu)
     }
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
+            <Head>
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1.0"
+                />
+            </Head>
             <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
             <Navbar toggleMenu={toggleMenu} />
 
             <main className={style.root}>{children}</main>
-            <Floorplans showNav={false} />
+            {/* <Floorplans showNav={false} /> */}
             {/* <RelatedContent /> */}
             <div className={style.root}>
                 <Catchall />

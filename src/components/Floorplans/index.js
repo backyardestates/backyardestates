@@ -3,13 +3,13 @@ import { useState } from 'react'
 import Image from 'next/image'
 import SectionTitle from '@/components/SectionTitle'
 import StandaloneLink from '@/components/StandaloneLink'
-import Divider from '@/components/Divider'
+// import Divider from '@/components/Divider'
 
 import style from './Floorplans.module.css'
 import Button from '../Button'
 import VideoPlayer from '../VideoPlayer'
 import PropertyInformation from '../PropertyInformation'
-import ButtonTag from '../ButtonTag'
+// import ButtonTag from '../ButtonTag'
 import ButtonTags from '../ButtonTags'
 
 export default function Floorplans({ showNav = false, floorplans }) {
