@@ -1,12 +1,13 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+
 import Layout from '../../src/layouts/Floorplan'
 import StandaloneLink from '@/components/StandaloneLink'
 import style from './FloorPlan.module.css'
 import Divider from '@/components/Divider'
 
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
-import Floorplans from '@/components/Floorplans'
+// import Floorplans from '@/components/Floorplans'
 import VideoPlayer from '@/components/VideoPlayer'
 import CustomerStory from '@/components/CustomerStory'
 

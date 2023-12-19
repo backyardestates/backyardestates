@@ -44,8 +44,11 @@ export default function Floorplan({ title, explanation, children }) {
 
             <main className={style.root}>{children}</main>
             <Floorplans showNav={false} />
-            <RelatedContent />
-            <Catchall />
+            {/* <RelatedContent /> */}
+            <div className={style.root}>
+                <Catchall />
+            </div>
+
             <Footer />
         </div>
     )
