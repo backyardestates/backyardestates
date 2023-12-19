@@ -29,6 +29,7 @@ import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 import Catchall from '@/components/Catchall'
 import Menu from '@/components/Menu'
+import Head from 'next/head'
 
 export default function Page({ title, explanation, children }) {
     const [showMenu, setShowMenu] = useState(false)
@@ -37,10 +38,16 @@ export default function Page({ title, explanation, children }) {
     }
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
+            <Head>
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1.0"
+                />
+            </Head>
             <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
             <Navbar toggleMenu={toggleMenu} />
             <Masthead title={title} explanation={explanation} />
-            <main className={style.root}>
+            <main className={style.base}>
                 {children}
                 <Catchall />
             </main>

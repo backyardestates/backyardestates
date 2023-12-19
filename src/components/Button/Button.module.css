@@ -45,3 +45,23 @@
     background-color: var(--color-brand-beige);
     border-color: var(--color-brand-beige);
 }
+
+.secondary.theme_blue {
+    color: var(--color-brand-light-blue);
+    background-color: var(--color-white);
+    border-color: var(--color-white);
+}
+
+.secondary.theme_beige {
+    color: var(--color-brand-beige);
+    background-color: var(--color-white);
+    border-color: var(--color-white);
+}
+
+.secondary.theme_blue svg {
+    stroke: var(--color-brand-light-blue);
+}
+
+.secondary.theme_beige svg {
+    stroke: var(--color-brand-beige);
+}

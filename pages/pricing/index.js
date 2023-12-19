@@ -26,7 +26,7 @@ export default function Pricing() {
                         <tr>
                             <th scope="col">Estate 350</th>
                             <th scope="col">Our Price</th>
-                            <th scope="col">Other Builders</th>
+                            <th scope="col">Others</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,12 +77,12 @@ export default function Pricing() {
                 </table>
 
                 <h2>Pricing by floor plan</h2>
-                <table>
+                <table className={style.pricingByFloorplan}>
                     <thead>
                         <tr>
                             <th>Floor plan</th>
-                            <th>Bedrooms</th>
-                            <th>Bathrooms</th>
+                            <th>Bed</th>
+                            <th>Bath</th>
                             <th>Dimensions</th>
                             <th>All-in cost</th>
                         </tr>
