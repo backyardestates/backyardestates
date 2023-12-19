@@ -10,7 +10,7 @@ export default function Testimonial({
     floorplan,
 }) {
     return (
-        <div className={style.root}>
+        <div className={style.base}>
             <div className={style.border}>
                 <Image
                     className={style.portrait}

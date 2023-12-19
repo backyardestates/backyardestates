@@ -1,19 +1,16 @@
-.root {
-    display: flex;
-    /* flex-direction: column; */
-    justify-content: center;
-    /* align-items: center; */
+.base {
+    margin: 0 0 4rem 0;
     position: relative;
     padding: 1rem;
-    /* background-color: azure; */
-    width: 30rem;
+    width: 100%;
+    /* border: 3px solid pink; */
 }
 
 .border {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 20rem;
+    /* width: 20rem; */
     border-radius: 0.5rem;
     border: 2px solid var(--color-neutral-100);
     padding: 3rem 0;
@@ -49,17 +46,15 @@
 
 .quote {
     font-family: var(--font-serif);
-
-    width: calc(100% + 6rem);
+    width: calc(100% + 3rem);
     background: white;
     padding: 2rem 0;
     color: var(--color-neutral-700);
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-style: italic;
     font-weight: 300;
-    line-height: 2.25rem; /* 150% */
-    /* border: 1px solid red; */
+    line-height: 1.5em;
 }
 
 .floor_plan {
@@ -85,4 +80,94 @@
     font-weight: 600;
     font-variant: all-small-caps;
     letter-spacing: 0.1125rem;
+}
+
+/* fixed */
+@media only screen and (min-width: 1440px) {
+    .base {
+        position: relative;
+        margin: 0;
+        padding: 1rem;
+        /* width: 30rem; */
+        /* border: 3px solid pink; */
+    }
+
+    .border {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* width: 20rem; */
+        border-radius: 0.5rem;
+        border: 2px solid var(--color-neutral-100);
+        margin: 0 4rem;
+        padding: 3rem 0;
+    }
+
+    .portrait {
+        position: absolute;
+        top: -3rem;
+        width: 6rem;
+        height: 6rem;
+        border-radius: 0.5rem;
+        /* background: #f0f; */
+        outline: 1rem solid white;
+    }
+
+    .name {
+        color: var(--color-neutral-500);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 600;
+    }
+
+    .small_caps {
+        color: var(--color-neutral-500);
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        font-style: normal;
+        font-weight: 600;
+        font-variant: all-small-caps;
+        letter-spacing: 0.1125rem;
+    }
+
+    .quote {
+        font-family: var(--font-serif);
+
+        width: calc(100% + 6rem);
+        background: white;
+        padding: 2rem 0;
+        color: var(--color-neutral-700);
+        text-align: center;
+        font-size: 1.5rem;
+        font-style: italic;
+        font-weight: 300;
+        line-height: 2.25rem; /* 150% */
+        /* border: 1px solid red; */
+    }
+
+    .floor_plan {
+        margin: 3rem 0 0 0;
+        padding: 0;
+        color: var(--color-neutral-500, #787878);
+        leading-trim: both;
+        text-edge: cap;
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 600;
+        /* line-height: 1.75rem; 175% */
+    }
+
+    .floor_plan span {
+        text-align: center;
+        leading-trim: both;
+        text-edge: cap;
+        /* font-family: Roboto; */
+        font-size: 0.75rem;
+        font-style: normal;
+        font-weight: 600;
+        font-variant: all-small-caps;
+        letter-spacing: 0.1125rem;
+    }
 }

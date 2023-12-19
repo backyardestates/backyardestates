@@ -4,7 +4,7 @@ import style from './Testimonials.module.css'
 
 export default function Testimonials() {
     return (
-        <div className={style.root}>
+        <div className={style.base}>
             <h2>Trusted by Californian homeowners</h2>
             <p className="small-caps">greater los angeles area</p>
             <div className={style.carousel}>
