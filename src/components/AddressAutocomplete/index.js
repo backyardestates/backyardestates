@@ -38,6 +38,8 @@ const PlacesAutocomplete = ({ setAddress }) => {
         clearSuggestions,
     } = usePlacesAutocomplete()
 
+    console.log(ready)
+
     const handleSelect = async (address) => {
         setValue(address, false)
         clearSuggestions()

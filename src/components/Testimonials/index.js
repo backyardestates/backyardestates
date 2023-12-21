@@ -20,7 +20,7 @@ export default function Testimonials() {
                     location="Diamond Bar, CA"
                     floorplan="Estate 500"
                 >
-                    Backyard Estates had it all planned out&hellip;everything
+                    Backyard Estates had it all planned out&hellip; everything
                     has fallen into place
                 </Testimonial>
             </div>

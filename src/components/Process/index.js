@@ -26,7 +26,7 @@ export default function Process() {
                 <div className={style.column}>
                     <p className={style.small_caps}>Phase 2</p>
                     <p className={style.weeks}>8-16 weeks</p>
-                    <Step title="Site Visit" />
+                    <Step title="Site visit" />
                     <Step title="Permit submittal" />
                     <Step title="Permit approval" showArrow={false} />
                 </div>
