@@ -13,7 +13,7 @@ import PropertyInformation from '../PropertyInformation'
 import ButtonTags from '../ButtonTags'
 
 export default function Floorplans({ showNav = false, floorplans }) {
-    const [selected, setSelected] = useState(0)
+    const [selected, setSelected] = useState(1)
     const [showVideo, setShowVideo] = useState(true)
 
     let selectedFloorplan = floorplans[selected]

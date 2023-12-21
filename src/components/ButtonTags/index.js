@@ -1,4 +1,4 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import ButtonTag from '@/components/ButtonTag'
 import style from './ButtonTags.module.css'
 
@@ -8,6 +8,7 @@ export default function ButtonTags({
     setSelected,
     showAll = false,
 }) {
+    // showAll ? (selectedID = 99) : (selectedID = 1)
     return (
         <div className={style.base}>
             <ul className={style.tags}>
@@ -17,7 +18,6 @@ export default function ButtonTags({
                             id={99}
                             label="All"
                             setSelected={setSelected}
-                            // setChosen={setChosen}
                             selectedID={selectedID}
                         />
                     </li>
