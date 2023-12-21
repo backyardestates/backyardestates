@@ -3,6 +3,8 @@ import { Roboto, Roboto_Slab } from 'next/font/google'
 import style from './Page.module.css'
 import Masthead from '@/components/Masthead'
 
+import Script from 'next/script'
+
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
@@ -38,6 +40,9 @@ export default function Page({ title, explanation, children }) {
     }
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
+            <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
+            />
             <Head>
                 <meta
                     name="viewport"

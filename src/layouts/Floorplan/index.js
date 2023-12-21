@@ -31,6 +31,8 @@ import RelatedContent from '@/components/RelatedContent'
 import Menu from '@/components/Menu'
 import Head from 'next/head'
 
+import Script from 'next/script'
+
 export default function Floorplan({ children }) {
     const [showMenu, setShowMenu] = useState(false)
     function toggleMenu() {
@@ -38,6 +40,9 @@ export default function Floorplan({ children }) {
     }
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
+            <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
+            />
             <Head>
                 <meta
                     name="viewport"

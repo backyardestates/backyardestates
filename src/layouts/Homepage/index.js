@@ -1,6 +1,11 @@
 import { useState } from 'react'
-
 import { useInView } from 'react-intersection-observer'
+import Script from 'next/script'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
+import Hero from '@/components/Hero'
+import Menu from '@/components/Menu'
+
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import Head from 'next/head'
 
@@ -24,11 +29,6 @@ export const metadata = {
         'Backyard Estates - Premier Accessory Dwelling Unit (ADU) builder for the greater Los Angeles area.',
 }
 
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
-import Hero from '@/components/Hero'
-import Menu from '@/components/Menu'
-
 export default function Homepage({ children }) {
     const { ref, inView } = useInView()
     const [showMenu, setShowMenu] = useState(false)
@@ -44,6 +44,9 @@ export default function Homepage({ children }) {
 
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
+            <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
+            />
             <Head>
                 <meta
                     name="viewport"

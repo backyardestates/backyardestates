@@ -2,6 +2,8 @@ import { Roboto, Roboto_Slab } from 'next/font/google'
 import style from './LeadForm.module.css'
 // import Masthead from '@/components/Masthead'
 
+import Script from 'next/script'
+
 import Head from 'next/head'
 
 import { config } from '@fortawesome/fontawesome-svg-core'
@@ -38,6 +40,9 @@ function goBack() {
 export default function LeadForm({ children }) {
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
+            <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
+            />
             <Head>
                 <meta
                     name="viewport"
