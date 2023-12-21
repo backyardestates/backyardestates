@@ -5,6 +5,7 @@ export default function PrivacyPolicy() {
     return (
         <Layout
             title="Privacy policy"
+            pageTitle="Privacy policy - Backyard Estates"
             explanation="Last updated December 01, 2020"
         >
             <div className={style.content}>

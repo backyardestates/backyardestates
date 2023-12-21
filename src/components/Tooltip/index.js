@@ -10,6 +10,7 @@ export default function Tooltip({ show = false, children }) {
                 height="24"
                 viewBox="0 0 49 24"
                 fill="none"
+                className={style.knob}
             >
                 <g clipPath="url(#clip0_323_960)">
                     <path

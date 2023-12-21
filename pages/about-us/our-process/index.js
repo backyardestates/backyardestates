@@ -23,6 +23,7 @@ export default function OurProcess() {
     return (
         <Layout
             title="Our process"
+            pageTitle="Our process - Backyard Estates"
             explanation="We manage the entire project, from custom design to permitting, all the way to construction and installation."
         >
             <div className={style.timeline}>

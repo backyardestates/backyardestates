@@ -1,5 +1,6 @@
+import Head from 'next/head'
 import Layout from '../../src/layouts/Page'
-import StandaloneLink from '@/components/StandaloneLink'
+// import StandaloneLink from '@/components/StandaloneLink'
 import style from './Pricing.module.css'
 import Pill from '@/components/Pill'
 
@@ -16,6 +17,7 @@ export default function Pricing() {
     return (
         <Layout
             title="Pricing"
+            pageTitle="Pricing - Backyard Estates"
             explanation="They say money doesn&rsquo;t grow on trees, but it can certainly grow in your
             backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow."
         >

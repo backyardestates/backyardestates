@@ -5,6 +5,7 @@ export default function OurTeam() {
     return (
         <Layout
             title="Our team"
+            pageTitle="Our team - Backyard Estates"
             explanation="Meet the people who make your ADU possible."
         >
             <Bio

@@ -7,6 +7,10 @@
     padding: 3rem 0;
 }
 
+.icon {
+    opacity: var(--link-opacity);
+}
+
 .container {
     /* border-top: 16px solid pink; */
     margin: 0;
@@ -16,12 +20,6 @@
     grid-template-columns: repeat(12, 1fr);
     gap: 2rem;
     font-family: var(--font-sans);
-}
-
-.contact {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
 }
 
 .logo {
@@ -105,6 +103,12 @@
     text-decoration: none;
     color: white;
     font-family: var(--font-sans);
+    opacity: var(--link-opacity);
+    transition: opacity 300ms ease;
+}
+
+.root ul li a:hover {
+    opacity: var(--link-opacity-hover);
 }
 
 .display3 {
@@ -172,4 +176,12 @@
         margin: 0 auto;
         width: 90rem;
     }
+}
+
+.contact {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    /* border: .5px solid pink; */
+    margin-bottom: 0.5rem !important;
 }

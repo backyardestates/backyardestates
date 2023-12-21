@@ -33,7 +33,7 @@ import Head from 'next/head'
 
 import Script from 'next/script'
 
-export default function Floorplan({ children }) {
+export default function Floorplan({ pageTitle, children }) {
     const [showMenu, setShowMenu] = useState(false)
     function toggleMenu() {
         setShowMenu(!showMenu)
@@ -44,11 +44,18 @@ export default function Floorplan({ children }) {
                 src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
             />
             <Head>
+                <title>{pageTitle} floor plan - Backyard Estates</title>
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1.0"
                 />
+                <link rel="icon" href="/favicon.ico" sizes="any" />
+                <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+                <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+                <link rel="manifest" href="/site.webmanifest" />
+                <meta name="theme-color" content="#4a4a4a" />
             </Head>
+
             <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
             <Navbar toggleMenu={toggleMenu} />
 

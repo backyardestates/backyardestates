@@ -5,6 +5,7 @@ export default function TermsOfUse() {
     return (
         <Layout
             title="Terms of use"
+            pageTitle="Terms of use - Backyard Estates"
             explanation="Last updated December 01, 2020"
         >
             <div className={style.content}>

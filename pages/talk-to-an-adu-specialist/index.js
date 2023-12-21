@@ -92,7 +92,7 @@ export default function LeadForm({ data }) {
         }
 
         const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/leads?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
+            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/deals?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
             {
                 method: 'POST',
                 body: JSON.stringify(submittedLead),

@@ -44,10 +44,16 @@ export default function LeadForm({ children }) {
                 src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
             />
             <Head>
+                <title>Talk to an ADU specialist - Backyard Estates</title>
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1.0"
                 />
+                <link rel="icon" href="/favicon.ico" sizes="any" />
+                <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+                <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+                <link rel="manifest" href="/site.webmanifest" />
+                <meta name="theme-color" content="#4a4a4a" />
             </Head>
             <div className={style.topBar}>
                 <Logo />

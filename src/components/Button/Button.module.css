@@ -10,18 +10,25 @@
     border-radius: 3rem;
     text-decoration: none;
     font-family: var(--font-sans);
+    transition: background-color 300ms ease, border-color 300ms ease;
 }
 
 .primary {
     composes: base;
     background-color: var(--color-brand-light-blue);
-    color: var(--color-white);
     border: 2px solid var(--color-brand-light-blue);
+    color: var(--color-white);
 }
 
 .primary svg {
     opacity: 0.5;
     stroke: white;
+    transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.primary:hover svg {
+    opacity: 0.75;
+    transform: translateX(2px);
 }
 
 .secondary {
@@ -64,4 +71,14 @@
 
 .secondary.theme_beige svg {
     stroke: var(--color-brand-beige);
+}
+
+.primary.theme_beige:hover {
+    background-color: var(--color-brand-beige-hover);
+    border-color: var(--color-brand-beige-hover);
+}
+
+.primary.theme_blue:hover {
+    background-color: var(--color-brand-light-blue-hover);
+    border-color: var(--color-brand-light-blue-hover);
 }

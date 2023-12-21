@@ -16,6 +16,7 @@ export default function ReturnOnInvestment() {
     return (
         <Layout
             title="Return on investment"
+            pageTitle="ROI - Backyard Estates"
             explanation="Take advantage of your underutilized land and new California laws. Convert your backyard into rental income with an Accessory Dwelling Unit (ADU)."
         >
             <div className={style.content}>

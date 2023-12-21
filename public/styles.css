@@ -4,6 +4,8 @@
     --color-black: #000;
     --color-blue: #1da3ba;
     --radius: 0.25rem;
+    --link-opacity: 0.7;
+    --link-opacity-hover: 1;
 
     --color-neutral-0: #f7f7f7;
     --color-neutral-50: #ebebeb;
@@ -18,10 +20,11 @@
     --color-neutral-900: #121212;
 
     --color-brand-dark-blue: #36484b;
+    --color-brand-dark-blue-hover: #202b2c;
     --color-brand-light-blue: #1da4ba;
-
+    --color-brand-light-blue-hover: #167c8d;
     --color-brand-beige: hsla(35, 32%, 53%, 1);
-    --color-brand-beige-rollover: hsla(35, 32%, 45%, 1);
+    --color-brand-beige-hover: #91744a;
     --color-brand-beige-subtle: hsla(35, 32%, 53%, 0.1);
 }
 

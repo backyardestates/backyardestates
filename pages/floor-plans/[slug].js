@@ -15,7 +15,7 @@ export default function FloorPlan({ floorplan }) {
     const price = floorplan.price
 
     return (
-        <Layout>
+        <Layout pageTitle={title}>
             <div className={style.content}>
                 <h1>{title}</h1>
                 <p className={style.intro}>

@@ -1,34 +1,33 @@
 .base {
-    /* display: none; */
+    /* display: block; */
     position: absolute;
     top: -6.75rem;
     left: -9.5rem;
     margin: 0;
     padding: 0;
     width: 20rem;
-    /* border-radius: 0.5rem; */
+    pointer-events: none;
 }
 
 .tooltip_show {
     composes: base;
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-4px);
+    transition: opacity 300ms ease, visibility 0s, transform 300ms ease;
 }
 
 .tooltip_hide {
     composes: base;
-    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 200ms ease, visibility 300s, transform 200ms ease;
 }
 
 .content {
-    /* display: none; */
-    /* position: absolute; */
-    /* top: -7rem; */
-    /* left: -9.5rem; */
     margin: 0;
     padding: 1rem;
-    /* width: 20rem; */
     border-radius: 0.5rem;
-
     color: var(--color-white);
     background-color: var(--color-brand-dark-blue);
     leading-trim: both;
@@ -45,6 +44,4 @@
     position: absolute;
     left: calc((20rem - 49px) / 2);
     bottom: -12px;
-    /* width: 49px; */
-    /* margin: 0 auto; */
 }

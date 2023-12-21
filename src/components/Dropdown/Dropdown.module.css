@@ -13,6 +13,12 @@
 
     & .btn {
         color: var(--color-neutral-500);
+        opacity: var(--link-opacity);
+        transition: opacity 300ms ease;
+    }
+
+    & .btn:hover {
+        opacity: var(--link-opacity-hover);
     }
 }
 
@@ -21,12 +27,18 @@
 
     & .btn {
         color: var(--color-white);
+        opacity: var(--link-opacity);
+        transition: opacity 300ms ease;
+    }
+
+    & .btn:hover {
+        opacity: var(--link-opacity-hover);
     }
 }
 
 .dropdown_menu {
     position: absolute;
-    left: 0;
+    left: -1.5rem;
     top: calc(100% + 0.5rem);
     background: white;
     opacity: 1;
@@ -37,7 +49,7 @@
 
 .dropdown_menu_hidden {
     position: absolute;
-    left: 0;
+    left: -1.5rem;
     top: calc(100% + 0.5rem);
     opacity: 0;
     background: white;
@@ -62,4 +74,15 @@
     text-decoration: none;
     color: var(--color-neutral-500);
     font-weight: 700;
+    opacity: var(--link-opacity);
+    transition: opacity 300ms ease;
+}
+
+.dropdown_menu_hidden ul li a:hover,
+.dropdown_menu ul li a:hover {
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--color-neutral-500);
+    font-weight: 700;
+    opacity: var(--link-opacity-hover);
 }

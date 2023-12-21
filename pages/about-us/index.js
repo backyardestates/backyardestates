@@ -12,6 +12,7 @@ export default function AboutUs() {
     return (
         <Layout
             title="About us"
+            pageTitle="About us - Backyard Estates"
             explanation="Our mission is to enable homeowners to reimage their backyard as an estate for themselves or family"
         >
             <div className={style.content}>
