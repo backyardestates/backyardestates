@@ -6,7 +6,7 @@ city: 'Chino'
 bed: 2
 bath: 1
 sqft: 500
-img: 'estate500-fpo.png'
+img: 'estate500-cover.png'
 price: '219,000'
 ---
 

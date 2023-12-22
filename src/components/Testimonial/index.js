@@ -3,7 +3,7 @@ import StandaloneLink from '@/components/StandaloneLink'
 import style from './Testimonial.module.css'
 
 export default function Testimonial({
-    portrait = '/portrait-fpo.png',
+    portrait = '',
     children,
     name,
     location,
@@ -12,13 +12,15 @@ export default function Testimonial({
     return (
         <div className={style.base}>
             <div className={style.border}>
-                <Image
-                    className={style.portrait}
-                    src={portrait}
-                    alt="Picture of the homeowner"
-                    width={96}
-                    height={96}
-                />
+                {portrait !== '' && (
+                    <Image
+                        className={style.portrait}
+                        src={portrait}
+                        alt="Picture of the homeowner"
+                        width={96}
+                        height={96}
+                    />
+                )}
                 <p className={style.name}>{name}</p>
                 <p className={style.small_caps}>{location}</p>
                 <p className={style.quote}>&ldquo;{children}&rdquo;</p>
