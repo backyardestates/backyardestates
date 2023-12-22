@@ -1,5 +1,6 @@
 .base {
     display: inline-flex;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 0.5rem;
     margin: 0;
@@ -8,6 +9,9 @@
     font-weight: 600;
     text-decoration: none;
     transition: color 300ms ease;
+}
+
+.base span {
 }
 
 .theme_blue {
