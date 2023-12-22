@@ -18,10 +18,10 @@ export default function FloorPlan({ floorplan }) {
         <Layout pageTitle={title}>
             <div className={style.content}>
                 <h1>{title}</h1>
-                <p className={style.intro}>
+                {/* <p className={style.intro}>
                     This modern open floor plan with one bedroom is perfect for
                     family members or rental income
-                </p>
+                </p> */}
                 <PropertyInformation floorplan={floorplan} />
                 <h3 className={style.subhead}>all-in-price starts at</h3>
                 <p className={style.price}>{`$${price}`}</p>

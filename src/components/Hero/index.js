@@ -57,9 +57,7 @@ export default function Hero() {
         <div className={style.base}>
             <div className={style.content}>
                 <h1 ref={titleRef}>
-                    <span className={style.title}>
-                        Build a backyard ADU to{' '}
-                    </span>
+                    <span className={style.title}>Build an ADU to</span>
                     <span ref={phraseRef}></span>
                     <span ref={cursorRef}>_</span>
                 </h1>

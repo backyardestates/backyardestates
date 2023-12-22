@@ -39,13 +39,13 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             <PropertyInformation
                                 floorplan={selectedFloorplan.frontmatter}
                             />
-                            <p>
+                            {/* <p>
                                 Interdum velit euismod in pellentesque massa
                                 placerat duis ultricies lacus sed turpis
                                 tincidunt id aliquet risus feugiat in ante metus
                                 dictum at tempor commodo ullamcorper a lacus
                                 vestibulum sed arcu
-                            </p>
+                            </p> */}
                             <StandaloneLink
                                 theme="beige"
                                 href={`/floor-plans/${selectedFloorplan.slug}`}

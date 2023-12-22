@@ -9,6 +9,7 @@ export default function Testimonials() {
             <div className={style.carousel}>
                 <Testimonial
                     name="Vanessa and Gabriel"
+                    portrait="portrait-02.jpg"
                     location="Rancho Cucamonga, CA"
                     floorplan="Estate 800"
                 >
@@ -17,6 +18,7 @@ export default function Testimonials() {
                 </Testimonial>
                 <Testimonial
                     name="Julie and Betty"
+                    portrait="portrait-01.jpg"
                     location="Diamond Bar, CA"
                     floorplan="Estate 500"
                 >

@@ -15,8 +15,8 @@ export default function Testimonial({
                 {portrait !== '' && (
                     <Image
                         className={style.portrait}
-                        src={portrait}
-                        alt="Picture of the homeowner"
+                        src={`/portraits/customers/${portrait}`}
+                        alt={`Portrait image of ${name}`}
                         width={96}
                         height={96}
                     />
