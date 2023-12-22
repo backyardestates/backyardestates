@@ -3,7 +3,7 @@ import style from './Chunk.module.css'
 
 export default function Chunk({
     image,
-    imageAlt = 'This is default alt text',
+    imageAlt = 'Default alt text',
     imagePriority = false,
     imageRight = false,
     title,
