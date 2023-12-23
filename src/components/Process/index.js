@@ -1,6 +1,5 @@
 import Step from '../Step'
 import style from './Process.module.css'
-import StandaloneLink from '@/components/StandaloneLink'
 
 export default function Process() {
     return (
@@ -36,9 +35,6 @@ export default function Process() {
                     <Step title="Pre-construction" />
                     <Step title="Home build" />
                     <Step title="Move in" showArrow={false} />
-                </div>
-                <div className={style.cta}>
-                    <StandaloneLink>Download process PDF</StandaloneLink>
                 </div>
             </div>
         </div>

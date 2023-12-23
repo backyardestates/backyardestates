@@ -1,5 +1,26 @@
+import React, { useEffect, useState } from 'react'
 import style from './VideoPlayer.module.css'
 
-export default function VideoPlayer() {
-    return <div className={style.base}>VideoPlayer</div>
+import { WistiaProvider, WistiaPlayer } from '@wistia/react-embeds'
+
+export default function VideoPlayer({ wistiaID = '8qm3203jcf' }) {
+    const [showComponent, setShowComponent] = useState(false)
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setShowComponent(true)
+        }, 50)
+
+        return () => clearTimeout(timeout)
+    }, [])
+
+    return (
+        <div className={style.base}>
+            {showComponent && (
+                <WistiaProvider>
+                    <WistiaPlayer hashedId={wistiaID} />
+                </WistiaProvider>
+            )}
+        </div>
+    )
 }

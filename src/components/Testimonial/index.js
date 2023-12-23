@@ -9,6 +9,8 @@ export default function Testimonial({
     location,
     floorplan,
 }) {
+    const slug = name.replace(/\s+/g, '-').toLowerCase()
+    // console.log(slug)
     return (
         <div className={style.base}>
             <div className={style.border}>
@@ -24,7 +26,9 @@ export default function Testimonial({
                 <p className={style.name}>{name}</p>
                 <p className={style.small_caps}>{location}</p>
                 <p className={style.quote}>&ldquo;{children}&rdquo;</p>
-                <StandaloneLink href="#">{`${name}'s story`}</StandaloneLink>
+                <StandaloneLink
+                    href={`/customer-stories/${slug}`}
+                >{`${name}'s story`}</StandaloneLink>
                 <p className={style.floor_plan}>{floorplan}</p>
                 <p className={style.small_caps}>Floor plan</p>
             </div>
