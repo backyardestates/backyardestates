@@ -8,6 +8,7 @@ bath: 1
 sqft: 500
 img: 'estate500-cover.png'
 price: '219,000'
+portrait: 'portrait-fpo.png'
 ---
 
 Content

@@ -28,9 +28,9 @@ export default function FloorPlan({ floorplan }) {
                 <StandaloneLink icon="download">
                     Download floor plan
                 </StandaloneLink>
+                <VideoPlayer />
             </div>
-            <VideoPlayer />
-            <CustomerStory />
+            <CustomerStory story={floorplan} />
         </Layout>
     )
 }

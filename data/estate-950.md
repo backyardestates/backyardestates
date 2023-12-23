@@ -8,6 +8,7 @@ bath: 2
 sqft: 950
 img: 'estate950-cover.jpg'
 price: '329,000'
+portrait: 'portrait-fpo.png'
 ---
 
 Content
