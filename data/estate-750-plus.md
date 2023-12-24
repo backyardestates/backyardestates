@@ -9,6 +9,9 @@ sqft: 750
 img: 'estate750plus-cover.jpg'
 price: '275,000'
 portrait: 'portrait-fpo.png'
+images:
+    - fpo@2x
+    - fpo@2x
 ---
 
 Content

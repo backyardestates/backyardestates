@@ -18,7 +18,7 @@ export default function CustomerStoryTemplate({ story, content }) {
     const introductorySentence = story.intro
     const video = story.wistiaID
 
-    // console.log(content)
+    console.log(story)
 
     return (
         <Layout pageTitle="Ray">

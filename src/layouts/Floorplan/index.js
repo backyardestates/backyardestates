@@ -44,7 +44,7 @@ export default function Floorplan({ pageTitle, children }) {
                 src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
             />
             <Head>
-                <title>{pageTitle} floor plan - Backyard Estates</title>
+                <title>{`${pageTitle} floor plan - Backyard Estates`}</title>
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1.0"

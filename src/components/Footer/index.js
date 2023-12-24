@@ -87,6 +87,11 @@ export default function Footer({ estates }) {
                                     </Link>
                                 </li>
                                 <li>
+                                    <Link href="/floor-plans/estate-600">
+                                        Estate 600
+                                    </Link>
+                                </li>
+                                <li>
                                     <Link href="/floor-plans/estate-750">
                                         Estate 750
                                     </Link>

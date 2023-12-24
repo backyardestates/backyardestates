@@ -12,6 +12,14 @@ name: 'Vanessa and Gabriel'
 intro: 'Bringing family close, maintaining privacy, and building intergenerational wealth.'
 wistiaID: '8qm3203jcf'
 portrait: 'portrait-02.jpg'
+images:
+    - vanessa-and-gabriel-01
+    - vanessa-and-gabriel-02
+    - vanessa-and-gabriel-03
+    - vanessa-and-gabriel-04
+    - vanessa-and-gabriel-05
+    - vanessa-and-gabriel-06
+    - vanessa-and-gabriel-07
 ---
 
 > I don’t feel like we are customers; I feel like Backyard Estates is taking a vested interest in our family.

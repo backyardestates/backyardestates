@@ -3,66 +3,90 @@ import Image from 'next/image'
 import style from './Carousel.module.css'
 import ArrowButton from '@/components/ArrowButton'
 
-import { gsap } from 'gsap'
+// import { gsap } from 'gsap'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 
-export default function Carousel() {
-    const [position, setPosition] = useState(0)
+export default function Carousel(images) {
+    const [position, setPosition] = useState(1)
+
+    const [buttonLeftVisible, setButtonLeftVisible] = useState(false)
+    const [buttonRightVisible, setButtonRightVisible] = useState(true)
     const img = useRef()
-    let imgWidth = 0
 
     function moveLeft() {
-        setPosition(0)
+        const temp = position - 1
+        setPosition(temp)
     }
 
     function moveRight() {
-        setPosition(1)
+        const temp = position + 1
+        setPosition(temp)
     }
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        imgWidth = img.current ? img.current.offsetWidth : 0
-        // console.log('width', img.current ? img.current.offsetWidth : 0)
+        // console.log(`The current position is ${position}`)
         switch (position) {
-            case 0:
-                // console.log('Set to 0')
-                gsap.to('#target', { x: 0, duration: 0.5 })
-                break
             case 1:
-                // console.log('Set to 1')
-                gsap.to('#target', { x: imgWidth * -1, duration: 0.5 })
+                setButtonLeftVisible(false)
+                setButtonRightVisible(true)
+                break
+            case images.images.length:
+                setButtonLeftVisible(true)
+                setButtonRightVisible(false)
                 break
             default:
-                console.log('Bang')
+                setButtonLeftVisible(true)
+                setButtonRightVisible(true)
         }
-    }, [position])
 
-    // setButtons(position)
+        // console.log(img.current.offsetWidth)
+        // console.log(img.current.getBoundingClientRect().width)
+        const imageWidth = img.current.getBoundingClientRect().width
+        let xPos = imageWidth * -1 * (position - 1)
+        gsap.to(img.current, {
+            x: xPos,
+            duration: 0.5,
+            ease: 'power2.out',
+        })
+    }, [position, images.images.length])
+
+    // useGSAP(() => {
+    //     console.log('Bang')
+    //     let xPos = -320 * (position - 1)
+    //     gsap.to(img.current, {
+    //         x: xPos,
+    //         duration: 0.5,
+    //         // ease: 'power2.out',
+    //     })
+    // })
+
     return (
         <div className={style.base}>
-            <div className={style.buttonLeft} onMouseDown={moveLeft}>
-                <ArrowButton direction="left" />
-            </div>
-            <div className={style.buttonRight} onMouseDown={moveRight}>
-                <ArrowButton direction="right" />
-            </div>
-            <div ref={img} className={style.slideViewer}>
-                <div id="target" className={style.slides}>
-                    <Image
-                        src="/fpo.png"
-                        alt="Hello"
-                        width={320}
-                        height={90}
-                        className={style.img}
-                        // style={{width}}
-                    />
-                    <Image
-                        src="/fpo.png"
-                        alt="Hello"
-                        width={320}
-                        height={90}
-                        className={style.img}
-                        // style={{width}}
-                    />
+            {buttonLeftVisible && (
+                <div className={style.buttonLeft} onMouseUp={moveLeft}>
+                    <ArrowButton direction="left" />
+                </div>
+            )}
+            {buttonRightVisible && (
+                <div className={style.buttonRight} onMouseUp={moveRight}>
+                    <ArrowButton direction="right" />
+                </div>
+            )}
+            <div className={style.slideViewer}>
+                <div ref={img} className={style.slides}>
+                    {images.images.map((image, index) => (
+                        // console.log(image)
+                        <Image
+                            key={index}
+                            src={`/images/stories/${image}.jpg`}
+                            alt="Hello"
+                            width={320}
+                            height={90}
+                            className={style.img}
+                            // style={{width}}
+                        />
+                    ))}
                 </div>
             </div>
             <div className={style.content}>
@@ -71,7 +95,9 @@ export default function Carousel() {
                     consectetur adipiscing elit, sed do eiusmod tempor
                     incididunt ut labore et dolore magna aliqua.
                 </p>
-                <p className={style.folio}>01 / 02</p>
+                <p className={style.folio}>
+                    {position} / {images.images.length}
+                </p>
             </div>
         </div>
     )

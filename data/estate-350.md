@@ -9,6 +9,9 @@ sqft: 350
 img: 'estate350-cover.png'
 price: '175,000'
 portrait: 'portrait-fpo.png'
+images:
+    - fpo@2x
+    - fpo@2x
 ---
 
 Content
