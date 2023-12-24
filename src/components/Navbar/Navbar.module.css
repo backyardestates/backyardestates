@@ -1,11 +1,12 @@
 /* Mobile S */
 .base {
-    position: sticky;
+    position: fixed;
     top: 0;
     margin: 0;
     padding: 1.5rem 2rem;
     z-index: 1000;
     font-family: var(--font-sans);
+    width: 100vw;
 }
 
 .link {
@@ -16,7 +17,8 @@
 
 .homepage {
     composes: base;
-    background: var(--color-brand-dark-blue);
+    /* background: var(--color-brand-dark-blue); */
+    /* background-color: rgba(255, 0, 255, 0.1); */
 
     & .link {
         opacity: 0.6;

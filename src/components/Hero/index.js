@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import Image from 'next/image'
 // import { gsap } from 'gsap'
 // import { TextPlugin } from 'gsap/TextPlugin'
 import { gsap } from 'gsap/dist/gsap'
@@ -6,6 +7,8 @@ import { TextPlugin } from 'gsap/dist/TextPlugin'
 import { useGSAP } from '@gsap/react'
 import Button from '../Button'
 import style from './Hero.module.css'
+
+// import mountains from '../../../public/images/hero-adu.jpg'
 
 gsap.registerPlugin(TextPlugin)
 
@@ -55,6 +58,19 @@ export default function Hero() {
 
     return (
         <div className={style.base}>
+            <div className={style.bgWrap}>
+                <Image
+                    alt="Mountains"
+                    src="/images/hero-adu@2x.jpg"
+                    // placeholder="blur"
+                    quality={100}
+                    fill
+                    sizes="100vw"
+                    style={{
+                        objectFit: 'cover',
+                    }}
+                />
+            </div>
             <div className={style.content}>
                 <h1 ref={titleRef}>
                     <span className={style.title}>Build an ADU to</span>
