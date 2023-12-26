@@ -69,6 +69,7 @@ export default function Hero() {
                     style={{
                         objectFit: 'cover',
                     }}
+                    priority={true}
                 />
             </div>
             <div className={style.content}>
