@@ -1,14 +1,34 @@
 .base {
+    position: relative;
+    top: 0;
     margin: 0;
-    padding: 3rem 0;
+    padding: 0;
     background-color: var(--color-brand-beige-subtle);
-    width: 100%;
+    width: 100vw;
 }
 
 .content {
-    margin: 0;
-    padding: 0;
-    width: 100%;
+    position: absolute;
+    top: 0;
+    /* margin
+    position: absolute;
+    top: 0;: 0; */
+    /* padding: 6rem 0 !important; */
+    /* width: 100vw; */
+    z-index: 2;
+}
+
+.bg {
+    /* margin: 0; */
+    /* padding: 0; */
+    position: relative;
+    top: 0;
+    /* left: 0; */
+    width: 100vw;
+    height: 50vw;
+    z-index: 1;
+    /* opacity: 0.25; */
+    /* border: 5px solid magenta; */
 }
 
 .container {
@@ -22,7 +42,7 @@
     flex-direction: column-reverse;
     align-items: center;
     margin: 0 0 0rem 0;
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 3rem 1.5rem;
     border-radius: 0;
     border-top: 2px solid var(--color-brand-beige);
     border-bottom: 2px solid var(--color-brand-beige);
@@ -109,11 +129,6 @@
     letter-spacing: 0.02em;
 }
 
-.buttonGroupButton:hover {
-    /* background: red; */
-    cursor: pointer;
-}
-
 .buttonGroupButtonLeft {
     composes: buttonGroupButton;
     padding: 1rem 1.25rem 1rem 1.5rem;
@@ -121,6 +136,11 @@
     background-color: var(--color-white);
     border-top-left-radius: 1.5rem;
     border-bottom-left-radius: 1.5rem;
+}
+
+.buttonGroupButtonLeft:hover {
+    background-color: var(--color-brand-beige-hover);
+    cursor: pointer;
 }
 
 .buttonGroupButtonRight {
@@ -132,16 +152,31 @@
     border-bottom-right-radius: 1.5rem;
 }
 
+.buttonGroupButtonRight:hover {
+    background-color: var(--color-brand-beige-hover);
+    cursor: pointer;
+}
+
 .buttonGroupButtonLeft_selected {
     composes: buttonGroupButtonLeft;
     color: var(--color-white);
     background-color: var(--color-brand-beige);
 }
 
+.buttonGroupButtonLeft_selected:hover {
+    background-color: var(--color-brand-beige-hover);
+    cursor: pointer;
+}
+
 .buttonGroupButtonRight_selected {
     composes: buttonGroupButtonRight;
     color: var(--color-white);
     background-color: var(--color-brand-beige);
+}
+
+.buttonGroupButtonRight_selected:hover {
+    color: var(--color-brand-beige-hover);
+    cursor: pointer;
 }
 
 .centered {
@@ -158,24 +193,21 @@
         display: flex;
         flex-direction: column;
         gap: 3rem;
-        justify-content: center;
+        align-items: center;
         margin: 0;
-        padding: 6rem 0;
+        padding: 0;
         background-color: var(--color-brand-beige-subtle);
-        /* text-align: center; */
-
-        width: 100%;
-        overflow: hidden;
+        /* width: 100%; */
     }
 
     .content {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
-        gap: 3rem;
-        /* margin: 0; */
-        padding: 0;
-        margin: 0 auto;
+        gap: 1rem;
+        margin: 0;
+        padding: 6rem 0;
         width: 1440px;
+        /* border: 3px solid red; */
     }
 
     .tagsContainer {
@@ -251,69 +283,5 @@
         padding: 0;
     }
 
-    .buttonGroup {
-        display: flex;
-        position: relative;
-        align-self: flex-start;
-        margin: 0 auto;
-        padding: 0;
-        /* width: 16rem; */
-        top: -1.5rem;
-        /* left: 50%; */
-        border: 2px solid var(--color-brand-beige);
-        border-radius: 3rem;
-    }
-
-    .buttonGroupButton {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        margin: 0;
-        border: none;
-        /* padding: 1rem; */
-        /* width: 8rem; */
-        text-decoration: none;
-        font-family: var(--font-sans);
-        font-size: 1rem;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
-        letter-spacing: 0.02em;
-    }
-
-    .buttonGroupButton:hover {
-        /* background: red; */
-        cursor: pointer;
-    }
-
-    .buttonGroupButtonLeft {
-        composes: buttonGroupButton;
-        padding: 1rem 1.25rem 1rem 1.5rem;
-        color: var(--color-brand-beige);
-        background-color: var(--color-white);
-        border-top-left-radius: 1.5rem;
-        border-bottom-left-radius: 1.5rem;
-    }
-
-    .buttonGroupButtonRight {
-        composes: buttonGroupButton;
-        padding: 1rem 1.5rem 1rem 1.25rem;
-        color: var(--color-brand-beige);
-        background-color: var(--color-white);
-        border-top-right-radius: 1.5rem;
-        border-bottom-right-radius: 1.5rem;
-    }
-
-    .buttonGroupButtonLeft_selected {
-        composes: buttonGroupButtonLeft;
-        color: var(--color-white);
-        background-color: var(--color-brand-beige);
-    }
-
-    .buttonGroupButtonRight_selected {
-        composes: buttonGroupButtonRight;
-        color: var(--color-white);
-        background-color: var(--color-brand-beige);
-    }
+    /*  */
 }

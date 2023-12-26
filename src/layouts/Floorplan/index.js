@@ -69,7 +69,7 @@ export default function Floorplan({ pageTitle, children }) {
             </div>
 
             <Footer />
-            <SpeedInsights />
+            {/* <SpeedInsights /> */}
         </div>
     )
 }

@@ -3,8 +3,6 @@
     height: auto;
     margin: 0;
     padding: 0;
-    /* grid-column: span 12; */
-    /* aspect-ratio: 16 / 9; */
 }
 
 /* fixed */
@@ -12,6 +10,5 @@
     .base {
         width: 640px;
         height: 360px;
-        /* grid-column: span 12; */
     }
 }

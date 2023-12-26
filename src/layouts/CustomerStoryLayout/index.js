@@ -69,7 +69,7 @@ export default function CustomerStoryLayout({ pageTitle, children }) {
             </div>
 
             <Footer />
-            <SpeedInsights />
+            {/* <SpeedInsights /> */}
         </div>
     )
 }

@@ -67,7 +67,7 @@ export default function Page({ title, pageTitle, explanation, children }) {
             </main>
 
             <Footer />
-            <SpeedInsights />
+            {/* <SpeedInsights /> */}
         </div>
     )
 }

@@ -25,7 +25,7 @@
     --color-brand-light-blue-hover: #167c8d;
     --color-brand-beige: hsla(35, 32%, 53%, 1);
     --color-brand-beige-hover: #91744a;
-    --color-brand-beige-subtle: hsla(35, 32%, 53%, 0.1);
+    --color-brand-beige-subtle: #f6f3ee;
 }
 
 * {

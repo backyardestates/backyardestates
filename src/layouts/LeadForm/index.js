@@ -68,7 +68,7 @@ export default function LeadForm({ children }) {
             </div>
 
             <main className={style.root}>{children}</main>
-            <SpeedInsights />
+            {/* <SpeedInsights /> */}
         </div>
     )
 }

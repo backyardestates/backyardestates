@@ -75,7 +75,7 @@ export default function Homepage({ children }) {
             </div>
             <main>{children}</main>
             <Footer />
-            <SpeedInsights />
+            {/* <SpeedInsights /> */}
         </div>
     )
 }

@@ -11,19 +11,21 @@ import VideoPlayer from '../VideoPlayer'
 import PropertyInformation from '../PropertyInformation'
 // import ButtonTag from '../ButtonTag'
 import ButtonTags from '../ButtonTags'
+import ButtonGroup from '../ButtonGroup'
 
 export default function Floorplans({ showNav = false, floorplans }) {
     const [selected, setSelected] = useState(1)
     const [showVideo, setShowVideo] = useState(true)
 
     let selectedFloorplan = floorplans[selected]
+    // console.log(selectedFloorplan)
     return (
         <div className={style.base}>
-            <SectionTitle
-                title="Explore our floor plans"
-                explanation="Any floor plan can be customized to meet your adu needs"
-            />
             <div className={style.content}>
+                <SectionTitle
+                    title="Explore our floor plans"
+                    explanation="Any floor plan can be customized to meet your adu needs"
+                />
                 {showNav && (
                     <ButtonTags
                         tags={floorplans}
@@ -31,7 +33,6 @@ export default function Floorplans({ showNav = false, floorplans }) {
                         setSelected={setSelected}
                     />
                 )}
-
                 <div className={style.container}>
                     <div className={style.columns}>
                         <div className={style.columnLeft}>
@@ -39,13 +40,15 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             <PropertyInformation
                                 floorplan={selectedFloorplan.frontmatter}
                             />
-                            {/* <p>
-                                Interdum velit euismod in pellentesque massa
-                                placerat duis ultricies lacus sed turpis
-                                tincidunt id aliquet risus feugiat in ante metus
-                                dictum at tempor commodo ullamcorper a lacus
-                                vestibulum sed arcu
-                            </p> */}
+                            <p>
+                                <mark>
+                                    Interdum velit euismod in pellentesque massa
+                                    placerat duis ultricies lacus sed turpis
+                                    tincidunt id aliquet risus feugiat in ante
+                                    metus dictum at tempor commodo ullamcorper a
+                                    lacus vestibulum sed arcu
+                                </mark>
+                            </p>
                             <StandaloneLink
                                 theme="beige"
                                 href={`/floor-plans/${selectedFloorplan.slug}`}
@@ -56,22 +59,41 @@ export default function Floorplans({ showNav = false, floorplans }) {
                         <div className={style.columnRight}>
                             {!showVideo && (
                                 <Image
-                                    src="/images/fpo-video.png"
+                                    href={`/floor-plans/${selectedFloorplan.slug}`}
+                                    src={`/images/floor-plans/${selectedFloorplan.frontmatter.floorPlanImage}`}
                                     alt="Placeholder"
                                     width={640}
                                     height={360}
                                     className={style.img}
                                 />
                             )}
-                            {showVideo && (
-                                <VideoPlayer
-                                    style={
-                                        showVideo
-                                            ? { display: 'block' }
-                                            : { display: 'none' }
-                                    }
-                                />
-                            )}
+                            {showVideo &&
+                                selectedFloorplan.frontmatter.wistiaID ===
+                                    null && (
+                                    <Image
+                                        href={`/floor-plans/${selectedFloorplan.slug}`}
+                                        src={`/images/floor-plans/${selectedFloorplan.frontmatter.floorPlanVideo}`}
+                                        alt="Placeholder"
+                                        width={640}
+                                        height={360}
+                                        className={style.img}
+                                    />
+                                )}
+                            {showVideo &&
+                                selectedFloorplan.frontmatter.wistiaID !==
+                                    null && (
+                                    <VideoPlayer
+                                        wistiaID={
+                                            selectedFloorplan.frontmatter
+                                                .wistiaID
+                                        }
+                                        style={
+                                            showVideo
+                                                ? { display: 'block' }
+                                                : { display: 'none' }
+                                        }
+                                    />
+                                )}
                         </div>
                     </div>
                     <div className={style.buttonGroup}>
@@ -96,12 +118,21 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             Floor plan
                         </button>
                     </div>
+                    {/* <ButtonGroup /> */}
                 </div>
             </div>
-            <div className={style.centered}>
-                <Button href="/talk-to-an-adu-specialist" theme="beige">
-                    Talk to an ADU specialist
-                </Button>
+            <div className={style.bg}>
+                <Image
+                    src="/greater-los-angeles.svg"
+                    alt="Accessory Dwelling Unit (ADU)"
+                    fill
+                    sizes="100vw"
+                    style={{
+                        objectFit: 'cover',
+                        objectPosition: 'center center',
+                        opacity: 0.15,
+                    }}
+                />
             </div>
         </div>
     )

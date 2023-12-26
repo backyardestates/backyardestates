@@ -17,6 +17,10 @@
     line-height: normal;
 }
 
+.mark {
+    background-color: yellow;
+}
+
 .intro {
     color: var(--color-neutral-500);
     text-align: center;

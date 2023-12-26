@@ -6,17 +6,18 @@
     gap: 0.5rem;
     height: 3rem;
     margin: 0;
-    padding: 0rem 1rem 0rem 1.5rem;
+    padding: 0rem 1.5rem 0rem 1.5rem;
     border-radius: 3rem;
     text-decoration: none;
     font-family: var(--font-sans);
+    border: none;
     transition: background-color 300ms ease, border-color 300ms ease;
 }
 
 .primary {
     composes: base;
     background-color: var(--color-brand-light-blue);
-    border: 2px solid var(--color-brand-light-blue);
+    /* border: 2px solid var(--color-brand-light-blue); */
     color: var(--color-white);
 }
 
@@ -35,7 +36,7 @@
     composes: base;
     background-color: none;
     color: var(--color-white);
-    border: 2px solid var(--color-white-subtle);
+    /* border: 2px solid var(--color-white-subtle); */
 }
 
 .secondary svg {
@@ -45,24 +46,24 @@
 
 .theme_blue {
     background-color: var(--color-brand-light-blue);
-    border-color: var(--color-brand-light-blue);
+    /* border-color: var(--color-brand-light-blue); */
 }
 
 .theme_beige {
     background-color: var(--color-brand-beige);
-    border-color: var(--color-brand-beige);
+    /* border-color: var(--color-brand-beige); */
 }
 
 .secondary.theme_blue {
     color: var(--color-brand-light-blue);
     background-color: var(--color-white);
-    border-color: var(--color-white);
+    /* border-color: var(--color-white); */
 }
 
 .secondary.theme_beige {
     color: var(--color-brand-beige);
     background-color: var(--color-white);
-    border-color: var(--color-white);
+    /* border-color: var(--color-white); */
 }
 
 .secondary.theme_blue svg {
@@ -75,10 +76,10 @@
 
 .primary.theme_beige:hover {
     background-color: var(--color-brand-beige-hover);
-    border-color: var(--color-brand-beige-hover);
+    /* border-color: var(--color-brand-beige-hover); */
 }
 
 .primary.theme_blue:hover {
     background-color: var(--color-brand-light-blue-hover);
-    border-color: var(--color-brand-light-blue-hover);
+    /* border-color: var(--color-brand-light-blue-hover); */
 }

@@ -5,30 +5,41 @@ import StandaloneLink from '../StandaloneLink'
 import Carousel from '../Carousel'
 import PropertyInformation from '../PropertyInformation'
 
-export default function CustomerStory({ story, children }) {
+export default function CustomerStory({
+    story,
+    hideDetails = false,
+    children,
+}) {
     return (
         <div className={style.base}>
             <div className={style.columnLeft}>
                 <div>
                     <div className={style.customer}>
-                        <Image
-                            src={`/portraits/customers/${story.portrait}`}
-                            alt={`Portrait image of ${story.name}`}
-                            width={120}
-                            height={120}
-                            className={style.portrait}
-                        />
-                        <div className={style.details}>
-                            <p className={style.name}>{story.name}</p>
-                            <p className={style.location}>
-                                <strong className={style.estate}>
-                                    {story.title}
-                                </strong>
-                                <br />
-                                {`${story.city}, CA`}
-                            </p>
-                            <PropertyInformation floorplan={story} />
-                        </div>
+                        {!hideDetails && (
+                            <Image
+                                src={`/portraits/customers/${story.portrait}`}
+                                alt={`Portrait image of ${story.name}`}
+                                width={120}
+                                height={120}
+                                className={style.portrait}
+                            />
+                        )}
+                        {!hideDetails && (
+                            <div className={style.details}>
+                                <p className={style.name}>{story.name}</p>
+                                <p className={style.location}>
+                                    <strong className={style.estate}>
+                                        {story.title}
+                                    </strong>
+                                </p>
+
+                                <p className={style.location}>
+                                    {`${story.city}, CA`}
+                                </p>
+
+                                <PropertyInformation floorplan={story} />
+                            </div>
+                        )}
                     </div>
                 </div>
 

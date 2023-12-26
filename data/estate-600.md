@@ -12,6 +12,13 @@ portrait: 'portrait-fpo.png'
 images:
     - fpo@2x
     - fpo@2x
+wistiaID:
+floorPlanVideo: floor-plan-video-600-fpo.png
+floorPlanImage: floor-plan-image-600-fpo.png
 ---
 
-Content
+> Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus. Accumsan sit amet nulla facilisi.
+
+**We highly recommend Backyard Estates.**
