@@ -22,6 +22,7 @@
         "@gsap/react": "^2.0.2",
         "@reach/combobox": "0.18.0",
         "@react-google-maps/api": "^2.19.2",
+        "@vercel/speed-insights": "^1.0.2",
         "@vis.gl/react-google-maps": "^0.4.2",
         "@wistia/react-embeds": "^0.0.20",
         "gray-matter": "^4.0.3",

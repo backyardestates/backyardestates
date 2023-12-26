@@ -6,6 +6,8 @@ import Footer from '@/components/Footer'
 import Hero from '@/components/Hero'
 import Menu from '@/components/Menu'
 
+import { SpeedInsights } from '@vercel/speed-insights/next'
+
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import Head from 'next/head'
 
@@ -73,6 +75,7 @@ export default function Homepage({ children }) {
             </div>
             <main>{children}</main>
             <Footer />
+            <SpeedInsights />
         </div>
     )
 }

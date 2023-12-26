@@ -4,6 +4,8 @@ import style from './LeadForm.module.css'
 
 import Script from 'next/script'
 
+import { SpeedInsights } from '@vercel/speed-insights/next'
+
 import Head from 'next/head'
 
 import { config } from '@fortawesome/fontawesome-svg-core'
@@ -66,6 +68,7 @@ export default function LeadForm({ children }) {
             </div>
 
             <main className={style.root}>{children}</main>
+            <SpeedInsights />
         </div>
     )
 }
