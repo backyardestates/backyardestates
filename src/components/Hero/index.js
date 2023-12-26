@@ -8,7 +8,7 @@ import { useGSAP } from '@gsap/react'
 import Button from '../Button'
 import style from './Hero.module.css'
 
-// import mountains from '../../../public/images/hero-adu.jpg'
+import heroBackgroundImage from '../../../public/images/hero-adu-optimized.webp'
 
 gsap.registerPlugin(TextPlugin)
 
@@ -60,9 +60,9 @@ export default function Hero() {
         <div className={style.base}>
             <div className={style.bgWrap}>
                 <Image
-                    alt="Mountains"
-                    src="/images/hero-adu@2x.jpg"
-                    // placeholder="blur"
+                    alt="Accessory Dwelling Unit (ADU)"
+                    src={heroBackgroundImage}
+                    placeholder="blur"
                     quality={100}
                     fill
                     sizes="100vw"
