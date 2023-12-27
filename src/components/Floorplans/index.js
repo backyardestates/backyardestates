@@ -26,6 +26,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
                     title="Explore our floor plans"
                     explanation="Any floor plan can be customized to meet your adu needs"
                 />
+
                 {showNav && (
                     <ButtonTags
                         tags={floorplans}
@@ -57,7 +58,8 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             </StandaloneLink>
                         </div>
                         <div className={style.columnRight}>
-                            {!showVideo && (
+                            {!showVideo ||
+                            selectedFloorplan.frontmatter.wistiaID === null ? (
                                 <Image
                                     href={`/floor-plans/${selectedFloorplan.slug}`}
                                     src={`/images/floor-plans/${selectedFloorplan.frontmatter.floorPlanImage}`}
@@ -66,58 +68,46 @@ export default function Floorplans({ showNav = false, floorplans }) {
                                     height={360}
                                     className={style.img}
                                 />
+                            ) : (
+                                <VideoPlayer
+                                    wistiaID={
+                                        selectedFloorplan.frontmatter.wistiaID
+                                    }
+                                    style={
+                                        showVideo
+                                            ? { display: 'block' }
+                                            : { display: 'none' }
+                                    }
+                                />
                             )}
-                            {showVideo &&
-                                selectedFloorplan.frontmatter.wistiaID ===
-                                    null && (
-                                    <Image
-                                        href={`/floor-plans/${selectedFloorplan.slug}`}
-                                        src={`/images/floor-plans/${selectedFloorplan.frontmatter.floorPlanVideo}`}
-                                        alt="Placeholder"
-                                        width={640}
-                                        height={360}
-                                        className={style.img}
-                                    />
-                                )}
-                            {showVideo &&
-                                selectedFloorplan.frontmatter.wistiaID !==
-                                    null && (
-                                    <VideoPlayer
-                                        wistiaID={
-                                            selectedFloorplan.frontmatter
-                                                .wistiaID
-                                        }
-                                        style={
-                                            showVideo
-                                                ? { display: 'block' }
-                                                : { display: 'none' }
-                                        }
-                                    />
-                                )}
                         </div>
                     </div>
-                    <div className={style.buttonGroup}>
-                        <button
-                            className={
-                                showVideo
-                                    ? style.buttonGroupButtonLeft_selected
-                                    : style.buttonGroupButtonLeft
-                            }
-                            onClick={() => setShowVideo(!showVideo)}
-                        >
-                            Walkthrough
-                        </button>
-                        <button
-                            className={
-                                showVideo
-                                    ? style.buttonGroupButtonRight
-                                    : style.buttonGroupButtonRight_selected
-                            }
-                            onClick={() => setShowVideo(!showVideo)}
-                        >
-                            Floor plan
-                        </button>
-                    </div>
+
+                    {selectedFloorplan.frontmatter.wistiaID !== null && (
+                        <div className={style.buttonGroup}>
+                            <button
+                                className={
+                                    showVideo
+                                        ? style.buttonGroupButtonLeft_selected
+                                        : style.buttonGroupButtonLeft
+                                }
+                                onClick={() => setShowVideo(!showVideo)}
+                            >
+                                Walkthrough
+                            </button>
+                            <button
+                                className={
+                                    showVideo
+                                        ? style.buttonGroupButtonRight
+                                        : style.buttonGroupButtonRight_selected
+                                }
+                                onClick={() => setShowVideo(!showVideo)}
+                            >
+                                Floor plan
+                            </button>
+                        </div>
+                    )}
+
                     {/* <ButtonGroup /> */}
                 </div>
             </div>

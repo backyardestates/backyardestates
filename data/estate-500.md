@@ -6,15 +6,22 @@ city: 'Chino'
 bed: 2
 bath: 1
 sqft: 500
-img: 'estate500-cover.png'
+img: '500-generic-06.jpg'
 price: '219,000'
 portrait: 'portrait-fpo.png'
 images:
-    - fpo@2x
-    - fpo@2x
+    - 500-generic-01
+    - 500-generic-02
+    - 500-generic-03
+    - 500-generic-04
+    - 500-generic-05
+    - 500-generic-06
+    - 500-generic-07
+    - 500-generic-08
+    - 500-generic-09
 wistiaID:
 floorPlanVideo: floor-plan-video-500-fpo.png
-floorPlanImage: floor-plan-image-500-fpo.png
+floorPlanImage: floor-plan-image-500.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

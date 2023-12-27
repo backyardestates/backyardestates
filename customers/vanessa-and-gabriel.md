@@ -26,6 +26,4 @@ images:
 
 Gabriel and Vanessa, expecting their second child, teamed up with Gabriel's parents, Grandma and Grandpa, to make a strategic move that benefited everyone involved. Seeking closer proximity to their grandchildren, Gabriel's parents sold their home and, along with Gabriel and Vanessa, purchased a new property in a better community. The plan? Build an ADU to maintain independence for Grandma and Grandpa, while creating a larger support system for the growing family.
 
-Backyard Estates played a crucial role in this seamless transition. Not only did they assist in vetting the property during the purchase, but they also initiated plans even before the official close date. The ADU not only accommodates the immediate needs of Gabriel's parents but also holds promising future benefits. It serves as a win-win arrangement for now, providing the support the grandparents need. Looking ahead, the ADU could become a valuable asset for supplementing retirement income and even housing their children during college and beyond. With Backyard Estates, the ADU was not just a housing solution – it was a no-brainer that enriched the lives and future of two generations.
-
 We highly recommend Backyard Estates.

@@ -3,10 +3,18 @@ import style from './Properties.module.css'
 import Property from '../Property'
 
 export default function Properties({ data }) {
+    // console.log(data)
+
+    const filteredProperties = data.filter(
+        (property) =>
+            property.frontmatter.order !== 'A' &&
+            property.frontmatter.order !== 'D'
+    )
+
     return (
         <div className={style.base}>
             <div className={style.properties}>
-                {data.map((estate, index) => (
+                {filteredProperties.map((estate, index) => (
                     <Property
                         key={index}
                         floorplan={estate}

@@ -19,7 +19,7 @@ images:
     - 450-generic-07
 wistiaID: 2z717cmf0o
 floorPlanVideo: floor-plan-video-450-fpo.png
-floorPlanImage: floor-plan-image-450-fpo.png
+floorPlanImage: floor-plan-image-450.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

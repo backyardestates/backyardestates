@@ -14,7 +14,7 @@ images:
     - fpo@2x
 wistiaID: ag2xyb3ued
 floorPlanVideo: floor-plan-video-750plus-fpo.png
-floorPlanImage: floor-plan-image-750plus-fpo.png
+floorPlanImage: floor-plan-image-750plus.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

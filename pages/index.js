@@ -24,10 +24,10 @@ export default function Home({ estates }) {
     return (
         <Layout>
             <Testimonials />
-            <Properties data={estates} />
+            <Floorplans showNav={true} floorplans={estates} />
             <Benefits />
             <Process />
-            <Floorplans showNav={true} floorplans={estates} />
+            <Properties data={estates} />
         </Layout>
     )
 }
