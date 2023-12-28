@@ -200,10 +200,11 @@ export default function LeadForm({ data }) {
                                     <input
                                         type="radio"
                                         name="source"
-                                        value="Referral"
+                                        value="Referral (Friend/Real Estate Agent/Lender etc.)"
                                     />
                                     <span className={style.option_label}>
-                                        Referral
+                                        Referral (Friend/Real Estate
+                                        Agent/Lender etc.)
                                     </span>
                                 </label>
                                 <label className={style.option}>
