@@ -12,11 +12,15 @@ import Markdown from 'react-markdown'
 import style from './FloorPlan.module.css'
 import RelatedContent from '@/components/RelatedContent'
 
-export default function FloorPlan({ floorplan, content }) {
+export default function FloorPlan({ floorplan, content, estates }) {
     const title = floorplan.title
     const price = floorplan.price
     const wistiaID = floorplan.wistiaID
     const relatedProperties = floorplan.related
+
+    const filteredRelatedProperties = estates.filter((e) =>
+        relatedProperties.includes(e.frontmatter.id)
+    )
 
     return (
         <Layout pageTitle={title}>
@@ -40,7 +44,7 @@ export default function FloorPlan({ floorplan, content }) {
             <CustomerStory story={floorplan} hideDetails>
                 <Markdown>{content}</Markdown>
             </CustomerStory>
-            <RelatedContent properties={relatedProperties} />
+            <RelatedContent properties={filteredRelatedProperties} />
         </Layout>
     )
 }

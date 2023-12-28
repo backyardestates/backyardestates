@@ -6,24 +6,23 @@ import StandaloneLink from '@/components/StandaloneLink'
 // import Divider from '@/components/Divider'
 
 import style from './Floorplans.module.css'
-import Button from '../Button'
+// import Button from '../Button'
 import VideoPlayer from '../VideoPlayer'
 import PropertyInformation from '../PropertyInformation'
 // import ButtonTag from '../ButtonTag'
 import ButtonTags from '../ButtonTags'
-import ButtonGroup from '../ButtonGroup'
+// import ButtonGroup from '../ButtonGroup'
 
 export default function Floorplans({ showNav = false, floorplans }) {
     const [selected, setSelected] = useState(1)
     const [showVideo, setShowVideo] = useState(true)
 
-    let selectedFloorplan = floorplans[selected]
-    // console.log(selectedFloorplan)
-
     // filter properties for floor plans
     const filteredProperties = floorplans.filter(
         (property) => property.frontmatter.isFloorplan
     )
+
+    let selectedFloorplan = filteredProperties[selected]
     return (
         <div className={style.base}>
             <div className={style.content}>
@@ -98,7 +97,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
                                 }
                                 onClick={() => setShowVideo(!showVideo)}
                             >
-                                Walkthrough
+                                Video
                             </button>
                             <button
                                 className={

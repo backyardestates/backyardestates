@@ -1,25 +1,29 @@
 ---
-id: '751-000'
-isFloorplan: true
-order: 'F'
-title: 'Estate 750+'
-city: 'Chino'
-bed: 2
-bath: 2
-sqft: 750
-img: 'estate750plus-cover.jpg'
-price: '275,000'
+id: '450-001'
+isFloorplan: false
+order: 'B'
+title: 'Estate 450'
+city: 'Rancho Cucamonga'
+bed: 1
+bath: 1
+sqft: 400
+img: 450-dalton-L-00.png
+price: '199,000'
 images:
-    - fpo@2x
-    - fpo@2x
+    - 450-dalton-L-01.png
+    - 450-dalton-L-02.png
+    - 450-dalton-L-03.png
+    - 450-dalton-L-04.png
+    - 450-dalton-L-05.png
+    - 450-dalton-L-00.png
 related:
     - 450-000
-    - 750-000
+    - 450-002
     - 751-000
     - 950-000
-wistiaID: ag2xyb3ued
-floorPlanVideo: floor-plan-video-750plus-fpo.png
-floorPlanImage: floor-plan-image-750plus.png
+wistiaID: 6rp2bce6ic
+floorPlanVideo: floor-plan-video-450-fpo.png
+floorPlanImage: 450-dalton-L-01
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

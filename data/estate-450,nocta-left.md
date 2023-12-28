@@ -1,30 +1,26 @@
 ---
-id: 450-000
+id: '450-003'
 isFloorplan: false
 order: 'B'
 title: 'Estate 450'
 city: 'Rancho Cucamonga'
 bed: 1
 bath: 1
-sqft: 450
-img: 'estate450-cover.jpg'
+sqft: 400
+img: 450-nocta-L-01.png
 price: '199,000'
 images:
-    - 450-generic-01
-    - 450-generic-02
-    - 450-generic-03
-    - 450-generic-04
-    - 450-generic-05
-    - 450-generic-06
-    - 450-generic-07
+    - 450-nocta-L-00.png
+    - 450-nocta-L-01.png
+    - 450-nocta-L-02.png
 related:
     - 450-000
-    - 750-000
-    - 751-000
-    - 950-000
-wistiaID: 2z717cmf0o
+    - 450-001
+    - 450-002
+    - 450-004
+wistiaID: 6rp2bce6ic
 floorPlanVideo: floor-plan-video-450-fpo.png
-floorPlanImage: floor-plan-image-450.png
+floorPlanImage: 450-dalton-L-01
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

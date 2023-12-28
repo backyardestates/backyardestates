@@ -79,7 +79,7 @@ export default function Carousel(images) {
                         // console.log(image)
                         <Image
                             key={index}
-                            src={`/images/stories/${image}.jpg`}
+                            src={`/images/property/${image}`}
                             alt="Hello"
                             width={320}
                             height={90}

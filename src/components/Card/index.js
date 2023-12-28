@@ -4,14 +4,17 @@ import Image from 'next/image'
 import PropertyInformation from '../PropertyInformation'
 
 export default function Card({ estate }) {
-    const url = `/floor-plans/${estate.slug}`
     const title = estate.frontmatter.title
-    const bed = estate.frontmatter.bed
-    const bath = estate.frontmatter.bath
-    const sqft = estate.frontmatter.sqft
-    const city = estate.frontmatter.city
-
     const img = estate.frontmatter.img
+
+    // build slug
+    const slugArray = estate.slug.split(',')
+    let builtSlug = ''
+    slugArray.forEach((element) => {
+        builtSlug += element + '/'
+    })
+
+    const url = `/floor-plans/${builtSlug}`
 
     return (
         <Link href={url} className={style.base}>

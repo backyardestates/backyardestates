@@ -12,7 +12,12 @@ import ButtonTags from '@/components/ButtonTags'
 export default function FloorPlans({ estates }) {
     const [selected, setSelected] = useState(99)
 
-    estates.sort((a, b) => {
+    // filter properties for floor plans
+    const filteredProperties = estates.filter(
+        (property) => property.frontmatter.isFloorplan
+    )
+
+    filteredProperties.sort((a, b) => {
         const nameA = a.frontmatter.order
         const nameB = b.frontmatter.order
         if (nameA < nameB) {
@@ -54,7 +59,7 @@ export default function FloorPlans({ estates }) {
         >
             <div className={style.content}>
                 <ButtonTags
-                    tags={estates}
+                    tags={filteredProperties}
                     selectedID={selected}
                     setSelected={setSelected}
                     showAll={true}

@@ -8,7 +8,9 @@ export default function SectionTitle({
     return (
         <div className={style.base}>
             <h2 className={`${style.title} ${theme}`}>{title}</h2>
-            <p className={`${style.explanation} ${theme}`}>{explanation}</p>
+            <p className={`${style.explanation} ${theme}`}>
+                <mark>{explanation}</mark>
+            </p>
         </div>
     )
 }

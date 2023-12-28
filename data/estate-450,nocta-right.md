@@ -1,25 +1,26 @@
 ---
-id: '751-000'
-isFloorplan: true
-order: 'F'
-title: 'Estate 750+'
-city: 'Chino'
-bed: 2
-bath: 2
-sqft: 750
-img: 'estate750plus-cover.jpg'
-price: '275,000'
+id: '450-004'
+isFloorplan: false
+order: 'B'
+title: 'Estate 450'
+city: 'Rancho Cucamonga'
+bed: 1
+bath: 1
+sqft: 400
+img: 450-nocta-R-00.png
+price: '199,000'
 images:
-    - fpo@2x
-    - fpo@2x
+    - 450-nocta-R-00.png
+    - 450-nocta-R-01.png
+    - 450-nocta-R-02.png
 related:
     - 450-000
-    - 750-000
-    - 751-000
-    - 950-000
-wistiaID: ag2xyb3ued
-floorPlanVideo: floor-plan-video-750plus-fpo.png
-floorPlanImage: floor-plan-image-750plus.png
+    - 450-001
+    - 450-002
+    - 450-003
+wistiaID: rm2nrskw9z
+floorPlanVideo: floor-plan-video-450-fpo.png
+floorPlanImage: floor-plan-image-450.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

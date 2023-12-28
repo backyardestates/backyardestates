@@ -28,7 +28,7 @@ export default function Properties({ data }) {
             </div>
             <div className={style.centered}>
                 <StandaloneLink href="/floor-plans">
-                    View all properties
+                    View all floor plans
                 </StandaloneLink>
             </div>
         </div>

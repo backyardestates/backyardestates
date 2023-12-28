@@ -1,5 +1,5 @@
 ---
-id: 450-000
+id: '450-000'
 isFloorplan: true
 order: 'B'
 title: 'Estate 450'
@@ -18,8 +18,8 @@ images:
     - 450-generic-06
     - 450-generic-07
 related:
-    - 450-000
-    - 750-000
+    - 450-001
+    - 450-002
     - 751-000
     - 950-000
 wistiaID: 2z717cmf0o
