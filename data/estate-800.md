@@ -1,17 +1,22 @@
 ---
-title: 'Estate 800'
-date: '2023-11-28'
+id: 800-000
+isFloorplan: true
 order: 'G'
+title: 'Estate 800'
 city: 'Chino'
 bed: 2
 bath: 2
 sqft: 800
 img: 'estate800-cover.jpg'
 price: '299,000'
-portrait: 'portrait-fpo.png'
 images:
     - fpo@2x
     - fpo@2x
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 wistiaID: 7a26ybnd1g
 floorPlanVideo: floor-plan-video-800-fpo.png
 floorPlanImage: floor-plan-image-800.png

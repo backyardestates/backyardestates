@@ -19,6 +19,11 @@ export default function Floorplans({ showNav = false, floorplans }) {
 
     let selectedFloorplan = floorplans[selected]
     // console.log(selectedFloorplan)
+
+    // filter properties for floor plans
+    const filteredProperties = floorplans.filter(
+        (property) => property.frontmatter.isFloorplan
+    )
     return (
         <div className={style.base}>
             <div className={style.content}>
@@ -29,7 +34,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
 
                 {showNav && (
                     <ButtonTags
-                        tags={floorplans}
+                        tags={filteredProperties}
                         selectedID={selected}
                         setSelected={setSelected}
                     />

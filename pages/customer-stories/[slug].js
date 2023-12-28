@@ -12,18 +12,29 @@ import style from './CustomerStoryTemplate.module.css'
 
 import Markdown from 'react-markdown'
 
-export default function CustomerStoryTemplate({ story, content, estates }) {
+import { useRouter } from 'next/router'
+
+// export default function Page() {
+
+// }
+
+export default function CustomerStoryTemplate({ story, content }) {
     const name = story.name
     const title = story.title
     const price = story.price
     const introductorySentence = story.intro
     const video = story.wistiaID
 
-    console.log(story)
+    const relatedProperties = story.related
+    console.log(relatedProperties)
+
+    const router = useRouter()
+    //   return
 
     return (
         <Layout pageTitle="Ray">
             <div className={style.content}>
+                <p>Slug: {router.query.slug}</p>
                 <h1>{name}</h1>
                 <p className={style.intro}>{introductorySentence}</p>
                 <h2>{title}</h2>
@@ -33,7 +44,7 @@ export default function CustomerStoryTemplate({ story, content, estates }) {
             <CustomerStory story={story}>
                 <Markdown>{content}</Markdown>
             </CustomerStory>
-            <RelatedContent estates={estates} />
+            <RelatedContent properties={relatedProperties} />
         </Layout>
     )
 }
@@ -56,18 +67,18 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { slug } }) {
-    const files = fs.readdirSync(path.join('data'))
+    // const files = fs.readdirSync(path.join('data'))
 
-    const estates = files.map((filename) => {
-        const slug = filename.replace('.md', '')
-        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
-        const { data: frontmatter } = matter(markdown)
-        return {
-            slug,
-            frontmatter,
-        }
-    })
-    // return { props: { estates } }
+    // const estates = files.map((filename) => {
+    //     const slug = filename.replace('.md', '')
+    //     const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
+    //     const { data: frontmatter } = matter(markdown)
+    //     return {
+    //         slug,
+    //         frontmatter,
+    //     }
+    // })
+    // // return { props: { estates } }
 
     const markdownWithMeta = fs.readFileSync(
         path.join('customers', slug + '.md'),
@@ -80,11 +91,6 @@ export async function getStaticProps({ params: { slug } }) {
         props: {
             story,
             content,
-            estates,
         },
     }
 }
-
-// export async function getStaticProps() {
-
-// }

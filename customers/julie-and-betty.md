@@ -22,6 +22,11 @@ images:
     - julie-and-betty-07
     - julie-and-betty-08
     - julie-and-betty-09
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 ---
 
 > Backyard Estates had it all planned out… everything has fallen into place. It was easy… so easy.

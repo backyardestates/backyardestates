@@ -8,18 +8,14 @@ export default function Property({
     url = 'estate-350',
     img = 'estate350-fpo.png',
     title = 'Estate 350',
-    city = 'Arcadia',
-    bed = 1,
-    bath = 1,
-    sqft = 350,
 }) {
-    // console.log(floorplan)
-    url = `/floor-plans/${floorplan.slug}`
-    // const title = estate.frontmatter.title
-    // const bed = estate.frontmatter.bed
-    // const bath = estate.frontmatter.bath
-    // const sqft = estate.frontmatter.sqft
-    // const city = estate.frontmatter.city
+    // build slug
+    const slugArray = floorplan.slug.split(',')
+    let builtSlug = ''
+    slugArray.forEach((element) => {
+        builtSlug += element + '/'
+    })
+    url = `/floor-plans/${builtSlug}`
     return (
         <Link href={url} className={style.base}>
             <Image
@@ -28,7 +24,6 @@ export default function Property({
                 width={640}
                 height={360}
                 alt="Alt"
-                // style={{ maxWidth: '100%', height: 'auto' }}
             />
             <div className={style.container}>
                 <p>

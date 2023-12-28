@@ -4,30 +4,7 @@ import Property from '../Property'
 import Card from '../Card'
 import SectionTitle from '../SectionTitle'
 
-export default function RelatedContent({ estates }) {
-    // const properties = ['Estate 350', 'Estate 350', 'Estate 350', 'Estate 350']
-
-    const filteredProperties = estates.filter(
-        (property) =>
-            property.frontmatter.order !== 'A' &&
-            property.frontmatter.order !== 'D' &&
-            property.frontmatter.order !== 'E' &&
-            property.frontmatter.order !== 'F' &&
-            property.frontmatter.order !== 'H'
-    )
-
-    filteredProperties.sort((a, b) => {
-        const nameA = a.frontmatter.order
-        const nameB = b.frontmatter.order
-        if (nameA < nameB) {
-            return -1
-        }
-        if (nameA > nameB) {
-            return 1
-        }
-        return 0
-    })
-
+export default function RelatedContent({ properties }) {
     return (
         <div className={style.base}>
             <SectionTitle
@@ -37,9 +14,12 @@ export default function RelatedContent({ estates }) {
                     eget non mattis sit massa eu a magna."
             />
             <div className={style.properties}>
-                {filteredProperties.map((filteredProperty, index) => (
-                    <Card key={index} estate={filteredProperty}></Card>
-                ))}
+                <ul>
+                    {properties.map((property, index) => (
+                        // <Card key={index} estate={property}></Card>
+                        <li key={index}>{property}</li>
+                    ))}
+                </ul>
             </div>
             <div className={style.centered}>
                 <StandaloneLink href="/floor-plans">

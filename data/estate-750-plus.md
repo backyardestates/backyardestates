@@ -1,17 +1,22 @@
 ---
-title: 'Estate 750+'
-date: '2023-11-28'
+id: 751-000
+isFloorplan: true
 order: 'F'
+title: 'Estate 750+'
 city: 'Chino'
 bed: 2
 bath: 2
 sqft: 750
 img: 'estate750plus-cover.jpg'
 price: '275,000'
-portrait: 'portrait-fpo.png'
 images:
     - fpo@2x
     - fpo@2x
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 wistiaID: ag2xyb3ued
 floorPlanVideo: floor-plan-video-750plus-fpo.png
 floorPlanImage: floor-plan-image-750plus.png

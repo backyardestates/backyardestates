@@ -1,17 +1,22 @@
 ---
+id: 350-000
+isFloorplan: true
 order: 'A'
 title: 'Estate 350'
-date: '2023-11-28'
 city: 'Chino'
 bed: 'Studio'
 bath: 1
 sqft: 350
 img: 'estate350-cover.png'
 price: '175,000'
-portrait: 'portrait-fpo.png'
 images:
     - fpo@2x
     - fpo@2x
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 wistiaID:
 floorPlanVideo: floor-plan-video-350-fpo.png
 floorPlanImage: floor-plan-image-350.png

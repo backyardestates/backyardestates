@@ -1,17 +1,22 @@
 ---
-title: 'Estate 1200'
-date: '2023-11-28'
+id: 1200-000
+isFloorplan: true
 order: 'I'
+title: 'Estate 1200'
 city: 'Chino'
 bed: 3
 bath: 2
 sqft: 1200
 img: 'estate1200-cover.png'
 price: '379,000'
-portrait: 'portrait-fpo.png'
 images:
     - fpo@2x
     - fpo@2x
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 wistiaID:
 floorPlanVideo: floor-plan-video-1200-fpo.png
 floorPlanImage: floor-plan-image-1200.png

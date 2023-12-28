@@ -1,17 +1,22 @@
 ---
-title: 'Estate 600'
-date: '2023-11-28'
+id: 600-000
+isFloorplan: true
 order: 'D'
+title: 'Estate 600'
 city: 'Chino'
 bed: 2
 bath: 1
 sqft: 600
 img: 'estate600-cover.png'
 price: '219,000'
-portrait: 'portrait-fpo.png'
 images:
     - fpo@2x
     - fpo@2x
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 wistiaID:
 floorPlanVideo: floor-plan-video-600-fpo.png
 floorPlanImage: floor-plan-image-600.png

@@ -20,6 +20,11 @@ images:
     - vanessa-and-gabriel-05
     - vanessa-and-gabriel-06
     - vanessa-and-gabriel-07
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 ---
 
 > I don’t feel like we are customers; I feel like Backyard Estates is taking a vested interest in our family.

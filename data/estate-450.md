@@ -1,14 +1,14 @@
 ---
-title: 'Estate 450'
-date: '2023-11-28'
+id: 450-000
+isFloorplan: true
 order: 'B'
+title: 'Estate 450'
 city: 'Rancho Cucamonga'
 bed: 1
 bath: 1
 sqft: 450
 img: 'estate450-cover.jpg'
 price: '199,000'
-portrait: 'portrait-fpo.png'
 images:
     - 450-generic-01
     - 450-generic-02
@@ -17,6 +17,11 @@ images:
     - 450-generic-05
     - 450-generic-06
     - 450-generic-07
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 wistiaID: 2z717cmf0o
 floorPlanVideo: floor-plan-video-450-fpo.png
 floorPlanImage: floor-plan-image-450.png

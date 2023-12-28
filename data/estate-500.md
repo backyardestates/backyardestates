@@ -1,14 +1,14 @@
 ---
-title: 'Estate 500'
-date: '2023-11-28'
+id: 500-000
+isFloorplan: true
 order: 'C'
+title: 'Estate 500'
 city: 'Chino'
 bed: 2
 bath: 1
 sqft: 500
 img: '500-generic-06.jpg'
 price: '219,000'
-portrait: 'portrait-fpo.png'
 images:
     - 500-generic-01
     - 500-generic-02
@@ -19,6 +19,11 @@ images:
     - 500-generic-07
     - 500-generic-08
     - 500-generic-09
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 wistiaID:
 floorPlanVideo: floor-plan-video-500-fpo.png
 floorPlanImage: floor-plan-image-500.png

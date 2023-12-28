@@ -1,17 +1,22 @@
 ---
-title: 'Estate 950'
-date: '2023-11-28'
+id: 950-000
+isFloorplan: true
 order: 'H'
+title: 'Estate 950'
 city: 'Chino'
 bed: 3
 bath: 2
 sqft: 950
 img: 'estate950-cover.jpg'
 price: '329,000'
-portrait: 'portrait-fpo.png'
 images:
     - fpo@2x
     - fpo@2x
+related:
+    - 450-000
+    - 750-000
+    - 751-000
+    - 950-000
 wistiaID: lrtz4sfbnf
 floorPlanVideo: floor-plan-video-950-fpo.png
 floorPlanImage: floor-plan-image-950.png

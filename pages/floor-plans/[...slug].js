@@ -12,10 +12,11 @@ import Markdown from 'react-markdown'
 import style from './FloorPlan.module.css'
 import RelatedContent from '@/components/RelatedContent'
 
-export default function FloorPlan({ floorplan, content, estates }) {
+export default function FloorPlan({ floorplan, content }) {
     const title = floorplan.title
     const price = floorplan.price
     const wistiaID = floorplan.wistiaID
+    const relatedProperties = floorplan.related
 
     return (
         <Layout pageTitle={title}>
@@ -39,21 +40,18 @@ export default function FloorPlan({ floorplan, content, estates }) {
             <CustomerStory story={floorplan} hideDetails>
                 <Markdown>{content}</Markdown>
             </CustomerStory>
-            <RelatedContent estates={estates} />
+            <RelatedContent properties={relatedProperties} />
         </Layout>
     )
 }
 
 export async function getStaticPaths() {
     const files = fs.readdirSync(path.join('data'))
-
-    const paths = files.map((filename) => ({
-        params: {
-            slug: filename.replace('.md', ''),
-        },
-    }))
-
-    // console.log(paths)
+    const paths = files.map((filename) => {
+        const name = path.parse(filename).name
+        const slugArray = name.split(',')
+        return { params: { slug: slugArray } }
+    })
 
     return {
         paths,
@@ -79,11 +77,7 @@ export async function getStaticProps({ params: { slug } }) {
         'utf-8'
     )
 
-    // console.log(markdownWithMeta)
-
     const { data: floorplan, content } = matter(markdownWithMeta)
-
-    // console.log(frontmatter)
 
     return {
         props: {
