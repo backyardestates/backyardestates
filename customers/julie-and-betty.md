@@ -13,15 +13,15 @@ intro: 'Julie and Betty set themselves up for retirement with an ADU.'
 wistiaID: '9lrx8heqgt'
 portrait: 'portrait-01.jpg'
 images:
-    - julie-and-betty-01
-    - julie-and-betty-02
-    - julie-and-betty-03
-    - julie-and-betty-04
-    - julie-and-betty-05
-    - julie-and-betty-06
-    - julie-and-betty-07
-    - julie-and-betty-08
-    - julie-and-betty-09
+    - julie-and-betty-01.jpg
+    - julie-and-betty-02.jpg
+    - julie-and-betty-03.jpg
+    - julie-and-betty-04.jpg
+    - julie-and-betty-05.jpg
+    - julie-and-betty-06.jpg
+    - julie-and-betty-07.jpg
+    - julie-and-betty-08.jpg
+    - julie-and-betty-09.jpg
 related:
     - 450-000
     - 750-000

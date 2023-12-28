@@ -5,6 +5,18 @@ import Card from '../Card'
 import SectionTitle from '../SectionTitle'
 
 export default function RelatedContent({ properties }) {
+    properties.sort((a, b) => {
+        const nameA = a.frontmatter.order
+        const nameB = b.frontmatter.order
+        if (nameA < nameB) {
+            return -1
+        }
+        if (nameA > nameB) {
+            return 1
+        }
+        return 0
+    })
+
     return (
         <div className={style.base}>
             <SectionTitle

@@ -13,18 +13,18 @@ intro: 'Bringing family close, maintaining privacy, and building intergeneration
 wistiaID: '8qm3203jcf'
 portrait: 'portrait-02.jpg'
 images:
-    - vanessa-and-gabriel-01
-    - vanessa-and-gabriel-02
-    - vanessa-and-gabriel-03
-    - vanessa-and-gabriel-04
-    - vanessa-and-gabriel-05
-    - vanessa-and-gabriel-06
-    - vanessa-and-gabriel-07
+    - vanessa-and-gabriel-01.jpg
+    - vanessa-and-gabriel-02.jpg
+    - vanessa-and-gabriel-03.jpg
+    - vanessa-and-gabriel-04.jpg
+    - vanessa-and-gabriel-05.jpg
+    - vanessa-and-gabriel-06.jpg
+    - vanessa-and-gabriel-07.jpg
 related:
-    - 450-000
     - 750-000
     - 751-000
     - 950-000
+    - 1200-000
 ---
 
 > I don’t feel like we are customers; I feel like Backyard Estates is taking a vested interest in our family.

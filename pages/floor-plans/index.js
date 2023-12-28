@@ -51,6 +51,19 @@ export default function FloorPlans({ estates }) {
                 return estates
         }
     })
+
+    selectedProperties.sort((a, b) => {
+        const nameA = a.frontmatter.order
+        const nameB = b.frontmatter.order
+        if (nameA < nameB) {
+            return -1
+        }
+        if (nameA > nameB) {
+            return 1
+        }
+        return 0
+    })
+
     return (
         <Layout
             title="Floor plans"

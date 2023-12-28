@@ -10,18 +10,18 @@ sqft: 450
 img: 'estate450-cover.jpg'
 price: '199,000'
 images:
-    - 450-generic-01
-    - 450-generic-02
-    - 450-generic-03
-    - 450-generic-04
-    - 450-generic-05
-    - 450-generic-06
-    - 450-generic-07
+    - 450-generic-01.jpg
+    - 450-generic-02.jpg
+    - 450-generic-03.jpg
+    - 450-generic-04.jpg
+    - 450-generic-05.jpg
+    - 450-generic-06.jpg
+    - 450-generic-07.jpg
 related:
     - 450-001
     - 450-002
-    - 751-000
-    - 950-000
+    - 450-003
+    - 450-004
 wistiaID: 2z717cmf0o
 floorPlanVideo: floor-plan-video-450-fpo.png
 floorPlanImage: floor-plan-image-450.png
