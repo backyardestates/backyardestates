@@ -244,20 +244,22 @@ export default function LeadForm({ data }) {
                             />
                         </button>
                         <p className={style.legal_print}>
-                            By clicking &ldquo;Submit,&rdquo; I give my
-                            electronic signature and consent that Backyard
-                            Estates may contact me with offers at the phone
-                            number above, including by text message, autodialer
-                            or prerecorded message. Consent not required for
-                            purchase. Message & data rates may apply. Promotion
-                            is subject to local service pricing, and may not
-                            apply to some services. I have read and understand
-                            the{' '}
-                            <Link href="/legal/privacy-policy">
-                                Privacy Policy
-                            </Link>{' '}
-                            and agree to recieve commerical communication from
-                            Backyard Estates via email (optional)
+                            <mark>
+                                By clicking &ldquo;Submit,&rdquo; I give my
+                                electronic signature and consent that Backyard
+                                Estates may contact me with offers at the phone
+                                number above, including by text message,
+                                autodialer or prerecorded message. Consent not
+                                required for purchase. Message & data rates may
+                                apply. Promotion is subject to local service
+                                pricing, and may not apply to some services. I
+                                have read and understand the{' '}
+                                <Link href="/legal/privacy-policy">
+                                    Privacy Policy
+                                </Link>{' '}
+                                and agree to recieve commerical communication
+                                from Backyard Estates via email (optional)
+                            </mark>
                         </p>
                     </form>
                 </div>

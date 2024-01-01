@@ -150,6 +150,11 @@ tfoot td {
     vertical-align: top;
 }
 
+video {
+    background-color: rgb(255, 0, 0) !important;
+}
+
+/*
 input {
     border-radius: 0;
     -webkit-appearance: none;
@@ -160,4 +165,13 @@ input[type='text'],
 input[type='button'],
 input[type='submit'] {
     background-color: #ffffff;
+}
+*/
+
+@media only screen and (min-width: 1400px) {
+    .wistia_responsive_wrapper {
+        /* border: 5px solid magenta; */
+        max-height: 360px;
+        /* background-color: red; */
+    }
 }

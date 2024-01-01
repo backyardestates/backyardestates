@@ -3,12 +3,15 @@
     height: auto;
     margin: 0;
     padding: 0;
+    border-radius: 0.5rem;
 }
 
 /* fixed */
 @media only screen and (min-width: 1440px) {
     .base {
         width: 640px;
-        height: 360px;
+        max-height: 360px;
+        overflow: hidden;
+        /* background-color: orange; */
     }
 }
