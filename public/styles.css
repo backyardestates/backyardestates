@@ -149,3 +149,15 @@ td {
 tfoot td {
     vertical-align: top;
 }
+
+input {
+    border-radius: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+input[type='text'],
+input[type='button'],
+input[type='submit'] {
+    background-color: #ffffff;
+}
