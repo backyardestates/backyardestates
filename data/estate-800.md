@@ -10,8 +10,13 @@ sqft: 800
 img: 'estate800-cover.jpg'
 price: '299,000'
 images:
-    - fpo@2x
-    - fpo@2x
+    - 800-cameo-00.png
+    - 800-cameo-01.png
+    - 800-cameo-02.png
+    - 800-cameo-03.png
+    - 800-cameo-04.png
+    - 800-cameo-05.png
+    - 800-cameo-06.png
 related:
     - 450-000
     - 750-000

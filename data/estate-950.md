@@ -10,8 +10,14 @@ sqft: 950
 img: 'estate950-cover.jpg'
 price: '329,000'
 images:
-    - fpo@2x
-    - fpo@2x
+    - 950-garnsey-00.png
+    - 950-garnsey-01.png
+    - 950-garnsey-02.png
+    - 950-garnsey-03.png
+    - 950-garnsey-04.png
+    - 950-garnsey-05.png
+    - 950-garnsey-06.png
+    - 950-garnsey-07.png
 related:
     - 450-000
     - 750-000
