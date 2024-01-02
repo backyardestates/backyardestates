@@ -1,12 +1,16 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
 import Bio from '@/components/Bio'
 import Layout from '../../../src/layouts/Page'
 
-export default function OurTeam() {
+export default function OurTeam({ estates }) {
     return (
         <Layout
             title="Our team"
             pageTitle="Our team - Backyard Estates"
             explanation="Meet the people who make your ADU possible."
+            floorplans={estates}
         >
             <Bio
                 portrait="adam-stewart.png"
@@ -93,4 +97,21 @@ export default function OurTeam() {
             </Bio>
         </Layout>
     )
+}
+
+export async function getStaticProps() {
+    // console.log(`files:`)
+    const files = fs.readdirSync(path.join('data'))
+    // console.log(`files: ${files}`)
+
+    const estates = files.map((filename) => {
+        const slug = filename.replace('.md', '')
+        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
+        const { data: frontmatter } = matter(markdown)
+        return {
+            slug,
+            frontmatter,
+        }
+    })
+    return { props: { estates } }
 }

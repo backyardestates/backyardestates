@@ -22,7 +22,7 @@ export default function Home({ estates }) {
         return 0
     })
     return (
-        <Layout>
+        <Layout floorplans={estates}>
             <Testimonials />
             <Floorplans showNav={true} floorplans={estates} />
             <Benefits />

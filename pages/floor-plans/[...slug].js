@@ -23,7 +23,7 @@ export default function FloorPlan({ floorplan, content, estates }) {
     )
 
     return (
-        <Layout pageTitle={title}>
+        <Layout pageTitle={title} floorplans={estates}>
             <div className={style.content}>
                 <h1>{title}</h1>
                 <p className={style.intro}>

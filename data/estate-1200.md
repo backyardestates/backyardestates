@@ -11,7 +11,6 @@ img: 'estate1200-cover.png'
 price: '379,000'
 images:
     - fpo@2x
-    - fpo@2x
 related:
     - 450-000
     - 750-000

@@ -5,7 +5,32 @@ import Newsletter from '../Newsletter'
 
 import style from './Footer.module.css'
 
-export default function Footer({ estates }) {
+export default function Footer({ floorplans }) {
+    // sort
+    floorplans.sort((a, b) => {
+        const nameA = a.frontmatter.order
+        const nameB = b.frontmatter.order
+        if (nameA < nameB) {
+            return -1
+        }
+        if (nameA > nameB) {
+            return 1
+        }
+        return 0
+    })
+
+    // filter properties for floor plans
+    const filteredFloorplans = floorplans.filter(
+        (property) => property.frontmatter.isFloorplan
+    )
+
+    const floorplanLinks = filteredFloorplans.map((floorplan, index) => (
+        <li key={index}>
+            <Link href={`/floor-plans/${floorplan.slug}`}>
+                {floorplan.frontmatter.title}
+            </Link>
+        </li>
+    ))
     return (
         <footer className={style.root}>
             <div className={style.container}>
@@ -70,53 +95,7 @@ export default function Footer({ estates }) {
                     <div className={style.columnRightTop}>
                         <div className={style.linkColumn}>
                             <h3 className={style.display3}>Floor plans</h3>
-                            <ul>
-                                <li>
-                                    <Link href="/floor-plans/estate-350">
-                                        Estate 350
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/floor-plans/estate-450">
-                                        Estate 450
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/floor-plans/estate-500">
-                                        Estate 500
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/floor-plans/estate-600">
-                                        Estate 600
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/floor-plans/estate-750">
-                                        Estate 750
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/floor-plans/estate-750-plus">
-                                        Estate 750+
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/floor-plans/estate-800">
-                                        Estate 800
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/floor-plans/estate-900">
-                                        Estate 900
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/floor-plans/estate-1200">
-                                        Estate 1200
-                                    </Link>
-                                </li>
-                            </ul>
+                            <ul>{floorplanLinks}</ul>
                         </div>
                         <div className={style.linkColumn}>
                             <h3 className={style.display3}>Resources</h3>

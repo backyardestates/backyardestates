@@ -35,7 +35,13 @@ import Catchall from '@/components/Catchall'
 import Menu from '@/components/Menu'
 import Head from 'next/head'
 
-export default function Page({ title, pageTitle, explanation, children }) {
+export default function Page({
+    title,
+    pageTitle,
+    explanation,
+    children,
+    floorplans,
+}) {
     const [showMenu, setShowMenu] = useState(false)
     function toggleMenu() {
         setShowMenu(!showMenu)
@@ -65,9 +71,9 @@ export default function Page({ title, pageTitle, explanation, children }) {
                 {children}
                 <Catchall />
             </main>
-
-            <Footer />
             {/* <SpeedInsights /> */}
+
+            <Footer floorplans={floorplans} />
         </div>
     )
 }

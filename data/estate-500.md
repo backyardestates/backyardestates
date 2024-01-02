@@ -7,23 +7,23 @@ city: 'Chino'
 bed: 2
 bath: 1
 sqft: 500
-img: '500-generic-06.jpg'
+img: 500-generic-06.jpg
 price: '219,000'
 images:
-    - 500-generic-01
-    - 500-generic-02
-    - 500-generic-03
-    - 500-generic-04
-    - 500-generic-05
-    - 500-generic-06
-    - 500-generic-07
-    - 500-generic-08
-    - 500-generic-09
+    - 500-generic-01.jpg
+    - 500-generic-02.jpg
+    - 500-generic-03.jpg
+    - 500-generic-04.jpg
+    - 500-generic-05.jpg
+    - 500-generic-06.jpg
+    - 500-generic-07.jpg
+    - 500-generic-08.jpg
+    - 500-generic-09.jpg
 related:
+    - 450-001
+    - 450-002
+    - 450-003
     - 450-000
-    - 750-000
-    - 751-000
-    - 950-000
 wistiaID:
 floorPlanVideo: floor-plan-video-500-fpo.png
 floorPlanImage: floor-plan-image-500.png

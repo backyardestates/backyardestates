@@ -47,6 +47,8 @@ export default function FloorPlans({ estates }) {
                 return estate.frontmatter.order === 'G'
             case 7:
                 return estate.frontmatter.order === 'H'
+            case 8:
+                return estate.frontmatter.order === 'I'
             default:
                 return estates
         }
@@ -69,6 +71,7 @@ export default function FloorPlans({ estates }) {
             title="Floor plans"
             pageTitle="Floor plans - Backyard Estates"
             explanation="Browse our floor plans and customer stories to discover the right Accessory Dwelling Unit (ADU) for your family"
+            floorplans={estates}
         >
             <div className={style.content}>
                 <ButtonTags

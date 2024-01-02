@@ -31,7 +31,7 @@ export const metadata = {
         'Backyard Estates - Premier Accessory Dwelling Unit (ADU) builder for the greater Los Angeles area.',
 }
 
-export default function Homepage({ children }) {
+export default function Homepage({ children, floorplans }) {
     const { ref, inView } = useInView()
     const [showMenu, setShowMenu] = useState(false)
 
@@ -74,7 +74,7 @@ export default function Homepage({ children }) {
                 <Hero />
             </div>
             <main>{children}</main>
-            <Footer />
+            <Footer floorplans={floorplans} />
             {/* <SpeedInsights /> */}
         </div>
     )

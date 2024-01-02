@@ -1,12 +1,16 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
 import Layout from '../../../src/layouts/Page'
 import style from '../Legal.module.css'
 
-export default function TermsOfUse() {
+export default function TermsOfUse({ estates }) {
     return (
         <Layout
             title="Terms of use"
             pageTitle="Terms of use - Backyard Estates"
             explanation="Last updated December 01, 2020"
+            floorplans={estates}
         >
             <div className={style.content}>
                 <h2>AGREEMENT TO TERMS</h2>
@@ -740,4 +744,21 @@ export default function TermsOfUse() {
             </div>
         </Layout>
     )
+}
+
+export async function getStaticProps() {
+    // console.log(`files:`)
+    const files = fs.readdirSync(path.join('data'))
+    // console.log(`files: ${files}`)
+
+    const estates = files.map((filename) => {
+        const slug = filename.replace('.md', '')
+        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
+        const { data: frontmatter } = matter(markdown)
+        return {
+            slug,
+            frontmatter,
+        }
+    })
+    return { props: { estates } }
 }

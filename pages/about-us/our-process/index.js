@@ -1,3 +1,6 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
 // import Link from 'next/link'
 import Layout from '../../../src/layouts/Page'
 import style from './OurProcess.module.css'
@@ -19,12 +22,13 @@ import { faArrowDown } from '@fortawesome/pro-light-svg-icons'
 // import Pill from '@/components/Pill'
 import Phase from '@/components/Phase'
 
-export default function OurProcess() {
+export default function OurProcess({ estates }) {
     return (
         <Layout
             title="Our process"
             pageTitle="Our process - Backyard Estates"
             explanation="We manage the entire project, from custom design to permitting, all the way to construction and installation."
+            floorplans={estates}
         >
             <div className={style.timeline}>
                 <Phase
@@ -208,4 +212,21 @@ export default function OurProcess() {
             </div>
         </Layout>
     )
+}
+
+export async function getStaticProps() {
+    // console.log(`files:`)
+    const files = fs.readdirSync(path.join('data'))
+    // console.log(`files: ${files}`)
+
+    const estates = files.map((filename) => {
+        const slug = filename.replace('.md', '')
+        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
+        const { data: frontmatter } = matter(markdown)
+        return {
+            slug,
+            frontmatter,
+        }
+    })
+    return { props: { estates } }
 }

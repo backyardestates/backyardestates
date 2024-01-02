@@ -48,7 +48,7 @@
     .columnRight {
         /* border: 1px solid lime; */
         padding-top: 3rem;
-        grid-column-start: 7;
+        grid-column-start: 6;
         grid-column-end: 13;
     }
 }

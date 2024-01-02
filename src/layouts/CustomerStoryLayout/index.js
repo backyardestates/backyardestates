@@ -35,7 +35,11 @@ import Head from 'next/head'
 
 import Script from 'next/script'
 
-export default function CustomerStoryLayout({ pageTitle, children }) {
+export default function CustomerStoryLayout({
+    pageTitle,
+    children,
+    floorplans,
+}) {
     const [showMenu, setShowMenu] = useState(false)
     function toggleMenu() {
         setShowMenu(!showMenu)
@@ -68,7 +72,7 @@ export default function CustomerStoryLayout({ pageTitle, children }) {
                 <Catchall />
             </div>
 
-            <Footer />
+            <Footer floorplans={floorplans} />
             {/* <SpeedInsights /> */}
         </div>
     )

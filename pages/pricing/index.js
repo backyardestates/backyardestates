@@ -1,3 +1,7 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+
 import Head from 'next/head'
 import Layout from '../../src/layouts/Page'
 // import StandaloneLink from '@/components/StandaloneLink'
@@ -13,13 +17,14 @@ import {
 } from '@fortawesome/pro-light-svg-icons'
 import CallToAction from '@/components/CallToAction'
 
-export default function Pricing() {
+export default function Pricing({ estates }) {
     return (
         <Layout
             title="Pricing"
             pageTitle="Pricing - Backyard Estates"
             explanation="They say money doesn&rsquo;t grow on trees, but it can certainly grow in your
             backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow."
+            floorplans={estates}
         >
             <div className={style.content}>
                 <h2>All-Inclusive pricing comparison</h2>
@@ -231,4 +236,21 @@ export default function Pricing() {
             </div>
         </Layout>
     )
+}
+
+export async function getStaticProps() {
+    // console.log(`files:`)
+    const files = fs.readdirSync(path.join('data'))
+    // console.log(`files: ${files}`)
+
+    const estates = files.map((filename) => {
+        const slug = filename.replace('.md', '')
+        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
+        const { data: frontmatter } = matter(markdown)
+        return {
+            slug,
+            frontmatter,
+        }
+    })
+    return { props: { estates } }
 }

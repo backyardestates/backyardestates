@@ -10,8 +10,11 @@ sqft: 750
 img: 'estate750plus-cover.jpg'
 price: '275,000'
 images:
-    - fpo@2x
-    - fpo@2x
+    - 750-coolcrest-00.png
+    - 750-coolcrest-01.png
+    - 750-coolcrest-02.png
+    - 750-coolcrest-03.png
+    - 750-coolcrest-04.png
 related:
     - 450-000
     - 750-000

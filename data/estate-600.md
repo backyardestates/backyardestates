@@ -11,12 +11,11 @@ img: 'estate600-cover.png'
 price: '219,000'
 images:
     - fpo@2x
-    - fpo@2x
 related:
     - 450-000
+    - 500-000
     - 750-000
     - 751-000
-    - 950-000
 wistiaID:
 floorPlanVideo: floor-plan-video-600-fpo.png
 floorPlanImage: floor-plan-image-600.png

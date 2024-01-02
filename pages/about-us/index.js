@@ -1,3 +1,6 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
 import Chunk from '@/components/Chunk'
 import Layout from '../../src/layouts/Page'
 
@@ -8,12 +11,13 @@ import {
 } from '@fortawesome/pro-regular-svg-icons'
 import style from './AboutUs.module.css'
 
-export default function AboutUs() {
+export default function AboutUs({ estates }) {
     return (
         <Layout
             title="About us"
             pageTitle="About us - Backyard Estates"
             explanation="Our mission is to enable homeowners to reimage their backyard as an estate for themselves or family"
+            floorplans={estates}
         >
             <div className={style.content}>
                 <Chunk
@@ -221,4 +225,21 @@ export default function AboutUs() {
             </div>
         </Layout>
     )
+}
+
+export async function getStaticProps() {
+    // console.log(`files:`)
+    const files = fs.readdirSync(path.join('data'))
+    // console.log(`files: ${files}`)
+
+    const estates = files.map((filename) => {
+        const slug = filename.replace('.md', '')
+        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
+        const { data: frontmatter } = matter(markdown)
+        return {
+            slug,
+            frontmatter,
+        }
+    })
+    return { props: { estates } }
 }

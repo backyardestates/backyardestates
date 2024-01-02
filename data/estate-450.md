@@ -7,7 +7,7 @@ city: 'Rancho Cucamonga'
 bed: 1
 bath: 1
 sqft: 450
-img: 'estate450-cover.jpg'
+img: estate450-cover.jpg
 price: '199,000'
 images:
     - 450-generic-01.jpg

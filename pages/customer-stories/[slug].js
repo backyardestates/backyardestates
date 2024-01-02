@@ -35,7 +35,7 @@ export default function CustomerStoryTemplate({ story, content, estates }) {
     //   return
 
     return (
-        <Layout pageTitle="Ray">
+        <Layout pageTitle="Ray" floorplans={estates}>
             <div className={style.content}>
                 {/* <p>Slug: {router.query.slug}</p> */}
                 <h1>{name}</h1>

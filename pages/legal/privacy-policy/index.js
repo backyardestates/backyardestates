@@ -1,12 +1,17 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+
 import Layout from '../../../src/layouts/Page'
 import style from '../Legal.module.css'
 
-export default function PrivacyPolicy() {
+export default function PrivacyPolicy({ estates }) {
     return (
         <Layout
             title="Privacy policy"
             pageTitle="Privacy policy - Backyard Estates"
             explanation="Last updated December 01, 2020"
+            floorplans={estates}
         >
             <div className={style.content}>
                 <p>
@@ -992,4 +997,21 @@ export default function PrivacyPolicy() {
             </div>
         </Layout>
     )
+}
+
+export async function getStaticProps() {
+    // console.log(`files:`)
+    const files = fs.readdirSync(path.join('data'))
+    // console.log(`files: ${files}`)
+
+    const estates = files.map((filename) => {
+        const slug = filename.replace('.md', '')
+        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
+        const { data: frontmatter } = matter(markdown)
+        return {
+            slug,
+            frontmatter,
+        }
+    })
+    return { props: { estates } }
 }

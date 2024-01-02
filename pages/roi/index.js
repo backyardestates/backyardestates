@@ -1,7 +1,12 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+
 // import Button from '@/components/Button'
 import Layout from '../../src/layouts/Page'
 import style from './Roi.module.css'
 import CallToAction from '@/components/CallToAction'
+import Footer from '@/components/Footer'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -12,12 +17,13 @@ import {
 } from '@fortawesome/pro-light-svg-icons'
 import Chunk from '@/components/Chunk'
 
-export default function ReturnOnInvestment() {
+export default function ReturnOnInvestment({ estates }) {
     return (
         <Layout
             title="Return on investment"
             pageTitle="ROI - Backyard Estates"
             explanation="Take advantage of your underutilized land and new California laws. Convert your backyard into rental income with an Accessory Dwelling Unit (ADU)."
+            floorplans={estates}
         >
             <div className={style.content}>
                 <Chunk
@@ -135,4 +141,21 @@ export default function ReturnOnInvestment() {
             </div>
         </Layout>
     )
+}
+
+export async function getStaticProps() {
+    // console.log(`files:`)
+    const files = fs.readdirSync(path.join('data'))
+    // console.log(`files: ${files}`)
+
+    const estates = files.map((filename) => {
+        const slug = filename.replace('.md', '')
+        const markdown = fs.readFileSync(path.join('data', filename), 'utf-8')
+        const { data: frontmatter } = matter(markdown)
+        return {
+            slug,
+            frontmatter,
+        }
+    })
+    return { props: { estates } }
 }
