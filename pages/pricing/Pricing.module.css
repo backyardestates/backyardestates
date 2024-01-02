@@ -1,12 +1,7 @@
 .content {
-    /* display: flex; */
-    /* flex-direction: column; */
-    /* align-items: center; */
-    /* gap: 1rem; */
     margin: 0;
     padding: 0 1.5rem;
     grid-column: span 12;
-    /* border: 5px solid green; */
     width: 100%;
     overflow: hidden;
 }
@@ -70,19 +65,19 @@
 @media only screen and (min-width: 1440px) {
     .content {
         /* border: 5px solid red; */
-        margin: 0 auto;
-        padding: 0;
-        width: 1440px;
+        /* margin: 0 auto; */
+        /* padding: 0; */
+        /* width: 1440px; */
+        grid-column-start: 3;
+        grid-column-end: 11;
     }
 
     .factors {
-        /* display: grid; */
         grid-template-columns: repeat(2, 1fr);
         grid-template-rows: repeat(2, 1fr);
         gap: 2rem;
         margin: 3rem 0 6rem 0;
         padding: 0;
-        /* list-style: none; */
     }
 
     .pricingByFloorplan th:nth-child(4),

@@ -23,7 +23,7 @@ export default function RelatedContent({ properties }) {
                 title="Explore properties we&rsquo;ve built"
                 explanation="Sed tortor eu placerat porta sed nec fames volutpat.
                     Ultricies fermentum donec pulvinar a mollis. Pellentesque
-                    eget non mattis sit massa eu a magna."
+                    eget non mattis sit"
             />
             <div className={style.properties}>
                 {properties.map((property, index) => (

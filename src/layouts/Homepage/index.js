@@ -32,7 +32,7 @@ export const metadata = {
 }
 
 export default function Homepage({ children, floorplans }) {
-    const { ref, inView } = useInView()
+    const { ref, inView } = useInView({ initialInView: true })
     const [showMenu, setShowMenu] = useState(false)
 
     function toggleMenu() {

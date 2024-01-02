@@ -74,7 +74,9 @@ export default function Navbar({
 
                     <div
                         className={
-                            isHomepage ? style.menu_dark : style.menu_light
+                            isHomepage && mode !== 'light'
+                                ? style.menu_dark
+                                : style.menu_light
                         }
                         onClick={() => {
                             toggleMenu()
