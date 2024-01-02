@@ -6,6 +6,11 @@ title: 'Estate 600'
 city: 'Chino'
 bed: 2
 bath: 1
+dimension:
+    - 1
+    - 1
+    - 1
+    - 1
 sqft: 600
 img: 'estate600-cover.png'
 price: '219,000'

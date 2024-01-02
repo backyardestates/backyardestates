@@ -6,6 +6,11 @@ title: 'Estate 1200'
 city: 'Chino'
 bed: 3
 bath: 2
+dimension:
+    - 1
+    - 1
+    - 1
+    - 1
 sqft: 1200
 img: 'estate1200-cover.png'
 price: '379,000'

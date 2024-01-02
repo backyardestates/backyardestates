@@ -6,6 +6,11 @@ title: 'Estate 500'
 city: '?'
 bed: 2
 bath: 1
+dimension:
+    - 1
+    - 1
+    - 1
+    - 1
 sqft: 500
 img: 500-antler-03.png
 price: '219,000'

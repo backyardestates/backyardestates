@@ -6,6 +6,11 @@ title: 'Estate 950'
 city: 'Chino'
 bed: 3
 bath: 2
+dimension:
+    - 40
+    - 0
+    - 23
+    - 8
 sqft: 950
 img: 'estate950-cover.jpg'
 price: '329,000'

@@ -6,6 +6,11 @@ title: 'Estate 500'
 city: 'Chino'
 bed: 2
 bath: 1
+dimension:
+    - 38
+    - 0
+    - 13
+    - 4
 sqft: 500
 img: 500-generic-06.jpg
 price: '219,000'

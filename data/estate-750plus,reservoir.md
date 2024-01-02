@@ -6,6 +6,11 @@ title: 'Estate 750+'
 city: '?'
 bed: 2
 bath: 2
+dimension:
+    - 1
+    - 1
+    - 1
+    - 1
 sqft: 750
 img: 750plus-reservoir-01.png
 price: '275,000'

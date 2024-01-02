@@ -61,6 +61,17 @@
     display: none;
 }
 
+.link {
+    font-family: var(--font-sans);
+    color: var(--color-brand-light-blue);
+    text-underline-offset: 4px;
+    transition: color 300ms ease;
+}
+
+.link:hover {
+    color: var(--color-brand-dark-blue);
+}
+
 /* fixed */
 @media only screen and (min-width: 1440px) {
     .content {

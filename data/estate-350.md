@@ -6,11 +6,22 @@ title: 'Estate 350'
 city: 'Chino'
 bed: 'Studio'
 bath: 1
+dimension:
+    - 28
+    - 1
+    - 12
+    - 1
 sqft: 350
 img: 'estate350-cover.png'
 price: '175,000'
 images:
-    - fpo@2x
+    - 450-generic-01.jpg
+    - 450-generic-02.jpg
+    - 450-generic-03.jpg
+    - 450-generic-04.jpg
+    - 450-generic-05.jpg
+    - 450-generic-06.jpg
+    - 450-generic-07.jpg
 related:
     - 450-000
     - 750-000

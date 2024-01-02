@@ -6,6 +6,11 @@ title: 'Estate 950'
 city: '?'
 bed: 3
 bath: 2
+dimension:
+    - 1
+    - 1
+    - 1
+    - 1
 sqft: 950
 img: 950-garnsey-03.png
 price: '329,000'

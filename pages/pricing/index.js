@@ -7,6 +7,7 @@ import Layout from '../../src/layouts/Page'
 // import StandaloneLink from '@/components/StandaloneLink'
 import style from './Pricing.module.css'
 import Pill from '@/components/Pill'
+import Link from 'next/link'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -18,6 +19,11 @@ import {
 import CallToAction from '@/components/CallToAction'
 
 export default function Pricing({ estates }) {
+    // filter properties for floor plans
+    const filteredProperties = estates.filter(
+        (property) => property.frontmatter.isFloorplan
+    )
+
     return (
         <Layout
             title="Pricing"
@@ -73,10 +79,10 @@ export default function Pricing({ estates }) {
                         <tr>
                             <td className="left">Total</td>
                             <td>
-                                $175K
+                                $155K
                                 <br />
                                 <br />
-                                <Pill>Save up to $75K</Pill>
+                                <Pill>Save up to $95K</Pill>
                             </td>
                             <td>$250K+</td>
                         </tr>
@@ -95,63 +101,28 @@ export default function Pricing({ estates }) {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Estate 350</td>
-                            <td>Studio</td>
-                            <td>1</td>
-                            <td>28&prime;1&Prime; x 12&prime;1&Prime;</td>
-                            <td>$155K</td>
-                        </tr>
-                        <tr>
-                            <td>Estate 450</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>35&prime;6&Prime; x 13&prime;1&Prime;</td>
-                            <td>$199K</td>
-                        </tr>
-                        <tr>
-                            <td>Estate 500</td>
-                            <td>2</td>
-                            <td>1</td>
-                            <td>38&prime; x 13&prime;4&Prime;</td>
-                            <td>$219K</td>
-                        </tr>
-                        <tr>
-                            <td>Estate 750</td>
-                            <td>2</td>
-                            <td>1</td>
-                            <td>28&prime;1&Prime; x 12&prime;1&Prime;</td>
-                            <td>$175K</td>
-                        </tr>
-                        <tr>
-                            <td>Estate 750+</td>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>40&prime;8&Prime; x 18&prime;5&Prime;</td>
-                            <td>$185K</td>
-                        </tr>
-                        <tr>
-                            <td>Estate 800</td>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>40&prime; x 20&prime;</td>
-                            <td>$299K</td>
-                        </tr>
-                        <tr>
-                            <td>Estate 900</td>
-                            <td>3</td>
-                            <td>2</td>
-                            <td>40&prime; x 23&prime;8&Prime;</td>
-                            <td>$329K</td>
-                        </tr>
-
-                        <tr>
-                            <td>Estate 1200</td>
-                            <td>3</td>
-                            <td>2</td>
-                            <td>?</td>
-                            <td>$379K</td>
-                        </tr>
+                        {filteredProperties.map((floorplan, index) => (
+                            <tr key={index}>
+                                <td>
+                                    <Link
+                                        href={`/floor-plans/${floorplan.slug}`}
+                                        className={style.link}
+                                    >
+                                        {floorplan.frontmatter.title}
+                                    </Link>
+                                </td>
+                                <td>{floorplan.frontmatter.bed}</td>
+                                <td>{floorplan.frontmatter.bath}</td>
+                                <td>
+                                    {floorplan.frontmatter.dimension[0]}&prime;
+                                    {floorplan.frontmatter.dimension[1]}&Prime;
+                                    x {floorplan.frontmatter.dimension[2]}
+                                    &prime;${floorplan.frontmatter.dimension[3]}
+                                    &Prime;
+                                </td>
+                                <td>{floorplan.frontmatter.price}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
 

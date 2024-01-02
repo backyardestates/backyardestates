@@ -6,6 +6,11 @@ title: 'Estate 800'
 city: 'Chino'
 bed: 2
 bath: 2
+dimension:
+    - 40
+    - 0
+    - 20
+    - 0
 sqft: 800
 img: 'estate800-cover.jpg'
 price: '299,000'

@@ -189,30 +189,21 @@
         flex-direction: column;
         gap: 3rem;
         align-items: center;
+        position: relative;
+        top: 0;
+        background-color: var(--color-brand-beige-subtle);
         margin: 0;
         padding: 0;
-        background-color: var(--color-brand-beige-subtle);
-        /* width: 100%; */
     }
 
     .content {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
         gap: 1rem;
-        margin: 0;
-        padding: 6rem 0;
+        margin: 0 0 5rem 0;
+        padding: 6rem 0 12rem 0;
         width: 1440px;
-        /* border: 3px solid red; */
-    }
-
-    .base {
-        position: relative;
-        top: 0;
-        width: 100vw;
-        height: 50vw;
-    }
-
-    .content {
+        height: auto;
         position: absolute;
         top: 0;
         z-index: 2;
@@ -223,7 +214,7 @@
         position: relative;
         top: 0;
         width: 100vw;
-        height: 50vw;
+        height: 60vw;
         z-index: 1;
     }
 
@@ -243,7 +234,7 @@
     .container {
         display: flex;
         flex-direction: column;
-        /* align-items: center; */
+        align-items: center;
         grid-column: span 12;
     }
 

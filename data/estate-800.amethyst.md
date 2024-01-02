@@ -6,6 +6,11 @@ title: 'Estate 800'
 city: '?'
 bed: 2
 bath: 2
+dimension:
+    - 1
+    - 1
+    - 1
+    - 1
 sqft: 800
 img: 800-amethyst-02.png
 price: '299,000'

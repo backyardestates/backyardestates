@@ -80,11 +80,10 @@ export default function Carousel(images) {
                         <Image
                             key={index}
                             src={`/images/property/${image}`}
-                            alt="Hello"
+                            alt={`Image of ADU`}
                             width={320}
                             height={90}
                             className={style.img}
-                            // style={{width}}
                         />
                     ))}
                 </div>

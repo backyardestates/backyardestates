@@ -6,6 +6,11 @@ title: 'Estate 750+'
 city: 'Chino'
 bed: 2
 bath: 2
+dimension:
+    - 40
+    - 8
+    - 18
+    - 5
 sqft: 750
 img: 'estate750plus-cover.jpg'
 price: '275,000'

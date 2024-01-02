@@ -6,6 +6,11 @@ title: 'Estate 450'
 city: 'Rancho Cucamonga'
 bed: 1
 bath: 1
+dimension:
+    - 1
+    - 1
+    - 1
+    - 1
 sqft: 400
 img: 450-dalton-R-01.png
 price: '199,000'
