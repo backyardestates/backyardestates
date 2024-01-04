@@ -47,7 +47,7 @@
 .intro {
     padding: 0;
     color: var(--color-white);
-    opacity: 0.5;
+    opacity: 0.75;
     font-family: var(--font-sans);
     font-size: 1.125rem;
     font-weight: 300;

@@ -4,9 +4,9 @@ isFloorplan: false
 order: 'X'
 title: 'Custom Estate'
 city: '?'
-bed: 3
-bath: 2
-sqft: 1200
+bed: 1
+bath: 1
+sqft: 450
 img: custom-ukiah-00.png
 price: '379,000'
 images:

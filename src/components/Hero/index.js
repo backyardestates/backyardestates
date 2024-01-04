@@ -79,8 +79,8 @@ export default function Hero() {
                     <span ref={cursorRef}>_</span>
                 </h1>
                 <p className={style.intro}>
-                    With the quickest and only fixed-price Accessory Dwelling
-                    Unit (ADU) builder in the greater Los Angeles area.
+                    Backyard Estates - Premier Accessory Dwelling Unit (ADU)
+                    builder for the greater Los Angeles area.
                 </p>
                 <Button href="/talk-to-an-adu-specialist">
                     Talk to an ADU specialist

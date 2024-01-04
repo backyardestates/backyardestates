@@ -28,7 +28,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
             <div className={style.content}>
                 <SectionTitle
                     title="Explore our floor plans"
-                    explanation="Any floor plan can be customized to meet your adu needs"
+                    explanation="We offer customized ADU floorplans to accomodate your family's needs."
                 />
 
                 {showNav && (
@@ -44,15 +44,14 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             <h2>{selectedFloorplan.frontmatter.title}</h2>
                             <PropertyInformation
                                 floorplan={selectedFloorplan.frontmatter}
+                                showPrice
                             />
                             <p>
-                                <mark>
-                                    Interdum velit euismod in pellentesque massa
-                                    placerat duis ultricies lacus sed turpis
-                                    tincidunt id aliquet risus feugiat in ante
-                                    metus dictum at tempor commodo ullamcorper a
-                                    lacus vestibulum sed arcu
-                                </mark>
+                                Explore our modern open floorplan, beautifully
+                                designed to optimize every square footage with
+                                high-quality standard finishes and kitchen
+                                appliances, offering a move-in-ready solution
+                                for a contemporary lifestyle.
                             </p>
                             <StandaloneLink
                                 theme="beige"

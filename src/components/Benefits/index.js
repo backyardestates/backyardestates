@@ -21,23 +21,9 @@ export default function WhyChoose() {
                     type="process"
                 >
                     <p>
-                        <mark>
-                            Tortor posuere ac ut consequat semper viverra nam
-                            libero justo laoreet sit amet cursus sit amet dictum
-                            sit amet justo donec{' '}
-                        </mark>
+                        At Backyard Estates, you choose your pre-design ADU
+                        floorplan and watch your dream become a reality.
                     </p>
-                    <ul className={style.bullets}>
-                        <li>
-                            <mark>One</mark>
-                        </li>
-                        <li>
-                            <mark>Two</mark>
-                        </li>
-                        <li>
-                            <mark>Three</mark>
-                        </li>
-                    </ul>
                     <StandaloneLink href="/about-us/our-process">
                         View our process
                     </StandaloneLink>
@@ -49,23 +35,12 @@ export default function WhyChoose() {
                     subtle
                 >
                     <p>
-                        <mark>
-                            Tortor posuere ac ut consequat semper viverra nam
-                            libero justo laoreet sit amet cursus sit amet dictum
-                            sit amet justo donec{' '}
-                        </mark>
+                        Each estate comes with our standard high-quality and
+                        durable materials that not only enhance its overall
+                        value but also ensure long-term utility with minimal
+                        maintenace costs. This results in a stunning home,
+                        perfect for your family or future tenants.
                     </p>
-                    <ul className={style.bullets}>
-                        <li>
-                            <mark>One</mark>
-                        </li>
-                        <li>
-                            <mark>Two</mark>
-                        </li>
-                        <li>
-                            <mark>Three</mark>
-                        </li>
-                    </ul>
                     <StandaloneLink href="/about-us/our-process">
                         View floor plans
                     </StandaloneLink>
@@ -76,23 +51,14 @@ export default function WhyChoose() {
                     type="pricing"
                 >
                     <p>
-                        <mark>
-                            Tortor posuere ac ut consequat semper viverra nam
-                            libero justo laoreet sit amet cursus sit amet dictum
-                            sit amet justo donec{' '}
-                        </mark>
+                        Enjoy peace of mind with our all-in pricing, covering
+                        every aspect of your ADU project: from design and
+                        engineering to city fees, pre-development, construction,
+                        solar where required, interior finishes, and kitchen
+                        appliances. And that&rsquo;s not all - we even take care
+                        of utility connections up to 50 feet of dirt, ensuring a
+                        seamless and hassle-free experience.
                     </p>
-                    <ul className={style.bullets}>
-                        <li>
-                            <mark>One</mark>
-                        </li>
-                        <li>
-                            <mark>Two</mark>
-                        </li>
-                        <li>
-                            <mark>Three</mark>
-                        </li>
-                    </ul>
                     <StandaloneLink href="/about-us/our-process">
                         View pricing
                     </StandaloneLink>
@@ -103,23 +69,12 @@ export default function WhyChoose() {
                     type="team"
                 >
                     <p>
-                        <mark>
-                            Tortor posuere ac ut consequat semper viverra nam
-                            libero justo laoreet sit amet cursus sit amet dictum
-                            sit amet justo
-                        </mark>
+                        Our expert team comprises skilled architects, engineers,
+                        and developers working alongside dedicated custom home
+                        builders and seasoned track home builders, ensuring the
+                        perfect blend of precision and creativity to bring your
+                        ADU project to life.
                     </p>
-                    <ul className={style.bullets}>
-                        <li>
-                            <mark>One</mark>
-                        </li>
-                        <li>
-                            <mark>Two</mark>
-                        </li>
-                        <li>
-                            <mark>Three</mark>
-                        </li>
-                    </ul>
                     <StandaloneLink href="/about-us/our-process">
                         View team profiles
                     </StandaloneLink>
@@ -131,23 +86,13 @@ export default function WhyChoose() {
                     subtle
                 >
                     <p>
-                        <mark>
-                            Tortor posuere ac ut consequat semper viverra nam
-                            libero justo laoreet sit amet cursus sit amet dictum
-                            sit amet justo
-                        </mark>
+                        Benefit from our streamlined ADU processes—from design
+                        and permitting to construction. Homeowners working with
+                        Backyard Estates are experiencing a 2 to 3 times faster
+                        pace, ensuring swift progress while maintaining a
+                        commitment to constructing enduring, quality homes for
+                        generations to come.
                     </p>
-                    <ul className={style.bullets}>
-                        <li>
-                            <mark>One</mark>
-                        </li>
-                        <li>
-                            <mark>Two</mark>
-                        </li>
-                        <li>
-                            <mark>Three</mark>
-                        </li>
-                    </ul>
                     <StandaloneLink href="/about-us/our-process">
                         View our process
                     </StandaloneLink>

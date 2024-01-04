@@ -13,8 +13,8 @@ export default function Testimonials() {
                     location="Rancho Cucamonga, CA"
                     floorplan="Estate 800"
                 >
-                    I don&rsquo;t feel like we are customers; I feel like
-                    Backyard Estates is taking a vested interest in our family.
+                    I feel like Backyard Estates is taking a vested interest in
+                    our family
                 </Testimonial>
                 <Testimonial
                     name="Julie and Betty"
@@ -22,8 +22,8 @@ export default function Testimonials() {
                     location="Diamond Bar, CA"
                     floorplan="Estate 500"
                 >
-                    Backyard Estates had it all planned out&hellip; everything
-                    has fallen into place. It was easy&hellip; so easy.
+                    Everything has fallen into place. It was easy&hellip; so
+                    easy
                 </Testimonial>
             </div>
         </div>

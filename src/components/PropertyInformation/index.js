@@ -2,10 +2,11 @@ import Divider from '@/components/Divider'
 
 import style from './PropertyInformation.module.css'
 
-export default function PropertyInformation({ floorplan }) {
+export default function PropertyInformation({ floorplan, showPrice = false }) {
     const bed = floorplan.bed
     const bath = floorplan.bath
     const sqft = floorplan.sqft
+    const price = floorplan.price
 
     return (
         <ul className={style.base}>
@@ -18,6 +19,12 @@ export default function PropertyInformation({ floorplan }) {
                 <Divider />
             </li>
             <li>{`${sqft} sq. ft.`}</li>
+            {showPrice && (
+                <li>
+                    <Divider />
+                </li>
+            )}
+            {showPrice && <li>{`$${price}`}</li>}
         </ul>
     )
 }
