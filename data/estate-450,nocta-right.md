@@ -26,6 +26,7 @@ related:
 wistiaID: rm2nrskw9z
 floorPlanVideo: floor-plan-video-450-fpo.png
 floorPlanImage: floor-plan-image-450.png
+floorPlanPDF:
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

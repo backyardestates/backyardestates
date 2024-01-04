@@ -28,6 +28,7 @@ related:
 wistiaID: ccxlm8bq08
 floorPlanVideo: floor-plan-video-750-fpo.png
 floorPlanImage: floor-plan-image-750.png
+floorPlanPDF: Estate-750-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

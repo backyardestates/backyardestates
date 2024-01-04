@@ -29,9 +29,10 @@ related:
     - 450-002
     - 450-003
     - 450-000
-wistiaID:
+wistiaID: 25frn4bozw
 floorPlanVideo: floor-plan-video-500-fpo.png
 floorPlanImage: floor-plan-image-500.png
+floorPlanPDF: Estate-500-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

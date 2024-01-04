@@ -26,6 +26,7 @@ related:
 wistiaID: 6rp2bce6ic
 floorPlanVideo: floor-plan-video-450-fpo.png
 floorPlanImage: 450-dalton-L-01
+floorPlanPDF:
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

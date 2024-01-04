@@ -36,6 +36,8 @@
 .prominent p {
     font-size: 1rem;
     font-weight: 300;
+    line-height: 1.5em;
+    margin-bottom: 1rem;
 }
 
 /* fixed */
@@ -67,14 +69,18 @@
 
     .subtle p {
         font-size: 1rem;
-        font-weight: 450;
-        /* line-height: 1em; */
+        font-weight: 300;
+        line-height: 1.5em;
+        margin-bottom: 1rem;
+        /* border: 3px solid green; */
     }
 
     .prominent p {
         font-size: 1rem;
-        font-weight: 450;
-        /* line-height: 1.2em; */
+        font-weight: 300;
+        line-height: 1.5em;
+        margin-bottom: 1rem;
+        /* border: 3px solid green; */
     }
 
     .b0 {

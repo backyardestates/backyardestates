@@ -21,9 +21,7 @@ export default function RelatedContent({ properties }) {
         <div className={style.base}>
             <SectionTitle
                 title="Explore properties we&rsquo;ve built"
-                explanation="Sed tortor eu placerat porta sed nec fames volutpat.
-                    Ultricies fermentum donec pulvinar a mollis. Pellentesque
-                    eget non mattis sit"
+                explanation=""
             />
             <div className={style.properties}>
                 {properties.map((property, index) => (

@@ -12,9 +12,7 @@ export default function CustomerStory({
 }) {
     return (
         <div className={style.base}>
-            <div className={style.columnLeft}>
-                <div className={style.markdown}>{children}</div>
-            </div>
+            <div className={style.columnLeft}>{children}</div>
             <div className={style.columnRight}>
                 <Carousel images={story.images} />
             </div>

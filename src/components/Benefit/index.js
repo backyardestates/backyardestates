@@ -81,7 +81,9 @@ export default function Benefit({
             onMouseLeave={() => setSelected(false)}
         >
             <BenefitTag>{type}</BenefitTag>
-            <p className={style.title}>{title}</p>
+            <p className={style.title}>
+                <strong>{title}</strong>
+            </p>
             <div className={selected ? style.content_show : style.content_hide}>
                 {children}
             </div>

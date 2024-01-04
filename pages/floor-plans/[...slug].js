@@ -16,6 +16,7 @@ export default function FloorPlan({ floorplan, content, estates }) {
     const title = floorplan.title
     const price = floorplan.price
     const wistiaID = floorplan.wistiaID
+    const floorPlanPDF = floorplan.floorPlanPDF
     const relatedProperties = floorplan.related
 
     const filteredRelatedProperties = estates.filter((e) =>
@@ -27,22 +28,46 @@ export default function FloorPlan({ floorplan, content, estates }) {
             <div className={style.content}>
                 <h1>{title}</h1>
                 <p className={style.intro}>
-                    <mark>
-                        Interdum velit euismod in pellentesque massa placerat
-                        duis ultricies lacus sed turpis tincidunt id aliquet
-                        risus feugiat in ante metus dictum at tempor commodo
-                    </mark>
+                    Explore our modern open floorplan, beautifully designed to
+                    optimize every square footage with high-quality standard
+                    finishes and kitchen appliances, offering a move-in-ready
+                    solution for a contemporary lifestyle.
                 </p>
                 <PropertyInformation floorplan={floorplan} />
-                <h3 className={style.subhead}>all-in-price starts at</h3>
-                <p className={style.price}>{`$${price}`}</p>
-                <StandaloneLink icon="download">
-                    Download floor plan
-                </StandaloneLink>
+                <div className={style.price}>
+                    <h3 className={style.subhead}>all-in-price starts at</h3>
+                    <p className={style.price}>{`$${price}`}</p>
+                </div>
+
+                {floorPlanPDF !== null && (
+                    <StandaloneLink
+                        icon="download"
+                        href={`/pdf/${floorPlanPDF}`}
+                        download
+                    >
+                        Download floor plan
+                    </StandaloneLink>
+                )}
+
                 {wistiaID !== null && <VideoPlayer wistiaID={wistiaID} />}
             </div>
             <CustomerStory story={floorplan} hideDetails>
-                <Markdown>{content}</Markdown>
+                {/* <Markdown>{content}</Markdown> */}
+                <p>
+                    <strong>Every estate includes:</strong>
+                </p>
+                <ul>
+                    <li>Luxury vinyl planking</li>
+                    <li>Name brand stainless-steel kitchen appliances</li>
+                    <li>Real quartz countertops</li>
+                    <li>Recessed lighting in every room</li>
+                    <li>
+                        Clerestory windows with vaulted ceilings in kitchen and
+                        living room
+                    </li>
+                    <li>2-inch vinyl blinds on windows</li>
+                    <li>Mirrored closet doors in bedrooms</li>
+                </ul>
             </CustomerStory>
             <RelatedContent properties={filteredRelatedProperties} />
         </Layout>

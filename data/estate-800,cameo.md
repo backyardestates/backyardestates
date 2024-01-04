@@ -30,6 +30,7 @@ related:
 wistiaID: q7l4bmz7fg
 floorPlanVideo: floor-plan-video-800-fpo.png
 floorPlanImage: floor-plan-image-800.png
+floorPlanPDF:
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

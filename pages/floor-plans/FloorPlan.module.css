@@ -21,6 +21,15 @@
     background-color: yellow;
 }
 
+.price {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    padding: 0;
+}
+
 .intro {
     color: var(--color-neutral-500);
     text-align: center;

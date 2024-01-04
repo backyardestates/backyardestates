@@ -24,6 +24,7 @@ related:
 wistiaID:
 floorPlanVideo: floor-plan-video-600-fpo.png
 floorPlanImage: floor-plan-image-600.png
+floorPlanPDF: Estate-600-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

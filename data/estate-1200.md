@@ -3,7 +3,7 @@ id: '1200-000'
 isFloorplan: true
 order: 'I'
 title: 'Estate 1200'
-city: 'Chino'
+city: ''
 bed: 3
 bath: 2
 dimension:
@@ -12,18 +12,24 @@ dimension:
     - 1
     - 1
 sqft: 1200
-img: 'estate1200-cover.png'
+img: custom-crestview-03.png
 price: '379,000'
 images:
-    - fpo@2x
+    - custom-crestview-00.png
+    - custom-crestview-01.png
+    - custom-crestview-02.png
+    - custom-crestview-03.png
+    - custom-crestview-04.png
+    - custom-crestview-05.png
 related:
     - 450-000
     - 750-000
     - 751-000
     - 950-000
-wistiaID:
+wistiaID: 45wmlshtwo
 floorPlanVideo: floor-plan-video-1200-fpo.png
 floorPlanImage: floor-plan-image-1200.png
+floorPlanPDF: Estate-1200-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

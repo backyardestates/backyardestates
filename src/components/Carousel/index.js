@@ -89,13 +89,7 @@ export default function Carousel(images) {
                 </div>
             </div>
             <div className={style.content}>
-                <p>
-                    <mark>
-                        <strong>Lorem ipsum dolor sit amet, </strong>
-                        consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna aliqua.
-                    </mark>
-                </p>
+                <p>Floor plans designed for optimal space utilization.</p>
                 <p className={style.folio}>
                     {position} / {images.images.length}
                 </p>

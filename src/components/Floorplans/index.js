@@ -65,7 +65,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             selectedFloorplan.frontmatter.wistiaID === null ? (
                                 <Image
                                     href={`/floor-plans/${selectedFloorplan.slug}`}
-                                    src={`/images/floor-plans/${selectedFloorplan.frontmatter.floorPlanImage}`}
+                                    src={`/images/property/${selectedFloorplan.frontmatter.floorPlanImage}`}
                                     alt="Placeholder"
                                     width={640}
                                     height={360}
