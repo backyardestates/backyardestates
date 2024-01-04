@@ -117,7 +117,7 @@ export default function Pricing({ estates }) {
                                     {floorplan.frontmatter.dimension[0]}&prime;
                                     {floorplan.frontmatter.dimension[1]}&Prime;
                                     x {floorplan.frontmatter.dimension[2]}
-                                    &prime;${floorplan.frontmatter.dimension[3]}
+                                    &prime;{floorplan.frontmatter.dimension[3]}
                                     &Prime;
                                 </td>
                                 <td>{floorplan.frontmatter.price}</td>
