@@ -9,9 +9,9 @@ bath: 1
 dimension:
     - 32
     - 0
-    - 25
+    - 23
     - 4
-sqft: 549
+sqft: 749
 img: 'estate750-cover.jpg'
 price: '275,000'
 images:

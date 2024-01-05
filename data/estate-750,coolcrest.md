@@ -9,7 +9,7 @@ bath: 1
 dimension:
     - 32
     - 0
-    - 25
+    - 23
     - 4
 sqft: 749
 img: 750-coolcrest-04.png

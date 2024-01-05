@@ -43,8 +43,8 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             />
                             <p>
                                 Explore our modern open floorplan, beautifully
-                                designed to optimize every square footage with
-                                high-quality standard finishes and kitchen
+                                designed to optimize every square foot with
+                                high-quality, standard finishes, and kitchen
                                 appliances, offering a move-in-ready solution
                                 for a contemporary lifestyle.
                             </p>

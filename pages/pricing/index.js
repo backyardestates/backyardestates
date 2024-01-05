@@ -17,6 +17,7 @@ import {
     faRulerCombined,
 } from '@fortawesome/pro-light-svg-icons'
 import CallToAction from '@/components/CallToAction'
+import StandaloneLink from '@/components/StandaloneLink'
 
 export default function Pricing({ estates }) {
     // filter properties for floor plans
@@ -79,10 +80,10 @@ export default function Pricing({ estates }) {
                         <tr>
                             <td className="left">Total</td>
                             <td>
-                                $155K
+                                $185K
                                 <br />
                                 <br />
-                                <Pill>Save up to $95K</Pill>
+                                <Pill>Save up to $65K</Pill>
                             </td>
                             <td>$250K+</td>
                         </tr>
@@ -190,6 +191,12 @@ export default function Pricing({ estates }) {
                         </li>
                     </ul>
                 </div>
+                <div className={style.centered}>
+                    <StandaloneLink href="/talk-to-an-adu-specialist">
+                        Get your all-in price estimate today
+                    </StandaloneLink>
+                </div>
+
                 <CallToAction
                     title="Potential Return on investment (ROI)"
                     ctaLabel="Explore ADU rental advantages"

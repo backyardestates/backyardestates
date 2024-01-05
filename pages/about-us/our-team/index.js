@@ -35,24 +35,22 @@ export default function OurTeam({ estates }) {
                 project is completed on time and within budget.
             </Bio>
             <Bio
-                portrait="mary-martin.png"
-                name="Mary Martin"
-                title="Office Manager"
+                portrait="tom-gibson.png"
+                name="Thomas Gibson"
+                title="Head of Construction"
             >
-                Mary Martin is a key employee at Backyard Estates, having joined
-                the company during its founding. With over five years of
-                experience in the industry, Mary brings a wealth of knowledge to
-                her role as an ADU specialist. She has become an expert in all
-                of the city ordinances and permits related to ADUs, which has
-                been invaluable to the company&rsquo;s success. Mary has been
-                instrumental in building the organization that Backyard Estates
-                is today. Her expertise and guidance have helped the company
-                navigate the complexities of the ADU market and grow into a
-                leader in the industry. Her contributions have been vital to the
-                company&rsquo;s success. Her dedication to her craft, her expert
-                knowledge of ADUs and city ordinances, and her commitment to
-                excellence make her a valuable asset to the company and a highly
-                respected member of the industry.
+                Tom Wright is an experienced construction industry professional
+                who has been working in the field for over 50 years. He attended
+                Eastern New Mexico University and Pierce College in California,
+                where he studied construction and electrical work. Tom has
+                worked in various roles throughout his career, including as an
+                electrician and estimator at Cal-Crest Electric, where he
+                started his career. He later worked as a Vice President and
+                Board Member in estimating and sales at Walton Electric
+                Corporation. He also founded Tom W. Gibson, Inc., where he
+                oversaw general and electrical construction projects.
+                Tom&rsquo;s expertise in the construction field makes him a key
+                component to all of Backyard Estate&rsquo;s projects.
             </Bio>
             <Bio
                 portrait="serge-mayer.png"
@@ -78,22 +76,24 @@ export default function OurTeam({ estates }) {
                 him an invaluable member of our team here at Backyard Estates.
             </Bio>
             <Bio
-                portrait="tom-gibson.png"
-                name="Thomas Gibson"
-                title="Head of Construction"
+                portrait="mary-martin.png"
+                name="Mary Martin"
+                title="Office Manager"
             >
-                Tom Wright is an experienced construction industry professional
-                who has been working in the field for over 50 years. He attended
-                Eastern New Mexico University and Pierce College in California,
-                where he studied construction and electrical work. Tom has
-                worked in various roles throughout his career, including as an
-                electrician and estimator at Cal-Crest Electric, where he
-                started his career. He later worked as a Vice President and
-                Board Member in estimating and sales at Walton Electric
-                Corporation. He also founded Tom W. Gibson, Inc., where he
-                oversaw general and electrical construction projects.
-                Tom&rsquo;s expertise in the construction field makes him a key
-                component to all of Backyard Estate&rsquo;s projects.
+                Mary Martin is a key employee at Backyard Estates, having joined
+                the company during its founding. With over five years of
+                experience in the industry, Mary brings a wealth of knowledge to
+                her role as an ADU specialist. She has become an expert in all
+                of the city ordinances and permits related to ADUs, which has
+                been invaluable to the company&rsquo;s success. Mary has been
+                instrumental in building the organization that Backyard Estates
+                is today. Her expertise and guidance have helped the company
+                navigate the complexities of the ADU market and grow into a
+                leader in the industry. Her contributions have been vital to the
+                company&rsquo;s success. Her dedication to her craft, her expert
+                knowledge of ADUs and city ordinances, and her commitment to
+                excellence make her a valuable asset to the company and a highly
+                respected member of the industry.
             </Bio>
         </Layout>
     )

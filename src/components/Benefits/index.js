@@ -21,7 +21,7 @@ export default function WhyChoose() {
                     type="process"
                 >
                     <p>
-                        At Backyard Estates, you choose your pre-design ADU
+                        At Backyard Estates, you choose your pre-designed ADU
                         floorplan and watch your dream become a reality.
                     </p>
                     <StandaloneLink href="/about-us/our-process">
@@ -35,11 +35,11 @@ export default function WhyChoose() {
                     subtle
                 >
                     <p>
-                        Each estate comes with our standard high-quality and
-                        durable materials that not only enhance its overall
-                        value but also ensure long-term utility with minimal
-                        maintenace costs. This results in a stunning home,
-                        perfect for your family or future tenants.
+                        Each ADU is built to the Backyard Estate standard with
+                        high-quality and durable materials that not only enhance
+                        its overall value but also ensure long-term utility with
+                        minimal maintenace costs. This results in a stunning
+                        home, perfect for your family or future tenants.
                     </p>
                     <StandaloneLink href="/about-us/our-process">
                         View floor plans
@@ -69,11 +69,11 @@ export default function WhyChoose() {
                     type="team"
                 >
                     <p>
-                        Our expert team comprises skilled architects, engineers,
-                        and developers working alongside dedicated custom home
-                        builders and seasoned track home builders, ensuring the
-                        perfect blend of precision and creativity to bring your
-                        ADU project to life.
+                        Our team of experts is comprised of skilled architects,
+                        engineers, and developers working alongside dedicated
+                        custom home builders and seasoned track home builders,
+                        ensuring the perfect blend of precision and creativity
+                        to bring your ADU project to life.
                     </p>
                     <StandaloneLink href="/about-us/our-process">
                         View team profiles
@@ -88,10 +88,10 @@ export default function WhyChoose() {
                     <p>
                         Benefit from our streamlined ADU processes—from design
                         and permitting to construction. Homeowners working with
-                        Backyard Estates are experiencing a 2 to 3 times faster
-                        pace, ensuring swift progress while maintaining a
-                        commitment to constructing enduring, quality homes for
-                        generations to come.
+                        Backyard Estates are experiencing move in timelines that
+                        are half that of the industry average, ensuring swift
+                        progress while maintaining a commitment to constructing
+                        enduring, quality homes for generations to come.
                     </p>
                     <StandaloneLink href="/about-us/our-process">
                         View our process
