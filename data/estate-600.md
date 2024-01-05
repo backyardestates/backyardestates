@@ -23,7 +23,7 @@ related:
     - 751-000
 wistiaID:
 floorPlanVideo: floor-plan-video-600-fpo.png
-floorPlanImage: floor-plan-image-600.png
+floorPlanImage: Estate-600-Floor-Plan.png
 floorPlanPDF: Estate-600-Floor-Plan.pdf
 ---
 

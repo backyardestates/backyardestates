@@ -28,7 +28,7 @@ related:
     - 950-000
 wistiaID: 45wmlshtwo
 floorPlanVideo: floor-plan-video-1200-fpo.png
-floorPlanImage: floor-plan-image-1200.png
+floorPlanImage: Estate-1200-Floor-Plan.png
 floorPlanPDF: Estate-1200-Floor-Plan.pdf
 ---
 

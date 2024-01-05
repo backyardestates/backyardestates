@@ -1,17 +1,12 @@
 import { useState } from 'react'
-
 import Image from 'next/image'
 import SectionTitle from '@/components/SectionTitle'
 import StandaloneLink from '@/components/StandaloneLink'
-// import Divider from '@/components/Divider'
 
 import style from './Floorplans.module.css'
-// import Button from '../Button'
 import VideoPlayer from '../VideoPlayer'
 import PropertyInformation from '../PropertyInformation'
-// import ButtonTag from '../ButtonTag'
 import ButtonTags from '../ButtonTags'
-// import ButtonGroup from '../ButtonGroup'
 
 export default function Floorplans({ showNav = false, floorplans }) {
     const [selected, setSelected] = useState(1)
@@ -64,9 +59,8 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             {!showVideo ||
                             selectedFloorplan.frontmatter.wistiaID === null ? (
                                 <Image
-                                    href={`/floor-plans/${selectedFloorplan.slug}`}
-                                    src={`/images/property/${selectedFloorplan.frontmatter.floorPlanImage}`}
-                                    alt="Placeholder"
+                                    src={`/images/floor-plans/${selectedFloorplan.frontmatter.floorPlanImage}`}
+                                    alt={`3D floor plan image of ${selectedFloorplan.frontmatter.title}`}
                                     width={640}
                                     height={360}
                                     className={style.img}

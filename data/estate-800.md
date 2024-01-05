@@ -29,7 +29,7 @@ related:
     - 950-000
 wistiaID: 7a26ybnd1g
 floorPlanVideo: floor-plan-video-800-fpo.png
-floorPlanImage: floor-plan-image-800.png
+floorPlanImage: Estate-800-Floor-Plan.png
 floorPlanPDF: Estate-800-Floor-Plan.pdf
 ---
 
