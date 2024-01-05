@@ -12,7 +12,7 @@
     composes: dropdown;
 
     & .btn {
-        color: var(--color-neutral-500);
+        color: var(--color-neutral-600);
         opacity: var(--link-opacity);
         transition: opacity 300ms ease;
     }
@@ -72,7 +72,7 @@
 .dropdown_menu ul li a {
     white-space: nowrap;
     text-decoration: none;
-    color: var(--color-neutral-500);
+    color: var(--color-neutral-600);
     font-weight: 700;
     opacity: var(--link-opacity);
     transition: opacity 300ms ease;
@@ -80,9 +80,5 @@
 
 .dropdown_menu_hidden ul li a:hover,
 .dropdown_menu ul li a:hover {
-    white-space: nowrap;
-    text-decoration: none;
-    color: var(--color-neutral-500);
-    font-weight: 700;
     opacity: var(--link-opacity-hover);
 }

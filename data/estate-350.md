@@ -28,7 +28,6 @@ related:
     - 751-000
     - 950-000
 wistiaID:
-floorPlanVideo: floor-plan-video-350-fpo.png
 floorPlanImage: Estate-350-Floor-Plan.png
 floorPlanPDF: Estate-350-Floor-Plan.pdf
 ---

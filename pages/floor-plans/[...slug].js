@@ -2,22 +2,25 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
+import Image from 'next/image'
+
+import CustomerStory from '@/components/CustomerStory'
 import Layout from '../../src/layouts/Floorplan'
+import PropertyInformation from '@/components/PropertyInformation'
+import RelatedContent from '@/components/RelatedContent'
 import StandaloneLink from '@/components/StandaloneLink'
 import VideoPlayer from '@/components/VideoPlayer'
-import CustomerStory from '@/components/CustomerStory'
-import PropertyInformation from '@/components/PropertyInformation'
-import Markdown from 'react-markdown'
 
 import style from './FloorPlan.module.css'
-import RelatedContent from '@/components/RelatedContent'
 
-export default function FloorPlan({ floorplan, content, estates }) {
+export default function FloorPlan({ floorplan, estates }) {
     const title = floorplan.title
     const price = floorplan.price
     const wistiaID = floorplan.wistiaID
     const floorPlanPDF = floorplan.floorPlanPDF
     const relatedProperties = floorplan.related
+
+    // console.log(floorplan.floorPlanImage)
 
     const filteredRelatedProperties = estates.filter((e) =>
         relatedProperties.includes(e.frontmatter.id)
@@ -27,12 +30,6 @@ export default function FloorPlan({ floorplan, content, estates }) {
         <Layout pageTitle={title} floorplans={estates}>
             <div className={style.content}>
                 <h1>{title}</h1>
-                <p className={style.intro}>
-                    Explore our modern open floorplan, beautifully designed to
-                    optimize every square footage with high-quality standard
-                    finishes and kitchen appliances, offering a move-in-ready
-                    solution for a contemporary lifestyle.
-                </p>
                 <PropertyInformation floorplan={floorplan} />
                 <div className={style.price}>
                     <h3 className={style.subhead}>all-in-price starts at</h3>
@@ -47,11 +44,28 @@ export default function FloorPlan({ floorplan, content, estates }) {
                         </StandaloneLink>
                     )}
                 </div>
-
-                {wistiaID !== null && <VideoPlayer wistiaID={wistiaID} />}
+                <div className={style.videoAndImage}>
+                    {wistiaID !== null && (
+                        <VideoPlayer
+                            wistiaID={wistiaID}
+                            className={style.video}
+                            style={{ flex: 1 }}
+                        />
+                    )}
+                    {floorplan.floorPlanImage !== null && (
+                        <Image
+                            src={`/images/floor-plans/${floorplan.floorPlanImage}`}
+                            alt={`3D floor plan image of ${floorplan.title}`}
+                            width={640}
+                            height={360}
+                            className={style.image}
+                            style={{ flex: 1 }}
+                            priority
+                        />
+                    )}
+                </div>
             </div>
             <CustomerStory story={floorplan} hideDetails>
-                {/* <Markdown>{content}</Markdown> */}
                 <p>
                     <strong>Every estate includes:</strong>
                 </p>
@@ -105,12 +119,11 @@ export async function getStaticProps({ params: { slug } }) {
         'utf-8'
     )
 
-    const { data: floorplan, content } = matter(markdownWithMeta)
+    const { data: floorplan } = matter(markdownWithMeta)
 
     return {
         props: {
             floorplan,
-            content,
             estates,
         },
     }

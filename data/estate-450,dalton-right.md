@@ -26,8 +26,7 @@ related:
     - 751-000
     - 950-000
 wistiaID: dz1swqyjuh
-floorPlanVideo: floor-plan-video-450-fpo.png
-floorPlanImage: floor-plan-image-450.png
+floorPlanImage:
 floorPlanPDF:
 ---
 

@@ -27,8 +27,7 @@ related:
     - 751-000
     - 950-000
 wistiaID: 6rp2bce6ic
-floorPlanVideo: floor-plan-video-450-fpo.png
-floorPlanImage: 450-dalton-L-01
+floorPlanImage:
 floorPlanPDF:
 ---
 

@@ -26,7 +26,6 @@ related:
     - 751-000
     - 950-000
 wistiaID: ccxlm8bq08
-floorPlanVideo: floor-plan-video-750-fpo.png
 floorPlanImage: Estate-750-Floor-Plan.png
 floorPlanPDF: Estate-750-Floor-Plan.pdf
 ---

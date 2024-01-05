@@ -28,8 +28,7 @@ related:
     - 450-003
     - 450-004
 wistiaID: 2z717cmf0o
-floorPlanVideo: floor-plan-video-450-fpo.png
-floorPlanImage: floor-plan-image-450.png
+floorPlanImage: Estate-450-Floor-Plan.png
 floorPlanPDF:
 ---
 

@@ -30,8 +30,7 @@ related:
     - 1200-000
     - 1200-001
 wistiaID: uxfiowsvvh
-floorPlanVideo: floor-plan-video-950-fpo.png
-floorPlanImage: floor-plan-image-950.png
+floorPlanImage: Estate-950-Floor-Plan.png
 floorPlanPDF:
 ---
 

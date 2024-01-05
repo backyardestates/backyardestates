@@ -12,7 +12,7 @@ dimension:
     - 14
     - 10
 sqft: 600
-img: 'estate600-cover.png'
+img: estate600-cover.png
 price: '255,000'
 images:
     - fpo@2x
@@ -22,7 +22,6 @@ related:
     - 750-000
     - 751-000
 wistiaID:
-floorPlanVideo: floor-plan-video-600-fpo.png
 floorPlanImage: Estate-600-Floor-Plan.png
 floorPlanPDF: Estate-600-Floor-Plan.pdf
 ---

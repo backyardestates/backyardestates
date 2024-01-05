@@ -24,8 +24,7 @@ related:
     - 450-002
     - 450-003
 wistiaID: rm2nrskw9z
-floorPlanVideo: floor-plan-video-450-fpo.png
-floorPlanImage: floor-plan-image-450.png
+floorPlanImage:
 floorPlanPDF:
 ---
 

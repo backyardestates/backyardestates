@@ -29,8 +29,7 @@ related:
     - 751-000
     - 800-000
 wistiaID: yfyt83r48d
-floorPlanVideo: floor-plan-video-750-fpo.png
-floorPlanImage: floor-plan-image-750.png
+floorPlanImage: Estate-750-Floor-Plan.png
 floorPlanPDF:
 ---
 

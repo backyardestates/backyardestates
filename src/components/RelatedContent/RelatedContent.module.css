@@ -15,7 +15,11 @@
     margin: 0;
     padding: 1.5rem;
     overflow-x: scroll;
-    /* border: 3px solid red; */
+}
+
+.properties > * {
+    /* border: 3px solid magenta; */
+    min-width: 75vw;
 }
 
 .properties::-webkit-scrollbar {
@@ -69,9 +73,10 @@
         column-gap: 1.5rem;
         row-gap: 1.5rem;
         grid-template-columns: repeat(4, 1fr);
-        /* margin: 0; */
-        /* padding: 0; */
-        /* overflow-x: auto; */
+    }
+
+    .properties > * {
+        min-width: 0;
     }
 
     .root h2 {

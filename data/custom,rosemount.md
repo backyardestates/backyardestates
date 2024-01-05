@@ -22,7 +22,6 @@ related:
     - 750-001
     - 751-000
 wistiaID: ofv6fdyfib
-floorPlanVideo: floor-plan-video-1200-fpo.png
 floorPlanImage: floor-plan-image-1200.png
 floorPlanPDF:
 ---

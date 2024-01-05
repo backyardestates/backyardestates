@@ -33,14 +33,17 @@
 .content {
     margin: 0;
     padding: 1rem 1.5rem;
+    width: 100%;
 }
 
 .location {
-    margin: 0;
-    padding: 0;
-    color: var(--color-neutral-500);
+    margin: 0 !important;
+    padding: 0 0 0.5rem 0 !important;
+    color: var(--color-neutral-500) !important;
     line-height: 1.5rem;
     font-family: var(--font-sans);
+    /* color: red; */
+    text-align: left !important;
 }
 
 .information {

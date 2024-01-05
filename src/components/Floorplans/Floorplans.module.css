@@ -50,7 +50,7 @@
 }
 
 .columnLeft p {
-    margin: 0 0 1rem 0;
+    margin: 1rem 0 !important;
     padding: 0;
     color: var(--color-neutral-500);
     font-family: var(--font-sans);
@@ -62,6 +62,7 @@
 
 .columnLeft h2 {
     text-align: left;
+    margin: 0 0 1rem 0;
 }
 
 .columnLeft,

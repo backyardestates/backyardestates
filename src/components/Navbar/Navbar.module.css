@@ -21,13 +21,13 @@
     /* background-color: rgba(255, 0, 255, 0.1); */
 
     & .link {
-        opacity: 0.6;
+        opacity: var(--link-opacity);
         color: var(--color-white);
         transition: opacity 300ms ease;
     }
 
     & .link:hover {
-        opacity: 1;
+        opacity: var(--link-opacity-hover);
     }
 }
 
@@ -37,13 +37,13 @@
     box-shadow: 0px 4px 16px 0px rgba(54, 72, 75, 0.25);
 
     & .link {
-        opacity: 0.7;
-        color: var(--color-neutral-500);
+        opacity: var(--link-opacity);
+        color: var(--color-neutral-600);
         transition: opacity 300ms ease;
     }
 
     & .link:hover {
-        opacity: 1;
+        opacity: var(--link-opacity-hover);
         /* color: red; */
     }
 }

@@ -29,7 +29,6 @@ related:
     - 751-000
     - 950-000
 wistiaID: lrtz4sfbnf
-floorPlanVideo: floor-plan-video-950-fpo.png
 floorPlanImage: Estate-950-Floor-Plan.png
 floorPlanPDF: Estate-950-Floor-Plan.pdf
 ---
