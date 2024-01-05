@@ -11,9 +11,9 @@ dimension:
     - 1
     - 1
     - 1
-sqft: 750
+sqft: 749
 img: 750plus-reservoir-01.png
-price: '275,000'
+price: '285,000'
 images:
     - 750plus-reservoir-00.png
     - 750plus-reservoir-01.png
@@ -27,7 +27,7 @@ related:
     - 950-000
     - 1200-000
 wistiaID: 8e9cpnz0nn
-floorPlanImage: floor-plan-image-750plus.png
+floorPlanImage: Estate-750plus-Floor-Plan.png
 floorPlanPDF:
 ---
 

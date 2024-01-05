@@ -32,8 +32,15 @@ export default function FloorPlan({ floorplan, estates }) {
                 <h1>{title}</h1>
                 <PropertyInformation floorplan={floorplan} />
                 <div className={style.price}>
-                    <h3 className={style.subhead}>all-in-price starts at</h3>
-                    <p className={style.price}>{`$${price}`}</p>
+                    {price !== null && (
+                        <h3 className={style.subhead}>
+                            all-in-price starts at
+                        </h3>
+                    )}
+
+                    {price !== null && (
+                        <p className={style.price}>{`$${price}`}</p>
+                    )}
                     {floorPlanPDF !== null && (
                         <StandaloneLink
                             icon="download"
@@ -45,13 +52,6 @@ export default function FloorPlan({ floorplan, estates }) {
                     )}
                 </div>
                 <div className={style.videoAndImage}>
-                    {wistiaID !== null && (
-                        <VideoPlayer
-                            wistiaID={wistiaID}
-                            className={style.video}
-                            style={{ flex: 1 }}
-                        />
-                    )}
                     {floorplan.floorPlanImage !== null && (
                         <Image
                             src={`/images/floor-plans/${floorplan.floorPlanImage}`}
@@ -61,6 +61,13 @@ export default function FloorPlan({ floorplan, estates }) {
                             className={style.image}
                             style={{ flex: 1 }}
                             priority
+                        />
+                    )}
+                    {wistiaID !== null && (
+                        <VideoPlayer
+                            wistiaID={wistiaID}
+                            className={style.video}
+                            style={{ flex: 1 }}
                         />
                     )}
                 </div>

@@ -6,9 +6,9 @@ title: 'Custom Estate'
 city: '?'
 bed: 1
 bath: 1
-sqft: 450
+sqft: 690
 img: custom-ukiah-00.png
-price: '379,000'
+price:
 images:
     - custom-ukiah-00.png
     - custom-ukiah-01.png
@@ -22,7 +22,7 @@ related:
     - 750-001
     - 751-000
 wistiaID:
-floorPlanImage: floor-plan-image-1200.png
+floorPlanImage:
 floorPlanPDF:
 ---
 

@@ -6,9 +6,9 @@ title: 'Custom Estate'
 city: '?'
 bed: 2
 bath: 1
-sqft: 450
+sqft: 684
 img: custom-rosemount-00.png
-price: '379,000'
+price:
 images:
     - custom-rosemount-00.png
     - custom-rosemount-01.png
@@ -22,7 +22,7 @@ related:
     - 750-001
     - 751-000
 wistiaID: ofv6fdyfib
-floorPlanImage: floor-plan-image-1200.png
+floorPlanImage:
 floorPlanPDF:
 ---
 
