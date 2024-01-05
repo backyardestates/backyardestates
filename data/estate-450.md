@@ -11,7 +11,7 @@ dimension:
     - 6
     - 13
     - 1
-sqft: 450
+sqft: 464
 img: estate450-cover.jpg
 price: '199,000'
 images:

@@ -7,13 +7,13 @@ city: '?'
 bed: 2
 bath: 1
 dimension:
-    - 1
-    - 1
-    - 1
-    - 1
-sqft: 750
+    - 32
+    - 0
+    - 25
+    - 4
+sqft: 749
 img: 750-coolcrest-04.png
-price: '285,000'
+price: '275,000'
 images:
     - 750-coolcrest-00.png
     - 750-coolcrest-01.png

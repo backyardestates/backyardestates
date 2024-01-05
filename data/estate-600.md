@@ -7,13 +7,13 @@ city: 'Chino'
 bed: 2
 bath: 1
 dimension:
-    - 1
-    - 1
-    - 1
-    - 1
+    - 41
+    - 8
+    - 14
+    - 10
 sqft: 600
 img: 'estate600-cover.png'
-price: '219,000'
+price: '255,000'
 images:
     - fpo@2x
 related:

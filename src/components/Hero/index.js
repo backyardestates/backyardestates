@@ -82,7 +82,7 @@ export default function Hero() {
                     Backyard Estates - Premier Accessory Dwelling Unit (ADU)
                     builder for the greater Los Angeles area.
                 </p>
-                <Button href="/talk-to-an-adu-specialist">
+                <Button href="/talk-to-an-adu-specialist" isPrimary={false}>
                     Talk to an ADU specialist
                 </Button>
             </div>

@@ -37,17 +37,16 @@ export default function FloorPlan({ floorplan, content, estates }) {
                 <div className={style.price}>
                     <h3 className={style.subhead}>all-in-price starts at</h3>
                     <p className={style.price}>{`$${price}`}</p>
+                    {floorPlanPDF !== null && (
+                        <StandaloneLink
+                            icon="download"
+                            href={`/pdf/${floorPlanPDF}`}
+                            download
+                        >
+                            Download floor plan
+                        </StandaloneLink>
+                    )}
                 </div>
-
-                {floorPlanPDF !== null && (
-                    <StandaloneLink
-                        icon="download"
-                        href={`/pdf/${floorPlanPDF}`}
-                        download
-                    >
-                        Download floor plan
-                    </StandaloneLink>
-                )}
 
                 {wistiaID !== null && <VideoPlayer wistiaID={wistiaID} />}
             </div>

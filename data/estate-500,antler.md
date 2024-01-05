@@ -11,7 +11,7 @@ dimension:
     - 1
     - 1
     - 1
-sqft: 500
+sqft: 507
 img: 500-antler-03.png
 price: '219,000'
 images:

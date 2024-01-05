@@ -11,9 +11,9 @@ dimension:
     - 8
     - 18
     - 5
-sqft: 750
+sqft: 749
 img: 'estate750plus-cover.jpg'
-price: '275,000'
+price: '285,000'
 images:
     - 750plus-reservoir-00.png
     - 750plus-reservoir-01.png

@@ -13,42 +13,34 @@ export default function FloorPlans({ estates }) {
     const [selected, setSelected] = useState(99)
 
     // filter properties for floor plans
-    const filteredProperties = estates.filter(
-        (property) => property.frontmatter.isFloorplan
-    )
+    // const filteredProperties = estates.filter(
+    //     (property) => property.frontmatter.isFloorplan
+    // )
 
-    filteredProperties.sort((a, b) => {
-        const nameA = a.frontmatter.order
-        const nameB = b.frontmatter.order
-        if (nameA < nameB) {
-            return -1
-        }
-        if (nameA > nameB) {
-            return 1
-        }
-        return 0
-    })
+    const bedroomCounts = ['Studio', '1 bedroom', '2 bedrooms', '3 bedrooms']
+
+    // filteredProperties.sort((a, b) => {
+    //     const nameA = a.frontmatter.order
+    //     const nameB = b.frontmatter.order
+    //     if (nameA < nameB) {
+    //         return -1
+    //     }
+    //     if (nameA > nameB) {
+    //         return 1
+    //     }
+    //     return 0
+    // })
 
     var selectedProperties = estates.filter((estate) => {
         switch (selected) {
             case 0:
-                return estate.frontmatter.order === 'A'
+                return estate.frontmatter.bed === 'Studio'
             case 1:
-                return estate.frontmatter.order === 'B'
+                return estate.frontmatter.bed === 1
             case 2:
-                return estate.frontmatter.order === 'C'
+                return estate.frontmatter.bed === 2
             case 3:
-                return estate.frontmatter.order === 'D'
-            case 4:
-                return estate.frontmatter.order === 'E'
-            case 5:
-                return estate.frontmatter.order === 'F'
-            case 6:
-                return estate.frontmatter.order === 'G'
-            case 7:
-                return estate.frontmatter.order === 'H'
-            case 8:
-                return estate.frontmatter.order === 'I'
+                return estate.frontmatter.bed === 3
             default:
                 return estates
         }
@@ -75,7 +67,7 @@ export default function FloorPlans({ estates }) {
         >
             <div className={style.content}>
                 <ButtonTags
-                    tags={filteredProperties}
+                    tags={bedroomCounts}
                     selectedID={selected}
                     setSelected={setSelected}
                     showAll={true}

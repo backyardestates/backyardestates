@@ -11,7 +11,7 @@ dimension:
     - 0
     - 23
     - 8
-sqft: 950
+sqft: 947
 img: 'estate950-cover.jpg'
 price: '329,000'
 images:

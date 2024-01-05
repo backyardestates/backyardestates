@@ -244,22 +244,20 @@ export default function LeadForm({ data }) {
                             />
                         </button>
                         <p className={style.legal_print}>
-                            <mark>
-                                By clicking &ldquo;Submit,&rdquo; I give my
-                                electronic signature and consent that Backyard
-                                Estates may contact me with offers at the phone
-                                number above, including by text message,
-                                autodialer or prerecorded message. Consent not
-                                required for purchase. Message & data rates may
-                                apply. Promotion is subject to local service
-                                pricing, and may not apply to some services. I
-                                have read and understand the{' '}
-                                <Link href="/legal/privacy-policy">
-                                    Privacy Policy
-                                </Link>{' '}
-                                and agree to recieve commerical communication
-                                from Backyard Estates via email (optional)
-                            </mark>
+                            By clicking &ldquo;Submit,&rdquo; you are granting
+                            consent to receive promotional emails and text
+                            messages from Backyard Estates. These communications
+                            aim to keep you informed about updates, special
+                            offers, and pertinent information regarding our ADU
+                            construction services. Additionally, your consent
+                            indicates that you have read and understood our{' '}
+                            <Link href="/legal/privacy-policy">
+                                Privacy Policy
+                            </Link>
+                            . You may choose to unsubscribe from our promotional
+                            emails and texts by using the opt-out link provided
+                            in our communications. Thank you for considering
+                            Backyard Estates for your ADU needs.
                         </p>
                     </form>
                 </div>

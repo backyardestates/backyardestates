@@ -24,7 +24,7 @@ export default function ButtonTags({
                     <li key={index}>
                         <ButtonTag
                             id={index}
-                            label={tag.frontmatter.title}
+                            label={tag}
                             setSelected={setSelected}
                             selectedID={selectedID}
                         />

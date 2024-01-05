@@ -7,10 +7,10 @@ city: ''
 bed: 3
 bath: 2
 dimension:
-    - 1
-    - 1
-    - 1
-    - 1
+    - 48
+    - 0
+    - 25
+    - 0
 sqft: 1200
 img: custom-crestview-03.png
 price: '379,000'
