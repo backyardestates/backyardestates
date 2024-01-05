@@ -1,7 +1,7 @@
 import ButtonTag from '@/components/ButtonTag'
 import style from './ButtonTags.module.css'
 
-export default function ButtonTags({
+export default function FilterTags({
     tags,
     selectedID,
     setSelected,
@@ -24,7 +24,7 @@ export default function ButtonTags({
                     <li key={index}>
                         <ButtonTag
                             id={index}
-                            label={tag.frontmatter.title}
+                            label={tag}
                             setSelected={setSelected}
                             selectedID={selectedID}
                         />

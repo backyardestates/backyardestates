@@ -7,7 +7,7 @@ import style from './FloorPlans.module.css'
 import Card from '@/components/Card'
 
 import { useState } from 'react'
-import ButtonTags from '@/components/ButtonTags'
+import ButtonTags from '@/components/FilterTags'
 
 export default function FloorPlans({ estates }) {
     const [selected, setSelected] = useState(99)
