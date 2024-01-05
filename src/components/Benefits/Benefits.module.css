@@ -1,7 +1,8 @@
 .root {
     margin: 0;
     padding: 6rem 0;
-    background-color: #f0f9fc;
+    /* background-color: #f0f9fc; */
+    background-color: var(--color-neutral-50);
     width: 100%;
     overflow: hidden;
 }

@@ -9,7 +9,8 @@
     /* font-style: normal; */
     width: 100%;
     line-height: 1.25em;
-    background-color: #f0f9fc;
+    /* background-color: #f0f9fc; */
+    background-color: var(--color-neutral-50);
 }
 
 .content_hide {

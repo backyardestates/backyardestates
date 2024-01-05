@@ -8,7 +8,8 @@
         display: block;
         margin: 0;
         padding: 0 0 6rem 0;
-        background-color: rgba(24, 194, 223, 0.08);
+        /* background-color: rgba(24, 194, 223, 0.08); */
+        background-color: var(--color-neutral-50);
         width: 100%;
         overflow: hidden;
     }
