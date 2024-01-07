@@ -42,7 +42,7 @@ export default function CustomerStoryLayout({
 }) {
     const [showMenu, setShowMenu] = useState(false)
     function toggleMenu() {
-        document.body.scrollTop = 0
+        // document.body.scrollTop = 0
         if (!showMenu) {
             document.body.style.overflow = 'hidden'
         } else {
@@ -54,7 +54,7 @@ export default function CustomerStoryLayout({
     // console.log(bodyRef)
 
     useEffect(() => {
-        document.body.scrollTop = 0
+        // document.body.scrollTop = 0
         // console.log(`overflow: ${document.body.style.overflow}`)
         // console.log(`showMenu: ${showMenu}`)
         if (showMenu) {
@@ -77,7 +77,11 @@ export default function CustomerStoryLayout({
                 <link rel="icon" href="/favicon.ico" sizes="any" />
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-                <link rel="manifest" href="/site.webmanifest" />
+                <link
+                    rel="manifest"
+                    href="/site.webmanifest"
+                    crossOrigin="use-credentials"
+                />
                 <meta name="theme-color" content="#4a4a4a" />
             </Head>
 

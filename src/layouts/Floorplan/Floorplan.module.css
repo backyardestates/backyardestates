@@ -4,7 +4,7 @@
     row-gap: 6rem;
     grid-template-columns: repeat(12, 1fr);
     margin: 0;
-    padding: 10rem 0 6rem 0;
+    padding: 8rem 0 3rem 0;
     z-index: 1;
     /* border: 5px solid red; */
 }
@@ -14,7 +14,7 @@
     column-gap: 2rem;
     row-gap: 6rem;
     grid-template-columns: repeat(12, 1fr);
-    margin: 0 0 6rem 0;
+    margin: 0 0 3rem 0;
     padding: 0;
     z-index: 1;
     /* border: 5px solid red; */
@@ -24,5 +24,9 @@
     .root {
         margin: 0 auto;
         width: 1440px;
+    }
+
+    .catchall {
+        margin: 0 0 6rem 0;
     }
 }

@@ -22,10 +22,11 @@
     right: calc(-1.5rem - 2px);
 }
 
-.img {
+.image {
     width: 100%;
     height: auto;
-    aspect-ratio: 16/9;
+    aspect-ratio: 16 / 9;
+    /* border: 5px solid pink; */
 }
 
 .content {

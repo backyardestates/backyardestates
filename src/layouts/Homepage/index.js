@@ -37,7 +37,7 @@ export default function Homepage({ children, floorplans }) {
     const [showMenu, setShowMenu] = useState(false)
 
     function toggleMenu() {
-        document.body.scrollTop = 0
+        // document.body.scrollTop = 0
         if (!showMenu) {
             document.body.style.overflow = 'hidden'
         } else {
@@ -63,7 +63,11 @@ export default function Homepage({ children, floorplans }) {
                 <link rel="icon" href="/favicon.ico" sizes="any" />
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-                <link rel="manifest" href="/site.webmanifest" />
+                <link
+                    rel="manifest"
+                    href="/site.webmanifest"
+                    crossOrigin="use-credentials"
+                />
                 <meta name="theme-color" content="#4a4a4a" />
             </Head>
             {/* <Inspector inView={inView} showMenu={showMenu} /> */}

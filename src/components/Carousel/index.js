@@ -82,8 +82,8 @@ export default function Carousel(images) {
                             src={`/images/property/${image}`}
                             alt={`Image of ADU`}
                             width={320}
-                            height={90}
-                            className={style.img}
+                            height={180}
+                            className={style.image}
                         />
                     ))}
                 </div>
