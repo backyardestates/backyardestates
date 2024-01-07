@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import style from './CustomerStoryLayout.module.css'
 
@@ -42,8 +42,27 @@ export default function CustomerStoryLayout({
 }) {
     const [showMenu, setShowMenu] = useState(false)
     function toggleMenu() {
+        document.body.scrollTop = 0
+        if (!showMenu) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
         setShowMenu(!showMenu)
     }
+
+    // console.log(bodyRef)
+
+    useEffect(() => {
+        document.body.scrollTop = 0
+        // console.log(`overflow: ${document.body.style.overflow}`)
+        // console.log(`showMenu: ${showMenu}`)
+        if (showMenu) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+    })
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
             <Script
@@ -64,16 +83,11 @@ export default function CustomerStoryLayout({
 
             <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
             <Navbar toggleMenu={toggleMenu} />
-
             <main className={style.root}>{children}</main>
-
-            {/* <RelatedContent /> */}
             <div className={style.catchall}>
                 <Catchall />
             </div>
-
             <Footer floorplans={floorplans} />
-            {/* <SpeedInsights /> */}
         </div>
     )
 }

@@ -2,11 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-import Head from 'next/head'
-import Layout from '../../src/layouts/Page'
-// import StandaloneLink from '@/components/StandaloneLink'
-import style from './Pricing.module.css'
-import Pill from '@/components/Pill'
 import Link from 'next/link'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,8 +11,13 @@ import {
     faVialCircleCheck,
     faRulerCombined,
 } from '@fortawesome/pro-light-svg-icons'
+
+import Layout from '../../src/layouts/Page'
+import Pill from '@/components/Pill'
 import CallToAction from '@/components/CallToAction'
 import StandaloneLink from '@/components/StandaloneLink'
+
+import style from './Pricing.module.css'
 
 export default function Pricing({ estates }) {
     // filter properties for floor plans

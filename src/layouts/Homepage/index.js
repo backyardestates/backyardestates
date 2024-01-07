@@ -12,6 +12,7 @@ import { Roboto, Roboto_Slab } from 'next/font/google'
 import Head from 'next/head'
 
 import style from './Homepage.module.css'
+import Inspector from '@/components/Inspector'
 
 const roboto = Roboto({
     variable: '--font-sans',
@@ -36,6 +37,7 @@ export default function Homepage({ children, floorplans }) {
     const [showMenu, setShowMenu] = useState(false)
 
     function toggleMenu() {
+        document.body.scrollTop = 0
         if (!showMenu) {
             document.body.style.overflow = 'hidden'
         } else {
@@ -64,6 +66,7 @@ export default function Homepage({ children, floorplans }) {
                 <link rel="manifest" href="/site.webmanifest" />
                 <meta name="theme-color" content="#4a4a4a" />
             </Head>
+            {/* <Inspector inView={inView} showMenu={showMenu} /> */}
             <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
             <Navbar
                 toggleMenu={toggleMenu}

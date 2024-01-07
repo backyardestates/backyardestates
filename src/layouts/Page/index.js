@@ -1,15 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Roboto, Roboto_Slab } from 'next/font/google'
-import style from './Page.module.css'
-import Masthead from '@/components/Masthead'
 
 import Script from 'next/script'
-
-import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
+
+import style from './Page.module.css'
+import Masthead from '@/components/Masthead'
 
 const roboto = Roboto({
     variable: '--font-sans',
@@ -34,6 +33,7 @@ import Footer from '../../components/Footer'
 import Catchall from '@/components/Catchall'
 import Menu from '@/components/Menu'
 import Head from 'next/head'
+import Inspector from '@/components/Inspector'
 
 export default function Page({
     title,
@@ -43,9 +43,24 @@ export default function Page({
     floorplans,
 }) {
     const [showMenu, setShowMenu] = useState(false)
+
     function toggleMenu() {
+        if (!showMenu) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
         setShowMenu(!showMenu)
     }
+
+    useEffect(() => {
+        if (showMenu) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'auto'
+        }
+    })
+
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
             <Script
@@ -64,6 +79,7 @@ export default function Page({
                 <link rel="manifest" href="/site.webmanifest" />
                 <meta name="theme-color" content="#4a4a4a" />
             </Head>
+            {/* <Inspector showMenu={showMenu} /> */}
             <Menu showMenu={showMenu} toggleMenu={toggleMenu} />
             <Navbar toggleMenu={toggleMenu} />
             <Masthead title={title} explanation={explanation} />
@@ -71,8 +87,6 @@ export default function Page({
                 {children}
                 <Catchall />
             </main>
-            {/* <SpeedInsights /> */}
-
             <Footer floorplans={floorplans} />
         </div>
     )
