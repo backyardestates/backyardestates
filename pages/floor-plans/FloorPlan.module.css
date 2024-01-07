@@ -88,6 +88,9 @@
     gap: 1.5rem;
     margin: 0;
     padding: 0 1.5rem;
+    min-width: 100vw;
+    /* min-height: 500px !important; */
+    /* border: 4px solid magenta !important; */
 }
 
 .image {
@@ -98,7 +101,7 @@
 /* fixed */
 @media only screen and (min-width: 1400px) {
     .videoAndImage {
-        display: flex;
+        /* display: flex; */
         flex-direction: row;
         gap: 2rem;
         /* width: 100%; */

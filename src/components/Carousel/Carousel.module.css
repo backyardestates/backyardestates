@@ -30,11 +30,11 @@
 
 .content {
     display: flex;
-    /* justify-content: flex-end; */
     gap: 4rem;
     flex: 1;
     margin: 0;
     padding: 1rem 0.75rem 0.75rem 0.75rem;
+    /* border: 1px solid pink; */
 }
 
 .content p {
@@ -45,6 +45,12 @@
     font-weight: 400;
     line-height: 1rem;
     /* border: 1px solid pink; */
+}
+
+.content p:last-child {
+    margin-left: auto;
+    text-wrap: nowrap;
+    /* border: 3px solid pink; */
 }
 
 .content p strong {

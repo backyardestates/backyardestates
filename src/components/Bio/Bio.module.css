@@ -6,8 +6,12 @@
 }
 
 .image {
+    max-width: 50%;
+    height: auto;
     border-radius: var(--radius);
     margin-bottom: 2rem;
+    aspect-ratio: 1 / 1.17;
+    /* border: 5px solid red; */
 }
 
 .content {
@@ -55,10 +59,12 @@
     }
 
     .image {
-        border-radius: 1rem;
-    }
-
-    .content {
+        max-width: 300px;
+        max-height: 350px;
+        border-radius: var(--radius);
+        margin-bottom: 2rem;
+        aspect-ratio: 1 / 1.17;
+        /* border: 5px solid red; */
     }
 
     .display2 {
