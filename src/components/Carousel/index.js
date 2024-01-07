@@ -12,7 +12,7 @@ export default function Carousel(images) {
 
     const [buttonLeftVisible, setButtonLeftVisible] = useState(false)
     const [buttonRightVisible, setButtonRightVisible] = useState(true)
-    const img = useRef()
+    const slidesRef = useRef()
 
     function moveLeft() {
         const temp = position - 1
@@ -25,7 +25,6 @@ export default function Carousel(images) {
     }
 
     useEffect(() => {
-        // console.log(`The current position is ${position}`)
         switch (position) {
             case 1:
                 setButtonLeftVisible(false)
@@ -41,25 +40,18 @@ export default function Carousel(images) {
         }
 
         // console.log(img.current.offsetWidth)
-        // console.log(img.current.getBoundingClientRect().width)
-        const imageWidth = img.current.getBoundingClientRect().width
+        const imageWidth = slidesRef.current.getBoundingClientRect().width
+        // console.log(`Using getBoundingClientRect().width: ${imageWidth}`)
+        // console.log(`Using offsetWidth: ${slidesRef.current.offsetWidth}`)
+        // console.log(`Using scrollWidth: ${slidesRef.current.scrollWidth}`)
+        // console.log(`Using clientWidth: ${slidesRef.current.clientWidth}`)
         let xPos = imageWidth * -1 * (position - 1)
-        gsap.to(img.current, {
+        gsap.to(slidesRef.current, {
             x: xPos,
             duration: 0.5,
             ease: 'power2.out',
         })
     }, [position, images.images.length])
-
-    // useGSAP(() => {
-    //     console.log('Bang')
-    //     let xPos = -320 * (position - 1)
-    //     gsap.to(img.current, {
-    //         x: xPos,
-    //         duration: 0.5,
-    //         // ease: 'power2.out',
-    //     })
-    // })
 
     return (
         <div className={style.base}>
@@ -74,15 +66,14 @@ export default function Carousel(images) {
                 </div>
             )}
             <div className={style.slideViewer}>
-                <div ref={img} className={style.slides}>
+                <div ref={slidesRef} className={style.slides}>
                     {images.images.map((image, index) => (
-                        // console.log(image)
                         <Image
                             key={index}
                             src={`/images/property/${image}`}
                             alt={`Image of ADU`}
-                            width={320}
-                            height={180}
+                            width={640}
+                            height={360}
                             className={style.image}
                         />
                     ))}

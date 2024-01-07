@@ -22,13 +22,6 @@
     right: calc(-1.5rem - 2px);
 }
 
-.image {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    /* border: 5px solid pink; */
-}
-
 .content {
     display: flex;
     gap: 4rem;
@@ -70,21 +63,23 @@
 }
 
 .slideViewer {
-    /* display: flex; */
     width: 100%;
     overflow: hidden;
     height: auto;
     aspect-ratio: 16 / 9;
-    /* border: 3px solid red; */
-
     border-radius: 0.25rem;
+    /* border: 4px solid purple; */
 }
 
 .slides {
     display: flex;
+    height: 100%;
+    /* border: 4px solid blue; */
+}
+
+.image {
     width: 100%;
-    /* overflow: hidden; */
     height: auto;
     aspect-ratio: 16 / 9;
-    /* border: 3px solid blue; */
+    /* border: 2px solid magenta; */
 }
