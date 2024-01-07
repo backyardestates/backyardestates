@@ -2,10 +2,6 @@ import { useState, useRef } from 'react'
 import BenefitTag from '../BenefitTag'
 import style from './Benefit.module.css'
 
-// import { gsap } from 'gsap'
-// import { Flip } from 'gsap/Flip'
-// gsap.registerPlugin(Flip)
-
 export default function Benefit({
     position,
     type = 'Process',

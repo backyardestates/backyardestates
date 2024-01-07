@@ -8,7 +8,6 @@
         display: block;
         margin: 0;
         padding: 0 0 6rem 0;
-        /* background-color: rgba(24, 194, 223, 0.08); */
         background-color: var(--color-neutral-50);
         width: 100%;
         overflow: hidden;
@@ -78,24 +77,16 @@
         padding: 0rem 1.25rem 0.125rem 1.25rem;
         height: 2rem;
         border: 2px solid var(--color-brand-light-blue);
-        background-color: var(--color-white);
-
+        background-color: var(--color-neutral-50);
         border-radius: 2rem;
         font-family: var(--font-sans);
-        /* position: relative; */
-
-        /* color: var(--color-neutral-500, #787878); */
-        /* text-align: center; */
-        /* leading-trim: both; */
         text-edge: cap;
-        /* font-family: var(--font-sans); */
         font-size: 1rem;
         font-style: normal;
         font-weight: 600;
         line-height: 1rem;
         font-variant: all-small-caps;
         letter-spacing: 0.1rem;
-
         color: var(--color-brand-light-blue);
     }
 

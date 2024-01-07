@@ -2,9 +2,9 @@ import Benefit from '../Benefit'
 import StandaloneLink from '../StandaloneLink'
 import style from './Benefits.module.css'
 
-export default function WhyChoose() {
+export default function Benefits() {
     return (
-        <div className={style.root}>
+        <div className={style.base}>
             <div className={style.content}>
                 <h2 className={style.subhead}>Why choose Backyard Estates?</h2>
                 <p className={style.intro}>

@@ -1,15 +1,13 @@
 .base {
     display: inline-block;
-    margin: 0 0 1.5rem 0;
+    margin: 0;
     padding: 0rem 1rem 2rem 2rem;
     border: 2px solid var(--color-brand-light-blue);
     border-radius: 0.75rem;
     color: var(--color-brand-light-blue);
     font-family: var(--font-sans);
-    /* font-style: normal; */
     width: 100%;
     line-height: 1.25em;
-    /* background-color: #f0f9fc; */
     background-color: var(--color-neutral-50);
 }
 
@@ -39,6 +37,14 @@
     font-weight: 300;
     line-height: 1.5em;
     margin-bottom: 1rem;
+}
+
+.b0_selected,
+.b1_selected,
+.b2_selected,
+.b3_selected,
+.b4_selected {
+    background-color: var(--color-white);
 }
 
 /* fixed */
@@ -73,7 +79,6 @@
         font-weight: 300;
         line-height: 1.5em;
         margin-bottom: 1rem;
-        /* border: 3px solid green; */
     }
 
     .prominent p {
@@ -81,7 +86,6 @@
         font-weight: 300;
         line-height: 1.5em;
         margin-bottom: 1rem;
-        /* border: 3px solid green; */
     }
 
     .b0 {
