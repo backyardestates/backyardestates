@@ -24,9 +24,9 @@
 .milestone {
     margin: 1rem 0;
     padding: 2rem 1.5rem;
-    border: 1px solid rgba(24, 194, 223, 0.15);
+    border: 1px solid var(--color-neutral-50);
     border-radius: 1rem;
-    background-color: rgba(24, 194, 223, 0.05);
+    background-color: var(--color-neutral-0);
     width: 100%;
 }
 
@@ -40,13 +40,14 @@
 }
 
 .milestone p {
-    margin: 0;
+    margin: 0 0 0.5rem 0;
     padding: 0;
     font-family: var(--font-sans);
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.25rem;
     color: var(--color-brand-light-blue);
+    /* color: red; */
 }
 
 .icon {
@@ -89,9 +90,9 @@
     .milestone {
         margin: 1rem 0;
         padding: 2rem 1.5rem;
-        border: 1px solid rgba(24, 194, 223, 0.15);
+        /* border: 1px solid rgba(24, 194, 223, 0.15); */
         border-radius: 1rem;
-        background-color: rgba(24, 194, 223, 0.05);
+        /* background-color: rgba(24, 194, 223, 0.05); */
         width: 35rem;
     }
 
@@ -105,13 +106,13 @@
     }
 
     .milestone p {
-        margin: 0;
+        /* margin: 0; */
         padding: 0;
         font-family: var(--font-sans);
         font-size: 0.875rem;
         font-weight: 400;
         line-height: 1.25rem;
-        color: var(--color-brand-light-blue);
+        /* color: var(--color-brand-light-blue); */
     }
 
     .icon {

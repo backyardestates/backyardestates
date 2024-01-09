@@ -6,6 +6,7 @@
     text-decoration: none;
     height: 3rem;
     font-family: var(--font-sans);
+    color: red;
 }
 
 .base_show {
@@ -27,17 +28,24 @@
     display: block;
 }
 
-.light {
+.light,
+.light:hover,
+.light:active,
+.light:visited {
     & .logo {
         fill: var(--color-brand-light-blue);
     }
 
     & .logotype {
         color: var(--color-brand-dark-blue);
+        /* color: red; */
     }
 }
 
-.dark {
+.dark,
+.dark:hover,
+.dark:active,
+.dark:visited {
     & .logo {
         fill: var(--color-white);
     }

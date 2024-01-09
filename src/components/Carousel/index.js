@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
+
 import Image from 'next/image'
-import style from './Carousel.module.css'
+
+import gsap from 'gsap'
+
 import ArrowButton from '@/components/ArrowButton'
 
-// import { gsap } from 'gsap'
-import gsap from 'gsap'
-import { useGSAP } from '@gsap/react'
+import style from './Carousel.module.css'
 
 export default function Carousel(images) {
     const [position, setPosition] = useState(1)
-
     const [buttonLeftVisible, setButtonLeftVisible] = useState(false)
     const [buttonRightVisible, setButtonRightVisible] = useState(true)
     const slidesRef = useRef()
@@ -39,12 +39,7 @@ export default function Carousel(images) {
                 setButtonRightVisible(true)
         }
 
-        // console.log(img.current.offsetWidth)
         const imageWidth = slidesRef.current.getBoundingClientRect().width
-        // console.log(`Using getBoundingClientRect().width: ${imageWidth}`)
-        // console.log(`Using offsetWidth: ${slidesRef.current.offsetWidth}`)
-        // console.log(`Using scrollWidth: ${slidesRef.current.scrollWidth}`)
-        // console.log(`Using clientWidth: ${slidesRef.current.clientWidth}`)
         let xPos = imageWidth * -1 * (position - 1)
         gsap.to(slidesRef.current, {
             x: xPos,

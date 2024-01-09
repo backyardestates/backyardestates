@@ -1,6 +1,7 @@
 ---
 id: '450-000'
 isFloorplan: true
+isClickable: true
 order: 'B'
 title: 'Estate 450'
 city: 'Rancho Cucamonga'
@@ -11,9 +12,9 @@ dimension:
     - 6
     - 13
     - 1
-sqft: 400
+sqft: 464
 img: estate450-cover.jpg
-price: '199,000'
+price: '218,000'
 images:
     - 450-generic-01.jpg
     - 450-generic-02.jpg

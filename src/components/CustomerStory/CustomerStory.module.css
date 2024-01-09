@@ -10,12 +10,12 @@
     margin: 3rem 0 0 0;
 }
 
-.markdown blockquote {
+.columnLeft blockquote {
     margin: 0;
     padding: 0;
 }
 
-.markdown blockquote p {
+.columnLeft blockquote p {
     /* display: inline-block; */
     margin-bottom: 1rem;
     color: var(--color-neutral-500);

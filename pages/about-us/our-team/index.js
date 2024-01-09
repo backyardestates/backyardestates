@@ -45,12 +45,15 @@ export default function OurTeam({ estates }) {
                 where he studied construction and electrical work. Tom has
                 worked in various roles throughout his career, including as an
                 electrician and estimator at Cal-Crest Electric, where he
-                started his career. He later worked as a Vice President and
-                Board Member in estimating and sales at Walton Electric
-                Corporation. He also founded Tom W. Gibson, Inc., where he
-                oversaw general and electrical construction projects.
-                Tom&rsquo;s expertise in the construction field makes him a key
-                component to all of Backyard Estate&rsquo;s projects.
+                started his career. Later, Tom led Walton Construction Inc. as
+                it&rsquo;s President, a family owned general contracting company
+                that specializes in mixed-use Multi-Family and Senior Housing
+                developments, collaborating with non-profit clients on new and
+                rehabilitation projects for family, senior and special needs
+                residents. He also founded Tom W. Gibson, Inc., where he oversaw
+                general and electrical construction projects. Tom&rsquo;s
+                expertise in the construction field makes him a key component to
+                all of Backyard Estate&rsquo;s projects.
             </Bio>
             <Bio
                 portrait="serge-mayer.png"
@@ -65,7 +68,7 @@ export default function OurTeam({ estates }) {
                 Poly Pomona, where he ranked among the top of his class, Magna
                 Cum Laude. Serge honed his skills under the tutelage of Steven
                 Phillips Architect of Laguna Hills, working on some of the most
-                extravagant private homes in southern California. Serge is
+                extravagant private homes in Southern California. Serge is
                 well-versed in various architectural styles, but his true
                 passion lies in designing Craftsman-style homes. His extensive
                 civil engineering and surveying experience make him particularly

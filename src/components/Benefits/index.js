@@ -41,7 +41,7 @@ export default function Benefits() {
                         minimal maintenace costs. This results in a stunning
                         home, perfect for your family or future tenants.
                     </p>
-                    <StandaloneLink href="/about-us/our-process">
+                    <StandaloneLink href="/floor-plans">
                         View floor plans
                     </StandaloneLink>
                 </Benefit>
@@ -59,7 +59,7 @@ export default function Benefits() {
                         of utility connections up to 50 feet of dirt, ensuring a
                         seamless and hassle-free experience.
                     </p>
-                    <StandaloneLink href="/about-us/our-process">
+                    <StandaloneLink href="/pricing">
                         View pricing
                     </StandaloneLink>
                 </Benefit>
@@ -75,7 +75,7 @@ export default function Benefits() {
                         ensuring the perfect blend of precision and creativity
                         to bring your ADU project to life.
                     </p>
-                    <StandaloneLink href="/about-us/our-process">
+                    <StandaloneLink href="/about-us/our-team">
                         View team profiles
                     </StandaloneLink>
                 </Benefit>
@@ -89,7 +89,7 @@ export default function Benefits() {
                         Benefit from our streamlined ADU processes—from design
                         and permitting to construction. Homeowners working with
                         Backyard Estates are experiencing move in timelines that
-                        are half that of the industry average, ensuring swift
+                        are half that of the industry average. We ensure swift
                         progress while maintaining a commitment to constructing
                         enduring, quality homes for generations to come.
                     </p>

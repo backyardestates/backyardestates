@@ -53,6 +53,7 @@
 
 .content p,
 .content ul {
+    margin: 0 0 1rem 0;
     color: var(--color-neutral-500);
     font-family: var(--font-sans);
     font-size: 1rem;

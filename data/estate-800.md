@@ -1,6 +1,7 @@
 ---
 id: '800-000'
 isFloorplan: true
+isClickable: true
 order: 'G'
 title: 'Estate 800'
 city: 'Chino'

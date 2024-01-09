@@ -1,6 +1,7 @@
 ---
 id: '600-000'
 isFloorplan: true
+isClickable: true
 order: 'D'
 title: 'Estate 600'
 city: 'Chino'

@@ -2,7 +2,7 @@
 id: '450-003'
 isFloorplan: false
 order: 'B'
-title: 'Estate 450'
+title: 'Estate 400'
 city: 'Rancho Cucamonga'
 bed: 1
 bath: 1
@@ -11,7 +11,7 @@ dimension:
     - 1
     - 1
     - 1
-sqft: 464
+sqft: 400
 img: 450-nocta-L-01.png
 price: '199,000'
 images:

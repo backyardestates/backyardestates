@@ -73,9 +73,7 @@ export default function FloorPlan({ floorplan, estates }) {
                 </div>
             </div>
             <CustomerStory story={floorplan} hideDetails>
-                <p>
-                    <strong>Every estate includes:</strong>
-                </p>
+                <h2 style={{ textAlign: 'left' }}>Every estate includes:</h2>
                 <ul>
                     <li>Luxury vinyl planking</li>
                     <li>Name brand stainless-steel kitchen appliances</li>

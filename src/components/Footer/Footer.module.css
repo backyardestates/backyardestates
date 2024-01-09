@@ -99,6 +99,10 @@
     padding: 0 0 0.5rem 0;
 }
 
+.linkColumn:first-child ul li:first-child {
+    opacity: 0.3;
+}
+
 .root ul li a {
     text-decoration: none;
     color: white;

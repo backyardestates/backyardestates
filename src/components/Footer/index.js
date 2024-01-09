@@ -24,13 +24,17 @@ export default function Footer({ floorplans }) {
         (property) => property.frontmatter.isFloorplan
     )
 
-    const floorplanLinks = filteredFloorplans.map((floorplan, index) => (
-        <li key={index}>
-            <Link href={`/floor-plans/${floorplan.slug}`}>
-                {floorplan.frontmatter.title}
-            </Link>
-        </li>
-    ))
+    const floorplanLinks = filteredFloorplans.map((floorplan, index) =>
+        floorplan.frontmatter.isClickable ? (
+            <li key={index}>
+                <Link href={`/floor-plans/${floorplan.slug}`}>
+                    {floorplan.frontmatter.title}
+                </Link>
+            </li>
+        ) : (
+            <li key={index}>{floorplan.frontmatter.title}</li>
+        )
+    )
     return (
         <footer className={style.root}>
             <div className={style.container}>

@@ -34,9 +34,9 @@ export default function ReturnOnInvestment({ estates }) {
                     <p>
                         Remove the need to pay for expensive land and
                         construction. Take advantage of space that is already
-                        underutilized or even a drain on your resources. You
-                        will find that almost any property in our market can see
-                        increased cash flows of $1000, after financing.
+                        underutilized or even a drain on your resources.
+                        Schedule a call to find out how much your backyard could
+                        be making you today!
                     </p>
                 </Chunk>
                 <Chunk
@@ -45,15 +45,27 @@ export default function ReturnOnInvestment({ estates }) {
                     imageRight={true}
                 >
                     <p>
-                        Building an ADU adds new functional square footage to
-                        your property. This is the most obvious value add, as
-                        viewed by current appraisal norms. You are also adding a
-                        rentable unit. Each of these factors contributes to an
-                        increase in appraised value of the home. The value add
-                        can vary depending on the location and appraiser but can
-                        provide significant benefit in the short term and long
-                        term.
+                        Building an ADU increases your property value in 3 ways!
                     </p>
+                    <ol>
+                        <li>
+                            ADU&rsquo;s add livable area and square footage to
+                            the home. And in areas where most similarly built
+                            homes sell for $500-$1,500, this can mean huge
+                            value.
+                        </li>
+                        <li>
+                            Extra Income? ADU&rsquo;s earn incredible rents and
+                            are boosting income for real estate investors,
+                            retirees, and everyone else in between!
+                        </li>
+                        <li>
+                            Lastly, properties that sell with an ADU are
+                            attractive to a more broader group of buyers, which
+                            increases demand for your home and helps create
+                            bidding wars among buyers!
+                        </li>
+                    </ol>
                 </Chunk>
 
                 <div className={style.cost_factors}>
@@ -100,9 +112,9 @@ export default function ReturnOnInvestment({ estates }) {
                             <h3>Curated design packages</h3>
                             <p>
                                 One of the most time consuming aspects of
-                                construction is design. We simplify this we
-                                curated “rental” focused design packages that
-                                are appealing, functional, and value add focused
+                                construction is design. We simplify this with
+                                curated design packages that are appealing,
+                                functional, and value add focused.
                             </p>
                         </li>
                         <li className={style.factor}>
@@ -113,10 +125,19 @@ export default function ReturnOnInvestment({ estates }) {
                             />
                             <h3>Property analysis</h3>
                             <p>
-                                Your property has untapped potential. We will
-                                extensively analyze your property and determine
-                                what unit and options are ideal for rentals in
-                                that area.
+                                Want to know what it will really cost to build
+                                your specific ADU?
+                            </p>
+                            <p>
+                                Want to avoid traditional &ldquo;surprise
+                                costs&rdquo; and &ldquo;cost increases&rdquo;?
+                            </p>
+                            <p>
+                                During Backyard Estates&rsquo; Formal Property
+                                Analysis, we will assess 130+ key aspects of
+                                your property to ensure you have an accurate
+                                price estimate for your ADU from today through
+                                move-in!
                             </p>
                         </li>
                     </ul>
@@ -131,11 +152,8 @@ export default function ReturnOnInvestment({ estates }) {
                         Our prices include everything, property specific
                         analysis, permiting, design, enginerring, construction,
                         and installation. We even include all the appliances,
-                        site prep, and utility hookups. There are no hidden
-                        fees, change orders, or unforseen upcharges. We remove
-                        all the hassle of traditional construction. You will
-                        know exactly what you will pay after your property
-                        analysis.
+                        site prep, and utility hook-ups up to 50 lineal feet
+                        through dirt.
                     </p>
                 </CallToAction>
             </div>

@@ -29,10 +29,10 @@ related:
     - 950-000
 ---
 
-> Backyard Estates had it all planned out… everything has fallen into place. It was easy… so easy.
+> &ldquo;Backyard Estates had it all planned out… everything has fallen into place. It was easy… so easy.&rdquo;
 
 Meet Julie and Betty, a healthcare power couple who secured their retirement with an ADU investment! Take their lead, lock in your monthly payment today to avoid rising construction costs and take advantage of increasing rents!
 
-Jule and Betty had a kitchen remodel that took over a year. Backyard Estates built an entire home in the backyard in just 12 weeks!
+Julie and Betty had a kitchen remodel that took over a year. Backyard Estates built an entire home in the backyard in just 12 weeks!
 
-We highly recommend Backyard Estates.
+> &ldquo;We highly recommend Backyard Estates.&rdquo;

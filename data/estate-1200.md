@@ -1,6 +1,7 @@
 ---
 id: '1200-000'
 isFloorplan: true
+isClickable: true
 order: 'I'
 title: 'Estate 1200'
 city: ''

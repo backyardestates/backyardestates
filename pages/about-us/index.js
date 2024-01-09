@@ -16,7 +16,7 @@ export default function AboutUs({ estates }) {
         <Layout
             title="About us"
             pageTitle="About us - Backyard Estates"
-            explanation="Our mission is to enable homeowners to reimage their backyard as an estate for themselves or family"
+            explanation="Our mission is to enable homeowners to make your ADU dreams a reality!"
             floorplans={estates}
         >
             <div className={style.content}>
@@ -27,21 +27,20 @@ export default function AboutUs({ estates }) {
                 >
                     <p>
                         Backyard Estate&rsquo;s mission is to enable anyone who
-                        owns a house to make their backyard their estate! We do
-                        this by being the best in the business at getting an ADU
-                        installed on your property as quick and simple as
-                        possible. It all starts with our seamless property
-                        review and working with your dedicated design expert to
-                        craft the perfect ADU for your property in as little as
-                        2 weeks. Next, we handle all of the busy work with
-                        permitting, financing, and paperwork to ensure there is
-                        no delay to moving forward with your ADU installation.
-                        For ground up construction, our crews are in and out of
-                        your backyard in 12-16 weeks! You will be updated weekly
-                        on your ADUs progress. Lastly, should you decide to go
-                        with a manufactured ADU, we have partnered with the best
-                        manufacturer in CA. Our crews will make sure that your
-                        backyard is prepped for it&rsquo;s delivery.
+                        owns a house to make their backyard their estate!
+                        Backyard Estates specializes in ADU&rsquo;s; we handle
+                        every detail, so you don&rsquo;t have to!
+                    </p>
+                    <p>
+                        Our proven, end-to-end, process allows us to provide
+                        customers with accurate pricing upfront as well as
+                        customized financing options.
+                    </p>
+                    <p>
+                        We provide homeowner&rsquo;s a hands free experience and
+                        save them ten&rsquo;s of thousands of dollars by
+                        handling all design, permitting, and construction in
+                        half the time!
                     </p>
                 </Chunk>
                 <Chunk
@@ -50,20 +49,16 @@ export default function AboutUs({ estates }) {
                     title="Value to the community"
                 >
                     <p>
-                        Backyard Estates is providing value to the community in
-                        2 main ways. First, we are helping solve the housing
-                        shortage crisis in CA. California needs millions more
-                        homes and recent legislation has never made it easier to
-                        build an ADU. We provide the solution to expand the
-                        number of homes available for people to live in. Second,
-                        we are enabling middle class individuals and families to
-                        earn additional money from renting out a portion of
-                        their backyard to ease their financial burden. The
-                        average ADU will provide the homeowner $15k/year in
-                        profit if rented out and increase the overall value of
-                        the property. The median middle class household has only
-                        $12k in savings so this additional income can be a huge
-                        factor in lifetime financial security.
+                        Backyard Estates is dedicated to helping solve the
+                        housing crisis in California by making it easier and
+                        quicker to build an ADU, while offering unmatched
+                        pricing transparency!
+                    </p>
+                    <p>
+                        With our proprietary ADU Formal Property Analysis, we
+                        can ensure families have the information needed to know
+                        if an ADU is right for them, even before any plans or
+                        permitting need to be paid.
                     </p>
                 </Chunk>
                 <Chunk image="/client.jpg" title="Why Backyard Estates">
@@ -72,22 +67,22 @@ export default function AboutUs({ estates }) {
                         following:
                     </p>
                     <ul>
-                        <li>We handle everything with all in pricing</li>
+                        <li>We handle everything with all-in pricing</li>
                         <li>
                             Quick and seamless property analysis and ADU design
                         </li>
-                        <li>Ground up construction in 12-16 weeks!</li>
+                        <li>Ground up construction in 8-12 weeks!</li>
                         <li>
                             Partnered with the best off-site ADU manufacturer in
                             CA
                         </li>
                         <li>
-                            Prices are lower than our competitors while offering
-                            a better product
+                            Competitive pricing with unmatched timelines and
+                            quality
                         </li>
                         <li>
-                            Decades of experience working with cities to submit
-                            and approve permits
+                            Decades of experience in every aspect of your ADU
+                            project
                         </li>
                         <li>
                             Construction team is fast, efficient, and accurate
@@ -107,7 +102,7 @@ export default function AboutUs({ estates }) {
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                Fixed Prices
+                                Accurate Pricing Upfront
                             </li>
                             <li>
                                 <FontAwesomeIcon
@@ -121,14 +116,14 @@ export default function AboutUs({ estates }) {
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                Financing Guidance
+                                Financing Options
                             </li>
                             <li>
                                 <FontAwesomeIcon
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                Permit approval or money back
+                                100% of Permits Approved
                             </li>
                             <li>
                                 <FontAwesomeIcon
@@ -142,14 +137,14 @@ export default function AboutUs({ estates }) {
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                Solar ready
+                                Solar
                             </li>
                             <li>
                                 <FontAwesomeIcon
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                Guaranteed
+                                Guaranteed Results
                             </li>
                             <li>
                                 <FontAwesomeIcon

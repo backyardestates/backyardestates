@@ -16,6 +16,7 @@ import Layout from '../../src/layouts/Page'
 import Pill from '@/components/Pill'
 import CallToAction from '@/components/CallToAction'
 import StandaloneLink from '@/components/StandaloneLink'
+import Button from '@/components/Button'
 
 import style from './Pricing.module.css'
 
@@ -83,7 +84,9 @@ export default function Pricing({ estates }) {
                                 $185K
                                 <br />
                                 <br />
-                                <Pill>Save up to $65K</Pill>
+                                <Button href="/talk-to-an-adu-specialist">
+                                    Save up to $65K
+                                </Button>
                             </td>
                             <td>$250K+</td>
                         </tr>
@@ -104,14 +107,19 @@ export default function Pricing({ estates }) {
                     <tbody>
                         {filteredProperties.map((floorplan, index) => (
                             <tr key={index}>
-                                <td>
-                                    <Link
-                                        href={`/floor-plans/${floorplan.slug}`}
-                                        className={style.link}
-                                    >
-                                        {floorplan.frontmatter.title}
-                                    </Link>
-                                </td>
+                                {floorplan.frontmatter.isClickable ? (
+                                    <td>
+                                        <Link
+                                            href={`/floor-plans/${floorplan.slug}`}
+                                            className={style.link}
+                                        >
+                                            {floorplan.frontmatter.title}
+                                        </Link>
+                                    </td>
+                                ) : (
+                                    <td>{floorplan.frontmatter.title}</td>
+                                )}
+
                                 <td>{floorplan.frontmatter.bed}</td>
                                 <td>{floorplan.frontmatter.bath}</td>
                                 <td>
@@ -141,8 +149,7 @@ export default function Pricing({ estates }) {
                                 The type of materials selected for the ADU can
                                 also impact the project&rsquo;s cost and time.
                                 High-end materials will typically cost more and
-                                may require more time to install than more basic
-                                options
+                                may require more time to install.
                             </p>
                         </li>
                         <li className={style.factor}>
@@ -157,8 +164,8 @@ export default function Pricing({ estates }) {
                                 existing home than normal, we will have to
                                 extend our standard utility inclusions. This
                                 increases material and labor costs. Any
-                                increases in cost will be analyzed in the
-                                initial property analysis.
+                                increases in cost will be analyzed during your
+                                Formal Property Analysis.
                             </p>
                         </li>
                         <li className={style.factor}>
@@ -170,9 +177,10 @@ export default function Pricing({ estates }) {
                             <h3>Site conditions</h3>
                             <p>
                                 Certain areas have different soil requirements
-                                and might require additional soil testing or a
-                                retaining wall. This is determined on a site by
-                                site basis and will be covered in your analysis.
+                                and might require additional soils testing, over
+                                excavation, or a retaining wall. This is
+                                determined on a site by site basis and will be
+                                covered in your analysis.
                             </p>
                         </li>
                         <li className={style.factor}>
@@ -185,8 +193,11 @@ export default function Pricing({ estates }) {
                             <p>
                                 Required demolition of additional structures or
                                 very large trees will require additional
-                                equipment, labor, and disposal costs. This is
-                                reviewed in the analysis stage of the project.
+                                equipment, labor, and disposal costs. These
+                                additional costs and any other site or city
+                                specific factors will be reviewed and verified
+                                during the Formal Property Analysis stage of
+                                your project.
                             </p>
                         </li>
                     </ul>
