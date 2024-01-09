@@ -50,7 +50,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             </p>
                             <StandaloneLink
                                 theme="beige"
-                                href={`/floor-plans/${selectedFloorplan.slug}`}
+                                href={`/gallery/${selectedFloorplan.slug}`}
                             >
                                 View floor plan
                             </StandaloneLink>

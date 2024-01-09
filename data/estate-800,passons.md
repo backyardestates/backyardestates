@@ -1,5 +1,5 @@
 ---
-id: '800-003'
+id: '800-002'
 isFloorplan: false
 order: 'G'
 title: 'Estate 800'
@@ -22,10 +22,10 @@ images:
     - 800-passons-05.png
     - 800-passons-06.png
 related:
+    - 750-000
+    - 751-000
     - 800-000
     - 800-001
-    - 800-002
-    - 950-000
 wistiaID: okipofl9zg
 floorPlanImage: Estate-800-Floor-Plan.png
 floorPlanPDF:

@@ -15,7 +15,7 @@ sqft: 947
 img: 950-garnsey-03.png
 price: '329,000'
 images:
-    - 950-garnsey-00.png
+    - 950-garnsey-00-gray.png
     - 950-garnsey-01.png
     - 950-garnsey-02.png
     - 950-garnsey-03.png
@@ -24,9 +24,9 @@ images:
     - 950-garnsey-06.png
     - 950-garnsey-07.png
 related:
-    - 950-000
     - 800-000
-    - 1200-000
+    - 950-000
+    - 950-002
     - 1200-000
 wistiaID: o7c9dl1z2f
 floorPlanImage: Estate-950-Floor-Plan.png

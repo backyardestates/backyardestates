@@ -23,9 +23,9 @@ images:
     - 750plus-reservoir-05.png
 related:
     - 750-000
+    - 751-000
     - 800-000
     - 950-000
-    - 1200-000
 wistiaID: 8e9cpnz0nn
 floorPlanImage: Estate-750plus-Floor-Plan.png
 floorPlanPDF:

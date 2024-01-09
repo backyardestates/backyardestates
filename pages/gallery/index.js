@@ -60,9 +60,9 @@ export default function FloorPlans({ estates }) {
 
     return (
         <Layout
-            title="Floor plans"
-            pageTitle="Floor plans - Backyard Estates"
-            explanation="Browse our floor plans and customer stories to discover the right Accessory Dwelling Unit (ADU) for your family"
+            title="Gallery"
+            pageTitle="Gallery - Backyard Estates"
+            explanation="Browse recent projects and customer stories to discover the right Accessory Dwelling Unit (ADU) for your family"
             floorplans={estates}
         >
             <div className={style.content}>

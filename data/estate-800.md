@@ -4,16 +4,16 @@ isFloorplan: true
 isClickable: true
 order: 'G'
 title: 'Estate 800'
-city: 'Chino'
+city: '?'
 bed: 2
 bath: 2
 dimension:
-    - 40
-    - 0
-    - 20
-    - 0
+    - 1
+    - 1
+    - 1
+    - 1
 sqft: 800
-img: 'estate800-cover.jpg'
+img: 800-cameo-00.png
 price: '299,000'
 images:
     - 800-cameo-00.png
@@ -24,13 +24,13 @@ images:
     - 800-cameo-05.png
     - 800-cameo-06.png
 related:
-    - 450-000
     - 750-000
     - 751-000
-    - 950-000
-wistiaID: 7a26ybnd1g
+    - 800-001
+    - 800-002
+wistiaID: q7l4bmz7fg
 floorPlanImage: Estate-800-Floor-Plan.png
-floorPlanPDF: Estate-800-Floor-Plan.pdf
+floorPlanPDF:
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

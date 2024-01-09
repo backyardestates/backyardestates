@@ -5,7 +5,7 @@ date: '2023-12-22'
 city: 'Diamond Bar'
 bed: 2
 bath: 1
-sqft: 500
+sqft: 507
 img: 'estate350-cover.png'
 price: '299,999'
 name: 'Julie and Betty'

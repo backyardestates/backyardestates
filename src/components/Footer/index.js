@@ -27,7 +27,7 @@ export default function Footer({ floorplans }) {
     const floorplanLinks = filteredFloorplans.map((floorplan, index) =>
         floorplan.frontmatter.isClickable ? (
             <li key={index}>
-                <Link href={`/floor-plans/${floorplan.slug}`}>
+                <Link href={`/gallery/${floorplan.slug}`}>
                     {floorplan.frontmatter.title}
                 </Link>
             </li>
@@ -104,6 +104,9 @@ export default function Footer({ floorplans }) {
                         <div className={style.linkColumn}>
                             <h3 className={style.display3}>Resources</h3>
                             <ul>
+                                <li>
+                                    <Link href="/gallery">Gallery</Link>
+                                </li>
                                 <li>
                                     <Link href="/pricing">Pricing</Link>
                                 </li>

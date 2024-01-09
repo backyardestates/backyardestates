@@ -41,7 +41,7 @@ export default function Benefits() {
                         minimal maintenace costs. This results in a stunning
                         home, perfect for your family or future tenants.
                     </p>
-                    <StandaloneLink href="/floor-plans">
+                    <StandaloneLink href="/gallery">
                         View floor plans
                     </StandaloneLink>
                 </Benefit>

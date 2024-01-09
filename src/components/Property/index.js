@@ -15,7 +15,7 @@ export default function Property({
     slugArray.forEach((element) => {
         builtSlug += element + '/'
     })
-    url = `/floor-plans/${builtSlug}`
+    url = `/gallery/${builtSlug}`
     return (
         <Link href={url} className={style.base}>
             <Image

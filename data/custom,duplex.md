@@ -1,34 +1,30 @@
 ---
-id: '500-001'
+id: '999-003'
 isFloorplan: false
-order: 'C'
-title: 'Estate 500'
-city: '?'
-bed: 2
+order: 'X'
+title: 'Custom Estate 800 - Duplex'
+city: 'Rancho Cucamonga'
+bed: 1
 bath: 1
 dimension:
     - 1
     - 1
     - 1
     - 1
-sqft: 507
-img: 500-antler-03.png
-price: '219,000'
+sqft: 800
+img: 450-nocta-R-00.png
+price: '199,000'
 images:
-    - 500-antler-01.png
-    - 500-antler-02.png
-    - 500-antler-03.png
-    - 500-antler-04.png
-    - 500-antler-05.png
-    - 500-antler-06.png
-    - 500-antler-07.png
+    - 450-nocta-R-00.png
+    - 450-nocta-R-01.png
+    - 450-nocta-R-02.png
 related:
-    - 500-000
-    - 750-000
-    - 751-000
-    - 950-000
-wistiaID: 25frn4bozw
-floorPlanImage: Estate-500-Floor-Plan.png
+    - 999-001
+    - 999-002
+    - 999-004
+    - 1200-000
+wistiaID: rm2nrskw9z
+floorPlanImage:
 floorPlanPDF:
 ---
 

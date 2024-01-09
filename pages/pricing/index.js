@@ -110,7 +110,7 @@ export default function Pricing({ estates }) {
                                 {floorplan.frontmatter.isClickable ? (
                                     <td>
                                         <Link
-                                            href={`/floor-plans/${floorplan.slug}`}
+                                            href={`/gallery/${floorplan.slug}`}
                                             className={style.link}
                                         >
                                             {floorplan.frontmatter.title}

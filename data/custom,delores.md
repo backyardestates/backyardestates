@@ -1,31 +1,27 @@
 ---
-id: '450-002'
+id: '999-004'
 isFloorplan: false
-order: 'B'
-title: 'Estate 400'
-city: 'Rancho Cucamonga'
-bed: 1
+order: 'X'
+title: 'Custom Estate - Delores'
+city: 'Delores'
+bed: 2
 bath: 1
 dimension:
     - 1
     - 1
     - 1
     - 1
-sqft: 400
-img: 450-dalton-R-01.png
+sqft: 550
+img: coming-soon.png
 price: '199,000'
 images:
-    - 450-dalton-R-01.png
-    - 450-dalton-R-02.png
-    - 450-dalton-R-03.png
-    - 450-dalton-R-04.png
-    - 450-dalton-R-00.png
+    - coming-soon.png
 related:
-    - 450-000
-    - 450-001
-    - 751-000
-    - 950-000
-wistiaID: dz1swqyjuh
+    - 999-001
+    - 999-002
+    - 999-003
+    - 1200-000
+wistiaID:
 floorPlanImage:
 floorPlanPDF:
 ---

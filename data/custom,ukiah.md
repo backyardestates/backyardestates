@@ -4,7 +4,7 @@ isFloorplan: false
 order: 'X'
 title: 'Custom Estate'
 city: '?'
-bed: 1
+bed: 2
 bath: 1
 sqft: 690
 img: custom-ukiah-00.png
@@ -18,9 +18,9 @@ images:
     - custom-ukiah-05.png
 related:
     - 999-002
-    - 750-000
-    - 750-001
-    - 751-000
+    - 999-003
+    - 999-004
+    - 1200-000
 wistiaID:
 floorPlanImage:
 floorPlanPDF:

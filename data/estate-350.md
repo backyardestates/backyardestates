@@ -13,21 +13,15 @@ dimension:
     - 12
     - 1
 sqft: 350
-img: 'estate350-cover.png'
+img: coming-soon.png
 price: '175,000'
 images:
-    - 450-generic-01.jpg
-    - 450-generic-02.jpg
-    - 450-generic-03.jpg
-    - 450-generic-04.jpg
-    - 450-generic-05.jpg
-    - 450-generic-06.jpg
-    - 450-generic-07.jpg
+    - coming-soon.png
 related:
+    - 400-000
+    - 400-001
+    - 400-002
     - 450-000
-    - 750-000
-    - 751-000
-    - 950-000
 wistiaID:
 floorPlanImage: Estate-350-Floor-Plan.png
 floorPlanPDF: Estate-350-Floor-Plan.pdf

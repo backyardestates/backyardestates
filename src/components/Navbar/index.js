@@ -23,8 +23,8 @@ export default function Navbar({
                 </div>
                 <ul className={style.links}>
                     <li>
-                        <Link href="/floor-plans" className={style.link}>
-                            Floor plans
+                        <Link href="/gallery" className={style.link}>
+                            Gallery
                         </Link>
                     </li>
                     <li>

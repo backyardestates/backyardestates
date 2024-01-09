@@ -22,10 +22,10 @@ images:
     - custom-crestview-04.png
     - custom-crestview-05.png
 related:
-    - 1200-000
+    - 750-000
+    - 800-000
     - 950-000
-    - 950-001
-    - 950-002
+    - 1200-000
 wistiaID: 45wmlshtwo
 floorPlanImage: Estate-1200-Floor-Plan.png
 floorPlanPDF:

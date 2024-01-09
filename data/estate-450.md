@@ -13,8 +13,8 @@ dimension:
     - 13
     - 1
 sqft: 464
-img: estate450-cover.jpg
-price: '218,000'
+img: 450-generic-03.jpg
+price: '199,000'
 images:
     - 450-generic-01.jpg
     - 450-generic-02.jpg
@@ -23,14 +23,15 @@ images:
     - 450-generic-05.jpg
     - 450-generic-06.jpg
     - 450-generic-07.jpg
+    - estate450-cover.jpg
 related:
-    - 450-001
-    - 450-002
-    - 450-003
-    - 450-004
+    - 350-000
+    - 400-000
+    - 400-001
+    - 400-002
 wistiaID: 2z717cmf0o
 floorPlanImage: Estate-450-Floor-Plan.png
-floorPlanPDF: Estate-450-Floor-Plan.pdf
+floorPlanPDF:
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

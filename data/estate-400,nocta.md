@@ -1,5 +1,5 @@
 ---
-id: '450-003'
+id: '400-002'
 isFloorplan: false
 order: 'B'
 title: 'Estate 400'
@@ -19,10 +19,10 @@ images:
     - 450-nocta-L-01.png
     - 450-nocta-L-02.png
 related:
+    - 350-000
+    - 400-000
+    - 400-001
     - 450-000
-    - 450-001
-    - 450-002
-    - 450-004
 wistiaID: 6rp2bce6ic
 floorPlanImage:
 floorPlanPDF:

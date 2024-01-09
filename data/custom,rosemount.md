@@ -4,7 +4,7 @@ isFloorplan: false
 order: 'X'
 title: 'Custom Estate'
 city: '?'
-bed: 2
+bed: 1
 bath: 1
 sqft: 684
 img: custom-rosemount-00.png
@@ -18,9 +18,9 @@ images:
     - custom-rosemount-05.png
 related:
     - 999-001
-    - 750-000
-    - 750-001
-    - 751-000
+    - 999-003
+    - 999-004
+    - 1200-000
 wistiaID: ofv6fdyfib
 floorPlanImage:
 floorPlanPDF:

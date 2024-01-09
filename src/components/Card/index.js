@@ -14,7 +14,7 @@ export default function Card({ estate }) {
         builtSlug += element + '/'
     })
 
-    const url = `/floor-plans/${builtSlug}`
+    const url = `/gallery/${builtSlug}`
 
     return (
         <Link href={url} className={style.base}>

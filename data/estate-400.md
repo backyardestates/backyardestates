@@ -1,33 +1,34 @@
 ---
-id: '800-001'
-isFloorplan: false
-order: 'G'
-title: 'Estate 800'
-city: '?'
-bed: 2
-bath: 2
+id: '400-000'
+isFloorplan: true
+isClickable: true
+order: 'B'
+title: 'Estate 400'
+city: 'Rancho Cucamonga'
+bed: 1
+bath: 1
 dimension:
     - 1
     - 1
     - 1
     - 1
-sqft: 800
-img: 800-amethyst-02.png
-price: '299,000'
+sqft: 400
+img: 450-dalton-L-01.png
+price: '199,000'
 images:
-    - 800-amethyst-00.png
-    - 800-amethyst-01.png
-    - 800-amethyst-02.png
-    - 800-amethyst-03.png
-    - 800-amethyst-04.png
-    - 800-amethyst-05.png
+    - 450-dalton-L-01.png
+    - 450-dalton-L-02.png
+    - 450-dalton-L-03.png
+    - 450-dalton-L-04.png
+    - 450-dalton-L-05.png
+    - 450-dalton-L-00.png
 related:
-    - 750-000
-    - 800-000
-    - 950-000
-    - 1200-000
-wistiaID: efbntyzoe6
-floorPlanImage: Estate-800-Floor-Plan.png
+    - 350-000
+    - 400-001
+    - 400-002
+    - 450-000
+wistiaID: z7cy2nvpuz
+floorPlanImage:
 floorPlanPDF:
 ---
 

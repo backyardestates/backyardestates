@@ -26,10 +26,10 @@ images:
     - 500-generic-08.jpg
     - 500-generic-09.jpg
 related:
-    - 450-001
-    - 450-002
-    - 450-003
+    - 400-000
     - 450-000
+    - 600-000
+    - 750-000
 wistiaID: 25frn4bozw
 floorPlanImage: Estate-500-Floor-Plan.png
 floorPlanPDF: Estate-500-Floor-Plan.pdf

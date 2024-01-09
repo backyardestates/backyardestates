@@ -13,10 +13,10 @@ dimension:
     - 14
     - 10
 sqft: 600
-img: estate600-cover.png
+img: coming-soon.png
 price: '255,000'
 images:
-    - fpo@2x
+    - coming-soon.png
 related:
     - 450-000
     - 500-000

@@ -25,10 +25,10 @@ images:
     - 950-garnsey-06.png
     - 950-garnsey-07.png
 related:
-    - 450-000
-    - 750-000
-    - 751-000
-    - 950-000
+    - 800-000
+    - 950-001
+    - 950-002
+    - 1200-000
 wistiaID: lrtz4sfbnf
 floorPlanImage: Estate-950-Floor-Plan.png
 floorPlanPDF: Estate-950-Floor-Plan.pdf

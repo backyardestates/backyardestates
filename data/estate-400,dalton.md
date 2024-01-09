@@ -1,34 +1,31 @@
 ---
-id: '450-005'
+id: '400-001'
 isFloorplan: false
 order: 'B'
-title: 'Estate 450'
+title: 'Estate 400'
 city: 'Rancho Cucamonga'
 bed: 1
 bath: 1
 dimension:
-    - 35
-    - 6
-    - 13
     - 1
-sqft: 464
-img: 450-generic-03.jpg
+    - 1
+    - 1
+    - 1
+sqft: 400
+img: 450-dalton-R-01.png
 price: '199,000'
 images:
-    - 450-generic-01.jpg
-    - 450-generic-02.jpg
-    - 450-generic-03.jpg
-    - 450-generic-04.jpg
-    - 450-generic-05.jpg
-    - 450-generic-06.jpg
-    - 450-generic-07.jpg
+    - 450-dalton-R-01.png
+    - 450-dalton-R-02.png
+    - 450-dalton-R-03.png
+    - 450-dalton-R-04.png
 related:
-    - 450-001
-    - 450-002
-    - 450-003
-    - 450-004
-wistiaID: 2z717cmf0o
-floorPlanImage: Estate-450-Floor-Plan.png
+    - 350-000
+    - 400-000
+    - 400-002
+    - 450-000
+wistiaID: dz1swqyjuh
+floorPlanImage:
 floorPlanPDF:
 ---
 

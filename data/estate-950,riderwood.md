@@ -18,17 +18,14 @@ images:
     - 950-riderwood-00.png
     - 950-riderwood-01.png
     - 950-riderwood-02.png
-    - 950-riderwood-03.png
-    - 950-riderwood-04.png
-    - 950-riderwood-05.png
-    - 950-riderwood-06.png
-    - 950-riderwood-07.png
-    - 950-riderwood-08.png
+    - 950-riderwood-03-new.png
+    - 950-riderwood-04-new.png
+    - 950-riderwood-05-new.png
 related:
+    - 800-000
     - 950-000
     - 950-001
     - 1200-000
-    - 1200-001
 wistiaID: uxfiowsvvh
 floorPlanImage: Estate-950-Floor-Plan.png
 floorPlanPDF:

@@ -29,7 +29,7 @@ export default function RelatedContent({ properties }) {
                 ))}
             </div>
             <div className={style.centered}>
-                <StandaloneLink href="/floor-plans">
+                <StandaloneLink href="/gallery">
                     View all floor plans
                 </StandaloneLink>
             </div>
