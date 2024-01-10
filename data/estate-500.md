@@ -14,7 +14,7 @@ dimension:
     - 4
 sqft: 507
 img: 500-generic-06.jpg
-price: '219,000'
+price: '239,000'
 images:
     - 500-generic-01.jpg
     - 500-generic-02.jpg

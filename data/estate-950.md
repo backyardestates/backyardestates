@@ -14,7 +14,7 @@ dimension:
     - 8
 sqft: 947
 img: 'estate950-cover.jpg'
-price: '329,000'
+price: '359,000'
 images:
     - 950-garnsey-00.png
     - 950-garnsey-01.png

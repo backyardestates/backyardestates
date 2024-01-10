@@ -14,7 +14,7 @@ dimension:
     - 4
 sqft: 749
 img: 750-coolcrest-04.png
-price: '275,000'
+price: '299,000'
 images:
     - 750-coolcrest-01.png
     - 750-coolcrest-02.png

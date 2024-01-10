@@ -41,7 +41,7 @@ export default function Menu({ showMenu, toggleMenu }) {
                 </div>
                 <ul>
                     <li>
-                        <Link href="/gallery">Floor plans</Link>
+                        <Link href="/gallery">Gallery</Link>
                     </li>
                     <li>
                         <Link href="/pricing">Pricing</Link>

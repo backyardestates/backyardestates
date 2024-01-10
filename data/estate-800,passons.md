@@ -7,13 +7,13 @@ city: '?'
 bed: 2
 bath: 2
 dimension:
-    - 1
-    - 1
-    - 1
-    - 1
+    - 40
+    - 0
+    - 20
+    - 0
 sqft: 800
 img: 800-passons-01.png
-price: '299,000'
+price: '319,000'
 images:
     - 800-passons-01.png
     - 800-passons-02.png

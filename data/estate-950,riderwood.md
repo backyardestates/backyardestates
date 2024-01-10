@@ -13,7 +13,7 @@ dimension:
     - 1
 sqft: 947
 img: 950-riderwood-00.png
-price: '329,000'
+price: '359,000'
 images:
     - 950-riderwood-00.png
     - 950-riderwood-01.png

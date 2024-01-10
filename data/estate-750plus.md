@@ -14,7 +14,7 @@ dimension:
     - 5
 sqft: 749
 img: 750plus-generic-01.png
-price: '285,000'
+price: '309,000'
 images:
     - 750plus-reservoir-00.png
     - 750plus-generic-01.png

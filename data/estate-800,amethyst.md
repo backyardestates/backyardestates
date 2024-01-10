@@ -7,13 +7,13 @@ city: '?'
 bed: 2
 bath: 2
 dimension:
-    - 1
-    - 1
-    - 1
-    - 1
+    - 40
+    - 0
+    - 20
+    - 0
 sqft: 800
 img: 800-amethyst-00.png
-price: '299,000'
+price: '319,000'
 images:
     - 800-amethyst-01.png
     - 800-amethyst-02.png

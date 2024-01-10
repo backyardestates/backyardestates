@@ -9,7 +9,7 @@ import PropertyInformation from '../PropertyInformation'
 import ButtonTags from '../ButtonTags'
 
 export default function Floorplans({ showNav = false, floorplans }) {
-    const [selected, setSelected] = useState(1)
+    const [selected, setSelected] = useState(2)
     const [showVideo, setShowVideo] = useState(true)
 
     // filter properties for floor plans

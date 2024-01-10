@@ -13,7 +13,7 @@ dimension:
     - 1
 sqft: 947
 img: 950-garnsey-03.png
-price: '329,000'
+price: '359,000'
 images:
     - 950-garnsey-00-gray.png
     - 950-garnsey-01.png

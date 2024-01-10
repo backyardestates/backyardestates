@@ -13,7 +13,7 @@ dimension:
     - 4
 sqft: 749
 img: 750-walnut-02.png
-price: '275,000'
+price: '299,000'
 images:
     - 750-walnut-01.png
     - 750-walnut-02.png

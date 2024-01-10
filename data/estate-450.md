@@ -14,7 +14,7 @@ dimension:
     - 1
 sqft: 464
 img: 450-generic-03.jpg
-price: '199,000'
+price: '219,000'
 images:
     - 450-generic-01.jpg
     - 450-generic-02.jpg

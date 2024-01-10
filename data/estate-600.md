@@ -14,7 +14,7 @@ dimension:
     - 10
 sqft: 600
 img: coming-soon.png
-price: '255,000'
+price: '265,000'
 images:
     - coming-soon.png
 related:

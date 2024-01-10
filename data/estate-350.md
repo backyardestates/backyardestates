@@ -14,7 +14,7 @@ dimension:
     - 1
 sqft: 350
 img: coming-soon.png
-price: '175,000'
+price: '185,000'
 images:
     - coming-soon.png
 related:
