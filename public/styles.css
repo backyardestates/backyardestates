@@ -42,6 +42,12 @@ body {
     background: #fff;
 }
 
+#logo,
+#logo span {
+    color: --color-brand-dark-blue !important;
+    /* border: 3px solid red; */
+}
+
 h1,
 h2,
 h3,

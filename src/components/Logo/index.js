@@ -3,7 +3,11 @@ import style from './Logo.module.css'
 
 export default function Logo({ mode = 'light' }) {
     return (
-        <Link href="/" className={mode === 'light' ? style.light : style.dark}>
+        <Link
+            id="logo"
+            href="/"
+            className={mode === 'light' ? style.light : style.dark}
+        >
             <svg
                 id="Layer_1"
                 data-name="Layer 1"
