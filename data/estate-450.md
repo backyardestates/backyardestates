@@ -31,7 +31,7 @@ related:
     - 400-002
 wistiaID: 2z717cmf0o
 floorPlanImage: Estate-450-Floor-Plan.png
-floorPlanPDF:
+floorPlanPDF: Estate-450-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

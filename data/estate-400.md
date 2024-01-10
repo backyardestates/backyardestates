@@ -29,7 +29,7 @@ related:
     - 450-000
 wistiaID: rm2nrskw9z
 floorPlanImage: Estate-400-Floor-Plan.png
-floorPlanPDF:
+floorPlanPDF: Estate-400-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

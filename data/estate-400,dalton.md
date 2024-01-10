@@ -25,7 +25,7 @@ related:
     - 400-002
     - 450-000
 wistiaID: dz1swqyjuh
-floorPlanImage:
+floorPlanImage: Estate-400-Floor-Plan.png
 floorPlanPDF:
 ---
 

@@ -30,7 +30,7 @@ related:
     - 800-002
 wistiaID: q7l4bmz7fg
 floorPlanImage: Estate-800-Floor-Plan.png
-floorPlanPDF:
+floorPlanPDF: Estate-800-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

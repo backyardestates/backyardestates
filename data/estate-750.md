@@ -28,7 +28,7 @@ related:
     - 950-000
 wistiaID: 567yhah25p
 floorPlanImage: Estate-750-Floor-Plan.png
-floorPlanPDF:
+floorPlanPDF: Estate-750-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum
