@@ -118,7 +118,7 @@ export default function LeadForm({ data }) {
         const data = await res.json()
 
         if (!data) {
-            console.log('Porblem')
+            console.log('Problem')
         } else {
             console.log(data)
         }
@@ -147,7 +147,6 @@ export default function LeadForm({ data }) {
                                     required
                                     className={style.textfield}
                                     data-1p-ignore
-                                    // defaultValue="Raymond Elder"
                                 />
                             </div>
                             <div className={style.field}>
@@ -159,7 +158,6 @@ export default function LeadForm({ data }) {
                                     required
                                     className={style.textfield}
                                     data-1p-ignore
-                                    // defaultValue="hello@rayelder.com"
                                 />
                             </div>
                             <div className={style.field}>
@@ -170,7 +168,6 @@ export default function LeadForm({ data }) {
                                     id="mobile"
                                     required
                                     className={style.textfield}
-                                    // defaultValue="8018503070"
                                 />
                             </div>
                             <div className={style.field}>
