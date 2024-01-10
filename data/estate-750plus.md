@@ -5,8 +5,8 @@ isClickable: true
 order: 'F'
 title: 'Estate 750+'
 city: 'Chino'
-bed: 1
-bath: 1
+bed: 2
+bath: 2
 dimension:
     - 40
     - 8
