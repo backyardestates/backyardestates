@@ -89,9 +89,9 @@
     height: 3rem;
     font-family: var(--font-sans);
     fill: var(--color-brand-light-blue);
+}
 
-    & .logotype {
-        display: block;
-        color: var(--color-brand-dark-blue);
-    }
+.logo .logotype {
+    display: block;
+    color: var(--color-brand-dark-blue);
 }

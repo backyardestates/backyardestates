@@ -27,30 +27,32 @@
     display: block;
 }
 
-.light,
-.light:hover,
-.light:active,
-.light:visited {
-    & .logo {
-        fill: var(--color-brand-light-blue);
-    }
-
-    & .logotype {
-        color: var(--color-brand-dark-blue);
-    }
+.light .logo,
+.light:hover .logo,
+.light:active .logo,
+.light:visited .logo {
+    fill: var(--color-brand-light-blue);
 }
 
-.dark,
-.dark:hover,
-.dark:active,
-.dark:visited {
-    & .logo {
-        fill: var(--color-white);
-    }
+.light .logotype,
+.light:hover .logotype,
+.light:active .logotype,
+.light:visited .logotype {
+    color: var(--color-brand-dark-blue);
+}
 
-    & .logotype {
-        color: var(--color-white);
-    }
+.dark .logo,
+.dark:hover .logo,
+.dark:active .logo,
+.dark:visited .logo {
+    fill: var(--color-white);
+}
+
+.dark .logotype,
+.dark:hover .logotype,
+.dark:active .logotype,
+.dark:visited .logotype {
+    color: var(--color-white);
 }
 
 /* Mobile XS */

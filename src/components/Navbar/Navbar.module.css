@@ -89,26 +89,26 @@
 
 .menu_light {
     composes: menu;
+}
 
-    & .label {
-        color: var(--color-neutral-600);
-    }
+.menu_light .label {
+    color: var(--color-neutral-600);
+}
 
-    & .icon_hamburger_bar {
-        stroke: var(--color-neutral-600);
-    }
+.menu_light .icon_hamburger_bar {
+    stroke: var(--color-neutral-600);
 }
 
 .menu_dark {
     composes: menu;
+}
 
-    & .label {
-        color: var(--color-white);
-    }
+.menu_dark .label {
+    color: var(--color-white);
+}
 
-    & .icon_hamburger_bar {
-        stroke: var(--color-white);
-    }
+.menu_dark .icon_hamburger_bar {
+    stroke: var(--color-white);
 }
 
 .cta {

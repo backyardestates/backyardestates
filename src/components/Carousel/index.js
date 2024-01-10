@@ -12,6 +12,7 @@ export default function Carousel(images) {
     const [position, setPosition] = useState(1)
     const [buttonLeftVisible, setButtonLeftVisible] = useState(false)
     const [buttonRightVisible, setButtonRightVisible] = useState(true)
+    const slidesViewerRef = useRef()
     const slidesRef = useRef()
 
     function moveLeft() {
@@ -39,7 +40,11 @@ export default function Carousel(images) {
                 setButtonRightVisible(true)
         }
 
+        // w = slidesRef.current.getBoundingClientRect().width
+        // const w = slidesViewerRef.current.offsetWidth
+
         const imageWidth = slidesRef.current.getBoundingClientRect().width
+        console.log(imageWidth)
         let xPos = imageWidth * -1 * (position - 1)
         gsap.to(slidesRef.current, {
             x: xPos,
@@ -60,17 +65,18 @@ export default function Carousel(images) {
                     <ArrowButton direction="right" />
                 </div>
             )}
-            <div className={style.slideViewer}>
+            <div ref={slidesViewerRef} className={style.slideViewer}>
                 <div ref={slidesRef} className={style.slides}>
                     {images.images.map((image, index) => (
-                        <Image
-                            key={index}
-                            src={`/images/property/${image}`}
-                            alt={`Image of ADU`}
-                            width={640}
-                            height={360}
-                            className={style.image}
-                        />
+                        <div className={style.slide} key={index}>
+                            <Image
+                                src={`/images/property/${image}`}
+                                alt={`Image of ADU`}
+                                width={640}
+                                height={360}
+                                className={style.image}
+                            />
+                        </div>
                     ))}
                 </div>
             </div>
