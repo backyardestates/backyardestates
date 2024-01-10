@@ -42,7 +42,6 @@
     color: var(--color-neutral-500) !important;
     line-height: 1.5rem;
     font-family: var(--font-sans);
-    /* color: red; */
     text-align: left !important;
 }
 

@@ -44,7 +44,6 @@
 
     & .link:hover {
         opacity: var(--link-opacity-hover);
-        /* color: red; */
     }
 }
 

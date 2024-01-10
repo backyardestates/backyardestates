@@ -170,8 +170,6 @@ input[type='submit'] {
 
 @media only screen and (min-width: 1400px) {
     .wistia_responsive_wrapper {
-        /* border: 5px solid magenta; */
         max-height: 360px;
-        /* background-color: red; */
     }
 }

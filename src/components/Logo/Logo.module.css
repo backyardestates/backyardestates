@@ -6,7 +6,6 @@
     text-decoration: none;
     height: 3rem;
     font-family: var(--font-sans);
-    color: red;
 }
 
 .base_show {
@@ -38,7 +37,6 @@
 
     & .logotype {
         color: var(--color-brand-dark-blue);
-        /* color: red; */
     }
 }
 

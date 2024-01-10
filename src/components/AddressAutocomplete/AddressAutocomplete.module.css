@@ -46,10 +46,6 @@
     background-color: var(--color-neutral-50);
 }
 
-.list [data-reach-combobox-option] {
-    color: red;
-}
-
 .list [data-user-value] {
     color: var(--color-neutral-800);
     font-family: sans-serif;

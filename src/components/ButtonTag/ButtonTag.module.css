@@ -29,11 +29,8 @@
     cursor: none;
     color: var(--color-white);
     background-color: var(--color-brand-beige);
-    /* display: block; */
 }
 
 .not_selected {
     composes: base;
-    /* background-color: red; */
-    /* display: none; */
 }
