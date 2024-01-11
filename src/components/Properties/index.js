@@ -5,16 +5,16 @@ import Property from '../Property'
 export default function Properties({ data }) {
     const filteredProperties = data.filter(
         (property) =>
-            property.frontmatter.id === '1200-001' ||
+            property.frontmatter.id === '400-000' ||
+            property.frontmatter.id === '450-000' ||
+            property.frontmatter.id === '750-001' ||
+            property.frontmatter.id === '751-000' ||
             property.frontmatter.id === '800-001' ||
-            property.frontmatter.id === '800-002' ||
-            property.frontmatter.id === '950-001' ||
-            property.frontmatter.id === '450-003' ||
-            property.frontmatter.id === '450-005' ||
-            property.frontmatter.id === '751-001'
+            property.frontmatter.id === '950-000' ||
+            property.frontmatter.id === '1200-000'
     )
 
-    filteredProperties.sort((b, a) => {
+    filteredProperties.sort((a, b) => {
         const nameA = a.frontmatter.order
         const nameB = b.frontmatter.order
         if (nameA < nameB) {
@@ -43,7 +43,7 @@ export default function Properties({ data }) {
             </div>
             <div className={style.centered}>
                 <StandaloneLink href="/gallery">
-                    View all floor plans
+                    View all projects
                 </StandaloneLink>
             </div>
         </div>
