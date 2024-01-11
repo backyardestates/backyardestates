@@ -38,6 +38,13 @@
     padding-left: 1rem;
 }
 .benefits {
+    /* padding: 0 1.5rem; */
+    /* width: 100%; */
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    /* grid-template-rows: repeat(2, 1fr); */
+    gap: 0;
+    margin: 0;
     padding: 0 1.5rem;
     width: 100%;
 }
