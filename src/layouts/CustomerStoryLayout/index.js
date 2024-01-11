@@ -69,7 +69,7 @@ export default function CustomerStoryLayout({
                 src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
             />
             <Head>
-                <title>{`${pageTitle} customer story - Backyard Estates`}</title>
+                <title>{`${pageTitle} - Customer story - Backyard Estates`}</title>
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1.0"

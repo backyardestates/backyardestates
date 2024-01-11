@@ -12,12 +12,6 @@ import style from './CustomerStoryTemplate.module.css'
 
 import Markdown from 'react-markdown'
 
-import { useRouter } from 'next/router'
-
-// export default function Page() {
-
-// }
-
 export default function CustomerStoryTemplate({ story, content, estates }) {
     const name = story.name
     const title = story.title
@@ -26,18 +20,13 @@ export default function CustomerStoryTemplate({ story, content, estates }) {
     const video = story.wistiaID
 
     const relatedProperties = story.related
-    // console.log(relatedProperties)
     const filteredRelatedProperties = estates.filter((e) =>
         relatedProperties.includes(e.frontmatter.id)
     )
 
-    // const router = useRouter()
-    //   return
-
     return (
-        <Layout pageTitle="Ray" floorplans={estates}>
+        <Layout pageTitle={name} floorplans={estates}>
             <div className={style.content}>
-                {/* <p>Slug: {router.query.slug}</p> */}
                 <h1>{name}</h1>
                 <p className={style.intro}>{introductorySentence}</p>
                 <h2>{title}</h2>
@@ -60,8 +49,6 @@ export async function getStaticPaths() {
             slug: filename.replace('.md', ''),
         },
     }))
-
-    // console.log(paths)
 
     return {
         paths,
