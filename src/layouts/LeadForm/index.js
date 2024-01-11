@@ -54,12 +54,8 @@ export default function LeadForm({ children }) {
                 <link rel="icon" href="/favicon.ico" sizes="any" />
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-                <link
-                    rel="manifest"
-                    href="/site.webmanifest"
-                    crossOrigin="use-credentials"
-                />
-                <meta name="theme-color" content="#4a4a4a" />
+                <link rel="manifest" href="/site.webmanifest" />
+                <meta name="theme-color" content="#ffffff" />
             </Head>
             <div className={style.topBar}>
                 <Logo />
