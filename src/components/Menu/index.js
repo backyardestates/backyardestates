@@ -67,9 +67,6 @@ export default function Menu({ showMenu, toggleMenu }) {
                             </li>
                         </ul>
                     </li>
-                    <li>
-                        <Link href="/contact-us">Contact us</Link>
-                    </li>
                 </ul>
                 <div className={style.bottom}>
                     <Button href="/talk-to-an-adu-specialist">
