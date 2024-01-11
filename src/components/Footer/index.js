@@ -131,9 +131,6 @@ export default function Footer({ floorplans }) {
                                         Our process
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link href="/contact-us">Contact us</Link>
-                                </li>
                             </ul>
                         </div>
                     </div>
