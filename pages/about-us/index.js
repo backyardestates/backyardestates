@@ -26,7 +26,7 @@ export default function AboutUs({ estates }) {
                     imagePriority={true}
                 >
                     <p>
-                        Backyard Estate&rsquo;s mission is to enable anyone who
+                        Backyard Estates&rsquo; mission is to enable anyone who
                         owns a house to make their backyard their estate!
                         Backyard Estates specializes in ADU&rsquo;s; we handle
                         every detail, so you don&rsquo;t have to!
