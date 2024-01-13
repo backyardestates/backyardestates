@@ -2,11 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-// import Button from '@/components/Button'
 import Layout from '../../src/layouts/Page'
 import style from './Roi.module.css'
 import CallToAction from '@/components/CallToAction'
-import Footer from '@/components/Footer'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -49,19 +47,18 @@ export default function ReturnOnInvestment({ estates }) {
                     </p>
                     <ol>
                         <li>
-                            ADU&rsquo;s add livable area and square footage to
-                            the home. And in areas where most similarly built
-                            homes sell for $500-$1,500, this can mean huge
-                            value.
+                            ADUs add livable area and square footage to the
+                            home. And in areas where most similarly built homes
+                            sell for $500-$1,500, this can mean huge value.
                         </li>
                         <li>
-                            Extra Income? ADU&rsquo;s earn incredible rents and
-                            are boosting income for real estate investors,
-                            retirees, and everyone else in between!
+                            Extra Income? ADUs earn incredible rents and are
+                            boosting income for real estate investors, retirees,
+                            and everyone else in between!
                         </li>
                         <li>
                             Lastly, properties that sell with an ADU are
-                            attractive to a more broader group of buyers, which
+                            attractive to a broader group of buyers, which
                             increases demand for your home and helps create
                             bidding wars among buyers!
                         </li>
@@ -81,10 +78,10 @@ export default function ReturnOnInvestment({ estates }) {
                             <p>
                                 Backyard Estates was made by investors for
                                 investors. We understand that you need to
-                                maximize ROI through both reducing the pull on
-                                any and all of your resources. Our portfolio
-                                line of units are custom tailored to maximize
-                                your dollars and time.
+                                maximize ROI by reducing the pull on any or all
+                                of your resources. Our portfolio line of units
+                                is custom-tailored to maximize your dollars and
+                                time.
                             </p>
                         </li>
                         <li className={style.factor}>
@@ -111,10 +108,10 @@ export default function ReturnOnInvestment({ estates }) {
                             />
                             <h3>Curated design packages</h3>
                             <p>
-                                One of the most time consuming aspects of
+                                One of the most time-consuming aspects of
                                 construction is design. We simplify this with
                                 curated design packages that are appealing,
-                                functional, and value add focused.
+                                functional, and value-add-focused.
                             </p>
                         </li>
                         <li className={style.factor}>
@@ -125,7 +122,7 @@ export default function ReturnOnInvestment({ estates }) {
                             />
                             <h3>Property analysis</h3>
                             <p>
-                                Want to know what it will really cost to build
+                                Want to know what it will actually cost to build
                                 your specific ADU?
                             </p>
                             <p>
@@ -149,11 +146,11 @@ export default function ReturnOnInvestment({ estates }) {
                     ctaUrl="/pricing"
                 >
                     <p>
-                        Our prices include everything, property specific
-                        analysis, permiting, design, enginerring, construction,
+                        Our prices include everything, property-specific
+                        analysis, permitting, design, engineering, construction,
                         and installation. We even include all the appliances,
-                        site prep, and utility hook-ups up to 50 lineal feet
-                        through dirt.
+                        site prep, window coverings, and utility hook-ups up to
+                        50 lineal feet through dirt.
                     </p>
                 </CallToAction>
             </div>

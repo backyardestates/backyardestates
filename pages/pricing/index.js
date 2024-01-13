@@ -13,7 +13,6 @@ import {
 } from '@fortawesome/pro-light-svg-icons'
 
 import Layout from '../../src/layouts/Page'
-import Pill from '@/components/Pill'
 import CallToAction from '@/components/CallToAction'
 import StandaloneLink from '@/components/StandaloneLink'
 import Button from '@/components/Button'
@@ -57,7 +56,7 @@ export default function Pricing({ estates }) {
                         </tr>
                         <tr>
                             <td className="left">
-                                Site Prep and Utility Connections
+                                Site prep and utility connections
                             </td>
                             <td>Included</td>
                             <td>$50K+</td>
@@ -161,11 +160,11 @@ export default function Pricing({ estates }) {
                             <h3>Property depth</h3>
                             <p>
                                 If your new ADU is placed farther from the
-                                existing home than normal, we will have to
+                                existing home than normal, we will need to
                                 extend our standard utility inclusions. This
-                                increases material and labor costs. Any
-                                increases in cost will be analyzed during your
-                                Formal Property Analysis.
+                                increases material and labor costs. Any cost
+                                increases will be analyzed during your Formal
+                                Property Analysis.
                             </p>
                         </li>
                         <li className={style.factor}>
@@ -177,9 +176,9 @@ export default function Pricing({ estates }) {
                             <h3>Site conditions</h3>
                             <p>
                                 Certain areas have different soil requirements
-                                and might require additional soils testing, over
-                                excavation, or a retaining wall. This is
-                                determined on a site by site basis and will be
+                                and might require additional soils testing,
+                                over-excavation, or a retaining wall. This is
+                                determined on a site-by-site basis and will be
                                 covered in your analysis.
                             </p>
                         </li>
@@ -194,10 +193,10 @@ export default function Pricing({ estates }) {
                                 Required demolition of additional structures or
                                 very large trees will require additional
                                 equipment, labor, and disposal costs. These
-                                additional costs and any other site or city
-                                specific factors will be reviewed and verified
-                                during the Formal Property Analysis stage of
-                                your project.
+                                additional costs and any other site or
+                                city-specific factors will be reviewed and
+                                verified during the Formal Property Analysis
+                                stage of your project.
                             </p>
                         </li>
                     </ul>
@@ -214,12 +213,12 @@ export default function Pricing({ estates }) {
                     ctaUrl="/roi"
                 >
                     <p>
-                        Accessory Dwelling Units (ADU&rsquo;s) are a compelling
+                        Accessory Dwelling Units (ADUs) are a compelling
                         investment opportunity. There&rsquo;s never been a
-                        better time to expand your cash flow and return on a
-                        property by property basis. We&rsquo;re investment
-                        specialists ready to help maximize your property rental
-                        potential.
+                        better time to expand your cash flow and return on
+                        investment on a property-by-property basis. We&rsquo;re
+                        investment specialists ready to help maximize your
+                        property rental potential.
                     </p>
                 </CallToAction>
             </div>

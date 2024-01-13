@@ -28,8 +28,8 @@ export default function AboutUs({ estates }) {
                     <p>
                         Backyard Estates&rsquo; mission is to enable anyone who
                         owns a house to make their backyard their estate!
-                        Backyard Estates specializes in ADU&rsquo;s; we handle
-                        every detail, so you don&rsquo;t have to!
+                        Backyard Estates specializes in ADUs; we handle every
+                        detail, so you don&rsquo;t have to!
                     </p>
                     <p>
                         Our proven, end-to-end, process allows us to provide
@@ -37,10 +37,9 @@ export default function AboutUs({ estates }) {
                         customized financing options.
                     </p>
                     <p>
-                        We provide homeowner&rsquo;s a hands free experience and
-                        save them ten&rsquo;s of thousands of dollars by
-                        handling all design, permitting, and construction in
-                        half the time!
+                        We provide homeowners a hands-free experience and save
+                        them tens of thousands of dollars by handling all
+                        design, permitting, and construction in half the time!
                     </p>
                 </Chunk>
                 <Chunk
@@ -56,9 +55,9 @@ export default function AboutUs({ estates }) {
                     </p>
                     <p>
                         With our proprietary ADU Formal Property Analysis, we
-                        can ensure families have the information needed to know
-                        if an ADU is right for them, even before any plans or
-                        permitting need to be paid.
+                        can ensure homeowners have the information needed to
+                        know if an ADU is right for them, even before any plans
+                        or permitting need to be paid.
                     </p>
                 </Chunk>
                 <Chunk image="/client.jpg" title="Why Backyard Estates">
@@ -71,7 +70,7 @@ export default function AboutUs({ estates }) {
                         <li>
                             Quick and seamless property analysis and ADU design
                         </li>
-                        <li>Ground up construction in 8-12 weeks!</li>
+                        <li>Ground-up construction in 8-12 weeks!</li>
                         <li>
                             Partnered with the best off-site ADU manufacturer in
                             CA
@@ -85,7 +84,8 @@ export default function AboutUs({ estates }) {
                             project
                         </li>
                         <li>
-                            Construction team is fast, efficient, and accurate
+                            Our construction team is fast, efficient, and
+                            accurate
                         </li>
                     </ul>
                 </Chunk>
@@ -102,28 +102,28 @@ export default function AboutUs({ estates }) {
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                Accurate Pricing Upfront
+                                Accurate pricing upfront
                             </li>
                             <li>
                                 <FontAwesomeIcon
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                Free Designs
+                                Free designs
                             </li>
                             <li>
                                 <FontAwesomeIcon
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                Financing Options
+                                Financing options
                             </li>
                             <li>
                                 <FontAwesomeIcon
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                100% of Permits Approved
+                                100% of permits approved
                             </li>
                             <li>
                                 <FontAwesomeIcon
@@ -144,7 +144,7 @@ export default function AboutUs({ estates }) {
                                     icon={faCheck}
                                     className={style.icon}
                                 />
-                                Guaranteed Results
+                                Guaranteed results
                             </li>
                             <li>
                                 <FontAwesomeIcon
@@ -170,14 +170,14 @@ export default function AboutUs({ estates }) {
                                     icon={faTriangleExclamation}
                                     className={style.icon}
                                 />
-                                Expensive designs{' '}
+                                Expensive designs
                             </li>
                             <li>
                                 <FontAwesomeIcon
                                     icon={faTriangleExclamation}
                                     className={style.icon}
                                 />
-                                Betterhave cash
+                                Better have cash
                             </li>
                             <li>
                                 <FontAwesomeIcon
