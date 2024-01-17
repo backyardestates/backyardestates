@@ -1,39 +1,32 @@
-.dropdown {
-    position: relative;
-}
-
 .btn {
     all: unset;
     cursor: pointer;
     font-weight: 700;
 }
 
-.light {
-    composes: dropdown;
-
-    & .btn {
-        color: var(--color-neutral-600);
-        opacity: var(--link-opacity);
-        transition: opacity 300ms ease;
-    }
-
-    & .btn:hover {
-        opacity: var(--link-opacity-hover);
-    }
+.light,
+.dark {
+    position: relative;
 }
 
-.dark {
-    composes: dropdown;
+.light .btn {
+    color: var(--color-neutral-600);
+    opacity: var(--link-opacity);
+    transition: opacity 300ms ease;
+}
 
-    & .btn {
-        color: var(--color-white);
-        opacity: var(--link-opacity);
-        transition: opacity 300ms ease;
-    }
+.light .btn:hover {
+    opacity: var(--link-opacity-hover);
+}
 
-    & .btn:hover {
-        opacity: var(--link-opacity-hover);
-    }
+.dark .btn {
+    color: var(--color-white);
+    opacity: var(--link-opacity);
+    transition: opacity 300ms ease;
+}
+
+.dark .btn:hover {
+    opacity: var(--link-opacity-hover);
 }
 
 .dropdown_menu {
