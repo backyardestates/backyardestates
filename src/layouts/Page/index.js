@@ -3,6 +3,7 @@ import { Roboto, Roboto_Slab } from 'next/font/google'
 
 import Script from 'next/script'
 
+import { GoogleTagManager } from '@next/third-parties/google'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
@@ -64,7 +65,8 @@ export default function Page({
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
             <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
+                id="attributer"
+                src="https://d1b3llzbo1rqxo.cloudfront.net/attributer.js"
             />
             <Head>
                 <title>{pageTitle}</title>
@@ -88,6 +90,8 @@ export default function Page({
                 <Catchall />
             </main>
             <Footer floorplans={floorplans} />
+
+            <GoogleTagManager gtmId="GTM-WZR3TD5L" />
         </div>
     )
 }

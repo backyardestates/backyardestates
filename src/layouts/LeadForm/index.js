@@ -4,7 +4,8 @@ import style from './LeadForm.module.css'
 
 import Script from 'next/script'
 
-import { SpeedInsights } from '@vercel/speed-insights/next'
+import { GoogleTagManager } from '@next/third-parties/google'
+// import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import Head from 'next/head'
 
@@ -43,7 +44,8 @@ export default function LeadForm({ children }) {
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
             <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
+                id="attributer"
+                src="https://d1b3llzbo1rqxo.cloudfront.net/attributer.js"
             />
             <Head>
                 <title>Talk to an ADU specialist - Backyard Estates</title>
@@ -69,6 +71,8 @@ export default function LeadForm({ children }) {
 
             <main className={style.root}>{children}</main>
             {/* <SpeedInsights /> */}
+
+            <GoogleTagManager gtmId="GTM-WZR3TD5L" />
         </div>
     )
 }

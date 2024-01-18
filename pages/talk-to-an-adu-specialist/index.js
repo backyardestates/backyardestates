@@ -134,6 +134,48 @@ export default function LeadForm({ data }) {
                             <AddressAutocomplete setAddress={setAddress} />
                             <input
                                 type="hidden"
+                                id="[attributer-channel]"
+                                name="[attributer-channel]"
+                                value="[channel]"
+                            />
+                            <input
+                                type="hidden"
+                                id="[attributer-channeldrilldown1]"
+                                name="[attributer-channeldrilldown1]"
+                                value="[channeldrilldown1]"
+                            />
+                            <input
+                                type="hidden"
+                                id="[attributer-channeldrilldown2]"
+                                name="[attributer-channeldrilldown2]"
+                                value="[channeldrilldown2]"
+                            />
+                            <input
+                                type="hidden"
+                                id="[attributer-channeldrilldown3]"
+                                name="[attributer-channeldrilldown3]"
+                                value="[channeldrilldown3]"
+                            />
+                            <input
+                                type="hidden"
+                                id="[attributer-channeldrilldown4]"
+                                name="[attributer-channeldrilldown4]"
+                                value="[channeldrilldown4]"
+                            />
+                            <input
+                                type="hidden"
+                                id="[attributer-landingpage]"
+                                name="[attributer-landingpage]"
+                                value="[landingpage]"
+                            />
+                            <input
+                                type="hidden"
+                                id="[attributer-landingpagegroup]"
+                                name="[attributer-landingpagegroup]"
+                                value="[landingpagegroup]"
+                            />
+                            <input
+                                type="hidden"
                                 id="selectedAddress"
                                 name="selectedAddress"
                                 value={address}

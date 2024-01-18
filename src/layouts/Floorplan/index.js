@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Roboto, Roboto_Slab } from 'next/font/google'
+
+import { GoogleTagManager } from '@next/third-parties/google'
 import style from './Floorplan.module.css'
 
 import { config } from '@fortawesome/fontawesome-svg-core'
@@ -62,7 +64,8 @@ export default function Floorplan({ pageTitle, children, floorplans }) {
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
             <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
+                id="attributer"
+                src="https://d1b3llzbo1rqxo.cloudfront.net/attributer.js"
             />
             <Head>
                 <title>{`${pageTitle} floor plan - Backyard Estates`}</title>
@@ -89,6 +92,8 @@ export default function Floorplan({ pageTitle, children, floorplans }) {
 
             <Footer floorplans={floorplans} />
             {/* <SpeedInsights /> */}
+
+            <GoogleTagManager gtmId="GTM-WZR3TD5L" />
         </div>
     )
 }

@@ -6,7 +6,9 @@ import Footer from '@/components/Footer'
 import Hero from '@/components/Hero'
 import Menu from '@/components/Menu'
 
-import { SpeedInsights } from '@vercel/speed-insights/next'
+import { GoogleTagManager } from '@next/third-parties/google'
+
+// import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import Head from 'next/head'
@@ -49,7 +51,8 @@ export default function Homepage({ children, floorplans }) {
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
             <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
+                id="attributer"
+                src="https://d1b3llzbo1rqxo.cloudfront.net/attributer.js"
             />
             <Head>
                 <title>
@@ -79,6 +82,8 @@ export default function Homepage({ children, floorplans }) {
             <main>{children}</main>
             <Footer floorplans={floorplans} />
             {/* <SpeedInsights /> */}
+
+            <GoogleTagManager gtmId="GTM-WZR3TD5L" />
         </div>
     )
 }
