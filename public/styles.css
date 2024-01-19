@@ -174,6 +174,22 @@ input[type='submit'] {
 }
 */
 
+ol {
+    margin: 0;
+    padding: 0 0 0 1.75rem;
+    color: var(--color-neutral-500);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5em;
+}
+
+ol li {
+    margin: 0 0 1rem 0;
+    padding: 0;
+}
+
 @media only screen and (min-width: 1400px) {
     .wistia_responsive_wrapper {
         max-height: 360px;

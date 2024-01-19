@@ -1,3 +1,1 @@
-<svg width="2" height="32" viewBox="0 0 2 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<line x1="1" y1="1" x2="0.999999" y2="31" stroke="#DEDEDE" stroke-width="2" stroke-linecap="round"/>
-</svg>
+<svg fill="none" height="32" viewBox="0 0 2 32" width="2" xmlns="http://www.w3.org/2000/svg"><path d="m1 1-.000001 30" stroke="#dedede" stroke-linecap="round" stroke-width="2"/></svg>
