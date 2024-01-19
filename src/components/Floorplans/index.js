@@ -41,13 +41,38 @@ export default function Floorplans({ showNav = false, floorplans }) {
                                 floorplan={selectedFloorplan.frontmatter}
                                 showPrice
                             />
-                            <p>
-                                Explore our modern open floorplan, beautifully
-                                designed to optimize every square foot with
-                                high-quality, standard finishes, and kitchen
-                                appliances, offering a move-in-ready solution
-                                for a contemporary lifestyle.
-                            </p>
+                            {selectedFloorplan.frontmatter.id === '350-000' ||
+                            selectedFloorplan.frontmatter.id === '400-000' ||
+                            selectedFloorplan.frontmatter.id === '450-000' ? (
+                                <p>
+                                    Inclusions: Discover our modern open
+                                    floorplan, designed for optimal use of every
+                                    square foot. Our all-inclusive price covers
+                                    everything from architectural, structural,
+                                    and title 24 plans, permit running, standard
+                                    city fees, and construction with utility
+                                    connection (50&prime;). Revel in the luxury
+                                    of stainless steel kitchen appliances,
+                                    quartz countertops, and LVP throughout. Your
+                                    dream home will be thoughtfully crafted for
+                                    style and convenience.
+                                </p>
+                            ) : (
+                                <p>
+                                    Inclusions: Discover our modern open
+                                    floorplan, designed for optimal use of every
+                                    square foot. Our all-inclusive price covers
+                                    everything from architectural, structural,
+                                    and title 24 plans, permit running, standard
+                                    city fees, construction with utility
+                                    connection (50&prime;), and solar. Revel in
+                                    the luxury of stainless steel kitchen
+                                    appliances, quartz countertops, and LVP
+                                    throughout. Your dream home will be
+                                    thoughtfully crafted for style and
+                                    convenience.
+                                </p>
+                            )}
                             <StandaloneLink
                                 theme="beige"
                                 href={`/gallery/${selectedFloorplan.slug}`}
