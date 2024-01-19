@@ -13,7 +13,7 @@ dimension:
     - 1
 sqft: 800
 img: 450-nocta-R-00.png
-price: '199,000'
+price: '344,000'
 images:
     - 450-nocta-R-00.png
     - 450-nocta-R-01.png
