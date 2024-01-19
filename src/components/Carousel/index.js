@@ -26,18 +26,23 @@ export default function Carousel(images) {
     }
 
     useEffect(() => {
-        switch (position) {
-            case 1:
-                setButtonLeftVisible(false)
-                setButtonRightVisible(true)
-                break
-            case images.images.length:
-                setButtonLeftVisible(true)
-                setButtonRightVisible(false)
-                break
-            default:
-                setButtonLeftVisible(true)
-                setButtonRightVisible(true)
+        if (images.images.length !== 1) {
+            switch (position) {
+                case 1:
+                    setButtonLeftVisible(false)
+                    setButtonRightVisible(true)
+                    break
+                case images.images.length:
+                    setButtonLeftVisible(true)
+                    setButtonRightVisible(false)
+                    break
+                default:
+                    setButtonLeftVisible(true)
+                    setButtonRightVisible(true)
+            }
+        } else {
+            setButtonLeftVisible(false)
+            setButtonRightVisible(false)
         }
 
         // w = slidesRef.current.getBoundingClientRect().width
