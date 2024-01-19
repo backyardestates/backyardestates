@@ -2,7 +2,7 @@
 id: '999-004'
 isFloorplan: false
 order: 'X'
-title: 'Custom Estate - Delores'
+title: 'Custom Estate'
 city: 'Delores'
 bed: 2
 bath: 1
@@ -12,16 +12,20 @@ dimension:
     - 1
     - 1
 sqft: 550
-img: coming-soon.png
+img: 500-delores-01.png
 price: '199,000'
 images:
-    - coming-soon.png
+    - 500-delores-01.png
+    - 500-delores-02.png
+    - 500-delores-03.png
+    - 500-delores-04.png
+    - 500-delores-05.png
 related:
     - 999-001
     - 999-002
     - 999-003
     - 1200-000
-wistiaID:
+wistiaID: bcxpod8tz2
 floorPlanImage:
 floorPlanPDF:
 ---
