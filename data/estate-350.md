@@ -13,7 +13,7 @@ dimension:
     - 12
     - 1
 sqft: 350
-img: coming-soon.png
+img: Estate-350-Floor-Plan.png
 price: '185,000'
 images:
     - coming-soon.png

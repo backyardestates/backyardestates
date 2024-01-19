@@ -13,7 +13,7 @@ dimension:
     - 14
     - 10
 sqft: 600
-img: coming-soon.png
+img: Estate-600-Floor-Plan.png
 price: '265,000'
 images:
     - coming-soon.png
