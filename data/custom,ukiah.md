@@ -22,8 +22,8 @@ related:
     - 999-004
     - 1200-000
 wistiaID:
-floorPlanImage:
-floorPlanPDF:
+floorPlanImage: Custom-Estate-Ukiah-Floor-Plan.png
+floorPlanPDF: Custom-Estate-Ukiah-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

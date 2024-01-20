@@ -16,14 +16,11 @@ sqft: 947
 img: 'estate950-cover.jpg'
 price: '359,000'
 images:
-    - 950-garnsey-00.png
-    - 950-garnsey-01.png
-    - 950-garnsey-02.png
-    - 950-garnsey-03.png
-    - 950-garnsey-04.png
-    - 950-garnsey-05.png
-    - 950-garnsey-06.png
-    - 950-garnsey-07.png
+    - 950-estate-generic-lts-01.png
+    - 950-estate-generic-lts-02.png
+    - 950-estate-generic-lts-03.png
+    - 950-estate-generic-lts-04.png
+    - 950-estate-generic-lts-05.png
 related:
     - 800-000
     - 950-001

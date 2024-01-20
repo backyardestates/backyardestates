@@ -17,15 +17,18 @@ price: '344,000'
 images:
     - 450-nocta-R-00.png
     - 450-nocta-R-01.png
-    - 450-nocta-R-02.png
+    - 800-custom-duplex-01.png
+    - 800-custom-duplex-02.png
+    - 800-custom-duplex-03.png
+    - 800-custom-duplex-04.png
 related:
     - 999-001
     - 999-002
     - 999-004
     - 1200-000
 wistiaID: rm2nrskw9z
-floorPlanImage:
-floorPlanPDF:
+floorPlanImage: Custom-Estate-Duplex-Floor-Plan.png
+floorPlanPDF: Custom-Estate-Duplex-Floor-Plan.pdf
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum
