@@ -1,4 +1,3 @@
-// import { useState } from 'react'
 import { useLoadScript } from '@react-google-maps/api'
 import usePlacesAutocomplete from 'use-places-autocomplete'
 import {
@@ -14,7 +13,7 @@ import style from './AddressAutocomplete.module.css'
 
 const libraries = ['places']
 
-export default function AddressAutocomplete({ setAddress }) {
+export default function AddressAutocomplete({ getAddress }) {
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
         libraries: libraries,
@@ -24,12 +23,12 @@ export default function AddressAutocomplete({ setAddress }) {
     return (
         <div className={style.base}>
             <label>What is your property address?</label>
-            <PlacesAutocomplete setAddress={setAddress} />
+            <PlacesAutocomplete getAddress={getAddress} />
         </div>
     )
 }
 
-const PlacesAutocomplete = ({ setAddress }) => {
+const PlacesAutocomplete = ({ getAddress }) => {
     const {
         ready,
         value,
@@ -38,13 +37,10 @@ const PlacesAutocomplete = ({ setAddress }) => {
         clearSuggestions,
     } = usePlacesAutocomplete()
 
-    console.log(ready)
-
     const handleSelect = async (address) => {
         setValue(address, false)
         clearSuggestions()
-        // console.log(address)
-        setAddress(address)
+        getAddress(address)
     }
 
     return (
@@ -54,7 +50,6 @@ const PlacesAutocomplete = ({ setAddress }) => {
                 onChange={(e) => setValue(e.target.value)}
                 disabled={!ready}
                 className={style.textfield}
-                // placeholder="Enter address"
                 data-1p-ignore
             />
             <ComboboxPopover className={style.list}>

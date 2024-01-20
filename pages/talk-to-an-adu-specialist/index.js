@@ -9,14 +9,17 @@ import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
 import AddressAutocomplete from '@/components/AddressAutocomplete'
 
 export default function LeadForm({ data }) {
-    const [address, setAddress] = useState('Not set yet')
-
     const formRef = useRef()
     const messageRef = useRef()
 
+    let selectedAddress = 'Not set yet'
+
+    function getAddress(address) {
+        selectedAddress = address
+    }
+
     async function createPerson(e) {
         e.preventDefault()
-
         e.target.fields.disabled = true
         e.target.btn.firstChild.innerText = 'Submitting...'
         e.target.btn.lastChild.style.display = 'block'
@@ -31,24 +34,25 @@ export default function LeadForm({ data }) {
 
         const lead = {
             name: e.target.name.value,
-            address: e.target.selectedAddress.value,
+            address: selectedAddress,
             firstname: names[0],
             lastname: names[names.length - 1],
             email: [{ value: e.target.email.value }],
             phone: [{ value: e.target.mobile.value }],
             source: e.target.source.value,
-            attributer_channel: e.target.attributer_channel.value,
+            attributer_channel: e.target.attributer_channel.defaultValue,
             attributer_channeldrilldown1:
-                e.target.attributer_channeldrilldown1.value,
+                e.target.attributer_channeldrilldown1.defaultValue,
             attributer_channeldrilldown2:
-                e.target.attributer_channeldrilldown2.value,
+                e.target.attributer_channeldrilldown2.defaultValue,
             attributer_channeldrilldown3:
-                e.target.attributer_channeldrilldown3.value,
+                e.target.attributer_channeldrilldown3.defaultValue,
             attributer_channeldrilldown4:
-                e.target.attributer_channeldrilldown4.value,
-            attributer_landingpage: e.target.attributer_landingpage.value,
+                e.target.attributer_channeldrilldown4.defaultValue,
+            attributer_landingpage:
+                e.target.attributer_landingpage.defaultValue,
             attributer_landingpagegroup:
-                e.target.attributer_landingpagegroup.value,
+                e.target.attributer_landingpagegroup.defaultValue,
         }
 
         const res = await fetch(
@@ -62,6 +66,7 @@ export default function LeadForm({ data }) {
             }
         )
         const data = await res.json()
+
         createLead(data.data, lead)
     }
 
@@ -155,7 +160,7 @@ export default function LeadForm({ data }) {
                 <div ref={formRef}>
                     <form onSubmit={createPerson}>
                         <fieldset id="fields">
-                            <AddressAutocomplete setAddress={setAddress} />
+                            <AddressAutocomplete getAddress={getAddress} />
                             <input
                                 type="hidden"
                                 id="attributer_channel"
@@ -197,12 +202,6 @@ export default function LeadForm({ data }) {
                                 id="attributer_landingpagegroup"
                                 name="attributer_landingpagegroup"
                                 value="[landingpagegroup]"
-                            />
-                            <input
-                                type="hidden"
-                                id="selectedAddress"
-                                name="selectedAddress"
-                                value={address}
                             />
                             <div className={style.field}>
                                 <label htmlFor="firstname">Full name</label>
