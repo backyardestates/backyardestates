@@ -21,13 +21,12 @@ images:
     - 450-dalton-L-03.png
     - 450-dalton-L-04.png
     - 450-dalton-L-05.png
-    - 450-dalton-L-00.png
 related:
     - 350-000
     - 400-001
     - 400-002
     - 450-000
-wistiaID: dz1swqyjuh
+wistiaID: ilzvqd9lo7
 floorPlanImage: Estate-400-Floor-Plan.png
 floorPlanPDF: Estate-400-Floor-Plan.pdf
 ---

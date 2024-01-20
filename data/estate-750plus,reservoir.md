@@ -16,17 +16,19 @@ img: 750plus-reservoir-01.png
 price: '309,000'
 images:
     - 750plus-reservoir-00.png
-    - 750plus-reservoir-01.png
-    - 750plus-reservoir-02.png
-    - 750plus-reservoir-03.png
-    - 750plus-reservoir-04.png
-    - 750plus-reservoir-05.png
+    - 750plus-reservoir-01-lts.png
+    - 750plus-reservoir-02-lts.png
+    - 750plus-reservoir-03-lts.png
+    - 750plus-reservoir-04-lts.png
+    - 750plus-reservoir-05-lts.png
+    - 750plus-reservoir-06-lts.png
+    - 750plus-reservoir-07-lts.png
 related:
     - 750-000
     - 751-000
     - 800-000
     - 950-000
-wistiaID: 8e9cpnz0nn
+wistiaID: 8d3s420d62
 floorPlanImage: Estate-750plus-Floor-Plan.png
 floorPlanPDF:
 ---

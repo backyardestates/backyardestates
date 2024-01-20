@@ -19,13 +19,9 @@ export default function FloorPlan({ floorplan, estates }) {
     const wistiaID = floorplan.wistiaID
     const floorPlanPDF = floorplan.floorPlanPDF
     const relatedProperties = floorplan.related
-
-    // console.log(floorplan.floorPlanImage)
-
     const filteredRelatedProperties = estates.filter((e) =>
         relatedProperties.includes(e.frontmatter.id)
     )
-
     return (
         <Layout pageTitle={title} floorplans={estates}>
             <div className={style.content}>
@@ -85,6 +81,7 @@ export default function FloorPlan({ floorplan, estates }) {
                     </li>
                     <li>2-inch vinyl blinds on windows</li>
                     <li>Mirrored closet doors in bedrooms</li>
+                    <li>Smart ceiling fans</li>
                 </ul>
             </CustomerStory>
             <RelatedContent properties={filteredRelatedProperties} />

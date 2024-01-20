@@ -1,7 +1,7 @@
 ---
 id: '350-000'
 isFloorplan: true
-isClickable: false
+isClickable: true
 order: 'A'
 title: 'Estate 350'
 city: 'Chino'

@@ -15,9 +15,9 @@ sqft: 400
 img: 450-nocta-L-01.png
 price: '199,000'
 images:
-    - 450-nocta-L-00.png
     - 450-nocta-L-01.png
     - 450-nocta-L-02.png
+    - 450-nocta-L-03.png
 related:
     - 350-000
     - 400-000

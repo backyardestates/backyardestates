@@ -5,7 +5,7 @@ order: 'X'
 title: 'Custom Estate'
 city: 'Delores'
 bed: 2
-bath: 1
+bath: 2
 dimension:
     - 1
     - 1
@@ -13,7 +13,7 @@ dimension:
     - 1
 sqft: 550
 img: 500-delores-01.png
-price: '199,000'
+price:
 images:
     - 500-delores-01.png
     - 500-delores-02.png
