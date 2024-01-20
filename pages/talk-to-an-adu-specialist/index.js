@@ -37,6 +37,18 @@ export default function LeadForm({ data }) {
             email: [{ value: e.target.email.value }],
             phone: [{ value: e.target.mobile.value }],
             source: e.target.source.value,
+            attributer_channel: e.target.attributer_channel.value,
+            attributer_channeldrilldown1:
+                e.target.attributer_channeldrilldown1.value,
+            attributer_channeldrilldown2:
+                e.target.attributer_channeldrilldown2.value,
+            attributer_channeldrilldown3:
+                e.target.attributer_channeldrilldown3.value,
+            attributer_channeldrilldown4:
+                e.target.attributer_channeldrilldown4.value,
+            attributer_landingpage: e.target.attributer_landingpage.value,
+            attributer_landingpagegroup:
+                e.target.attributer_landingpagegroup.value,
         }
 
         const res = await fetch(
@@ -50,7 +62,6 @@ export default function LeadForm({ data }) {
             }
         )
         const data = await res.json()
-
         createLead(data.data, lead)
     }
 
@@ -84,11 +95,24 @@ export default function LeadForm({ data }) {
             '30a2b54f80758dab86a35c127fb7fd2d70ba36c0': d.last_name,
             '80ecccdf8f5ceabad89d411094abbc61248f16c8': d.phone[0].value,
             // prettier-ignore
-            "fd49bc4881f7bdffdeaa1868171df24bea5925fe": source,
-
+            'fd49bc4881f7bdffdeaa1868171df24bea5925fe': source,
             '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
             // prettier-ignore
-            "bbb72730be7b5833fef926f0ab0636961bdb0050": d.primary_email,
+            'bbb72730be7b5833fef926f0ab0636961bdb0050': d.primary_email,
+            // prettier-ignore
+            'dea15c0245a280c47d904902a4f0c0bec33ef082': lead.attributer_channel,
+            // prettier-ignore
+            'd2397a2fd81f101ff2d74d414bf2d86f4e2e3e2d': lead.attributer_channeldrilldown1,
+            '348a2707675ba07647b664ee7b7cee37f612e937':
+                lead.attributer_channeldrilldown1,
+            '2e2017125cfb22061969c326aa62b8ca2833cf87':
+                lead.attributer_channeldrilldown1,
+            '5ebaf0bffb3c97b14e83907671781caf4f0e00b0':
+                lead.attributer_channeldrilldown1,
+            '096a07c957328fdaf6d359d7dc9c9070c9332e70':
+                lead.attributer_landingpage,
+            '73f6368b2ec18c4cc7e006da670088253fdc88c3':
+                lead.attributer_landingpagegroup,
         }
 
         const res = await fetch(
@@ -134,44 +158,44 @@ export default function LeadForm({ data }) {
                             <AddressAutocomplete setAddress={setAddress} />
                             <input
                                 type="hidden"
-                                id="[attributer-channel]"
-                                name="[attributer-channel]"
+                                id="attributer_channel"
+                                name="attributer_channel"
                                 value="[channel]"
                             />
                             <input
                                 type="hidden"
-                                id="[attributer-channeldrilldown1]"
-                                name="[attributer-channeldrilldown1]"
+                                id="attributer_channeldrilldown1"
+                                name="attributer_channeldrilldown1"
                                 value="[channeldrilldown1]"
                             />
                             <input
                                 type="hidden"
-                                id="[attributer-channeldrilldown2]"
-                                name="[attributer-channeldrilldown2]"
+                                id="attributer_channeldrilldown2"
+                                name="attributer_channeldrilldown2"
                                 value="[channeldrilldown2]"
                             />
                             <input
                                 type="hidden"
-                                id="[attributer-channeldrilldown3]"
-                                name="[attributer-channeldrilldown3]"
+                                id="attributer_channeldrilldown3"
+                                name="attributer_channeldrilldown3"
                                 value="[channeldrilldown3]"
                             />
                             <input
                                 type="hidden"
-                                id="[attributer-channeldrilldown4]"
-                                name="[attributer-channeldrilldown4]"
+                                id="attributer_channeldrilldown4"
+                                name="attributer_channeldrilldown4"
                                 value="[channeldrilldown4]"
                             />
                             <input
                                 type="hidden"
-                                id="[attributer-landingpage]"
-                                name="[attributer-landingpage]"
+                                id="attributer_landingpage"
+                                name="attributer_landingpage"
                                 value="[landingpage]"
                             />
                             <input
                                 type="hidden"
-                                id="[attributer-landingpagegroup]"
-                                name="[attributer-landingpagegroup]"
+                                id="attributer_landingpagegroup"
+                                name="attributer_landingpagegroup"
                                 value="[landingpagegroup]"
                             />
                             <input
