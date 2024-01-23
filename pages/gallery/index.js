@@ -8,6 +8,7 @@ import Card from '@/components/Card'
 
 import { useState } from 'react'
 import ButtonTags from '@/components/FilterTags'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function FloorPlans({ estates }) {
     const [selected, setSelected] = useState(99)
@@ -65,6 +66,7 @@ export default function FloorPlans({ estates }) {
             explanation="Browse recent projects and customer stories to discover the right Accessory Dwelling Unit (ADU) for your family"
             floorplans={estates}
         >
+            <OpenGraph />
             <div className={style.content}>
                 <ButtonTags
                     tags={bedroomCounts}

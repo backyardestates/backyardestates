@@ -20,6 +20,7 @@ import {
 import { faArrowDown } from '@fortawesome/pro-light-svg-icons'
 // import Pill from '@/components/Pill'
 import Phase from '@/components/Phase'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function OurProcess({ estates }) {
     return (
@@ -29,6 +30,7 @@ export default function OurProcess({ estates }) {
             explanation="We manage the entire project, from custom design to permitting, all the way to construction and installation."
             floorplans={estates}
         >
+            <OpenGraph title="Our process - Backyard Estates" />
             <div className={style.timeline}>
                 <Phase
                     number={1}

@@ -3,6 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import Bio from '@/components/Bio'
 import Layout from '../../../src/layouts/Page'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function OurTeam({ estates }) {
     return (
@@ -12,6 +13,7 @@ export default function OurTeam({ estates }) {
             explanation="Meet the people who make your ADU possible."
             floorplans={estates}
         >
+            <OpenGraph title="Our team - Backyard Estates" />
             <Bio
                 portrait="adam-stewart.png"
                 name="Adam Stewart"

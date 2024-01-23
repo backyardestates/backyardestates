@@ -12,18 +12,25 @@ import StandaloneLink from '@/components/StandaloneLink'
 import VideoPlayer from '@/components/VideoPlayer'
 
 import style from './FloorPlan.module.css'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function FloorPlan({ floorplan, estates }) {
     const title = floorplan.title
     const price = floorplan.price
     const wistiaID = floorplan.wistiaID
     const floorPlanPDF = floorplan.floorPlanPDF
+    const floorPlanSocialImage = floorplan.ogImage
     const relatedProperties = floorplan.related
     const filteredRelatedProperties = estates.filter((e) =>
         relatedProperties.includes(e.frontmatter.id)
     )
     return (
         <Layout pageTitle={title} floorplans={estates}>
+            <OpenGraph
+                title={title}
+                description={`Backyard Estate - ${title}`}
+                image={floorPlanSocialImage}
+            />
             <div className={style.content}>
                 <h1>{title}</h1>
                 <PropertyInformation floorplan={floorplan} />
