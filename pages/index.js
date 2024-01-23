@@ -8,6 +8,7 @@ import Properties from '@/components/Properties'
 import Benefits from '@/components/Benefits'
 import Process from '@/components/Process'
 import Floorplans from '@/components/Floorplans'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function Home({ estates }) {
     estates.sort((a, b) => {
@@ -23,6 +24,7 @@ export default function Home({ estates }) {
     })
     return (
         <Layout floorplans={estates}>
+            <OpenGraph />
             <Testimonials />
             <Floorplans showNav={true} floorplans={estates} />
             <Benefits />

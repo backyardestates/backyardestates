@@ -4,6 +4,7 @@ import matter from 'gray-matter'
 
 import Layout from '../../../src/layouts/Page'
 import style from '../Legal.module.css'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function PrivacyPolicy({ estates }) {
     return (
@@ -13,6 +14,7 @@ export default function PrivacyPolicy({ estates }) {
             explanation="Last updated December 01, 2020"
             floorplans={estates}
         >
+            <OpenGraph title={`Backyard Estates - Privacy policy`} />
             <div className={style.content}>
                 <p>
                     Thank you for choosing to be part of our community at

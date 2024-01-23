@@ -14,6 +14,7 @@ import {
     faHandHoldingDollar,
 } from '@fortawesome/pro-light-svg-icons'
 import Chunk from '@/components/Chunk'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function ReturnOnInvestment({ estates }) {
     return (
@@ -23,6 +24,7 @@ export default function ReturnOnInvestment({ estates }) {
             explanation="Take advantage of your underutilized land and new California laws. Convert your backyard into rental income with an Accessory Dwelling Unit (ADU)."
             floorplans={estates}
         >
+            <OpenGraph title={`Backyard Estates - Return on investment`} />
             <div className={style.content}>
                 <Chunk
                     image="/city.jpg"

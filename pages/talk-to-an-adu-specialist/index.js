@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
 
 import AddressAutocomplete from '@/components/AddressAutocomplete'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function LeadForm({ data }) {
     const formRef = useRef()
@@ -155,6 +156,7 @@ export default function LeadForm({ data }) {
 
     return (
         <Layout>
+            <OpenGraph title={`Backyard Estates - Contact form`} />
             <div className={style.content}>
                 <h1>Talk to an ADU specialist</h1>
                 <div ref={formRef}>

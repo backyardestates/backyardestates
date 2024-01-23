@@ -27,8 +27,8 @@ export default function FloorPlan({ floorplan, estates }) {
     return (
         <Layout pageTitle={title} floorplans={estates}>
             <OpenGraph
-                title={title}
-                description={`Backyard Estate - ${title}`}
+                title={`Backyard Estates - ${title}`}
+                description={`Backyard Estates - ${title}`}
                 image={floorPlanSocialImage}
             />
             <div className={style.content}>

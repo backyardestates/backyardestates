@@ -18,6 +18,7 @@ import StandaloneLink from '@/components/StandaloneLink'
 import Button from '@/components/Button'
 
 import style from './Pricing.module.css'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function Pricing({ estates }) {
     // filter properties for floor plans
@@ -33,6 +34,7 @@ export default function Pricing({ estates }) {
             backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow."
             floorplans={estates}
         >
+            <OpenGraph title={`Backyard Estates - Pricing`} />
             <div className={style.content}>
                 <h2>All-Inclusive pricing comparison</h2>
                 <table>

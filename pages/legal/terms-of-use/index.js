@@ -3,6 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import Layout from '../../../src/layouts/Page'
 import style from '../Legal.module.css'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function TermsOfUse({ estates }) {
     return (
@@ -12,6 +13,7 @@ export default function TermsOfUse({ estates }) {
             explanation="Last updated December 01, 2020"
             floorplans={estates}
         >
+            <OpenGraph title="Backyard Estates - Terms of use" />
             <div className={style.content}>
                 <h2>AGREEMENT TO TERMS</h2>
                 <p>

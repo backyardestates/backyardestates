@@ -66,7 +66,7 @@ export default function FloorPlans({ estates }) {
             explanation="Browse recent projects and customer stories to discover the right Accessory Dwelling Unit (ADU) for your family"
             floorplans={estates}
         >
-            <OpenGraph />
+            <OpenGraph title={`Backyard Estates - Gallery`} />
             <div className={style.content}>
                 <ButtonTags
                     tags={bedroomCounts}

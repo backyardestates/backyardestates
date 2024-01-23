@@ -11,6 +11,7 @@ import RelatedContent from '@/components/RelatedContent'
 import style from './CustomerStoryTemplate.module.css'
 
 import Markdown from 'react-markdown'
+import OpenGraph from '@/components/OpenGraph'
 
 export default function CustomerStoryTemplate({ story, content, estates }) {
     const name = story.name
@@ -26,6 +27,7 @@ export default function CustomerStoryTemplate({ story, content, estates }) {
 
     return (
         <Layout pageTitle={name} floorplans={estates}>
+            <OpenGraph title={`Backyard Estates - ${name}'s customer story`} />
             <div className={style.content}>
                 <h1>{name}</h1>
                 <p className={style.intro}>{introductorySentence}</p>
