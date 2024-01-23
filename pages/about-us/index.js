@@ -3,6 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import Chunk from '@/components/Chunk'
 import Layout from '../../src/layouts/Page'
+import OpenGraph from '@/components/OpenGraph'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -19,6 +20,7 @@ export default function AboutUs({ estates }) {
             explanation="Our mission is to enable homeowners to make your ADU dreams a reality!"
             floorplans={estates}
         >
+            <OpenGraph />
             <div className={style.content}>
                 <Chunk
                     image="/render.jpg"

@@ -24,6 +24,7 @@ related:
 wistiaID: ofv6fdyfib
 floorPlanImage: Custom-Estate-Rosemount-Floor-Plan.png
 floorPlanPDF: Custom-Estate-Rosemount-Floor-Plan.pdf
+ogImage: Custom-Estate-Rosemount-Floor-Plan-OG.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

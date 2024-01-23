@@ -31,6 +31,7 @@ related:
 wistiaID: yfyt83r48d
 floorPlanImage: Estate-750-Floor-Plan.png
 floorPlanPDF:
+ogImage: backyard-estates-OG.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

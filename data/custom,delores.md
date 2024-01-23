@@ -28,6 +28,7 @@ related:
 wistiaID: bcxpod8tz2
 floorPlanImage:
 floorPlanPDF:
+ogImage: backyard-estates-OG.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

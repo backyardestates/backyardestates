@@ -24,6 +24,7 @@ related:
 wistiaID:
 floorPlanImage: Custom-Estate-Ukiah-Floor-Plan.png
 floorPlanPDF: Custom-Estate-Ukiah-Floor-Plan.pdf
+ogImage: Custom-Estate-Ukiah-Floor-Plan-OG.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

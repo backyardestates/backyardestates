@@ -31,6 +31,7 @@ related:
 wistiaID: q7l4bmz7fg
 floorPlanImage: Estate-800-Floor-Plan.png
 floorPlanPDF: Estate-800-Floor-Plan.pdf
+ogImage: Estate-800-Floor-Plan-OG.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

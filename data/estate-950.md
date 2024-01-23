@@ -29,6 +29,7 @@ related:
 wistiaID: lrtz4sfbnf
 floorPlanImage: Estate-950-Floor-Plan.png
 floorPlanPDF: Estate-950-Floor-Plan.pdf
+ogImage: Estate-950-Floor-Plan-OG.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

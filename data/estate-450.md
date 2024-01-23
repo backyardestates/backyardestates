@@ -32,6 +32,7 @@ related:
 wistiaID: 7fszby72sk
 floorPlanImage: Estate-450-Floor-Plan.png
 floorPlanPDF: Estate-450-Floor-Plan.pdf
+ogImage: Estate-450-Floor-Plan-OG.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

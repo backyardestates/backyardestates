@@ -29,6 +29,7 @@ related:
 wistiaID: rm2nrskw9z
 floorPlanImage: Custom-Estate-Duplex-Floor-Plan.png
 floorPlanPDF: Custom-Estate-Duplex-Floor-Plan.pdf
+ogImage: Custom-Estate-Duplex-Floor-Plan-OG.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum

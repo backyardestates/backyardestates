@@ -27,6 +27,7 @@ related:
     - 750-000
     - 751-000
     - 950-000
+ogImage: backyard-estates-OG.png
 ---
 
 > &ldquo;Backyard Estates had it all planned out… everything has fallen into place. It was easy… so easy.&rdquo;

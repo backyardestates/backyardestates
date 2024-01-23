@@ -25,6 +25,7 @@ related:
     - 751-000
     - 950-000
     - 1200-000
+ogImage: backyard-estates-OG.png
 ---
 
 > &ldquo;I don’t feel like we are customers; I feel like Backyard Estates is taking a vested interest in our family.&rdquo;
