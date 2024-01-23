@@ -63,6 +63,23 @@ export default function Homepage({ children, floorplans }) {
                     name="viewport"
                     content="width=device-width, initial-scale=1.0"
                 />
+
+                <meta
+                    name="description"
+                    content="Backyard Estates - Premier Accessory Dwelling Unit (ADU)
+                    builder for the greater Los Angeles area."
+                    key="desc"
+                />
+                <meta
+                    property="og:description"
+                    content="Backyard Estates - Premier Accessory Dwelling Unit (ADU)
+                    builder for the greater Los Angeles area."
+                />
+                <meta
+                    property="og:image"
+                    content="/images/og/backyard-estates-OG.png"
+                />
+
                 <link rel="icon" href="/favicon.ico" sizes="any" />
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
