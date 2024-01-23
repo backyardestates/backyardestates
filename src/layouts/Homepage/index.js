@@ -65,6 +65,13 @@ export default function Homepage({ children, floorplans }) {
                 />
 
                 <meta
+                    property="og:url"
+                    content="https://www.backyardestates.com/"
+                />
+                <meta property="og:type" content="website" />
+                <meta property="og:title" content="Backyard Estates" />
+
+                <meta
                     name="description"
                     content="Backyard Estates - Premier Accessory Dwelling Unit (ADU)
                     builder for the greater Los Angeles area."
@@ -72,8 +79,7 @@ export default function Homepage({ children, floorplans }) {
                 />
                 <meta
                     property="og:description"
-                    content="Backyard Estates - Premier Accessory Dwelling Unit (ADU)
-                    builder for the greater Los Angeles area."
+                    content="Premier ADU builder for the greater Los Angeles area"
                 />
                 <meta
                     property="og:image"
@@ -89,7 +95,7 @@ export default function Homepage({ children, floorplans }) {
                 <meta name="twitter:title" content="Backyard Estates" />
                 <meta
                     name="twitter:description"
-                    content="Backyard Estates - Premier Accessory Dwelling Unit (ADU) builder for the greater Los Angeles area."
+                    content="Premier ADU builder for the greater Los Angeles area"
                 />
                 <meta
                     name="twitter:image"
