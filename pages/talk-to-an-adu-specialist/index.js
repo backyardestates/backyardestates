@@ -1,7 +1,11 @@
-import { useState, useRef } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
+// import Script from 'next/script'
 import Layout from '../../src/layouts/LeadForm'
 import style from './Form.module.css'
+
+import { redirect } from 'next/navigation'
+import { useRouter } from 'next/router'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
@@ -9,9 +13,16 @@ import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
 import AddressAutocomplete from '@/components/AddressAutocomplete'
 import OpenGraph from '@/components/OpenGraph'
 
+import { InlineWidget } from 'react-calendly'
+
 export default function LeadForm({ data }) {
-    const formRef = useRef()
-    const messageRef = useRef()
+    const router = useRouter()
+    const [calendly, setCalendly] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+    })
 
     let selectedAddress = 'Not set yet'
 
@@ -134,8 +145,13 @@ export default function LeadForm({ data }) {
         const data = await res.json()
 
         if (data.success) {
-            formRef.current.style.display = 'none'
-            messageRef.current.style.display = 'block'
+            router.push({
+                pathname: '/talk-to-an-adu-specialist/calendly',
+                query: {
+                    name: `${d.first_name} ${d.last_name}`,
+                    address: lead.address,
+                },
+            })
         }
     }
 
@@ -158,8 +174,8 @@ export default function LeadForm({ data }) {
         <Layout>
             <OpenGraph title={`Backyard Estates - Contact form`} />
             <div className={style.content}>
-                <h1>Talk to an ADU specialist</h1>
-                <div ref={formRef}>
+                <div className={style.centered}>
+                    <h1>Talk to an ADU specialist</h1>
                     <form onSubmit={createPerson}>
                         <fieldset id="fields">
                             <AddressAutocomplete getAddress={getAddress} />
@@ -324,10 +340,6 @@ export default function LeadForm({ data }) {
                             Backyard Estates for your ADU needs.
                         </p>
                     </form>
-                </div>
-                <div ref={messageRef} id="success" className={style.success}>
-                    <h3>Thank you!</h3>
-                    <p>Someone from our team will contact you soon.</p>
                 </div>
             </div>
         </Layout>
