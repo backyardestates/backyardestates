@@ -10,11 +10,12 @@ export default function Calendly() {
             <OpenGraph title={`Backyard Estates - Calendly form`} />
             <div className={style.calendly}>
                 <h1 className={style.calendlyTitle}>
-                    Talk to an ADU specialist
+                    Schedule your Backyard Estates call
                 </h1>
                 <p className={style.calendlySentence}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore
+                    Keep an eye out for a link via text message, which will
+                    provide additional details and prepare you for our upcoming
+                    call.
                 </p>
                 <InlineWidget
                     className={style.g}
