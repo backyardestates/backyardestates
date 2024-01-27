@@ -9,15 +9,6 @@ import style from './Form.module.css'
 export default function Calendly() {
     const router = useRouter()
 
-    let name = ''
-
-    useEffect(() => {
-        if (router.isReady) {
-            name = router.query.name
-            console.log(name)
-        }
-    }, [router.isReady, router.pathname, router.query])
-
     return (
         <Layout path={router.pathname}>
             <OpenGraph title={`Backyard Estates - Calendly form`} />
