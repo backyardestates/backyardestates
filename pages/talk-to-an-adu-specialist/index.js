@@ -150,6 +150,8 @@ export default function LeadForm({ data }) {
                 query: {
                     name: `${d.first_name} ${d.last_name}`,
                     address: lead.address,
+                    email: d.primary_email,
+                    // phone: d.phone[0].value,
                 },
             })
         }
@@ -171,7 +173,7 @@ export default function LeadForm({ data }) {
     }
 
     return (
-        <Layout>
+        <Layout path="/talk-to-an-adu-specialist">
             <OpenGraph title={`Backyard Estates - Contact form`} />
             <div className={style.content}>
                 <div className={style.centered}>

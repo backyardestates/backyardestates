@@ -3,6 +3,7 @@ import style from './LeadForm.module.css'
 // import Masthead from '@/components/Masthead'
 
 import Script from 'next/script'
+import { useRouter } from 'next/router'
 
 import { GoogleTagManager } from '@next/third-parties/google'
 // import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -35,12 +36,17 @@ import Logo from '@/components/Logo'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/pro-solid-svg-icons'
 
-function goBack() {
-    // console.log('Go back one page')
-    history.back()
-}
-
-export default function LeadForm({ children }) {
+export default function LeadForm({ path, children }) {
+    const router = useRouter()
+    function goBack() {
+        if (path === '/talk-to-an-adu-specialist/calendly') {
+            router.push({
+                pathname: '/',
+            })
+        } else {
+            history.back()
+        }
+    }
     return (
         <div className={`${roboto.variable} ${robotoSlab.variable}`}>
             <Script

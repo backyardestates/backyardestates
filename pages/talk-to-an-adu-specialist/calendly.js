@@ -1,12 +1,25 @@
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import OpenGraph from '@/components/OpenGraph'
 import Layout from '../../src/layouts/LeadForm'
-
 import { InlineWidget } from 'react-calendly'
+
 import style from './Form.module.css'
 
 export default function Calendly() {
+    const router = useRouter()
+
+    let name = ''
+
+    useEffect(() => {
+        if (router.isReady) {
+            name = router.query.name
+            console.log(name)
+        }
+    }, [router.isReady, router.pathname, router.query])
+
     return (
-        <Layout>
+        <Layout path={router.pathname}>
             <OpenGraph title={`Backyard Estates - Calendly form`} />
             <div className={style.calendly}>
                 <h1 className={style.calendlyTitle}>
@@ -18,18 +31,25 @@ export default function Calendly() {
                     call.
                 </p>
                 <InlineWidget
-                    className={style.g}
                     url="https://calendly.com/adam-735/15min?hide_gdpr_banner=1"
                     styles={{
                         margin: '0px',
                         height: '1000px',
                     }}
                     pageSettings={{
-                        backgroundColor: 'f7f7f7',
+                        backgroundColor: 'ffffff',
                         hideEventTypeDetails: true,
                         hideLandingPageDetails: true,
                         primaryColor: '36484b',
                         textColor: '5e5e5e',
+                    }}
+                    prefill={{
+                        name: router.query.name,
+                        email: router.query.email,
+                        // smsReminderNumber: `+1${router.query.phone}`,
+                        customAnswers: {
+                            a1: router.query.address,
+                        },
                     }}
                 />
             </div>
