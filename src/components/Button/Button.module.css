@@ -3,13 +3,14 @@
     align-self: center;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.625rem;
     height: 3rem;
     margin: 0;
-    padding: 0rem 1.5rem 0rem 1.5rem;
+    padding: 0rem 1.25rem 0rem 1.5rem;
     border-radius: 3rem;
     text-decoration: none;
     font-family: var(--font-sans);
+    font-weight: 500;
     border: none;
     transition: background-color 300ms ease, border-color 300ms ease;
 }
@@ -17,18 +18,27 @@
 .primary {
     composes: base;
     background-color: var(--color-brand-light-blue);
-    /* border: 2px solid var(--color-brand-light-blue); */
     color: var(--color-white);
 }
 
-.primary svg {
-    opacity: 0.5;
-    stroke: white;
+.base span {
+    opacity: 0.9;
+}
+
+.base:hover span {
+    opacity: 1;
+}
+
+.primary svg,
+.secondary svg {
+    opacity: 0.75;
+    stroke: var(--color-white);
     transition: transform 200ms ease, opacity 200ms ease;
 }
 
-.primary:hover svg {
-    opacity: 0.75;
+.primary:hover svg,
+.secondary:hover svg {
+    opacity: 1;
     transform: translateX(2px);
 }
 
@@ -36,34 +46,24 @@
     composes: base;
     background-color: none;
     color: var(--color-white);
-    /* border: 2px solid var(--color-white-subtle); */
-}
-
-.secondary svg {
-    opacity: 0.5;
-    stroke: var(--color-white);
 }
 
 .theme_blue {
     background-color: var(--color-brand-light-blue);
-    /* border-color: var(--color-brand-light-blue); */
 }
 
 .theme_beige {
     background-color: var(--color-brand-beige);
-    /* border-color: var(--color-brand-beige); */
 }
 
 .secondary.theme_blue {
     color: var(--color-brand-light-blue);
     background-color: var(--color-white);
-    /* border-color: var(--color-white); */
 }
 
 .secondary.theme_beige {
     color: var(--color-brand-beige);
     background-color: var(--color-white);
-    /* border-color: var(--color-white); */
 }
 
 .secondary.theme_blue svg {
@@ -76,10 +76,8 @@
 
 .primary.theme_beige:hover {
     background-color: var(--color-brand-beige-hover);
-    /* border-color: var(--color-brand-beige-hover); */
 }
 
 .primary.theme_blue:hover {
     background-color: var(--color-brand-light-blue-hover);
-    /* border-color: var(--color-brand-light-blue-hover); */
 }
