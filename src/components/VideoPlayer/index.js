@@ -9,8 +9,7 @@ export default function VideoPlayer({ wistiaID = '8qm3203jcf' }) {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setShowComponent(true)
-        }, 50)
-
+        }, 500)
         return () => clearTimeout(timeout)
     }, [])
 
