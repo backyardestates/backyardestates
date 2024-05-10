@@ -1,35 +1,32 @@
 ---
-id: '950-001'
+id: '400-003'
 isFloorplan: false
-order: 'H'
-title: 'Estate 950'
-city: '?'
-bed: 3
-bath: 2
+order: 'B'
+title: 'Estate 400'
+city: ''
+bed: 1
+bath: 1
 dimension:
-    - 1
-    - 1
-    - 1
-    - 1
-sqft: 947
-img: 950-garnsey-03.png
-price: '359,000'
+    - 20
+    - 0
+    - 20
+    - 0
+sqft: 400
+img: 400-north-mountain-01.png
+price: '199,000'
 images:
-    - 950-garnsey-00-gray.png
-    - 950-garnsey-01.png
-    - 950-garnsey-02.png
-    - 950-garnsey-03.png
-    - 950-garnsey-04.png
-    - 950-garnsey-05.png
-    - 950-garnsey-06.png
-    - 950-garnsey-07.png
+    - 400-north-mountain-01.png
+    - 400-north-mountain-02.png
+    - 400-north-mountain-03.png
+    - 400-north-mountain-04.png
+    - 400-north-mountain-05.png
 related:
-    - 800-000
-    - 950-000
-    - 950-002
-    - 950-003
-wistiaID: o7c9dl1z2f
-floorPlanImage: Estate-950-Floor-Plan.png
+    - 400-000
+    - 400-001
+    - 400-002
+    - 450-000
+wistiaID: 0kgonrclmu
+floorPlanImage: Estate-400-Floor-Plan.png
 floorPlanPDF:
 ogImage: backyard-estates-OG.png
 ---

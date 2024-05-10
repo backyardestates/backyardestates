@@ -1,11 +1,10 @@
 ---
-id: '750-000'
-isFloorplan: true
-isClickable: true
+id: '750-002'
+isFloorplan: false
 order: 'E'
 title: 'Estate 750'
 city: '?'
-bed: 2
+bed: 1
 bath: 1
 dimension:
     - 32
@@ -13,23 +12,23 @@ dimension:
     - 23
     - 4
 sqft: 749
-img: 750-coolcrest-04.png
+img: 750-orchard-01.png
 price: '299,000'
 images:
-    - 750-coolcrest-01.png
-    - 750-coolcrest-02.png
-    - 750-coolcrest-03.png
-    - 750-coolcrest-04.png
-    - 750-coolcrest-00.png
+    - 750-orchard-01.png
+    - 750-orchard-02.png
+    - 750-orchard-03.png
+    - 750-orchard-04.png
+    - 750-orchard-05.png
 related:
     - 600-000
-    - 751-000
+    - 750-000
+    - 750-001
     - 800-000
-    - 950-000
-wistiaID: vsn42n6qdi
+wistiaID: e3d25g0c6j
 floorPlanImage: Estate-750-Floor-Plan.png
-floorPlanPDF: Estate-750-Floor-Plan.pdf
-ogImage: Estate-750-Floor-Plan-OG.png
+floorPlanPDF:
+ogImage: backyard-estates-OG.png
 ---
 
 > Non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum
