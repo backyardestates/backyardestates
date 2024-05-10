@@ -12,9 +12,6 @@
     transition: color 300ms ease;
 }
 
-.base span {
-}
-
 .theme_blue {
     color: var(--color-brand-light-blue);
 }
@@ -39,10 +36,10 @@
     color: var(--color-brand-beige-hover);
 }
 
-.base svg {
+.animated svg {
     transition: transform 200ms ease;
 }
 
-.base:hover svg {
+.animated:hover svg {
     transform: translateX(2px);
 }

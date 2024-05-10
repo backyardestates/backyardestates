@@ -17,10 +17,9 @@ export default function StandaloneLink({
             href={href}
             className={`${style.base} ${
                 theme === 'blue' ? style.theme_blue : style.theme_beige
-            }`}
+            } ${icon === 'arrow' ? style.animated : style.static}`}
         >
             <span>{children}</span>
-
             <FontAwesomeIcon
                 icon={icon === 'arrow' ? faArrowRight : faArrowDownToLine}
             />
