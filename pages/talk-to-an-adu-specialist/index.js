@@ -224,7 +224,7 @@ export default function LeadForm({ data }) {
                                 value="[landingpagegroup]"
                             />
                             <div className={style.field}>
-                                <label htmlFor="firstname">Full name</label>
+                                <label htmlFor="name">Full name</label>
                                 <input
                                     type="text"
                                     name="name"
@@ -243,6 +243,7 @@ export default function LeadForm({ data }) {
                                     required
                                     className={style.textfield}
                                     data-1p-ignore
+                                    autoComplete="off"
                                 />
                             </div>
                             <div className={style.field}>

@@ -20,7 +20,7 @@ export default function Newsletter() {
                         placeholder="Enter your email address"
                         className={style.inputEmail}
                         data-1p-ignore
-                        // defaultValue="office@rayelders.com"
+                        autoComplete="off"
                     />
                     <button id="btn" className={style.inputButton}>
                         <span>Subscribe</span>
