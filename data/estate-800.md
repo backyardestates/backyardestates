@@ -28,7 +28,7 @@ related:
     - 751-000
     - 800-001
     - 800-002
-wistiaID: 4gbnrfyedf
+wistiaID: efbntyzoe6
 floorPlanImage: Estate-800-Floor-Plan.png
 floorPlanPDF: Estate-800-Floor-Plan.pdf
 ogImage: Estate-800-Floor-Plan-OG.png
