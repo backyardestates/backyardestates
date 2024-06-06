@@ -27,7 +27,6 @@ export default function StandardInclusions({ estates }) {
             floorplans={estates}
         >
             {/* <OpenGraph /> */}
-            <InclusionsPanel />
             <div className={style.content}>
                 <h2 className={style.headline}>
                     Standard features and upgrades
