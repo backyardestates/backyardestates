@@ -108,6 +108,11 @@ export default function Footer({ floorplans }) {
                                     <Link href="/gallery">Gallery</Link>
                                 </li>
                                 <li>
+                                    <Link href="/standard-inclusions">
+                                        Standard inclusions
+                                    </Link>
+                                </li>
+                                <li>
                                     <Link href="/pricing">Pricing</Link>
                                 </li>
                                 <li>
