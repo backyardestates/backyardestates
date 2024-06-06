@@ -1,0 +1,77 @@
+.base {
+    display: grid;
+    column-gap: 2rem;
+    row-gap: 2rem;
+    grid-template-columns: repeat(12, 1fr);
+    margin: 0;
+    padding: 2rem 0 4rem 0;
+    grid-column: span 13;
+    background: linear-gradient(180deg, #f6f3ee 0%, #f3efe8 100%);
+}
+
+.header {
+    border: 2px solid magenta;
+    grid-column: 3 / 11;
+    grid-row: 1 / 2;
+}
+
+.rooms {
+    border: 2px solid magenta;
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+.preview {
+    border: 2px solid magenta;
+    grid-column: 3 / 9;
+    grid-row: 2 / 3;
+}
+
+.sidebar {
+    border: 2px solid magenta;
+    grid-column: 9 / 13;
+    grid-row: 2 / 3;
+}
+
+.description {
+    border: 2px solid magenta;
+    grid-column: 3 / 9;
+    grid-row: 3 / 4;
+}
+
+.subhead {
+    color: var(--Brand-Beige-Default, #ad8d5f);
+    text-align: center;
+    leading-trim: both;
+    text-edge: cap;
+
+    /* Subhead */
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5rem; /* 150% */
+    font-variant: all-small-caps;
+    letter-spacing: 0.1rem;
+}
+
+.rooms > ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rooms > ul li {
+    margin: 0 0 1rem 0;
+    /* padding: 0; */
+    /* list-style: none; */
+}
+
+/* fixed */
+@media only screen and (min-width: 1440px) {
+    .base {
+        margin: 0 auto;
+        /* padding: 0; */
+        width: 1440px;
+    }
+}
