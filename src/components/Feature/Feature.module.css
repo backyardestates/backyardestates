@@ -1,0 +1,25 @@
+.base {
+    /* border: 3px solid blue; */
+}
+
+.base > h3 {
+    margin: 1rem 0 0 0;
+    padding: 0;
+    color: var(--Brand-Dark-blue-Default, #36484b);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.5rem;
+}
+
+.base > p {
+    margin: 0.5rem 0 0 0;
+    padding: 0;
+    color: var(--Color-Neutral-500, #787878);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem;
+}
