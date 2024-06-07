@@ -47,7 +47,7 @@
 }
 
 .sidebar {
-    border: 2px solid magenta;
+    /* border: 2px solid magenta; */
     grid-column: 9 / 12;
     grid-row: 2 / 3;
 }
