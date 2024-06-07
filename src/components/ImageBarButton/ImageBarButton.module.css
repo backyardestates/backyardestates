@@ -1,0 +1,29 @@
+.base {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    padding: 0.25rem;
+    background-color: rgba(246, 243, 238, 0);
+    border: 2px solid rgba(246, 243, 238, 0);
+    border-radius: var(--radius);
+}
+
+.base:hover {
+    border-color: rgba(54, 72, 75, 0.5);
+}
+
+.selected {
+    border-color: var(--Brand-Dark-blue-Default, #36484b);
+}
+
+.image {
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+
+    border-radius: 0.25rem;
+    overflow: hidden;
+}

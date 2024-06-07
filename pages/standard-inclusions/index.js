@@ -23,7 +23,7 @@ export default function StandardInclusions({ estates }) {
         <Layout
             title="Standard inclusions"
             pageTitle="Standard inclusions - Backyard Estates"
-            explanation="Vulputate eu scelerisque felis imperdiet proin fermentum leo vel orci porta non pulvinar neque laoreet suspendisse interdum consectetur libero id faucibus"
+            explanation="Vulputate eu scelerisque felis imperdiet proin fermentum leo vel orci porta non pulvinar neque laoreet"
             floorplans={estates}
         >
             {/* <OpenGraph /> */}

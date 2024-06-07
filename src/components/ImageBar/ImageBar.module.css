@@ -1,0 +1,17 @@
+.base {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    /* border: 2px solid red; */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.base > li {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+}

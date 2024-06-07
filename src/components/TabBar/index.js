@@ -1,22 +1,23 @@
+import TabBarButton from '../TabBarButton'
 import style from './TabBar.module.css'
 
 export default function TabBar() {
     return (
         <ul className={style.base}>
             <li>
-                <a href="#">Contemporary light</a>
+                <TabBarButton isSelected>Contemporary light</TabBarButton>
             </li>
             <li>
-                <a href="#">Contemporary dark</a>
+                <TabBarButton>Contemporary dark</TabBarButton>
             </li>
             <li>
-                <a href="#">Modern Blue</a>
+                <TabBarButton>Modern Blue</TabBarButton>
             </li>
             <li>
-                <a href="#">Modern monochrome</a>
+                <TabBarButton>Modern monochrome</TabBarButton>
             </li>
             <li>
-                <a href="#">Urban olive</a>
+                <TabBarButton>Urban olive</TabBarButton>
             </li>
         </ul>
     )

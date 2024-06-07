@@ -1,5 +1,7 @@
 import TabBar from '@/components/TabBar'
+import Image from 'next/image'
 import style from './InclusionsPanel.module.css'
+import ImageBar from '@/components/ImageBar'
 
 export default function InclusionsPanel() {
     return (
@@ -12,25 +14,18 @@ export default function InclusionsPanel() {
                     <TabBar />
                 </div>
                 <div className={style.rooms}>
-                    <ul>
-                        <li>
-                            <a href="#">Kitchen</a>
-                        </li>
-                        <li>
-                            <a href="#">Bathroom</a>
-                        </li>
-                        <li>
-                            <a href="#">Interior features</a>
-                        </li>
-                        <li>
-                            <a href="#">Exterior features</a>
-                        </li>
-                        <li>
-                            <a href="#">Construction specifications</a>
-                        </li>
-                    </ul>
+                    <ImageBar />
                 </div>
-                <div className={style.preview}>Preview</div>
+                <div className={style.preview}>
+                    <Image
+                        src="/images/preview/preview-FPO.png"
+                        width={790}
+                        height={790}
+                        alt="Picture of the author"
+                        // fill={true}
+                        className={style.previewImage}
+                    />
+                </div>
                 <div className={style.sidebar}>Sidebar</div>
                 <div className={style.description}>
                     This contemporary look combines muted grays with white

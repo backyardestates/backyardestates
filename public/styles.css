@@ -25,7 +25,10 @@
     --color-brand-light-blue-hover: #202b2c;
     --color-brand-beige: hsla(35, 32%, 53%, 1);
     --color-brand-beige-hover: #91744a;
-    --color-brand-beige-subtle: #f6f3ee;
+    --color-brand-beige-subtle: rgba(246, 243, 238, 1);
+
+    --color-wireframe: rgba(255, 0, 255, 0.5);
+    --color-wireframe-subtle: rgba(255, 0, 255, 0.1);
 }
 
 * {

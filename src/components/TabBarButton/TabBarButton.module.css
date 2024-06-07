@@ -1,0 +1,27 @@
+.base {
+    display: inline-block;
+    text-decoration: none;
+    /* height: 3rem; */
+    padding: 1rem 1.5rem;
+    color: var(--color-brand-beige);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    border-right: 1px dashed rgba(173, 141, 95, 0.5);
+}
+
+.base:hover {
+    background-color: rgba(173, 141, 95, 0.1);
+}
+
+.selected {
+    color: white;
+    background-color: var(--color-brand-beige);
+}
+
+.selected:hover {
+    color: white;
+    background-color: var(--color-brand-beige-hover);
+}
