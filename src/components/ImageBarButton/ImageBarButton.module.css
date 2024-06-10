@@ -1,4 +1,5 @@
 .base {
+    position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
     height: auto;
@@ -10,9 +11,11 @@
 
 .base:hover {
     border-color: rgba(54, 72, 75, 0.5);
+    cursor: pointer;
 }
 
-.selected {
+.selected,
+.selected:hover {
     border-color: var(--Brand-Dark-blue-Default, #36484b);
 }
 
@@ -23,7 +26,6 @@
     width: 100%;
     aspect-ratio: 1 / 1;
     height: auto;
-
     border-radius: 0.25rem;
     overflow: hidden;
 }
