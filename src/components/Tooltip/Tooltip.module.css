@@ -1,11 +1,11 @@
 .base {
-    /* display: block; */
+    display: flex;
+    white-space: nowrap;
     position: absolute;
-    top: -6.75rem;
-    left: -9.5rem;
+    top: calc(50% - (52px / 2));
+    left: 85%;
     margin: 0;
     padding: 0;
-    width: 20rem;
     pointer-events: none;
 }
 
@@ -13,8 +13,8 @@
     composes: base;
     opacity: 1;
     visibility: visible;
-    transform: translateY(-4px);
-    transition: opacity 300ms ease, visibility 0s, transform 300ms ease;
+    transform: translateX(-4px);
+    transition: opacity 400ms ease, visibility 0s, transform 300ms ease;
 }
 
 .tooltip_hide {
@@ -25,9 +25,12 @@
 }
 
 .content {
+    display: flex;
+    align-items: center;
     margin: 0;
-    padding: 1rem;
-    border-radius: 0.5rem;
+    padding: 0 1.5rem 0 0.75rem;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
     color: var(--color-white);
     background-color: var(--color-brand-dark-blue);
     leading-trim: both;
@@ -37,11 +40,12 @@
     font-style: normal;
     font-weight: 500;
     line-height: 1.25rem;
+    height: 48px;
 }
 
 .base svg {
-    display: block;
-    position: absolute;
-    left: calc((20rem - 49px) / 2);
-    bottom: -12px;
+    /* display: none; */
+    /* position: absolute; */
+    /* left: 12px; */
+    /* bottom: -12px; */
 }
