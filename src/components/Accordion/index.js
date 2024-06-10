@@ -14,7 +14,6 @@ export default function Accordion({ children }) {
 
     return (
         <div className={style.base}>
-            {/* <div>{`selectPanel is ${selectPanel}`}</div> */}
             {children.map((child, index) => (
                 <AccordionPanel
                     id={index}
@@ -23,7 +22,6 @@ export default function Accordion({ children }) {
                     isOpen={selectPanel === index ? true : false}
                     handler={handleClick}
                 >
-                    {/* <p>{`isOpen is ${selectPanel === index}`}</p> */}
                     {child.props.children}
                 </AccordionPanel>
             ))}

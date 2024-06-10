@@ -32,24 +32,33 @@ export default function InclusionsPanel() {
                     <Accordion>
                         <AccordionPanel label="Cabinets" isOpen>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
+                                Wood construction cabinets with soft-close
+                                shaker style wooden doors and face frames
                             </p>
                         </AccordionPanel>
                         <AccordionPanel label="Counter tops">
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
+                                Quartz with 4&Prime; backsplash and beveled edge
                             </p>
                         </AccordionPanel>
                         <AccordionPanel label="Appliances">
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua.
+                                Stainless steel 36&Prime; fridge, 30&Prime;
+                                range, 24&Prime; dishwasher, and over-the-range
+                                microwave
                             </p>
+                        </AccordionPanel>
+                        <AccordionPanel label="Sink">
+                            <p>
+                                33&Prime; stainless steel single cell undermount
+                                sink with garbage disposal
+                            </p>
+                        </AccordionPanel>
+                        <AccordionPanel label="Faucet">
+                            <p>Single-handle faucet with pulldown sprayer</p>
+                        </AccordionPanel>
+                        <AccordionPanel label="Lightning">
+                            <p>4&Prime; LED recessed lights (2-4 per plan)</p>
                         </AccordionPanel>
                     </Accordion>
                 </div>
