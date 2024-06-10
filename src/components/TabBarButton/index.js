@@ -1,12 +1,15 @@
 import style from './TabBarButton.module.css'
 
-export default function TabBarButton({ children, isSelected = false }) {
+export default function TabBarButton({ children, handler, collection, value }) {
     return (
-        <a
+        <div
             href="#"
-            className={`${style.base} ${isSelected ? style.selected : ''}`}
+            className={`${style.base} ${
+                collection === value ? style.selected : ''
+            }`}
+            onClick={() => handler(value)}
         >
             {children}
-        </a>
+        </div>
     )
 }
