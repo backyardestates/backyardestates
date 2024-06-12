@@ -51,11 +51,6 @@ export default function Navbar({
                                         Our process
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link href="/roi">
-                                        Return On Investment (ROI)
-                                    </Link>
-                                </li>
                             </ul>
                         </Dropdown>
                     </li>

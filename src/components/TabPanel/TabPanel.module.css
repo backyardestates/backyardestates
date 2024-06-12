@@ -1,7 +1,16 @@
 .base {
     display: grid;
     gap: 2rem;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     margin: 0;
-    padding: 0;
+    padding: 0 2rem 0 0;
+}
+
+@media only screen and (min-width: 1440px) {
+    .base {
+        gap: 2rem;
+        grid-template-columns: repeat(2, 1fr);
+        margin: 0;
+        padding: 0;
+    }
 }

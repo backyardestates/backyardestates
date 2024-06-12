@@ -115,9 +115,6 @@ export default function Footer({ floorplans }) {
                                 <li>
                                     <Link href="/pricing">Pricing</Link>
                                 </li>
-                                <li>
-                                    <Link href="/roi">Investment ROI</Link>
-                                </li>
                             </ul>
                         </div>
                         <div className={style.linkColumn}>

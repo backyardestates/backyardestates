@@ -44,6 +44,11 @@ export default function Menu({ showMenu, toggleMenu }) {
                         <Link href="/gallery">Gallery</Link>
                     </li>
                     <li>
+                        <Link href="/standard-inclusions">
+                            Standard inclusions
+                        </Link>
+                    </li>
+                    <li>
                         <Link href="/pricing">Pricing</Link>
                     </li>
                     <li>
@@ -58,11 +63,6 @@ export default function Menu({ showMenu, toggleMenu }) {
                             <li>
                                 <Link href="/about-us/our-process">
                                     Our process
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/roi">
-                                    Return On Investment (ROI)
                                 </Link>
                             </li>
                         </ul>

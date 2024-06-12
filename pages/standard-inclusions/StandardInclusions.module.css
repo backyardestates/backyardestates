@@ -1,7 +1,16 @@
 .content {
+    /* border: 5px solid red; */
     margin: 0;
-    padding: 6rem 0 0 0;
-    grid-column: 3 / 11;
+    padding: 2rem 0 0 1.5rem;
+    grid-column: 1 / 2;
+}
+
+@media only screen and (min-width: 1440px) {
+    .content {
+        margin: 0;
+        padding: 6rem 0 0 0;
+        grid-column: 3 / 11;
+    }
 }
 
 .headline {

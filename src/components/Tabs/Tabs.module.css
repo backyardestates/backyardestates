@@ -1,14 +1,26 @@
 .base {
-    margin: 3rem 0;
+    margin: 2rem 0 2rem 0;
     padding: 0;
 }
 
 .tabs {
     display: flex;
-    gap: 3rem;
+    gap: 2rem;
     margin: 0;
-    padding: 0;
+    padding: 0 1.5rem 0 0;
     border-bottom: 1px solid var(--color-neutral-300);
+    overflow-x: scroll;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.tabs {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }
 
 .tab {
@@ -31,4 +43,19 @@
     font-style: normal;
     font-weight: 400;
     /* line-height: 1.5rem; */
+}
+
+@media only screen and (min-width: 1440px) {
+    .base {
+        margin: 3rem 0;
+        padding: 0;
+    }
+
+    .tabs {
+        /* display: flex; */
+        gap: 3rem;
+        margin: 0;
+        padding: 0;
+        /* border-bottom: 1px solid var(--color-neutral-300); */
+    }
 }

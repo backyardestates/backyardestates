@@ -1,9 +1,6 @@
 .base {
     display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    /* border: 2px solid red; */
-    margin: 0;
+    margin: 1rem 0;
     padding: 0;
     list-style: none;
 }
@@ -14,4 +11,12 @@
     width: 100%;
     aspect-ratio: 1 / 1;
     height: auto;
+}
+
+@media only screen and (min-width: 1440px) {
+    .base {
+        flex-direction: column;
+        gap: 2rem;
+        margin: 0;
+    }
 }

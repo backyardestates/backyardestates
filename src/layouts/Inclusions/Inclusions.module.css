@@ -1,22 +1,21 @@
 .base {
-    display: grid;
-    column-gap: 2rem;
-    row-gap: 6rem;
-    grid-template-columns: repeat(12, 1fr);
+    display: block;
     margin: 0;
-    padding: 2rem 0;
-    z-index: 1;
+    padding: 0 0 3rem 0;
     width: 100%;
     overflow: hidden;
-    /* background: linear-gradient(180deg, #f6f3ee 0%, #f3efe8 100%); */
 }
 
-/* fixed */
 @media only screen and (min-width: 1440px) {
     .base {
-        /* border: 3px solid lime; */
+        display: grid;
+        column-gap: 2rem;
+        row-gap: 6rem;
+        grid-template-columns: repeat(12, 1fr);
         margin: 0;
-        padding: 0 0 6rem 0;
-        /* width: 1440px; */
+        padding: 2rem 0 6rem 0;
+        z-index: 1;
+        width: 100%;
+        overflow: hidden;
     }
 }

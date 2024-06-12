@@ -4,7 +4,13 @@ import Tooltip from '../Tooltip'
 
 import style from './ImageBarButton.module.css'
 
-export default function ImageBarButton({ value, room, handler, tooltip }) {
+export default function ImageBarButton({
+    value,
+    room,
+    handler,
+    showTooltip,
+    tooltip,
+}) {
     const [show, setShow] = useState(false)
 
     function handleMouseOver() {
@@ -22,7 +28,7 @@ export default function ImageBarButton({ value, room, handler, tooltip }) {
             onMouseOver={() => handleMouseOver()}
             onMouseOut={() => handleMouseOut()}
         >
-            <Tooltip show={show}>{tooltip}</Tooltip>
+            {!showTooltip && <Tooltip show={show}>{tooltip}</Tooltip>}
             <Image
                 src="/images/preview/preview-FPO.png"
                 alt="Picture of the author"
