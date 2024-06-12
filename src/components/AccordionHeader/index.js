@@ -10,7 +10,7 @@ export default function AccordionHeader({
     handler,
 }) {
     return (
-        <div className={style.base} onClick={() => handler(id)} isOpen={isOpen}>
+        <div className={style.base} onClick={() => handler(id)}>
             {/* <span>{id}</span> */}
             {/* <span>{isOpen ? 'T' : 'F'}</span> */}
             <span>{children}</span>

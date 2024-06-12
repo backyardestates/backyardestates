@@ -1,6 +1,4 @@
 import { useState } from 'react'
-
-import AccordionHeader from '@/components/AccordionHeader'
 import AccordionPanel from '@/components/AccordionPanel'
 
 import style from './Accordion.module.css'

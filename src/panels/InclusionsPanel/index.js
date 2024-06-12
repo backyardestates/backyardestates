@@ -3,7 +3,6 @@ import Image from 'next/image'
 import style from './InclusionsPanel.module.css'
 import ImageBar from '@/components/ImageBar'
 import Accordion from '@/components/Accordion'
-import AccordionHeader from '@/components/AccordionHeader'
 import AccordionPanel from '@/components/AccordionPanel'
 
 export default function InclusionsPanel() {
@@ -30,7 +29,7 @@ export default function InclusionsPanel() {
                 </div>
                 <div className={style.sidebar}>
                     <Accordion>
-                        <AccordionPanel label="Cabinets" isOpen>
+                        <AccordionPanel label="Cabinets">
                             <p>
                                 Wood construction cabinets with soft-close
                                 shaker style wooden doors and face frames
