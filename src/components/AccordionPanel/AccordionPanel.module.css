@@ -14,7 +14,7 @@
 
 .open {
     composes: base;
-    padding: 1rem 1.5rem;
+    padding: 1rem 1.5rem 2rem 1.5rem;
 
     border-bottom: 1px solid rgba(173, 141, 95, 0.5);
     display: block;

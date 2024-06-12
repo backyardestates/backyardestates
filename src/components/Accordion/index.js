@@ -4,7 +4,7 @@ import AccordionPanel from '@/components/AccordionPanel'
 import style from './Accordion.module.css'
 
 export default function Accordion({ children }) {
-    const [selectPanel, setSelectPanel] = useState(0)
+    const [selectPanel, setSelectPanel] = useState(-1)
 
     function handleClick(id) {
         setSelectPanel(id)

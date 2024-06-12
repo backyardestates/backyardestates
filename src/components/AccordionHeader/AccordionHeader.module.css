@@ -18,3 +18,14 @@
     background-color: rgba(173, 141, 95, 0.1);
     cursor: pointer;
 }
+
+.selected {
+    composes: base;
+    color: white;
+    background-color: var(--color-brand-beige);
+}
+
+.selected:hover {
+    color: white;
+    background-color: var(--color-brand-beige-hover);
+}

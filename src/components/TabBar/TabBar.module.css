@@ -1,9 +1,6 @@
 .base {
-    /* border: 5px dashed red; */
     margin: 0;
     padding: 0;
-    /* display: flex; */
-    /* flex-direction: column; */
     list-style: none;
     border-radius: 0.5rem;
     background: var(--Color-White, #fff);

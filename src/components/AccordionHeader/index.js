@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus, faPlus } from '@fortawesome/pro-regular-svg-icons'
 
@@ -9,10 +11,19 @@ export default function AccordionHeader({
     isOpen = false,
     handler,
 }) {
+    function clickHandler() {
+        if (isOpen) {
+            handler(-1)
+        } else {
+            handler(id)
+        }
+    }
+
     return (
-        <div className={style.base} onClick={() => handler(id)}>
-            {/* <span>{id}</span> */}
-            {/* <span>{isOpen ? 'T' : 'F'}</span> */}
+        <div
+            className={isOpen ? style.selected : style.base}
+            onClick={() => clickHandler()}
+        >
             <span>{children}</span>
             {isOpen ? (
                 <FontAwesomeIcon icon={faMinus} size="sm" />
