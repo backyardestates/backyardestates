@@ -14,16 +14,47 @@ export default function StandardInclusions({ estates }) {
     const tabs = [
         'Kitchen',
         'Bathroom',
-        'Interior features',
-        'Exterior features',
-        'Construction specifications',
+        // 'Interior features',
+        // 'Exterior features',
+        // 'Construction specifications',
+    ]
+
+    const kitchen = [
+        {
+            image: 'featureFPO.png',
+            header: 'Cabinets',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        },
+        {
+            image: 'featureFPO.png',
+            header: 'Counter tops',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        },
+        {
+            image: 'featureFPO.png',
+            header: 'Appliances',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        },
+    ]
+
+    const bathroom = [
+        {
+            image: 'featureFPO.png',
+            header: 'Shower',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        },
+        {
+            image: 'featureFPO.png',
+            header: 'Shower head',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        },
     ]
 
     return (
         <Layout
             title="Standard inclusions"
             pageTitle="Standard inclusions - Backyard Estates"
-            explanation="Vulputate eu scelerisque felis imperdiet proin fermentum leo vel orci porta non pulvinar neque laoreet"
+            explanation="At Backyard Estates, we provide complete transparency on the exact inclusions of our standard ADU builds"
             floorplans={estates}
         >
             {/* <OpenGraph /> */}
@@ -37,16 +68,14 @@ export default function StandardInclusions({ estates }) {
                 </p>
                 <Tabs tabs={tabs}>
                     <TabPanel>
-                        <Feature />
-                        <Feature />
-                        <Feature />
-                        <Feature />
+                        {kitchen.map((feature, index) => (
+                            <Feature key={index} content={feature} />
+                        ))}
                     </TabPanel>
                     <TabPanel>
-                        <Feature />
-                        <Feature />
-                        <Feature />
-                        <Feature />
+                        {bathroom.map((feature, index) => (
+                            <Feature key={index} content={feature} />
+                        ))}
                     </TabPanel>
                     <TabPanel>
                         <Feature />

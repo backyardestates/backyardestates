@@ -28,4 +28,5 @@
     height: auto;
     border-radius: 0.25rem;
     overflow: hidden;
+    box-shadow: var(--drop-shadow-on-beige);
 }

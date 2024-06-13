@@ -31,7 +31,6 @@ export default function ImageBarButton({
             className={`${style.base} ${
                 preview.room === value ? style.selected : ''
             }`}
-            // onClick={() => handler(value)}
             onMouseOver={() => handleMouseOver()}
             onMouseOut={() => handleMouseOut()}
             onClick={() => {
@@ -40,8 +39,8 @@ export default function ImageBarButton({
         >
             {!showTooltip && <Tooltip show={show}>{tooltip}</Tooltip>}
             <Image
-                src="/images/preview/preview-FPO.png"
-                alt="Picture of the author"
+                src={`/images/preview/imageBar-${value}@2x.png`}
+                alt={`Image of ${value}`}
                 width={100}
                 height={100}
                 className={style.image}

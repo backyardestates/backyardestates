@@ -29,6 +29,8 @@
 
     --color-wireframe: rgba(255, 0, 255, 0.5);
     --color-wireframe-subtle: rgba(255, 0, 255, 0.1);
+
+    --drop-shadow-on-beige: 0px 4px 8px 0px rgba(173, 141, 95, 0.25);
 }
 
 * {

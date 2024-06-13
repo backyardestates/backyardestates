@@ -16,22 +16,21 @@ export default function TabBar() {
     return (
         <ul className={style.base}>
             <li>
-                <TabBarButton
-                    // handler={handleClick}
-                    value="light"
-                    // collection={collection}
-                >
-                    Contemporary light
+                <TabBarButton value="light">Contemporary light</TabBarButton>
+            </li>
+            <li>
+                <TabBarButton value="dark">Contemporary dark</TabBarButton>
+            </li>
+            <li>
+                <TabBarButton value="blue">Modern blue</TabBarButton>
+            </li>
+            <li>
+                <TabBarButton value="monochrome">
+                    Modern monochrome
                 </TabBarButton>
             </li>
             <li>
-                <TabBarButton
-                    // handler={handleClick}
-                    value="dark"
-                    // collection={collection}
-                >
-                    Contemporary dark
-                </TabBarButton>
+                <TabBarButton value="olive">Urban olive</TabBarButton>
             </li>
         </ul>
     )

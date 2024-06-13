@@ -23,7 +23,9 @@
     grid-column: 3 / 9;
     grid-row: 2 / 3;
     border-radius: var(--radius);
+    box-shadow: var(--drop-shadow-on-beige);
     overflow: hidden;
+    aspect-ratio: 1 / 1;
 }
 
 .previewImage {
