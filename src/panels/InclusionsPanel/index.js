@@ -99,7 +99,7 @@ export default function InclusionsPanel() {
                         />
                     </div>
                     <div className={style.sidebar}>
-                        <Accordion content={ROOMS[roomIndex]} />
+                        {/* <Accordion content={ROOMS[roomIndex]} /> */}
                     </div>
                     <div className={style.description}>
                         {collectionDescriptions[collectionDescription]}

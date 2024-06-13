@@ -3,7 +3,7 @@ import AccordionPanel from '@/components/AccordionPanel'
 
 import style from './Accordion.module.css'
 
-export default function Accordion({ children, content }) {
+export default function Accordion({ content }) {
     const [selectPanel, setSelectPanel] = useState(-1)
 
     function handleClick(id) {
