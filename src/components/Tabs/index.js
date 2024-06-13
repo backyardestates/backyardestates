@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
+
 import Tab from '@/components/Tab'
+import TabPanel from '@/components/TabPanel'
+import Feature from '@/components/Feature'
+
 import style from './Tabs.module.css'
-import TabPanel from '../TabPanel'
 
 export default function Tabs({ tabs, children }) {
     const [selectedTab, setSelectedTab] = useState(0)
@@ -17,22 +20,19 @@ export default function Tabs({ tabs, children }) {
                     <Tab
                         key={index}
                         index={index}
-                        isSelected={index === selectedTab ? true : false}
                         handler={handleClick}
+                        isSelected={selectedTab === index ? true : false}
                     >
-                        {tab}
+                        {tab.title}
                     </Tab>
                 ))}
             </div>
             <div className={style.tabContent}>
-                {children.map((child, index) => {
-                    if (selectedTab === index)
-                        return (
-                            <TabPanel key={index}>
-                                {child.props.children}
-                            </TabPanel>
-                        )
-                })}
+                <TabPanel>
+                    {tabs[selectedTab].features.map((feature, index) => (
+                        <Feature key={index} content={feature} />
+                    ))}
+                </TabPanel>
             </div>
         </div>
     )

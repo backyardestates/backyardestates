@@ -13,3 +13,9 @@
     /* border-bottom: 3px solid red; */
     border-bottom: none;
 }
+
+.content ul {
+    /* border-left: 5px solid red; */
+    margin-left: 0;
+    padding-left: 0.875rem;
+}

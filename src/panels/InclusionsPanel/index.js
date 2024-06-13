@@ -7,7 +7,9 @@ import Image from 'next/image'
 import style from './InclusionsPanel.module.css'
 import ImageBar from '@/components/ImageBar'
 import Accordion from '@/components/Accordion'
-import AccordionPanel from '@/components/AccordionPanel'
+// import AccordionPanel from '@/components/AccordionPanel'
+
+import { ROOMS } from '../../../content/inclusions'
 
 export default function InclusionsPanel() {
     const [preview, setPreview] = useState({
@@ -46,38 +48,28 @@ export default function InclusionsPanel() {
             break
     }
 
-    const kitchen = [
-        {
-            image: 'featureFPO.png',
-            header: 'Cabinets',
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        },
-        {
-            image: 'featureFPO.png',
-            header: 'Counter tops',
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        },
-        {
-            image: 'featureFPO.png',
-            header: 'Appliances',
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        },
-    ]
+    let roomIndex = 0
 
-    const bathroom = [
-        {
-            image: 'featureFPO.png',
-            header: 'Shower',
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        },
-        {
-            image: 'featureFPO.png',
-            header: 'Shower head',
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        },
-    ]
-
-    const features = preview.room === 'kitchen' ? kitchen : bathroom
+    switch (preview.room) {
+        case 'kitchen':
+            roomIndex = 0
+            break
+        case 'bathroom':
+            roomIndex = 1
+            break
+        case 'interior':
+            roomIndex = 2
+            break
+        case 'exterior':
+            roomIndex = 3
+            break
+        case 'construction':
+            roomIndex = 4
+            break
+        default:
+            roomIndex = 0
+            break
+    }
 
     return (
         <PreviewContext.Provider
@@ -107,16 +99,7 @@ export default function InclusionsPanel() {
                         />
                     </div>
                     <div className={style.sidebar}>
-                        <Accordion>
-                            {features.map((feature, index) => (
-                                <AccordionPanel
-                                    label={feature.header}
-                                    key={index}
-                                >
-                                    <p>{feature.text}</p>
-                                </AccordionPanel>
-                            ))}
-                        </Accordion>
+                        <Accordion content={ROOMS[roomIndex]} />
                     </div>
                     <div className={style.description}>
                         {collectionDescriptions[collectionDescription]}

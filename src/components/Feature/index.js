@@ -12,7 +12,10 @@ export default function Feature({ content }) {
                 alt="FPO"
             />
             <h3>{content.header}</h3>
-            <p>{content.text}</p>
+            <p
+                dangerouslySetInnerHTML={{ __html: content.text }}
+                className={style.content}
+            ></p>
         </div>
     )
 }

@@ -24,3 +24,9 @@
     line-height: 1.5rem;
     max-width: 37rem;
 }
+
+.content ul {
+    /* border-left: 5px solid red; */
+    margin-left: 0;
+    padding-left: 0.875rem;
+}

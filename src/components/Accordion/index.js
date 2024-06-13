@@ -3,7 +3,7 @@ import AccordionPanel from '@/components/AccordionPanel'
 
 import style from './Accordion.module.css'
 
-export default function Accordion({ children }) {
+export default function Accordion({ children, content }) {
     const [selectPanel, setSelectPanel] = useState(-1)
 
     function handleClick(id) {
@@ -12,17 +12,24 @@ export default function Accordion({ children }) {
 
     return (
         <div className={style.base}>
-            {children.map((child, index) => (
+            {content.features.map((feature, index) => (
                 <AccordionPanel
                     id={index}
-                    label={child.props.label}
+                    label={feature.header}
                     key={index}
                     isOpen={selectPanel === index ? true : false}
                     handler={handleClick}
                 >
-                    {child.props.children}
+                    <p
+                        dangerouslySetInnerHTML={{ __html: feature.text }}
+                        className={style.content}
+                    ></p>
                 </AccordionPanel>
             ))}
         </div>
     )
 }
+
+/*
+
+*/

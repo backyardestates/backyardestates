@@ -18,6 +18,7 @@ export default function AccordionPanel({
                 className={`${style.base} ${
                     isOpen ? style.open : style.closed
                 }`}
+                // dangerouslySetInnerHTML={{ __html: children }}
             >
                 {children}
             </div>
