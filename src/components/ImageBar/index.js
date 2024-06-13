@@ -53,8 +53,8 @@ export default function ImageBar() {
             <li>
                 <ImageBarButton
                     value="kitchen"
-                    handler={handleClick}
-                    room={room}
+                    // handler={handleClick}
+                    // room={room}
                     showTooltip={showTooltip}
                     tooltip="Kitchen"
                 />
@@ -62,57 +62,12 @@ export default function ImageBar() {
             <li>
                 <ImageBarButton
                     value="bathroom"
-                    handler={handleClick}
-                    room={room}
+                    // handler={handleClick}
+                    // room={room}
                     showTooltip={showTooltip}
                     tooltip="Bathroom"
-                />
-            </li>
-            <li>
-                <ImageBarButton
-                    value="interior"
-                    handler={handleClick}
-                    room={room}
-                    showTooltip={showTooltip}
-                    tooltip="Interior features"
-                />
-            </li>
-            <li>
-                <ImageBarButton
-                    value="exterior"
-                    handler={handleClick}
-                    room={room}
-                    showTooltip={showTooltip}
-                    tooltip="Exterior features"
-                />
-            </li>
-            <li>
-                <ImageBarButton
-                    value="construction"
-                    handler={handleClick}
-                    room={room}
-                    showTooltip={showTooltip}
-                    tooltip="Construction specifications"
                 />
             </li>
         </ul>
     )
 }
-
-/*
-
-
-// Usage
-function App() {
-  
-
-  return (
-    <div>
-      {size.width}px / {size.height}px
-    </div>
-  );
-}
-
-// Hook
-
-*/

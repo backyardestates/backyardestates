@@ -1,3 +1,6 @@
+import { useContext } from 'react'
+import { PreviewContext } from '@/panels/InclusionsPanel'
+
 import { useState } from 'react'
 import Image from 'next/image'
 import Tooltip from '../Tooltip'
@@ -21,12 +24,19 @@ export default function ImageBarButton({
         setShow(false)
     }
 
+    const { preview, setPreview } = useContext(PreviewContext)
+
     return (
         <div
-            className={`${style.base} ${room === value ? style.selected : ''}`}
-            onClick={() => handler(value)}
+            className={`${style.base} ${
+                preview.room === value ? style.selected : ''
+            }`}
+            // onClick={() => handler(value)}
             onMouseOver={() => handleMouseOver()}
             onMouseOut={() => handleMouseOut()}
+            onClick={() => {
+                setPreview({ collection: preview.collection, room: value })
+            }}
         >
             {!showTooltip && <Tooltip show={show}>{tooltip}</Tooltip>}
             <Image

@@ -1,60 +1,36 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { PreviewContext } from '@/panels/InclusionsPanel'
 
 import TabBarButton from '../TabBarButton'
 import style from './TabBar.module.css'
 
 export default function TabBar() {
-    const [collection, setCollection] = useState('light')
+    // const [collection, setCollection] = useState('light')
 
-    function handleClick(rm) {
-        setCollection(rm)
-    }
+    // function handleClick(rm) {
+    //     setCollection(rm)
+    // }
+
+    const { preview, setPreview } = useContext(PreviewContext)
 
     return (
         <ul className={style.base}>
             <li>
                 <TabBarButton
-                    handler={handleClick}
+                    // handler={handleClick}
                     value="light"
-                    collection={collection}
+                    // collection={collection}
                 >
                     Contemporary light
                 </TabBarButton>
             </li>
             <li>
                 <TabBarButton
-                    handler={handleClick}
+                    // handler={handleClick}
                     value="dark"
-                    collection={collection}
+                    // collection={collection}
                 >
                     Contemporary dark
-                </TabBarButton>
-            </li>
-            <li>
-                <TabBarButton
-                    handler={handleClick}
-                    value="blue"
-                    collection={collection}
-                >
-                    Modern Blue
-                </TabBarButton>
-            </li>
-            <li>
-                <TabBarButton
-                    handler={handleClick}
-                    value="monochrome"
-                    collection={collection}
-                >
-                    Modern monochrome
-                </TabBarButton>
-            </li>
-            <li>
-                <TabBarButton
-                    handler={handleClick}
-                    value="olive"
-                    collection={collection}
-                >
-                    Urban olive
                 </TabBarButton>
             </li>
         </ul>
