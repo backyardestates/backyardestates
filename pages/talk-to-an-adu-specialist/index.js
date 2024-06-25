@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Layout from '../../src/layouts/LeadForm'
 import style from './Form.module.css'
 
-import { redirect } from 'next/navigation'
+// import { redirect } from 'next/navigation'
 import { useRouter } from 'next/router'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,7 +13,7 @@ import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
 import AddressAutocomplete from '@/components/AddressAutocomplete'
 import OpenGraph from '@/components/OpenGraph'
 
-import { InlineWidget } from 'react-calendly'
+// import { InlineWidget } from 'react-calendly'
 
 export default function LeadForm({ data }) {
     const router = useRouter()
@@ -46,7 +46,7 @@ export default function LeadForm({ data }) {
 
         const lead = {
             name: e.target.name.value,
-            address: selectedAddress,
+            address: e.target.address.value,
             firstname: names[0],
             lastname: names[names.length - 1],
             email: [{ value: e.target.email.value }],
@@ -85,6 +85,9 @@ export default function LeadForm({ data }) {
     async function createLead(d, lead) {
         let source = null
 
+        // console.log(d)
+        // console.log(lead)
+
         switch (lead.source) {
             case 'ADU Event':
                 source = 58
@@ -108,28 +111,28 @@ export default function LeadForm({ data }) {
         const submittedLead = {
             title: `${d.first_name} ${d.last_name}`,
             person_id: d.id,
-            '2d53fd586f7bec45cffbae211118af378a38a61d': d.first_name,
-            '30a2b54f80758dab86a35c127fb7fd2d70ba36c0': d.last_name,
-            '80ecccdf8f5ceabad89d411094abbc61248f16c8': d.phone[0].value,
+            // '2d53fd586f7bec45cffbae211118af378a38a61d': d.first_name,
+            // '30a2b54f80758dab86a35c127fb7fd2d70ba36c0': d.last_name,
+            // '80ecccdf8f5ceabad89d411094abbc61248f16c8': d.phone[0].value,
             // prettier-ignore
             'fd49bc4881f7bdffdeaa1868171df24bea5925fe': source,
             '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
             // prettier-ignore
-            'bbb72730be7b5833fef926f0ab0636961bdb0050': d.primary_email,
+            // 'bbb72730be7b5833fef926f0ab0636961bdb0050': d.primary_email,
             // prettier-ignore
-            'dea15c0245a280c47d904902a4f0c0bec33ef082': lead.attributer_channel,
+            // 'dea15c0245a280c47d904902a4f0c0bec33ef082': lead.attributer_channel,
             // prettier-ignore
-            'd2397a2fd81f101ff2d74d414bf2d86f4e2e3e2d': lead.attributer_channeldrilldown1,
-            '348a2707675ba07647b664ee7b7cee37f612e937':
-                lead.attributer_channeldrilldown1,
-            '2e2017125cfb22061969c326aa62b8ca2833cf87':
-                lead.attributer_channeldrilldown1,
-            '5ebaf0bffb3c97b14e83907671781caf4f0e00b0':
-                lead.attributer_channeldrilldown1,
-            '096a07c957328fdaf6d359d7dc9c9070c9332e70':
-                lead.attributer_landingpage,
-            '73f6368b2ec18c4cc7e006da670088253fdc88c3':
-                lead.attributer_landingpagegroup,
+            // 'd2397a2fd81f101ff2d74d414bf2d86f4e2e3e2d': lead.attributer_channeldrilldown1,
+            // '348a2707675ba07647b664ee7b7cee37f612e937':
+            // lead.attributer_channeldrilldown1,
+            // '2e2017125cfb22061969c326aa62b8ca2833cf87':
+            // lead.attributer_channeldrilldown1,
+            // '5ebaf0bffb3c97b14e83907671781caf4f0e00b0':
+            // lead.attributer_channeldrilldown1,
+            // '096a07c957328fdaf6d359d7dc9c9070c9332e70':
+            // lead.attributer_landingpage,
+            // '73f6368b2ec18c4cc7e006da670088253fdc88c3':
+            // lead.attributer_landingpagegroup,
         }
 
         const res = await fetch(
@@ -143,6 +146,8 @@ export default function LeadForm({ data }) {
             }
         )
         const data = await res.json()
+
+        console.log(data)
 
         if (data.success) {
             router.push({
@@ -179,8 +184,8 @@ export default function LeadForm({ data }) {
                 <div className={style.centered}>
                     <h1>Talk to an ADU specialist</h1>
                     <form onSubmit={createPerson}>
+                        {/* <form onSubmit={getAllFields}> */}
                         <fieldset id="fields">
-                            <AddressAutocomplete getAddress={getAddress} />
                             <input
                                 type="hidden"
                                 id="attributer_channel"
@@ -223,6 +228,19 @@ export default function LeadForm({ data }) {
                                 name="attributer_landingpagegroup"
                                 value="[landingpagegroup]"
                             />
+                            <div className={style.field}>
+                                <label htmlFor="address">
+                                    What is your property address?
+                                </label>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    id="address"
+                                    required
+                                    className={style.textfield}
+                                    data-1p-ignore
+                                />
+                            </div>
                             <div className={style.field}>
                                 <label htmlFor="name">Full name</label>
                                 <input

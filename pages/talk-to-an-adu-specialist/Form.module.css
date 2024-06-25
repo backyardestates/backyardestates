@@ -146,7 +146,7 @@
 }
 
 .calendlySentence {
-    margin: 0 0 2rem 0 !important;
+    margin: 0 auto 2rem auto !important;
     color: var(--color-neutral-500);
     font-family: var(--font-sans);
     font-size: 1.25rem;
@@ -171,7 +171,8 @@
         grid-column-end: 13;
     }
 
-    .calendlySentence {
+    /* .calendlySentence {
+        border: 1px solid red;
         margin: 0 auto 0 auto !important;
-    }
+    } */
 }
