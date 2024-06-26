@@ -97,6 +97,12 @@
     max-width: calc(100vw - 3rem);
 }
 
+.links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 /* fixed */
 @media only screen and (min-width: 1400px) {
     .videoAndImage {
@@ -115,5 +121,11 @@
 
     .video {
         flex: 1;
+    }
+
+    .links {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
     }
 }

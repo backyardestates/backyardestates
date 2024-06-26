@@ -28,6 +28,14 @@ export default function Navbar({
                         </Link>
                     </li>
                     <li>
+                        <Link
+                            href="/standard-inclusions"
+                            className={style.link}
+                        >
+                            Inclusions
+                        </Link>
+                    </li>
+                    <li>
                         <Link href="/pricing" className={style.link}>
                             Pricing
                         </Link>

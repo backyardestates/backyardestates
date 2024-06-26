@@ -44,15 +44,20 @@ export default function FloorPlan({ floorplan, estates }) {
                     {price !== null && (
                         <p className={style.price}>{`$${price}`}</p>
                     )}
-                    {floorPlanPDF !== null && (
-                        <StandaloneLink
-                            icon="download"
-                            href={`/pdf/${floorPlanPDF}`}
-                            download
-                        >
-                            Download floor plan
+                    <div className={style.links}>
+                        {floorPlanPDF !== null && (
+                            <StandaloneLink
+                                icon="download"
+                                href={`/pdf/${floorPlanPDF}`}
+                                download
+                            >
+                                Download floor plan
+                            </StandaloneLink>
+                        )}
+                        <StandaloneLink href={`/standard-inclusions/`}>
+                            View standard inclusions
                         </StandaloneLink>
-                    )}
+                    </div>
                 </div>
                 <div className={style.videoAndImage}>
                     {floorplan.floorPlanImage !== null && (
@@ -90,6 +95,9 @@ export default function FloorPlan({ floorplan, estates }) {
                     <li>Mirrored closet doors in bedrooms</li>
                     <li>Smart ceiling fans</li>
                 </ul>
+                <StandaloneLink theme="beige" href={`/standard-inclusions/`}>
+                    View standard inclusions
+                </StandaloneLink>
             </CustomerStory>
             <RelatedContent properties={filteredRelatedProperties} />
         </Layout>
