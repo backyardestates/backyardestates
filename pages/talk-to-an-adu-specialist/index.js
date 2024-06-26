@@ -1,19 +1,11 @@
 import { useRef, useState } from 'react'
 import Link from 'next/link'
-// import Script from 'next/script'
 import Layout from '../../src/layouts/LeadForm'
 import style from './Form.module.css'
-
-// import { redirect } from 'next/navigation'
 import { useRouter } from 'next/router'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
-
-import AddressAutocomplete from '@/components/AddressAutocomplete'
 import OpenGraph from '@/components/OpenGraph'
-
-// import { InlineWidget } from 'react-calendly'
 
 export default function LeadForm({ data }) {
     const router = useRouter()
