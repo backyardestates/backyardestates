@@ -7,8 +7,8 @@
     .base {
         display: block;
         margin: 0;
-        padding: 0 0 6rem 0;
-        background-color: var(--color-neutral-50);
+        padding: 6rem 0;
+        /* background-color: var(--color-neutral-50); */
         width: 100%;
         overflow: hidden;
     }
@@ -90,19 +90,9 @@
         color: var(--color-brand-light-blue);
     }
 
-    .timelineStart {
-        padding: 0rem 1.25rem 0.125rem 1rem;
-        border-top-left-radius: 0.2rem;
-        border-bottom-left-radius: 0.2rem;
-    }
     .timelineMiddle {
         color: var(--color-white);
         background-color: var(--color-brand-light-blue);
-    }
-    .timelineEnd {
-        padding: 0rem 1rem 0.125rem 1.25rem;
-        border-top-right-radius: 0.2rem;
-        border-bottom-right-radius: 0.2rem;
     }
 
     .column {

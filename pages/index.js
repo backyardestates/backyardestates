@@ -28,7 +28,6 @@ export default function Home({ estates }) {
             <OpenGraph />
             <Testimonials />
             <Floorplans showNav={true} floorplans={estates} />
-            <Inclusions />
             <Process />
             <Benefits />
             <Properties data={estates} />

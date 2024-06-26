@@ -15,7 +15,7 @@ export default function StandardInclusions({ estates }) {
         <Layout
             title="Standard inclusions"
             pageTitle="Standard inclusions - Backyard Estates"
-            explanation="At Backyard Estates, we provide complete transparency on the exact inclusions of our standard ADU builds"
+            explanation="We provide complete transparency on the exact inclusions of our standard and custom ADU builds"
             floorplans={estates}
         >
             {/* <OpenGraph /> */}

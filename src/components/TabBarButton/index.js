@@ -1,10 +1,17 @@
 import { useContext } from 'react'
 import { PreviewContext } from '@/panels/InclusionsPanel'
+import { PreviewHomeContext } from '@/panels/InclusionsHomePanel'
 
 import style from './TabBarButton.module.css'
 
+import { usePathname } from 'next/navigation'
+
 export default function TabBarButton({ children, handler, collection, value }) {
-    const { preview, setPreview } = useContext(PreviewContext)
+    const pathname = usePathname()
+
+    const context = pathname === '/' ? PreviewHomeContext : PreviewContext
+
+    const { preview, setPreview } = useContext(context)
     return (
         <div
             href="#"

@@ -8,13 +8,13 @@
     /* height: 50vw; */
     /* border: 5px solid green; */
     /* width: 100%; */
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .content {
     /* position: absolute;
     top: 0; */
-    z-index: 2;
+    /* z-index: 2; */
 }
 
 .bg {
@@ -30,6 +30,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.collectionsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0 0rem 0;
+    padding: 1.5rem 1.5rem 0 1.5rem;
+    /* border: 5px solid magenta; */
 }
 
 .columns {
@@ -219,9 +228,11 @@
         flex-direction: column;
         gap: 3rem;
         align-items: center;
-        position: relative;
-        top: 0;
+        /* position: relative; */
+        /* top: 0; */
         background-color: var(--color-brand-beige-subtle);
+        background-image: url('/greater-los-angeles.svg');
+        background-size: cover;
         margin: 0;
         padding: 0;
     }
@@ -234,19 +245,19 @@
         padding: 6rem 0 0 0;
         width: 1440px;
         /* height: auto; */
-        position: absolute;
-        top: 0;
-        z-index: 2;
+        /* position: absolute; */
+        /* top: 0; */
+        /* z-index: 2; */
     }
 
-    .bg {
+    /* .bg {
         display: block;
         position: relative;
         top: 0;
         width: 100vw;
-        height: 60vw;
+        height: 85vw;
         z-index: 1;
-    }
+    } */
 
     .tagsContainer {
         grid-column: span 12;
@@ -262,6 +273,15 @@
     }
 
     .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        grid-column: span 12;
+    }
+
+    .collectionsContainer {
+        margin: 0;
+        padding: 4rem 0;
         display: flex;
         flex-direction: column;
         align-items: center;

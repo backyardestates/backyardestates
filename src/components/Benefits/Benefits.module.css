@@ -1,6 +1,6 @@
 .base {
     margin: 0;
-    padding: 6rem 0;
+    padding: 3rem 0 6rem 0;
     background-color: var(--color-neutral-50);
     width: 100%;
     overflow: hidden;
@@ -73,7 +73,7 @@
     .content {
         width: 100%;
         margin: 0;
-        padding: 4rem 0 8rem 0;
+        padding: 4rem 0;
     }
 
     .subhead {

@@ -1,17 +1,17 @@
 import { useState, useContext } from 'react'
 import { PreviewContext } from '@/panels/InclusionsPanel'
+import { PreviewHomeContext } from '@/panels/InclusionsHomePanel'
 
 import TabBarButton from '../TabBarButton'
 import style from './TabBar.module.css'
 
+import { usePathname } from 'next/navigation'
+
 export default function TabBar() {
-    // const [collection, setCollection] = useState('light')
+    const pathname = usePathname()
+    const context = pathname === '/' ? PreviewHomeContext : PreviewContext
 
-    // function handleClick(rm) {
-    //     setCollection(rm)
-    // }
-
-    const { preview, setPreview } = useContext(PreviewContext)
+    const { preview, setPreview } = useContext(context)
 
     return (
         <ul className={style.base}>

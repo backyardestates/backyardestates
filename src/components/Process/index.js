@@ -5,14 +5,13 @@ export default function Process() {
     return (
         <div className={style.base}>
             <div className={style.content}>
-                <p className={style.subhead}>our process commitment</p>
                 <h2 className={style.display2}>
                     We deliver on-time and within budget
                 </h2>
                 <div className={style.timeline}>
                     <div className={style.timelineStart}>Start</div>
                     <div className={style.timelineMiddle}>~ 12 months</div>
-                    <div className={style.timelineEnd}>End</div>
+                    <div className={style.timelineEnd}>Finish</div>
                 </div>
                 <div className={style.column}>
                     <p className={style.small_caps}>Phase 1</p>

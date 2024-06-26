@@ -2,15 +2,22 @@ import { useState } from 'react'
 import Image from 'next/image'
 import SectionTitle from '@/components/SectionTitle'
 import StandaloneLink from '@/components/StandaloneLink'
+import TabBar from '@/components/TabBar'
 
 import style from './Floorplans.module.css'
 import VideoPlayer from '../VideoPlayer'
 import PropertyInformation from '../PropertyInformation'
 import ButtonTags from '../ButtonTags'
+import InclusionsHomePanel from '@/panels/InclusionsHomePanel'
+
+// import { useState,  } from 'react'
+// import { PreviewContext } from '@/panels/InclusionsPanel'
 
 export default function Floorplans({ showNav = false, floorplans }) {
     const [selected, setSelected] = useState(2)
     const [showVideo, setShowVideo] = useState(true)
+
+    // const { preview, setPreview } = useContext(PreviewContext)
 
     // filter properties for floor plans
     const filteredProperties = floorplans.filter(
@@ -22,7 +29,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
         <div className={style.base}>
             <div className={style.content}>
                 <SectionTitle
-                    title="Explore our floor plans"
+                    title="Choose a floor plan"
                     // explanation="We offer customized ADU floorplans to accomodate your family's needs."
                     explanation=""
                 />
@@ -88,7 +95,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
                                         className={style.img}
                                     />
                                     <a onClick={() => setShowVideo(!showVideo)}>
-                                        View interior video
+                                        View video
                                     </a>
                                 </div>
                             ) : (
@@ -105,15 +112,27 @@ export default function Floorplans({ showNav = false, floorplans }) {
                                         }
                                     />
                                     <a onClick={() => setShowVideo(!showVideo)}>
-                                        View interior image
+                                        View image
                                     </a>
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
+                <div className={style.collectionsContainer}>
+                    <SectionTitle
+                        title="Choose a package or customize"
+                        // explanation="We provide complete transparency on the exact inclusions of our standard and custom ADU builds"
+                        explanation=""
+                    />
+                    <InclusionsHomePanel />
+
+                    <StandaloneLink theme="beige" href={`/standard-inclusions`}>
+                        View standard inclusions
+                    </StandaloneLink>
+                </div>
             </div>
-            <div className={style.bg}>
+            {/* <div className={style.bg}>
                 <Image
                     src="/greater-los-angeles.svg"
                     alt="Accessory Dwelling Unit (ADU)"
@@ -125,7 +144,7 @@ export default function Floorplans({ showNav = false, floorplans }) {
                         opacity: 0.15,
                     }}
                 />
-            </div>
+            </div> */}
         </div>
     )
 }
