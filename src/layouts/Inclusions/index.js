@@ -35,7 +35,6 @@ import Catchall from '@/components/Catchall'
 import Menu from '@/components/Menu'
 import Head from 'next/head'
 import InclusionsPanel from '@/panels/InclusionsPanel'
-// import Inspector from '@/components/Inspector'
 
 export default function Inclusions({
     title,

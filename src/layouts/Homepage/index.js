@@ -8,13 +8,10 @@ import Menu from '@/components/Menu'
 
 import { GoogleTagManager } from '@next/third-parties/google'
 
-// import { SpeedInsights } from '@vercel/speed-insights/next'
-
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import Head from 'next/head'
 
 import style from './Homepage.module.css'
-import Inspector from '@/components/Inspector'
 
 const roboto = Roboto({
     variable: '--font-sans',

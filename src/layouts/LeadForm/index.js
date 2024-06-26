@@ -1,12 +1,10 @@
 import { Roboto, Roboto_Slab } from 'next/font/google'
 import style from './LeadForm.module.css'
-// import Masthead from '@/components/Masthead'
 
 import Script from 'next/script'
 import { useRouter } from 'next/router'
 
 import { GoogleTagManager } from '@next/third-parties/google'
-// import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import Head from 'next/head'
 

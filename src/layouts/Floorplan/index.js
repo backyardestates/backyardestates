@@ -8,8 +8,6 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
-import { SpeedInsights } from '@vercel/speed-insights/next'
-
 const roboto = Roboto({
     variable: '--font-sans',
     subsets: ['latin'],
