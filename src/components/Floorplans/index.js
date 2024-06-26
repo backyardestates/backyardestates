@@ -23,7 +23,8 @@ export default function Floorplans({ showNav = false, floorplans }) {
             <div className={style.content}>
                 <SectionTitle
                     title="Explore our floor plans"
-                    explanation="We offer customized ADU floorplans to accomodate your family's needs."
+                    // explanation="We offer customized ADU floorplans to accomodate your family's needs."
+                    explanation=""
                 />
 
                 {showNav && (
@@ -45,92 +46,71 @@ export default function Floorplans({ showNav = false, floorplans }) {
                             selectedFloorplan.frontmatter.id === '400-000' ||
                             selectedFloorplan.frontmatter.id === '450-000' ? (
                                 <p>
-                                    Inclusions: Discover our modern open
-                                    floorplan, designed for optimal use of every
-                                    square foot. Our all-inclusive price covers
-                                    everything from architectural, structural,
-                                    and title 24 plans, permit running, standard
-                                    city fees, and construction with utility
-                                    connection (50&prime;). Revel in the luxury
-                                    of stainless steel kitchen appliances,
-                                    quartz countertops, and LVP throughout. Your
-                                    dream home will be thoughtfully crafted for
-                                    style and convenience.
+                                    Lorem ipsum dolor sit amet, consectetur
+                                    adipiscing elit, sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua.
+                                    Placerat vestibulum lectus mauris ultrices
+                                    eros in cursus turpis massa.
                                 </p>
                             ) : (
                                 <p>
-                                    Inclusions: Discover our modern open
-                                    floorplan, designed for optimal use of every
-                                    square foot. Our all-inclusive price covers
-                                    everything from architectural, structural,
-                                    and title 24 plans, permit running, standard
-                                    city fees, construction with utility
-                                    connection (50&prime;), and solar. Revel in
-                                    the luxury of stainless steel kitchen
-                                    appliances, quartz countertops, and LVP
-                                    throughout. Your dream home will be
-                                    thoughtfully crafted for style and
-                                    convenience.
+                                    Lorem ipsum dolor sit amet, consectetur
+                                    adipiscing elit, sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua.
+                                    Placerat vestibulum lectus mauris ultrices
+                                    eros in cursus turpis massa.
                                 </p>
                             )}
-                            <StandaloneLink
-                                theme="beige"
-                                href={`/gallery/${selectedFloorplan.slug}`}
-                            >
-                                View floor plan
-                            </StandaloneLink>
+                            <div className={style.links}>
+                                <StandaloneLink
+                                    theme="beige"
+                                    href={`/gallery/${selectedFloorplan.slug}`}
+                                >
+                                    View floor plan
+                                </StandaloneLink>
+                                <StandaloneLink
+                                    theme="beige"
+                                    href={`/standard-inclusions`}
+                                >
+                                    View standard inclusions
+                                </StandaloneLink>
+                            </div>
                         </div>
                         <div className={style.columnRight}>
                             {!showVideo ||
                             selectedFloorplan.frontmatter.wistiaID === null ? (
-                                <Image
-                                    src={`/images/floor-plans/${selectedFloorplan.frontmatter.floorPlanImage}`}
-                                    alt={`3D floor plan image of ${selectedFloorplan.frontmatter.title}`}
-                                    width={640}
-                                    height={360}
-                                    className={style.img}
-                                />
+                                <div className={style.interiors}>
+                                    <Image
+                                        src={`/images/floor-plans/${selectedFloorplan.frontmatter.floorPlanImage}`}
+                                        alt={`3D floor plan image of ${selectedFloorplan.frontmatter.title}`}
+                                        width={640}
+                                        height={360}
+                                        className={style.img}
+                                    />
+                                    <a onClick={() => setShowVideo(!showVideo)}>
+                                        View interior video
+                                    </a>
+                                </div>
                             ) : (
-                                <VideoPlayer
-                                    wistiaID={
-                                        selectedFloorplan.frontmatter.wistiaID
-                                    }
-                                    style={
-                                        showVideo
-                                            ? { display: 'block' }
-                                            : { display: 'none' }
-                                    }
-                                />
+                                <div className={style.interiors}>
+                                    <VideoPlayer
+                                        wistiaID={
+                                            selectedFloorplan.frontmatter
+                                                .wistiaID
+                                        }
+                                        style={
+                                            showVideo
+                                                ? { display: 'block' }
+                                                : { display: 'none' }
+                                        }
+                                    />
+                                    <a onClick={() => setShowVideo(!showVideo)}>
+                                        View interior image
+                                    </a>
+                                </div>
                             )}
                         </div>
                     </div>
-
-                    {selectedFloorplan.frontmatter.wistiaID !== null && (
-                        <div className={style.buttonGroup}>
-                            <button
-                                className={
-                                    showVideo
-                                        ? style.buttonGroupButtonLeft_selected
-                                        : style.buttonGroupButtonLeft
-                                }
-                                onClick={() => setShowVideo(!showVideo)}
-                            >
-                                Video
-                            </button>
-                            <button
-                                className={
-                                    showVideo
-                                        ? style.buttonGroupButtonRight
-                                        : style.buttonGroupButtonRight_selected
-                                }
-                                onClick={() => setShowVideo(!showVideo)}
-                            >
-                                Floor plan
-                            </button>
-                        </div>
-                    )}
-
-                    {/* <ButtonGroup /> */}
                 </div>
             </div>
             <div className={style.bg}>
