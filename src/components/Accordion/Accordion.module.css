@@ -19,3 +19,34 @@
     margin-left: 0;
     padding-left: 0.875rem;
 }
+
+.options {
+    margin: 1rem 0 0 0;
+    padding: 0;
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+}
+
+.options li {
+    margin: 0;
+    padding: 0.25rem 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 300ms ease;
+    color: var(--color-brand-beige);
+    border: 2px solid var(--color-brand-beige-subtle);
+    border-radius: var(--radius);
+}
+
+.options li:hover {
+    color: var(--color-brand-beige-hover);
+    cursor: pointer;
+}
+
+.options li.selected {
+    border: 2px solid var(--color-brand-beige);
+    border-radius: var(--radius);
+}

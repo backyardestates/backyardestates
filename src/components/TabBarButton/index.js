@@ -19,7 +19,12 @@ export default function TabBarButton({ children, handler, collection, value }) {
                 preview.collection === value ? style.selected : ''
             }`}
             onClick={() => {
-                setPreview({ collection: value, room: preview.room })
+                setPreview({
+                    collection: value,
+                    room: preview.room,
+                    isCustom: false,
+                    kitchenCabinets: 'White',
+                })
             }}
         >
             {children}

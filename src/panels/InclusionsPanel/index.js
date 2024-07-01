@@ -7,14 +7,17 @@ import Image from 'next/image'
 import style from './InclusionsPanel.module.css'
 import ImageBar from '@/components/ImageBar'
 import Accordion from '@/components/Accordion'
-// import AccordionPanel from '@/components/AccordionPanel'
+import Button from '@/components/Button'
 
 import { ROOMS } from '../../../content/inclusions'
+import StandaloneLink from '@/components/StandaloneLink'
 
 export default function InclusionsPanel() {
     const [preview, setPreview] = useState({
         collection: 'light',
         room: 'kitchen',
+        isCustom: false,
+        kitchenCabinets: 'White',
     })
 
     const collectionDescriptions = [
@@ -100,6 +103,14 @@ export default function InclusionsPanel() {
                     </div>
                     <div className={style.sidebar}>
                         <Accordion content={ROOMS[roomIndex]} />
+                        <div className={style.ctas}>
+                            <StandaloneLink
+                                theme="beige"
+                                href="/standard-inclusions/share-with-a-friend/"
+                            >
+                                Share with a friend
+                            </StandaloneLink>
+                        </div>
                     </div>
                     <div className={style.description}>
                         {collectionDescriptions[collectionDescription]}

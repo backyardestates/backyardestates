@@ -9,7 +9,6 @@ import Benefits from '@/components/Benefits'
 import Process from '@/components/Process'
 import Floorplans from '@/components/Floorplans'
 import OpenGraph from '@/components/OpenGraph'
-import Inclusions from '@/components/Inclusions'
 
 export default function Home({ estates }) {
     estates.sort((a, b) => {

@@ -1,5 +1,6 @@
 .base {
     display: flex;
+
     margin: 1rem 0;
     padding: 0;
     list-style: none;
@@ -8,7 +9,7 @@
 .base > li {
     margin: 0;
     padding: 0;
-    width: 100%;
+    width: 75%;
     aspect-ratio: 1 / 1;
     height: auto;
 }
@@ -16,7 +17,8 @@
 @media only screen and (min-width: 1440px) {
     .base {
         flex-direction: column;
-        gap: 2rem;
+        align-items: flex-end;
+        gap: 1rem;
         margin: 0;
     }
 }

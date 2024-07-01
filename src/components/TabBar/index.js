@@ -14,24 +14,35 @@ export default function TabBar() {
     const { preview, setPreview } = useContext(context)
 
     return (
-        <ul className={style.base}>
-            <li>
-                <TabBarButton value="light">Contemporary light</TabBarButton>
-            </li>
-            <li>
-                <TabBarButton value="dark">Contemporary dark</TabBarButton>
-            </li>
-            <li>
-                <TabBarButton value="blue">Modern blue</TabBarButton>
-            </li>
-            <li>
-                <TabBarButton value="monochrome">
-                    Modern monochrome
-                </TabBarButton>
-            </li>
-            <li>
-                <TabBarButton value="olive">Urban olive</TabBarButton>
-            </li>
-        </ul>
+        <>
+            <ul className={style.base}>
+                <li>
+                    <TabBarButton value="light">
+                        Contemporary light
+                    </TabBarButton>
+                </li>
+                <li>
+                    <TabBarButton value="dark">Contemporary dark</TabBarButton>
+                </li>
+                <li>
+                    <TabBarButton value="blue">Modern blue</TabBarButton>
+                </li>
+                <li>
+                    <TabBarButton value="monochrome">
+                        Modern monochrome
+                    </TabBarButton>
+                </li>
+                <li>
+                    <TabBarButton value="olive">Urban olive</TabBarButton>
+                </li>
+                {preview.isCustom && (
+                    <li>
+                        <TabBarButton value="custom">
+                            Custom package
+                        </TabBarButton>
+                    </li>
+                )}
+            </ul>
+        </>
     )
 }

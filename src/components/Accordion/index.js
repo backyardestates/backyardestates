@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import AccordionPanel from '@/components/AccordionPanel'
+import { PreviewContext } from '@/panels/InclusionsPanel'
 
 import style from './Accordion.module.css'
 
@@ -9,6 +10,8 @@ export default function Accordion({ content }) {
     function handleClick(id) {
         setSelectPanel(id)
     }
+
+    const { preview, setPreview } = useContext(PreviewContext)
 
     return (
         <div className={style.base}>
@@ -24,6 +27,36 @@ export default function Accordion({ content }) {
                         dangerouslySetInnerHTML={{ __html: feature.text }}
                         className={style.content}
                     ></p>
+                    {feature.options.length !== 0 && (
+                        <ul className={style.options}>
+                            {feature.options.map((option, index) => (
+                                <li
+                                    key={index}
+                                    className={
+                                        preview.kitchenCabinets === option
+                                            ? style.selected
+                                            : ''
+                                    }
+                                    onClick={() => {
+                                        setPreview({
+                                            collection:
+                                                option !== 'White'
+                                                    ? 'custom'
+                                                    : 'light',
+                                            room: preview.room,
+                                            isCustom:
+                                                option !== 'White'
+                                                    ? true
+                                                    : false,
+                                            kitchenCabinets: option,
+                                        })
+                                    }}
+                                >
+                                    {option}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </AccordionPanel>
             ))}
         </div>

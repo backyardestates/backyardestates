@@ -15,12 +15,12 @@
 }
 
 .rooms {
-    grid-column: 2 / 3;
+    grid-column: 3 / 4;
     grid-row: 2 / 3;
 }
 
 .preview {
-    grid-column: 3 / 9;
+    grid-column: 4 / 8;
     grid-row: 2 / 3;
     border-radius: var(--radius);
     box-shadow: var(--drop-shadow-on-beige);
@@ -58,6 +58,10 @@
     padding: 0;
 }
 
+.ctas {
+    margin: 2rem 0 0 1.25rem;
+}
+
 @media only screen and (min-width: 1440px) {
     .interface {
         display: grid;
@@ -83,13 +87,13 @@
 
     .sidebar {
         display: block;
-        grid-column: 9 / 12;
+        grid-column: 8 / 11;
         grid-row: 2 / 3;
     }
 
     .description {
         display: block;
-        grid-column: 3 / 9;
+        grid-column: 4 / 8;
         grid-row: 3 / 4;
         color: var(--color-brand-beige);
         font-family: var(--font-sans);
