@@ -7,7 +7,6 @@ import Image from 'next/image'
 import style from './InclusionsPanel.module.css'
 import ImageBar from '@/components/ImageBar'
 import Accordion from '@/components/Accordion'
-import Button from '@/components/Button'
 
 import { ROOMS } from '../../../content/inclusions'
 import StandaloneLink from '@/components/StandaloneLink'
