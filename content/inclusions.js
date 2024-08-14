@@ -94,7 +94,7 @@ export const ROOMS = [
         ],
     },
     {
-        title: 'Interior features',
+        title: 'Living Room',
         features: [
             {
                 image: 'featureFPO.png',
@@ -213,6 +213,154 @@ export const ROOMS = [
                 header: 'Utilities',
                 text: '<ul><li>Energy-efficient 40 gallon water heater with enclosure (powered by electric heat pump)</li><li>Mini-Split Heating and HVAC system</li><li>PEX water lines with water shutoff valves at all sinks and toilets</li><li>External venting on all exhaust fans</li></ul>',
                 options: [],
+            },
+        ],
+    },
+]
+
+export const COLLECTIONS = [
+    {
+        name: 'light',
+        rooms: [
+            {
+                name: 'kitchen',
+                flooring: 'oyster',
+                cabinet: 'light',
+                countertop: 'fairy-white',
+                hardware: 'brushed-nickel',
+            },
+            {
+                name: 'bathroom',
+                flooring: 'oyster',
+                cabinet: 'light',
+                countertop: 'fairy-white',
+                hardware: 'brushed-nickel',
+            },
+            {
+                name: 'interiors',
+                flooring: 'oyster',
+                hardware: 'brushed-nickel',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'oyster',
+                hardware: 'brushed-nickel',
+            },
+        ],
+    },
+    {
+        name: 'dark',
+        rooms: [
+            {
+                name: 'kitchen',
+                flooring: 'espresso',
+                cabinet: 'dark',
+                countertop: 'calacatta-vega',
+                hardware: 'black-matte',
+            },
+            {
+                name: 'bathroom',
+                flooring: 'espresso',
+                cabinet: 'dark',
+                countertop: 'calacatta-vega',
+                hardware: 'black-matte',
+            },
+            {
+                name: 'interiors',
+                flooring: 'espresso',
+                hardware: 'black-matte',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'espresso',
+                hardware: 'black-matte',
+            },
+        ],
+    },
+    {
+        name: 'blue',
+        rooms: [
+            {
+                name: 'kitchen',
+                flooring: 'malibu',
+                cabinet: 'blue',
+                countertop: 'galant-gray',
+                hardware: 'black-matte',
+            },
+            {
+                name: 'bathroom',
+                flooring: 'malibu',
+                cabinet: 'blue',
+                countertop: 'galant-gray',
+                hardware: 'black-matte',
+            },
+            {
+                name: 'interiors',
+                flooring: 'malibu',
+                hardware: 'black-matte',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'malibu',
+                hardware: 'black-matte',
+            },
+        ],
+    },
+    {
+        name: 'monochrome',
+        rooms: [
+            {
+                name: 'kitchen',
+                flooring: 'gentry',
+                cabinet: 'monochrome',
+                countertop: 'calacatta-miraggio-gold',
+                hardware: 'brushed-nickel',
+            },
+            {
+                name: 'bathroom',
+                flooring: 'gentry',
+                cabinet: 'monochrome',
+                countertop: 'calacatta-miraggio-gold',
+                hardware: 'brushed-nickel',
+            },
+            {
+                name: 'interiors',
+                flooring: 'gentry',
+                hardware: 'brushed-nickel',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'gentry',
+                hardware: 'brushed-nickel',
+            },
+        ],
+    },
+    {
+        name: 'olive',
+        rooms: [
+            {
+                name: 'kitchen',
+                flooring: 'fox-and-hound',
+                cabinet: 'olive',
+                countertop: 'pure-white',
+                hardware: 'brushed-nickel',
+            },
+            {
+                name: 'bathroom',
+                flooring: 'fox-and-hound',
+                cabinet: 'olive',
+                countertop: 'pure-white',
+                hardware: 'brushed-nickel',
+            },
+            {
+                name: 'interiors',
+                flooring: 'fox-and-hound',
+                hardware: 'brushed-nickel',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'fox-and-hound',
+                hardware: 'brushed-nickel',
             },
         ],
     },
