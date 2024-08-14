@@ -6,7 +6,7 @@ export const ROOMS = [
                 image: 'featureFPO.png',
                 header: 'Cabinets',
                 text: 'Wood construction cabinets with soft-close shaker style wooden doors and face frames',
-                options: ['Grey', 'White', 'Misty', 'Blue', 'Olive'],
+                options: [],
             },
             {
                 image: 'featureFPO.png',
