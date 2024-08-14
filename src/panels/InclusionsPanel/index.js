@@ -10,6 +10,7 @@ import Accordion from '@/components/Accordion'
 
 import { ROOMS } from '../../../content/inclusions'
 import StandaloneLink from '@/components/StandaloneLink'
+import Preview from '../../components/Preview'
 
 export default function InclusionsPanel() {
     const [preview, setPreview] = useState({
@@ -92,13 +93,7 @@ export default function InclusionsPanel() {
                         <ImageBar />
                     </div>
                     <div className={style.preview}>
-                        <Image
-                            src={`/images/preview/${preview.collection}-${preview.room}@2x.png`}
-                            width={790}
-                            height={790}
-                            alt={`Preview of the ${preview.collection} ${preview.room}`}
-                            className={style.previewImage}
-                        />
+                        <Preview />
                     </div>
                     <div className={style.sidebar}>
                         <Accordion content={ROOMS[roomIndex]} />

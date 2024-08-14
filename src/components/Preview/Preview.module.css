@@ -1,0 +1,27 @@
+.base {
+    position: relative;
+    z-index: 1;
+}
+
+.imageHardware,
+.imageCountertop,
+.imageCabinets,
+.imageFlooring {
+    position: absolute;
+}
+
+.imageFlooring {
+    z-index: 2;
+}
+
+.imageCabinets {
+    z-index: 3;
+}
+
+.imageCountertop {
+    z-index: 4;
+}
+
+.imageHardware {
+    z-index: 5;
+}
