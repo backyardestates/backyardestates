@@ -9,7 +9,7 @@
 .base > li {
     margin: 0;
     padding: 0;
-    width: 75%;
+    width: 50%;
     aspect-ratio: 1 / 1;
     height: auto;
 }

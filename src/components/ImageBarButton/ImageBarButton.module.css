@@ -1,12 +1,27 @@
 .base {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
     height: auto;
     padding: 0.25rem;
-    background-color: rgba(246, 243, 238, 0);
+    /* background-color: rgba(246, 243, 238, 1); */
     border: 2px solid rgba(246, 243, 238, 0);
     border-radius: var(--radius);
+    background-color: white;
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+.base > svg {
+    width: 2rem;
+    fill: var(--color-brand-beige);
+}
+
+.selected > svg,
+.selected:hover > svg {
+    fill: var(--Brand-Dark-blue-Default, #36484b);
 }
 
 .base:hover {

@@ -13,6 +13,7 @@ export default function ImageBarButton({
     handler,
     showTooltip,
     tooltip,
+    children,
 }) {
     const [show, setShow] = useState(false)
 
@@ -38,13 +39,7 @@ export default function ImageBarButton({
             }}
         >
             {!showTooltip && <Tooltip show={show}>{tooltip}</Tooltip>}
-            <Image
-                src={`/images/preview/imageBar-${value}@2x.png`}
-                alt={`Image of ${value}`}
-                width={100}
-                height={100}
-                className={style.image}
-            />
+            {children}
         </div>
     )
 }
