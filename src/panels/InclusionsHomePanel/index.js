@@ -25,9 +25,9 @@ export default function InclusionsHomePanel() {
                     </div>
                     <div className={style.preview}>
                         <Image
-                            src={`/images/preview/${preview.collection}-kitchen@2x.png`}
+                            src={`/images/kitchen-${preview.collection}.png`}
                             width={480}
-                            height={480}
+                            height={360}
                             alt={`Preview of the ${preview.collection} kitchen`}
                             className={style.previewImage}
                         />
