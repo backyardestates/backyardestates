@@ -19,9 +19,14 @@
     grid-row: 2 / 3;
 }
 
-.preview {
+.previewContainer {
     grid-column: 4 / 8;
     grid-row: 2 / 3;
+}
+
+.preview {
+    /* grid-column: 4 / 8; */
+    /* grid-row: 2 / 3; */
     border-radius: var(--radius);
     box-shadow: var(--drop-shadow-on-beige);
     overflow: hidden;
@@ -94,9 +99,11 @@
     }
 
     .description {
+        margin-top: 1.5rem;
         display: block;
-        grid-column: 4 / 8;
-        grid-row: 3 / 4;
+        /* grid-column: 4 / 8; */
+        /* grid-row: 3 / 4; */
+
         color: var(--color-brand-beige);
         font-family: var(--font-sans);
         font-size: 1rem;
@@ -104,5 +111,7 @@
         font-weight: 400;
         line-height: 1.5rem;
         max-width: 37rem;
+        position: relative;
+        z-index: 2;
     }
 }

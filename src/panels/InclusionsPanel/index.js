@@ -3,7 +3,6 @@ import { createContext, useState } from 'react'
 export const PreviewContext = createContext(null)
 
 import TabBar from '@/components/TabBar'
-import Image from 'next/image'
 import style from './InclusionsPanel.module.css'
 import ImageBar from '@/components/ImageBar'
 import Accordion from '@/components/Accordion'
@@ -95,9 +94,15 @@ export default function InclusionsPanel() {
                     <div className={style.rooms}>
                         <ImageBar />
                     </div>
-                    <div className={style.preview}>
-                        <Preview />
+                    <div className={style.previewContainer}>
+                        <div className={style.preview}>
+                            <Preview />
+                        </div>
+                        <p className={style.description}>
+                            {collectionDescriptions[collectionDescription]}
+                        </p>
                     </div>
+
                     <div className={style.sidebar}>
                         <Accordion content={ROOMS[roomIndex]} />
                         <div className={style.ctas}>
@@ -108,9 +113,6 @@ export default function InclusionsPanel() {
                                 Share with a friend
                             </StandaloneLink>
                         </div>
-                    </div>
-                    <div className={style.description}>
-                        {collectionDescriptions[collectionDescription]}
                     </div>
                 </div>
             </div>
