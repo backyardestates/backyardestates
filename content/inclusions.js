@@ -41,65 +41,65 @@ export const ROOMS = [
         ],
     },
     {
-        title: 'Bathroom',
-        features: [
-            {
-                image: 'featureFPO.png',
-                header: 'Shower',
-                text: '60” molded fiberglass stall shower or tub/shower with integrated shelves',
-                options: [],
-            },
-            {
-                image: 'featureFPO.png',
-                header: 'Shower head',
-                text: 'Shower/tub single-handle faucet with pressure balance volume control',
-                options: [],
-            },
-            {
-                image: 'featureFPO.png',
-                header: 'Vanity',
-                text: '30” wood construction with soft-close doors and square white undermount sink',
-                options: [],
-            },
-            {
-                image: 'featureFPO.png',
-                header: 'Counter tops',
-                text: 'Quartz with 4” backsplash and beveled edge',
-                options: [],
-            },
-            {
-                image: 'featureFPO.png',
-                header: 'Sink faucet',
-                text: '4” widespread dual handle faucet',
-                options: [],
-            },
-            {
-                image: 'featureFPO.png',
-                header: 'Accessories',
-                text: 'Mirror above the sink, towel bar, towel ring, paper holder',
-                options: [],
-            },
-            {
-                image: 'featureFPO.png',
-                header: 'Lighting',
-                text: '3-light fixture above mirror, quiet series ceiling exhaust fan with external venting',
-                options: [],
-            },
-            {
-                image: 'featureFPO.png',
-                header: 'Toilet',
-                text: 'Low-flow water-saving toilet',
-                options: [],
-            },
-        ],
-    },
-    {
         title: 'Living Room',
         features: [
             {
                 image: 'featureFPO.png',
                 header: 'Ceilings',
                 text: 'Vaulted ceilings in great room and over kitchen where possible per plan',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Flooring',
+                text: 'Luxury vinyl plank flooring throughout',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Interior doors',
+                text: 'Shaker-style passage doors throughout',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Door hardware',
+                text: 'Passage or privacy door lever sets, plus matching entry door handle sets with deadbolts',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Paint',
+                text: 'PPG paint colors',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Trimwork',
+                text: '1x2.5” straight profile door casing, baseboard 1x4” straight profile throughout',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Lighting',
+                text: '4″ LED recessed lights in main living space (2-4 per plan)',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Electrical',
+                text: 'Rocker-style light switches with matching style wall outlets every 12′, flat screen TV connections at living area & bedrooms, prewired data/internet lines (coax & CAT 6) to one central location/hub',
+                options: [],
+            },
+        ],
+    },
+    {
+        title: 'Bedroom',
+        features: [
+            {
+                image: 'featureFPO.png',
+                header: 'Ceilings',
+                text: '?',
                 options: [],
             },
             {
@@ -148,6 +148,59 @@ export const ROOMS = [
                 image: 'featureFPO.png',
                 header: 'Closets',
                 text: 'Mirrored closet doors in bedrooms with shelf and pole',
+                options: [],
+            },
+        ],
+    },
+    {
+        title: 'Bathroom',
+        features: [
+            {
+                image: 'featureFPO.png',
+                header: 'Shower',
+                text: '60” molded fiberglass stall shower or tub/shower with integrated shelves',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Shower head',
+                text: 'Shower/tub single-handle faucet with pressure balance volume control',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Vanity',
+                text: '30” wood construction with soft-close doors and square white undermount sink',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Counter tops',
+                text: 'Quartz with 4” backsplash and beveled edge',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Sink faucet',
+                text: '4” widespread dual handle faucet',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Accessories',
+                text: 'Mirror above the sink, towel bar, towel ring, paper holder',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Lighting',
+                text: '3-light fixture above mirror, quiet series ceiling exhaust fan with external venting',
+                options: [],
+            },
+            {
+                image: 'featureFPO.png',
+                header: 'Toilet',
+                text: 'Low-flow water-saving toilet',
                 options: [],
             },
         ],

@@ -57,17 +57,20 @@ export default function InclusionsPanel() {
         case 'kitchen':
             roomIndex = 0
             break
-        case 'bathroom':
+        case 'living':
             roomIndex = 1
             break
-        case 'interior':
+        case 'bedroom':
             roomIndex = 2
             break
-        case 'exterior':
+        case 'bathroom':
             roomIndex = 3
             break
-        case 'construction':
+        case 'exterior':
             roomIndex = 4
+            break
+        case 'construction':
+            roomIndex = 5
             break
         default:
             roomIndex = 0

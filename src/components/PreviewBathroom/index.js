@@ -9,6 +9,9 @@ import style from '../Preview/Preview.module.css'
 export default function PreviewBathroom() {
     const { preview, setPreview } = useContext(PreviewContext)
 
+    const imageWidth = 639
+    const imageHeight = 426
+
     let collectionID = 0
 
     switch (preview.collection) {
@@ -36,38 +39,45 @@ export default function PreviewBathroom() {
         <div className={style.base}>
             <Image
                 src={`/images/inclusions/${preview.room}/hardware/${COLLECTIONS[collectionID].rooms[1].hardware}.png`}
-                width={790}
-                height={527}
+                width={imageWidth}
+                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageHardware}
             />
             <Image
                 src={`/images/inclusions/${preview.room}/countertop/${COLLECTIONS[collectionID].rooms[1].countertop}.png`}
-                width={790}
-                height={527}
+                width={imageWidth}
+                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageCountertop}
             />
             <Image
                 src={`/images/inclusions/${preview.room}/cabinet/${COLLECTIONS[collectionID].rooms[1].cabinet}.png`}
-                width={790}
-                height={527}
+                width={imageWidth}
+                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageCabinets}
             />
             <Image
                 src={`/images/inclusions/${preview.room}/tub/${COLLECTIONS[collectionID].rooms[1].hardware}.png`}
-                width={790}
-                height={527}
+                width={imageWidth}
+                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageHardware}
             />
             <Image
                 src={`/images/inclusions/${preview.room}/flooring/${COLLECTIONS[collectionID].rooms[1].flooring}.png`}
-                width={790}
-                height={527}
+                width={imageWidth}
+                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageFlooring}
+            />
+            <Image
+                src={`/images/inclusions/${preview.room}/background.jpg`}
+                width={imageWidth}
+                height={imageHeight}
+                alt={`Preview of the ${preview.collection} ${preview.room}`}
+                className={style.imageBackground}
             />
         </div>
     )

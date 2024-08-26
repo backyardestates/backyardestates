@@ -10,18 +10,22 @@
     position: absolute;
 }
 
-.imageFlooring {
+.imageBackground {
     z-index: 2;
 }
 
-.imageCabinets {
+.imageFlooring {
     z-index: 3;
 }
 
-.imageCountertop {
+.imageCabinets {
     z-index: 4;
 }
 
-.imageHardware {
+.imageCountertop {
     z-index: 5;
+}
+
+.imageHardware {
+    z-index: 6;
 }

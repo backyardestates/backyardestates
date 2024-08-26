@@ -25,13 +25,15 @@
     border-radius: var(--radius);
     box-shadow: var(--drop-shadow-on-beige);
     overflow: hidden;
-    /* aspect-ratio: 1 / 1; */
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
 }
 
 .previewImage {
     width: 100%;
-    aspect-ratio: 1 / 1;
     height: auto;
+    aspect-ratio: 3 / 2;
 }
 
 .sidebar {
@@ -62,7 +64,7 @@
     margin: 2rem 0 0 1.25rem;
 }
 
-@media only screen and (min-width: 1440px) {
+@media only screen and (min-width: 1280px) {
     .interface {
         display: grid;
         column-gap: 2rem;
