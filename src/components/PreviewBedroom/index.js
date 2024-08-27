@@ -9,7 +9,7 @@ import style from '../Preview/Preview.module.css'
 export default function PreviewBedroom() {
     const { preview } = useContext(PreviewContext)
 
-    const imageWidth = 639
+    const imageWidth = 640
     const imageHeight = 426
 
     let collectionID = 0
@@ -39,24 +39,24 @@ export default function PreviewBedroom() {
         <div className={style.base}>
             <Image
                 src={`/images/inclusions/${preview.room}/hardware/${COLLECTIONS[collectionID].rooms[3].hardware}.png`}
-                width={imageWidth}
-                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageHardware}
+                fill
+                priority
             />
             <Image
                 src={`/images/inclusions/${preview.room}/flooring/${COLLECTIONS[collectionID].rooms[3].flooring}.png`}
-                width={imageWidth}
-                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageFlooring}
+                fill
+                priority
             />
             <Image
                 src={`/images/inclusions/${preview.room}/background.jpg`}
-                width={imageWidth}
-                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageBackground}
+                fill
+                priority
             />
         </div>
     )

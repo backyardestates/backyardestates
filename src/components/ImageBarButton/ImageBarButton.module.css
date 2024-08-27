@@ -8,14 +8,14 @@
     height: auto;
     padding: 0.25rem;
     /* background-color: rgba(246, 243, 238, 1); */
-    border: 2px solid rgba(246, 243, 238, 0);
+    border: 1px solid rgba(246, 243, 238, 0);
     border-radius: var(--radius);
     background-color: white;
     box-shadow: var(--drop-shadow-on-beige);
 }
 
 .base > svg {
-    width: 2rem;
+    width: 1.25rem;
     fill: var(--color-brand-beige);
 }
 
@@ -44,4 +44,19 @@
     border-radius: 0.25rem;
     overflow: hidden;
     box-shadow: var(--drop-shadow-on-beige);
+}
+
+@media only screen and (min-width: 1280px) {
+    .base {
+        border: 2px solid rgba(246, 243, 238, 0);
+    }
+
+    .selected,
+    .selected:hover {
+        border-color: var(--Brand-Dark-blue-Default, #36484b);
+    }
+
+    .base > svg {
+        width: 1.75rem;
+    }
 }

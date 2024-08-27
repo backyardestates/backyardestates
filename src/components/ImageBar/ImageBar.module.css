@@ -1,6 +1,6 @@
 .base {
     display: flex;
-
+    gap: 1rem;
     margin: 1rem 0;
     padding: 0;
     list-style: none;
@@ -9,7 +9,7 @@
 .base > li {
     margin: 0;
     padding: 0;
-    width: 50%;
+    width: 48px;
     aspect-ratio: 1 / 1;
     height: auto;
 }

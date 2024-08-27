@@ -9,7 +9,7 @@ import style from '../Preview/Preview.module.css'
 export default function PreviewKitchen() {
     const { preview, setPreview } = useContext(PreviewContext)
 
-    const imageWidth = 639
+    const imageWidth = 640
     const imageHeight = 426
 
     let collectionID = 0
@@ -39,39 +39,39 @@ export default function PreviewKitchen() {
         <div className={style.base}>
             <Image
                 src={`/images/inclusions/${preview.room}/hardware/${COLLECTIONS[collectionID].rooms[0].hardware}.png`}
-                width={imageWidth}
-                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageHardware}
+                fill
+                priority
             />
             <Image
                 src={`/images/inclusions/${preview.room}/countertop/${COLLECTIONS[collectionID].rooms[0].countertop}.png`}
-                width={imageWidth}
-                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageCountertop}
+                fill
+                priority
             />
             <Image
                 src={`/images/inclusions/${preview.room}/cabinet/${COLLECTIONS[collectionID].rooms[0].cabinet}.png`}
-                width={imageWidth}
-                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageCabinets}
+                fill
+                priority
             />
             <Image
                 src={`/images/inclusions/${preview.room}/flooring/${COLLECTIONS[collectionID].rooms[0].flooring}.png`}
-                width={imageWidth}
-                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageFlooring}
+                fill
+                priority
             />
 
             <Image
                 src={`/images/inclusions/${preview.room}/background.jpg`}
-                width={imageWidth}
-                height={imageHeight}
                 alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageBackground}
+                fill
+                priority
             />
         </div>
     )

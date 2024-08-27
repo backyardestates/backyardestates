@@ -6,6 +6,8 @@ import PreviewKitchen from '../PreviewKitchen'
 import PreviewBedroom from '../PreviewBedroom'
 import PreviewBathroom from '../PreviewBathroom'
 import PreviewInterior from '../PreviewInterior'
+import PreviewExterior from '../PreviewExterior'
+import PreviewConstruction from '../PreviewConstruction'
 
 export default function Preview() {
     const { preview, setPreview } = useContext(PreviewContext)
@@ -55,6 +57,8 @@ export default function Preview() {
             {preview.room === 'living' && <PreviewInterior />}
             {preview.room === 'bedroom' && <PreviewBedroom />}
             {preview.room === 'bathroom' && <PreviewBathroom />}
+            {preview.room === 'exterior' && <PreviewExterior />}
+            {preview.room === 'construction' && <PreviewConstruction />}
         </div>
     )
 }

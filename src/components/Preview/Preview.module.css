@@ -1,12 +1,14 @@
 .base {
     position: relative;
     z-index: 1;
+    aspect-ratio: 3 / 2;
 }
 
 .imageHardware,
 .imageCountertop,
 .imageCabinets,
-.imageFlooring {
+.imageFlooring,
+.imageBackground {
     position: absolute;
 }
 
