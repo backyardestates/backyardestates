@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-
 import Layout from '../src/layouts/Homepage'
 import Testimonials from '@/components/Testimonials'
 import Properties from '@/components/Properties'

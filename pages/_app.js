@@ -47,25 +47,8 @@ export default function MyApp({ Component, pageProps }) {
           `,
                 }}
             />
+
             <Component {...pageProps} />
         </>
     )
 }
-
-/*
-
-import { useEffect } from 'react'
-import Script from 'next/script'
-import { useRouter } from 'next/router'
-import * as fbq from '../lib/fpixel'
-
-function MyApp({ Component, pageProps }) {
-  
-
-  return (
-    
-  )
-}
-
-export default MyApp
-*/
