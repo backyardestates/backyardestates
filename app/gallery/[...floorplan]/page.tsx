@@ -10,7 +10,8 @@ import VideoPlayer from '@/components/VideoPlayer'
 
 import style from './page.module.css'
 
-import db from '../../../utils/db'
+import db from '@/utils/db'
+import { USDollar } from '@/utils/currency'
 
 const getFloorplan = async (slug) => {
     const floorplan = await db.floorplan.findFirst({
@@ -23,13 +24,6 @@ const getFloorplan = async (slug) => {
 }
 
 export default async function Floorplan({ params }) {
-    // Format the price above to USD using the locale, style, and currency.
-    let USDollar = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumSignificantDigits: 3,
-    })
-
     const { floorplan } = params
     const property = await getFloorplan(floorplan)
 

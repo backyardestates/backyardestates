@@ -2,14 +2,9 @@ import Divider from '../Divider'
 
 import style from './PropertyInformation.module.css'
 
-export default function PropertyInformation({ floorplan, showPrice = false }) {
-    // Format the price above to USD using the locale, style, and currency.
-    let USDollar = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumSignificantDigits: 3,
-    })
+import { USDollar } from '@/utils/currency'
 
+export default function PropertyInformation({ floorplan, showPrice = false }) {
     const bed = floorplan.bed
     const bath = floorplan.bath
     const sqft = floorplan.sqft

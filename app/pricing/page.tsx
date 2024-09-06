@@ -18,7 +18,7 @@ import OpenGraph from '@/components/OpenGraph'
 import StandaloneLink from '@/components/StandaloneLink'
 
 import style from './page.module.css'
-import { USDollar } from '../../utils/currency'
+import { USDollar } from '@/utils/currency'
 import db from '@/utils/db'
 
 const getProperties = async () => {
