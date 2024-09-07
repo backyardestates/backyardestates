@@ -40,10 +40,10 @@ export default function OurTeam() {
                 </Bio>
                 <Bio
                     portrait="tom-gibson.png"
-                    name="Thomas Gibson"
+                    name="Tom Gibson"
                     title="Head of Construction"
                 >
-                    Tom Wright is an experienced construction industry
+                    Tom Gibson is an experienced construction industry
                     professional who has been working in the field for over 50
                     years. He attended Eastern New Mexico University and Pierce
                     College in California, where he studied construction and
