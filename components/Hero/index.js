@@ -1,14 +1,14 @@
+'use client'
+
 import { useRef } from 'react'
 import Image from 'next/image'
-// import { gsap } from 'gsap'
-// import { TextPlugin } from 'gsap/TextPlugin'
 import { gsap } from 'gsap/dist/gsap'
 import { TextPlugin } from 'gsap/dist/TextPlugin'
 import { useGSAP } from '@gsap/react'
 import Button from '../Button'
 import style from './Hero.module.css'
 
-import heroBackgroundImage from '../../../public/images/hero-adu-optimized.webp'
+import heroBackgroundImage from '../../public/images/hero-adu-optimized.webp'
 
 gsap.registerPlugin(TextPlugin)
 
@@ -27,8 +27,6 @@ export default function Hero() {
 
     useGSAP(
         () => {
-            // gsap.registerPlugin(Text)
-
             gsap.to(cursorRef.current, {
                 opacity: 0,
                 repeat: -1,
@@ -41,7 +39,6 @@ export default function Hero() {
 
             phrases.forEach((phrase) => {
                 let textTimeline = gsap.timeline({
-                    // delay: 3,
                     repeat: 1,
                     yoyo: true,
                     repeatDelay: 2,
@@ -57,7 +54,7 @@ export default function Hero() {
     )
 
     return (
-        <div className={style.base}>
+        <div className={style.base} onScroll={() => alert('Table Scrolled')}>
             <div className={style.bgWrap}>
                 <Image
                     alt="Accessory Dwelling Unit (ADU)"

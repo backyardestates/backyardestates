@@ -7,7 +7,7 @@ import { useState } from 'react'
 export default function Dropdown({ isHomepage = false, label, children }) {
     const [visibility, setVisibility] = useState(false)
     return (
-        <div className={style.light}>
+        <div className={isHomepage ? style.light : style.dark}>
             <button
                 type="button"
                 className={style.btn}

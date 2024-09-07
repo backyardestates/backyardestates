@@ -1,15 +1,12 @@
-// import { useState } from 'react'
-
-import Button from '../Button'
-import Logo from '../Logo'
-import style from './Menu.module.css'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 import { faXmark } from '@fortawesome/pro-solid-svg-icons'
 
+import Button from '@/components/Button'
+
+import style from './Menu.module.css'
+
 export default function Menu({ showMenu, toggleMenu }) {
-    // const [show, setShow] = useState(true)
     return (
         <div className={showMenu ? style.base_show : style.base_hide}>
             <div className={style.modal}>
