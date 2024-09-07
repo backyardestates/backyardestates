@@ -34,7 +34,7 @@ export default function Nav() {
                             </Link>
                         </li>
                         <li>
-                            <Dropdown label="Company">
+                            <Dropdown isHomepage={true} label="Company">
                                 <ul>
                                     <li>
                                         <Link href="/about-us">About us</Link>
