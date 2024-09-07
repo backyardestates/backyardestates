@@ -10,6 +10,7 @@ import {
 
 import Button from '@/components/Button'
 import CallToAction from '@/components/CallToAction'
+import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
@@ -17,6 +18,7 @@ import OpenGraph from '@/components/OpenGraph'
 import StandaloneLink from '@/components/StandaloneLink'
 
 import style from './page.module.css'
+
 import { USDollar } from '@/utils/currency'
 import db from '@/utils/db'
 
@@ -238,6 +240,7 @@ export default async function Pricing() {
                         </p>
                     </CallToAction>
                 </div>
+                <Catchall />
             </main>
             <Footer />
         </>
