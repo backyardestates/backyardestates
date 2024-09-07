@@ -15,8 +15,7 @@ import {
 import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
-// import Menu from '@/components/Menu'
-// import Navbar from '@/components/Navbar'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 import Phase from '@/components/Phase'
 
@@ -26,10 +25,7 @@ export default function OurProcess() {
     return (
         <>
             <OpenGraph title={`Backyard Estates - Our process`} />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
-
+            <Nav />
             <Masthead
                 title="Our process"
                 explanation="We manage the entire project, from custom design to permitting, all the way to construction and installation."

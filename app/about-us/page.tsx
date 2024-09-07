@@ -8,8 +8,7 @@ import Catchall from '@/components/Catchall'
 import Chunk from '@/components/Chunk'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
-// import Menu from '@/components/Menu'
-// import Navbar from '@/components/Navbar'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 
 import style from './page.module.css'
@@ -18,10 +17,7 @@ export default function AboutUs() {
     return (
         <>
             <OpenGraph title={`Backyard Estates - About Us`} />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
-
+            <Nav />
             <Masthead
                 title="About us"
                 explanation="Our mission is to enable homeowners to make your ADU dreams a reality!"

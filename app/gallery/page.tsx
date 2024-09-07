@@ -1,6 +1,7 @@
 import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 import PropertiesGrid from '@/components/PropertiesGrid'
 
@@ -22,10 +23,7 @@ export default async function Floorplan({ params }) {
                 title="Gallery"
                 explanation="Browse recent projects and customer stories to discover the right Accessory Dwelling Unit (ADU) for your family"
             />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
-
+            <Nav />
             <main className={style.base}>
                 <OpenGraph title={`Backyard Estates - Gallery`} />
                 <div className={style.content}>

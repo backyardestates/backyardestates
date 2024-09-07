@@ -12,8 +12,7 @@ import Button from '@/components/Button'
 import CallToAction from '@/components/CallToAction'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
-// import Menu from '@/components/Menu'
-// import Navbar from '@/components/Navbar'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 import StandaloneLink from '@/components/StandaloneLink'
 
@@ -41,10 +40,7 @@ export default async function Pricing() {
     return (
         <>
             <OpenGraph title={`Backyard Estates - Pricing`} />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
-
+            <Nav />
             <Masthead
                 title="Pricing"
                 explanation="They say money doesn’t grow on trees, but it can certainly grow in your backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow."

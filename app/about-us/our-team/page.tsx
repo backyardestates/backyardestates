@@ -2,18 +2,14 @@ import Bio from '@/components/Bio'
 import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
-import Menu from '@/components/Menu'
-import Navbar from '@/components/Navbar'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 
 export default function OurTeam() {
     return (
         <>
             <OpenGraph title={`Backyard Estates - Our team`} />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
-
+            <Nav />
             <Masthead
                 title="Our team"
                 explanation="Meet the people who make your ADU possible."

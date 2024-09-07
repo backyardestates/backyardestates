@@ -2,6 +2,7 @@ import Catchall from '@/components/Catchall'
 import CustomerStory from '@/components/CustomerStory'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 import PropertyInformation from '@/components/PropertyInformation'
 import RelatedContent from '@/components/RelatedContent'
@@ -34,11 +35,8 @@ export default async function Floorplan({ params }) {
                 description={`${property?.title} floor plan`}
                 image={property?.ogImage}
             />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
-
-            <main className="centered">
+            <Nav />
+            <main className="centered generous">
                 <div className={style.content}>
                     <h1>{property?.title}</h1>
                     <PropertyInformation floorplan={property} />

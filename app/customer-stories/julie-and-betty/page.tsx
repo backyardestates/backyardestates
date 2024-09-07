@@ -1,8 +1,7 @@
 import Catchall from '@/components/Catchall'
 import CustomerStory from '@/components/CustomerStory'
 import Footer from '@/components/Footer'
-// import Menu from '@/components/Menu'
-// import Navbar from '@/components/Navbar'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 import PropertyInformation from '@/components/PropertyInformation'
 import RelatedContent from '@/components/RelatedContent'
@@ -41,10 +40,7 @@ export default async function JulieAndBetty() {
             <OpenGraph
                 title={`Backyard Estates - Julie and Betty's customer story`}
             />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
-
+            <Nav />
             <main className={style.base}>
                 <div className={style.content}>
                     <h1>Julie and Betty</h1>

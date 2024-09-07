@@ -10,8 +10,7 @@ import CallToAction from '@/components/CallToAction'
 import Chunk from '@/components/Chunk'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
-// import Menu from '@/components/Menu'
-// import Navbar from '@/components/Navbar'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 
 import style from './page.module.css'
@@ -20,10 +19,7 @@ export default function ReturnOnInvestment() {
     return (
         <>
             <OpenGraph title={`Backyard Estates - Return on investment`} />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
-
+            <Nav />
             <Masthead
                 title="Return on investment"
                 explanation="Take advantage of your underutilized land and new California laws. Convert your backyard into rental income with an Accessory Dwelling Unit (ADU)."

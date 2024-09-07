@@ -1,7 +1,6 @@
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
-// import Menu from '@/components/Menu'
-// import Navbar from '@/components/Navbar'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 
 import style from '../page.module.css'
@@ -10,9 +9,7 @@ export default function PrivacyPolicy() {
     return (
         <>
             <OpenGraph title={`Backyard Estates - Privacy policy`} />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
+            <Nav />
 
             <Masthead
                 title="Privacy policy"

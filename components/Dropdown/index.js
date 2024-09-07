@@ -1,4 +1,5 @@
-// import Link from 'next/link'
+'use client'
+
 import style from './Dropdown.module.css'
 
 import { useState } from 'react'
@@ -6,7 +7,7 @@ import { useState } from 'react'
 export default function Dropdown({ isHomepage = false, label, children }) {
     const [visibility, setVisibility] = useState(false)
     return (
-        <div className={isHomepage ? style.dark : style.light}>
+        <div className={style.light}>
             <button
                 type="button"
                 className={style.btn}

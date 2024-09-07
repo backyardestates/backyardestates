@@ -1,8 +1,7 @@
 import Catchall from '@/components/Catchall'
 import CustomerStory from '@/components/CustomerStory'
 import Footer from '@/components/Footer'
-// import Menu from '@/components/Menu'
-// import Navbar from '@/components/Navbar'
+import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 import PropertyInformation from '@/components/PropertyInformation'
 import VideoPlayer from '@/components/VideoPlayer'
@@ -39,10 +38,7 @@ export default async function VanessaAndGabriel() {
             <OpenGraph
                 title={`Backyard Estates - Vanessa and Gabriel's customer story`}
             />
-
-            {/* <Menu showMenu={showMenu} toggleMenu={toggleMenu} /> */}
-            {/* <Navbar toggleMenu={toggleMenu} /> */}
-
+            <Nav />
             <main className={style.base}>
                 <div className={style.content}>
                     <h1>Vanessa and Gabriel</h1>
