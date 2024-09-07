@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import Catchall from '@/components/Catchall'
 import CustomerStory from '@/components/CustomerStory'
 import Footer from '@/components/Footer'
@@ -30,6 +32,12 @@ const story = {
     ],
     related: ['750-000', '751-000', '950-000', '1200-000'],
     ogImage: 'backyard-estates-OG.png',
+}
+
+export const metadata: Metadata = {
+    title: "Vanessa and Gabriel's customer story - Backyard Estates",
+    description:
+        "Gabriel and Vanessa, teamed up with Gabriel's parents, Grandma and Grandpa, to make a strategic move that benefited everyone involved. Seeking closer proximity to their grandchildren, Gabriel's parents sold their home and, along with Gabriel and Vanessa, purchased a new property in their ideal neighborhood. The plan? Build an ADU to maintain independence for Grandma and Grandpa, while creating a larger support system for the growing family.",
 }
 
 export default async function VanessaAndGabriel() {

@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import Catchall from '@/components/Catchall'
 import CustomerStory from '@/components/CustomerStory'
 import Footer from '@/components/Footer'
@@ -32,6 +34,12 @@ const story = {
     ],
     related: ['450-000', '750-000', '751-000', '950-000'],
     ogImage: 'backyard-estates-OG.png',
+}
+
+export const metadata: Metadata = {
+    title: "Julie and Betty's customer story - Backyard Estates",
+    description:
+        'Meet Julie and Betty, a healthcare power couple who secured their retirement with an ADU investment! Take their lead, lock in your monthly payment today to avoid rising construction costs and take advantage of increasing rents!',
 }
 
 export default async function JulieAndBetty() {

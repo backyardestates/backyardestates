@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
+
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 
 import style from '../page.module.css'
+
+export const metadata: Metadata = {
+    title: 'Terms of use - Backyard Estates',
+}
 
 export default function TermsOfUse() {
     return (

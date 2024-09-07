@@ -1,3 +1,5 @@
+import type { Metadata, ResolvingMetadata } from 'next'
+
 import Catchall from '@/components/Catchall'
 import CustomerStory from '@/components/CustomerStory'
 import Footer from '@/components/Footer'
@@ -22,6 +24,38 @@ const getFloorplan = async (slug) => {
         },
     })
     return floorplan
+}
+
+export async function generateMetadata(
+    { params },
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const slug = params.floorplan
+    let dynamicTitle = ''
+
+    if (slug.length === 2) {
+        dynamicTitle = `${formatDynamicTitle(slug[0])} - ${formatDynamicTitle(
+            slug[1]
+        )}`
+    } else {
+        dynamicTitle = formatDynamicTitle(slug[0])
+    }
+    return {
+        title: `${dynamicTitle} - Backyard Estates'`,
+    }
+}
+
+function formatDynamicTitle(slug: string) {
+    let dynamicTitle = ''
+    const words = slug.split('-')
+    if (words.length === 2) {
+        dynamicTitle = `${
+            words[0].charAt(0).toUpperCase() + words[0].slice(1)
+        } ${words[1].charAt(0).toUpperCase() + words[1].slice(1)}`
+    } else {
+        dynamicTitle = words[0].charAt(0).toUpperCase() + words[0].slice(1)
+    }
+    return dynamicTitle
 }
 
 export default async function Floorplan({ params }) {

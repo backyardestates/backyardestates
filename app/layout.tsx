@@ -1,4 +1,7 @@
 import Script from 'next/script'
+import type { Metadata } from 'next'
+
+// import { GoogleTagManager } from '@next/third-parties/google'
 
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
@@ -18,7 +21,7 @@ const robotoSlab = Roboto_Slab({
     weight: ['100', '300', '400', '500', '700', '900'],
 })
 
-export const metadata = {
+export const metadata: Metadata = {
     title: 'Backyard Estates',
     description:
         'Backyard Estates - Premier Accessory Dwelling Unit (ADU) builder for the greater Los Angeles area.',
@@ -41,6 +44,8 @@ export default function RootLayout({
             </head>
             <body className={`${roboto.variable} ${robotoSlab.variable}`}>
                 {children}
+
+                {/* <GoogleTagManager gtmId="GTM-WZR3TD5L" /> */}
             </body>
         </html>
     )

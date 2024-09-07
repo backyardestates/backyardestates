@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -36,6 +37,12 @@ const getProperties = async () => {
     return properties
 }
 
+export const metadata: Metadata = {
+    title: 'Pricing - Backyard Estates',
+    description:
+        "They say money doesn't grow on trees, but it can certainly grow in your backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow.",
+}
+
 export default async function Pricing() {
     const properties = await getProperties()
 
@@ -45,7 +52,7 @@ export default async function Pricing() {
             <Nav />
             <Masthead
                 title="Pricing"
-                explanation="They say money doesn’t grow on trees, but it can certainly grow in your backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow."
+                explanation="They say money doesn't grow on trees, but it can certainly grow in your backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow."
             />
             <main className="centered">
                 <div className={style.content}>

@@ -1,9 +1,16 @@
+import type { Metadata } from 'next'
+
 import Bio from '@/components/Bio'
 import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
+
+export const metadata: Metadata = {
+    title: 'Our team - Backyard Estates',
+    description: 'Meet the people who make your ADU possible.',
+}
 
 export default function OurTeam() {
     return (

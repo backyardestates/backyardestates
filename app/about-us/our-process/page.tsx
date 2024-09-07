@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faPhoneVolume,
@@ -20,6 +22,12 @@ import OpenGraph from '@/components/OpenGraph'
 import Phase from '@/components/Phase'
 
 import style from './page.module.css'
+
+export const metadata: Metadata = {
+    title: 'Our process - Backyard Estates',
+    description:
+        'We manage the entire project, from custom design to permitting, all the way to construction and installation.',
+}
 
 export default function OurProcess() {
     return (

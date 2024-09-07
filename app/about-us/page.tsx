@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faCheck,
@@ -13,10 +15,16 @@ import OpenGraph from '@/components/OpenGraph'
 
 import style from './page.module.css'
 
+export const metadata: Metadata = {
+    title: 'About us - Backyard Estates',
+    description:
+        'Our mission is to enable homeowners to make your ADU dreams a reality!',
+}
+
 export default function AboutUs() {
     return (
         <>
-            <OpenGraph title={`Backyard Estates - About Us`} />
+            <OpenGraph title={`Backyard Estates - About us`} />
             <Nav />
             <Masthead
                 title="About us"
