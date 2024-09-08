@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-// import { Suspense } from 'react'
+// import type { Metadata } from 'next'
 
 import { InlineWidget } from 'react-calendly'
 
@@ -12,6 +12,10 @@ import Logo from '@/components/Logo'
 import OpenGraph from '@/components/OpenGraph'
 
 import style from '../Form.module.css'
+
+// export const metadata: Metadata = {
+//     title: 'Schedule an appoint - Backyard Estates',
+// }
 
 export default function Calendly() {
     const router = useRouter()

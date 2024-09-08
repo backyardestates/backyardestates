@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faChartMixedUpCircleDollar,
@@ -14,6 +16,12 @@ import Nav from '@/components/Nav'
 import OpenGraph from '@/components/OpenGraph'
 
 import style from './page.module.css'
+
+export const metadata: Metadata = {
+    title: 'Return on investment - Backyard Estates',
+    description:
+        'Take advantage of your underutilized land and new California laws. Convert your backyard into rental income with an Accessory Dwelling Unit (ADU).',
+}
 
 export default function ReturnOnInvestment() {
     return (

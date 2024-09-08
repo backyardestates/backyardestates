@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+// import type { Metadata } from 'next'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/pro-solid-svg-icons'
@@ -10,6 +11,10 @@ import OpenGraph from '@/components/OpenGraph'
 
 import style from './Form.module.css'
 import MultiStepForm from '@/components/MultiStepForm'
+
+// export const metadata: Metadata = {
+//     title: 'Submit a referral - Backyard Estates',
+// }
 
 export default function SubmitReferral() {
     const router = useRouter()

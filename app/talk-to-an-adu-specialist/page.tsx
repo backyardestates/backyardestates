@@ -1,7 +1,7 @@
 'use client'
-import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
+// import type { Metadata } from 'next'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/pro-solid-svg-icons'
@@ -14,19 +14,16 @@ import OpenGraph from '@/components/OpenGraph'
 
 import style from './Form.module.css'
 
+// export const metadata: Metadata = {
+//     title: 'Talk to an ADU specialist - Backyard Estates',
+// }
+
 export default function LeadForm() {
     const router = useRouter()
 
     function goBack() {
         router.back()
     }
-
-    const [calendly, setCalendly] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
-    })
 
     async function createPerson(e) {
         e.preventDefault()
