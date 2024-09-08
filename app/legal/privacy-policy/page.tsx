@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 
 import style from '../page.module.css'
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function PrivacyPolicy() {
     return (
         <>
-            <OpenGraph title={`Backyard Estates - Privacy policy`} />
+            {/* <OpenGraph title={`Backyard Estates - Privacy policy`} /> */}
             <Nav />
 
             <Masthead

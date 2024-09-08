@@ -1,17 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model Floorplan {
@@ -19,13 +13,11 @@ model Floorplan {
   floorplan      String   @db.VarChar(255)
   location       String   @db.VarChar(255)
   isFloorplan    Boolean  @default(false)
-  isClickable    Boolean  @default(false)
   title          String   @db.VarChar(255)
   city           String   @db.VarChar(255)
   bed            Int
   bath           Int
   sqft           Int
-  dimension      Int[]
   price          Int
   image          String   @db.VarChar(255)
   images         String[]
@@ -35,7 +27,7 @@ model Floorplan {
   ogImage        String   @db.VarChar(255)
   related        Int[]
   createdAt      DateTime @default(now()) @db.Timestamp(6)
+  isClickable    Boolean  @default(false)
+  dimension      Int[]
+  order          String   @default("A") @db.VarChar(1)
 }
-
-// TODO:
-// order: 'X'

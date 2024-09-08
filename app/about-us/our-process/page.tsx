@@ -18,7 +18,7 @@ import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 import Phase from '@/components/Phase'
 
 import style from './page.module.css'
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 export default function OurProcess() {
     return (
         <>
-            <OpenGraph title={`Backyard Estates - Our process`} />
+            {/* <OpenGraph title={`Backyard Estates - Our process`} /> */}
             <Nav />
             <Masthead
                 title="Our process"

@@ -15,7 +15,7 @@ import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 import StandaloneLink from '@/components/StandaloneLink'
 
 import style from './page.module.css'
@@ -48,7 +48,7 @@ export default async function Pricing() {
 
     return (
         <>
-            <OpenGraph title={`Backyard Estates - Pricing`} />
+            {/* <OpenGraph title={`Backyard Estates - Pricing`} /> */}
             <Nav />
             <Masthead
                 title="Pricing"

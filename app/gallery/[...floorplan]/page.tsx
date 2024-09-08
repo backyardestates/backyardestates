@@ -5,7 +5,7 @@ import CustomerStory from '@/components/CustomerStory'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
 import Nav from '@/components/Nav'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 import PropertyInformation from '@/components/PropertyInformation'
 import RelatedContent from '@/components/RelatedContent'
 import StandaloneLink from '@/components/StandaloneLink'
@@ -70,11 +70,11 @@ export default async function Floorplan({ params }) {
 
     return (
         <>
-            <OpenGraph
+            {/* <OpenGraph
                 title={`Backyard Estates`}
                 description={`${property?.title} floor plan`}
                 image={property?.ogImage}
-            />
+            /> */}
             <Nav />
             <main className="centered generous">
                 <div className={style.content}>

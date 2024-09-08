@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/pro-solid-svg-icons'
 
 import Logo from '@/components/Logo'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 
 import style from '../Form.module.css'
 
@@ -43,7 +43,7 @@ export default function Calendly() {
             </div>
 
             <main className={style.root}>
-                <OpenGraph title={`Backyard Estates - Calendly form`} />
+                {/* <OpenGraph title={`Backyard Estates - Calendly form`} /> */}
                 <div className={style.calendly}>
                     <h1 className={style.calendlyTitle}>
                         Schedule your Backyard Estates call

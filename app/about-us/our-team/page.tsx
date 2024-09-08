@@ -5,7 +5,7 @@ import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 
 export const metadata: Metadata = {
     title: 'Our team - Backyard Estates',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function OurTeam() {
     return (
         <>
-            <OpenGraph title={`Backyard Estates - Our team`} />
+            {/* <OpenGraph title={`Backyard Estates - Our team`} /> */}
             <Nav />
             <Masthead
                 title="Our team"

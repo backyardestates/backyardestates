@@ -13,7 +13,10 @@ const getFloorplans = async () => {
     const floorplans = await db.floorplan.findMany({
         orderBy: [
             {
-                id: 'asc',
+                order: 'asc',
+            },
+            {
+                title: 'asc',
             },
         ],
         where: {

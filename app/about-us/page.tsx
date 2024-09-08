@@ -11,7 +11,7 @@ import Chunk from '@/components/Chunk'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 
 import style from './page.module.css'
 
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export default function AboutUs() {
     return (
         <>
-            <OpenGraph title={`Backyard Estates - About us`} />
+            {/* <OpenGraph title={`Backyard Estates - About us`} /> */}
             <Nav />
             <Masthead
                 title="About us"

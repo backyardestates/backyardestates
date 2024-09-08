@@ -4,7 +4,7 @@ import Catchall from '@/components/Catchall'
 import CustomerStory from '@/components/CustomerStory'
 import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 import PropertyInformation from '@/components/PropertyInformation'
 import RelatedContent from '@/components/RelatedContent'
 import VideoPlayer from '@/components/VideoPlayer'
@@ -45,9 +45,9 @@ export const metadata: Metadata = {
 export default async function JulieAndBetty() {
     return (
         <>
-            <OpenGraph
+            {/* <OpenGraph
                 title={`Backyard Estates - Julie and Betty's customer story`}
-            />
+            /> */}
             <Nav />
             <main className={style.base}>
                 <div className={style.content}>

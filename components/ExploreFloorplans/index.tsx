@@ -67,7 +67,7 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
                         )}{' '}
                         <StandaloneLink
                             theme="beige"
-                            href={`/gallery/${selectedFloorplan.slug}`}
+                            href={`/gallery/${selectedFloorplan.floorplan}`}
                         >
                             View floor plan
                         </StandaloneLink>

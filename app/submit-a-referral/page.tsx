@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/pro-solid-svg-icons'
 
 import Logo from '@/components/Logo'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 
 import style from './Form.module.css'
 import MultiStepForm from '@/components/MultiStepForm'
@@ -36,7 +36,7 @@ export default function SubmitReferral() {
             </div>
 
             <main className={style.root}>
-                <OpenGraph title={`Backyard Estates - Submit a referral`} />
+                {/* <OpenGraph title={`Backyard Estates - Submit a referral`} /> */}
                 <div className={style.content}>
                     <div className={style.centered}>
                         <h1>Submit a referral</h1>

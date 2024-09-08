@@ -1,11 +1,7 @@
 import Image from 'next/image'
-import SectionTitle from '../SectionTitle'
-// import StandaloneLink from '../StandaloneLink'
 
+import SectionTitle from '../SectionTitle'
 import style from './Floorplans.module.css'
-// import VideoPlayer from '../VideoPlayer'
-// import PropertyInformation from '../PropertyInformation'
-import ButtonTags from '../ButtonTags'
 
 import db from '@/utils/db'
 import ExploreFloorplans from '../ExploreFloorplans'
@@ -14,7 +10,10 @@ const getFloorplans = async () => {
     const floorplans = await db.floorplan.findMany({
         orderBy: [
             {
-                id: 'asc',
+                order: 'asc',
+            },
+            {
+                title: 'asc',
             },
         ],
         where: {
@@ -24,8 +23,6 @@ const getFloorplans = async () => {
     })
     return floorplans
 }
-
-// export default async function Properties() {
 
 export default async function Floorplans({ showNav = false }) {
     const floorplans = await getFloorplans()

@@ -10,7 +10,7 @@ import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
 import Link from 'next/link'
 
 import Logo from '@/components/Logo'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 
 import style from './Form.module.css'
 
@@ -142,7 +142,7 @@ export default function LeadForm() {
             </div>
 
             <main className={style.root}>
-                <OpenGraph title={`Backyard Estates - Contact form`} />
+                {/* <OpenGraph title={`Backyard Estates - Contact form`} /> */}
                 <div className={style.content}>
                     <div className={style.centered}>
                         <h1>Talk to an ADU specialist</h1>
