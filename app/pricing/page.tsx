@@ -27,7 +27,10 @@ const getProperties = async () => {
     const properties = await db.floorplan.findMany({
         orderBy: [
             {
-                id: 'asc',
+                order: 'asc',
+            },
+            {
+                title: 'asc',
             },
         ],
         where: {

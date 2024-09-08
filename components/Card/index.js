@@ -4,8 +4,15 @@ import Image from 'next/image'
 import PropertyInformation from '../PropertyInformation'
 
 export default function Card({ estate }) {
+    // build full url slug
+    let urlSlug = ''
+    if (estate.location !== '') {
+        urlSlug = `${estate.floorplan}/${estate.location}`
+    } else {
+        urlSlug = `${estate.floorplan}/${estate.location}`
+    }
     return (
-        <Link href={`/gallery/${estate.floorplan}`} className={style.base}>
+        <Link href={`/gallery/${urlSlug}`} className={style.base}>
             <Image
                 src={`/images/property/${estate.image}`}
                 width={640}

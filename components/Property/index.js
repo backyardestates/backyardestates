@@ -4,8 +4,15 @@ import style from './Property.module.css'
 import PropertyInformation from '../PropertyInformation'
 
 export default function Property({ floorplan }) {
+    // build full url slug
+    let urlSlug = ''
+    if (floorplan.location !== '') {
+        urlSlug = `${floorplan.floorplan}/${floorplan.location}`
+    } else {
+        urlSlug = `${floorplan.floorplan}/${floorplan.location}`
+    }
     return (
-        <Link href={`/gallery/${floorplan.floorplan}`} className={style.base}>
+        <Link href={`/gallery/${urlSlug}`} className={style.base}>
             <Image
                 src={`/images/property/${floorplan.image}`}
                 className={style.image}

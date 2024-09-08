@@ -12,7 +12,16 @@ import style from './page.module.css'
 import db from '@/utils/db'
 
 const getProperties = async () => {
-    const properties = await db.floorplan.findMany({})
+    const properties = await db.floorplan.findMany({
+        orderBy: [
+            {
+                order: 'asc',
+            },
+            {
+                title: 'asc',
+            },
+        ],
+    })
     return properties
 }
 
