@@ -81,6 +81,16 @@ export default function HeroNav() {
                         </li>
                     </ul>
                     <div className={style.right}>
+                        <ul className={style.links}>
+                            <li>
+                                <Link
+                                    href="/submit-a-referral"
+                                    className={style.link}
+                                >
+                                    Submit a referral
+                                </Link>
+                            </li>
+                        </ul>
                         <div className={style.cta}>
                             <Button
                                 isPrimary={isTransparent ? false : true}
