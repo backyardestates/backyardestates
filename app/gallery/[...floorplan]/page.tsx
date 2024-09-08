@@ -51,9 +51,15 @@ function formatDynamicTitle(slug: string) {
     if (words.length === 2) {
         dynamicTitle = `${
             words[0].charAt(0).toUpperCase() + words[0].slice(1)
-        } ${words[1].charAt(0).toUpperCase() + words[1].slice(1)}`
+        } ${words[1].charAt(0).toUpperCase() + words[1].slice(1)}  - Floor plan`
     } else {
-        dynamicTitle = words[0].charAt(0).toUpperCase() + words[0].slice(1)
+        if (words[0] === 'custom') {
+            dynamicTitle = 'Custom Estate'
+        } else {
+            dynamicTitle = `${
+                words[0].charAt(0).toUpperCase() + words[0].slice(1)
+            } property`
+        }
     }
     return dynamicTitle
 }
