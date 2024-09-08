@@ -14,7 +14,7 @@ import OpenGraph from '@/components/OpenGraph'
 
 import style from './Form.module.css'
 
-export default function LeadForm({ path }) {
+export default function LeadForm() {
     const router = useRouter()
 
     function goBack() {

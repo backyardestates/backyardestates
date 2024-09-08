@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
+// import { Suspense } from 'react'
 
 import { InlineWidget } from 'react-calendly'
 
@@ -48,6 +49,7 @@ export default function Calendly() {
                         provide additional details and prepare you for our
                         upcoming call.
                     </p>
+                    {/* <Suspense> */}
                     <InlineWidget
                         url="https://calendly.com/adam-735/15min?hide_gdpr_banner=1"
                         styles={{
@@ -70,6 +72,7 @@ export default function Calendly() {
                             },
                         }}
                     />
+                    {/* </Suspense> */}
                 </div>
             </main>
         </>

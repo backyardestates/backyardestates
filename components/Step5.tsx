@@ -2,11 +2,6 @@
 
 import { useState } from 'react'
 
-import { Progress } from '@/components/ui/progress'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { track } from '@vercel/analytics'
-
 import { StepProps } from '@/lib/props'
 
 import Task from './Task'
@@ -14,7 +9,6 @@ import Dropzone from './Dropzone'
 
 const Step5: React.FC<StepProps> = ({ setStep, setPreferences }) => {
     const handleClick = () => {
-        track('Click', { step: 5 })
         setStep(6)
     }
 
@@ -58,8 +52,7 @@ const Step5: React.FC<StepProps> = ({ setStep, setPreferences }) => {
          */
 
     return (
-        <Card className="shadow-xl p-6">
-            <Progress value={30} className="mb-6" />
+        <>
             <h1 className="scroll-m-20 text-3xl font-bold tracking-tight mb-6">
                 Rank these ADU goals based on priority
             </h1>
@@ -79,13 +72,13 @@ const Step5: React.FC<StepProps> = ({ setStep, setPreferences }) => {
                 ))}
             </div>
 
-            <Button
+            <button
                 className="bg-blue-500 w-full"
                 onClick={() => handleClick()}
             >
                 Continue
-            </Button>
-        </Card>
+            </button>
+        </>
     )
 }
 
