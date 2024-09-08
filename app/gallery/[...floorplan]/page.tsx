@@ -16,6 +16,17 @@ import style from './page.module.css'
 import db from '@/utils/db'
 import { USDollar } from '@/utils/currency'
 
+export async function generateStaticParams() {
+    // const posts = await fetch('https://.../posts').then((res) => res.json())
+
+    const floorplans = await db.floorplan.findMany({})
+    // return floorplan
+
+    return floorplans.map((floorplan) => ({
+        slug: `${floorplan.floorplan}/${floorplan.location}`,
+    }))
+}
+
 const getFloorplan = async (slug) => {
     const floorplan = await db.floorplan.findFirst({
         where: {
