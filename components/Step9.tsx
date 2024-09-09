@@ -18,9 +18,7 @@ const Step9: React.FC<StepProps> = ({
 
     return (
         <>
-            <h2 className="multistep">
-                When would you like to complete your ADU build?
-            </h2>
+            <h2 className="multistep">When do they need their ADU?</h2>
             <div className="multistep buttons">
                 <button
                     className="multistep button"

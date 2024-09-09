@@ -18,7 +18,7 @@ const Step10: React.FC<StepProps> = ({
 
     return (
         <>
-            <h2 className="multistep">Which type of ADU would you prefer?</h2>
+            <h2 className="multistep">What type of ADU do they need?</h2>
             <div className="multistep buttons">
                 <button
                     className="multistep button"

@@ -13,9 +13,10 @@ import Step6 from './Step6'
 import Step7 from './Step7'
 import Step9 from './Step9'
 import Step10 from './Step10'
+import Step11 from './Step11'
 
 export default function MultiStepForm() {
-    const [step, setStep] = useState(1)
+    const [step, setStep] = useState(0)
 
     interface LeadPreferences {
         purpose: string
@@ -72,7 +73,7 @@ export default function MultiStepForm() {
             })
 
             if (response.ok) {
-                setStep(12)
+                setStep(13)
             } else {
                 const data = await response.json()
             }
@@ -82,7 +83,7 @@ export default function MultiStepForm() {
     }
 
     const next = (nextStep: number) => {
-        if (step === 11) {
+        if (step === 12) {
             handleSubmit(onSubmit)
         } else {
             setStep(nextStep)
@@ -91,6 +92,97 @@ export default function MultiStepForm() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
+            {step === 0 && (
+                <>
+                    <h2 className="multistep">Who are you referring?</h2>
+                    <div>
+                        <label htmlFor="ownerName" className="multistep">
+                            Name
+                        </label>
+                        <div className="mt-2">
+                            <input
+                                type="text"
+                                id="ownerName"
+                                {...register('ownerName', {
+                                    required: 'Please enter their name',
+                                })}
+                                className="multistep"
+                            />
+                            {errors.ownerName && (
+                                <p className="multistep error">
+                                    {errors.ownerName.message}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    <div>
+                        <label htmlFor="ownerPhoneNumber" className="multistep">
+                            Phone number
+                        </label>
+                        <div>
+                            <input
+                                type="text"
+                                id="ownerRelationship"
+                                {...register('ownerPhoneNumber', {
+                                    required: 'Please enter their phone number',
+                                })}
+                                className="multistep"
+                            />
+                            {errors.ownerPhoneNumber && (
+                                <p className="multistep error">
+                                    {errors.ownerPhoneNumber.message}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            htmlFor="ownerPropertyAddress"
+                            className="multistep"
+                        >
+                            Property address
+                        </label>
+                        <div>
+                            <input
+                                type="text"
+                                id="ownerPropertyAddress"
+                                {...register('ownerPropertyAddress', {
+                                    required:
+                                        'Please enter their property address',
+                                })}
+                                className="multistep"
+                            />
+                            {errors.ownerPropertyAddress && (
+                                <p className="multistep error">
+                                    {errors.ownerPropertyAddress.message}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            const output = await trigger(
+                                [
+                                    'ownerName',
+                                    'ownerPhoneNumber',
+                                    'ownerPropertyAddress',
+                                ],
+                                {
+                                    shouldFocus: true,
+                                }
+                            )
+                            if (output) {
+                                next(1)
+                            }
+                        }}
+                        className="multistep button"
+                    >
+                        Continue
+                    </button>
+                </>
+            )}
+
             {step === 1 && (
                 <Step1
                     setStep={setStep}
@@ -101,8 +193,7 @@ export default function MultiStepForm() {
 
             {step === 2 && (
                 <>
-                    <h2 className="multistep">Tell us more</h2>
-
+                    <h2 className="multistep">Tell us why they need an ADU</h2>
                     <div>
                         <div>
                             <textarea
@@ -195,7 +286,7 @@ export default function MultiStepForm() {
                             htmlFor="ownerRelationship"
                             className="multistep"
                         >
-                            Relationship to owner
+                            Their relationship to owner
                         </label>
                         <div>
                             <input
@@ -205,7 +296,6 @@ export default function MultiStepForm() {
                                     required:
                                         'Please enter your relationship to the owner',
                                 })}
-                                // autoComplete="street-address"
                                 className="multistep"
                             />
                             {errors.ownerRelationship && (
@@ -249,8 +339,15 @@ export default function MultiStepForm() {
                 />
             )}
             {step === 11 && (
+                <Step11
+                    setStep={setStep}
+                    preferences={preferences}
+                    setPreferences={setPreferences}
+                />
+            )}
+            {step === 12 && (
                 <>
-                    <h2 className="multistep">Our recommendation:</h2>
+                    <h2 className="multistep">Your information:</h2>
                     <div>
                         <label htmlFor="contactName" className="multistep">
                             Name
@@ -301,7 +398,7 @@ export default function MultiStepForm() {
                                 }
                             )
                             if (output) {
-                                next(12)
+                                next(13)
                             }
                         }}
                         className="multistep button"
@@ -310,12 +407,11 @@ export default function MultiStepForm() {
                     </button>
                 </>
             )}
-            {step === 12 && (
+            {step === 13 && (
                 <>
                     <h2 className="multistep">
-                        Congrats on finding your perfect ADU!
+                        Backyard Estates will call within 24 hours.
                     </h2>
-                    <p>Backyard Estates will call within 24 hours.</p>
                 </>
             )}
         </form>

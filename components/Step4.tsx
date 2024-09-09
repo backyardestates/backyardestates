@@ -18,14 +18,8 @@ const Step4: React.FC<StepProps> = ({
 
     return (
         <>
-            <h2 className="multistep">How many bathrooms do you need?</h2>
+            <h2 className="multistep">How many bathrooms do they need?</h2>
             <div className="multistep buttons">
-                <button
-                    className="multistep button"
-                    onClick={() => handleClick(0)}
-                >
-                    0
-                </button>
                 <button
                     className="multistep button"
                     onClick={() => handleClick(1)}

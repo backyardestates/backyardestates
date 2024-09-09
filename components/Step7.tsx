@@ -28,7 +28,7 @@ const Step7: React.FC<StepProps> = ({
 
     return (
         <>
-            <h2 className="multistep">Are you the home owner?</h2>
+            <h2 className="multistep">Are they the home owner?</h2>
             <div className="multistep buttons">
                 <button
                     className="multistep button"

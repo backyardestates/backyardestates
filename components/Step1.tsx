@@ -28,7 +28,7 @@ const Step1: React.FC<StepProps> = ({
 
     return (
         <>
-            <h2 className="multistep">Why do you need to build an ADU?</h2>
+            <h2 className="multistep">Why do they need to build an ADU?</h2>
             <div className="multistep buttons">
                 <button
                     className="multistep button"
@@ -46,7 +46,7 @@ const Step1: React.FC<StepProps> = ({
                     className="multistep button"
                     onClick={() => handleClick('other')}
                 >
-                    I&apos;m looking for a different reason
+                    For a different reason
                 </button>
             </div>
         </>

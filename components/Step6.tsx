@@ -18,7 +18,7 @@ const Step6: React.FC<StepProps> = ({
 
     return (
         <>
-            <h2 className="multistep">What is the property home type?</h2>
+            <h2 className="multistep">What property type do they live in?</h2>
             <div className="multistep buttons">
                 <button
                     className="multistep button"
