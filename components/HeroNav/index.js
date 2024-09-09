@@ -40,46 +40,49 @@ export default function HeroNav() {
                 <div className={style.container}>
                     <div className={style.left}>
                         <Logo mode={isTransparent ? 'dark' : 'light'} />
+                        <ul className={style.links}>
+                            <li>
+                                <Link href="/gallery" className={style.link}>
+                                    Gallery
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/pricing" className={style.link}>
+                                    Pricing
+                                </Link>
+                            </li>
+                            <li>
+                                <Dropdown
+                                    label="Company"
+                                    isHomepage={isTransparent ? false : true}
+                                >
+                                    <ul>
+                                        <li>
+                                            <Link href="/about-us">
+                                                About us
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/about-us/our-team">
+                                                Our team
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/about-us/our-process">
+                                                Our process
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/roi">
+                                                Return On Investment (ROI)
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </Dropdown>
+                            </li>
+                        </ul>
                     </div>
-                    <ul className={style.links}>
-                        <li>
-                            <Link href="/gallery" className={style.link}>
-                                Gallery
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/pricing" className={style.link}>
-                                Pricing
-                            </Link>
-                        </li>
-                        <li>
-                            <Dropdown
-                                label="Company"
-                                isHomepage={isTransparent ? false : true}
-                            >
-                                <ul>
-                                    <li>
-                                        <Link href="/about-us">About us</Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/about-us/our-team">
-                                            Our team
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/about-us/our-process">
-                                            Our process
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/roi">
-                                            Return On Investment (ROI)
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </Dropdown>
-                        </li>
-                    </ul>
+
                     <div className={style.right}>
                         <ul className={style.links}>
                             <li>
