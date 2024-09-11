@@ -13,6 +13,7 @@ export async function POST(req: Request, res: Response) {
     const leadType = body.type
     const leadContactName = body.contactName
     const leadContactPhone = body.contactPhone
+    const leadContactEmail = body.contactEmail
     const leadUnit = body.unit
     const leadHomeType = body.homeType
     const leadAddress = body.propertyAddress
@@ -27,6 +28,7 @@ export async function POST(req: Request, res: Response) {
             const person = {
                 name: leadContactName,
                 phone: [{ value: leadContactPhone }],
+                email: [{ value: leadContactEmail }],
             }
 
             const res = await fetch(
@@ -114,7 +116,6 @@ export async function POST(req: Request, res: Response) {
                         }
                     )
                     const data = await res.json()
-                    // console.log(data)
                     return Response.json(data)
                 } catch (error) {
                     return Response.json({ error }, { status: 500 })

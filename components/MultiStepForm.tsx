@@ -129,7 +129,7 @@ export default function MultiStepForm() {
                                 htmlFor="referrerEmail"
                                 className="multistep"
                             >
-                                Email <span>(optional)</span>
+                                Email
                             </label>
                             <div className="mt-2">
                                 <input
@@ -229,7 +229,7 @@ export default function MultiStepForm() {
                         </div>
                         <div>
                             <label htmlFor="contactEmail" className="multistep">
-                                Email <span>(optional)</span>
+                                Email
                             </label>
                             <div className="mt-2">
                                 <input
