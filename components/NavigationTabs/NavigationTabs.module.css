@@ -1,0 +1,22 @@
+.base {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 2rem 0;
+    padding: 0;
+    list-style: none;
+    border-bottom: 2px solid var(--color-neutral-200);
+}
+
+.base li {
+    margin: 0;
+    padding: 0 0 1rem 0;
+    border-bottom: 4px solid white;
+    color: gray;
+}
+
+.base li.selected {
+    margin: 0;
+    padding: 0 0 1rem 0;
+    border-bottom: 6px solid var(--color-neutral-200);
+    color: black;
+}

@@ -14,7 +14,7 @@ const Step3: React.FC<StepProps> = ({
             ...updatedValue,
         }))
 
-        setStep(4)
+        setStep(8)
     }
 
     return (

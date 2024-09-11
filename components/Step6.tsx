@@ -13,7 +13,7 @@ const Step6: React.FC<StepProps> = ({
             ...preferences,
             ...updatedValue,
         }))
-        setStep(7)
+        setStep(10)
     }
 
     return (

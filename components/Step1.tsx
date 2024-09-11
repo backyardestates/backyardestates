@@ -14,7 +14,7 @@ const Step1: React.FC<StepProps> = ({
                 ...preferences,
                 ...updatedValue,
             }))
-            setStep(2)
+            setStep(6)
         } else {
             updatedValue = { purpose: answer }
 
@@ -22,7 +22,7 @@ const Step1: React.FC<StepProps> = ({
                 ...preferences,
                 ...updatedValue,
             }))
-            setStep(3)
+            setStep(7)
         }
     }
 

@@ -13,3 +13,10 @@ export interface StepProps {
     preferences: any
     setPreferences: Function
 }
+
+export interface Step11Props {
+    setStep: (step: number) => void
+    preferences: any
+    setPreferences: Function
+    setTab: Function
+}

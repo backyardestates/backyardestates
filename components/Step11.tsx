@@ -1,9 +1,10 @@
-import { StepProps } from '@/lib/props'
+import { Step11Props } from '@/lib/props'
 
-const Step11: React.FC<StepProps> = ({
+const Step11: React.FC<Step11Props> = ({
     setStep,
     preferences,
     setPreferences,
+    setTab,
 }) => {
     const handleClick = (answer: string) => {
         let updatedValue = {}
@@ -13,7 +14,8 @@ const Step11: React.FC<StepProps> = ({
             ...preferences,
             ...updatedValue,
         }))
-        setStep(12)
+        setStep(13)
+        setTab(3)
     }
 
     const units = [

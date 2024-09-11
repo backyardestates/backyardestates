@@ -14,7 +14,7 @@ const Step7: React.FC<StepProps> = ({
                 ...preferences,
                 ...updatedValue,
             }))
-            setStep(9)
+            setStep(5)
         } else {
             updatedValue = { homeowner: 'No' }
 
@@ -22,7 +22,7 @@ const Step7: React.FC<StepProps> = ({
                 ...preferences,
                 ...updatedValue,
             }))
-            setStep(8)
+            setStep(4)
         }
     }
 

@@ -62,7 +62,7 @@ export default function Nav() {
                     </div>
 
                     <div className={style.right}>
-                        {/* <ul className={style.links}>
+                        <ul className={style.links}>
                             <li>
                                 <Link
                                     href="/submit-a-referral"
@@ -71,7 +71,7 @@ export default function Nav() {
                                     Submit a referral
                                 </Link>
                             </li>
-                        </ul> */}
+                        </ul>
                         <div className={style.cta}>
                             <Button isPrimary href="/talk-to-an-adu-specialist">
                                 Talk to an ADU specialist

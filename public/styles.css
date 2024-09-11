@@ -295,3 +295,8 @@ label.multistep {
 
     color: var(--color-brand-dark-blue);
 }
+
+label.multistep span {
+    font-weight: 400;
+    color: var(--color-neutral-500);
+}
