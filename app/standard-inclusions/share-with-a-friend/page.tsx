@@ -1,10 +1,12 @@
+'use client'
+
 import { useState } from 'react'
 import Link from 'next/link'
-import Layout from '../../../src/layouts/LeadForm'
+// import Layout from '../../../src/layouts/LeadForm'
 import style from './Form.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
-import OpenGraph from '@/components/OpenGraph'
+// import OpenGraph from '@/components/OpenGraph'
 
 export default function LeadForm() {
     const [formData, setFormData] = useState({
@@ -43,8 +45,7 @@ export default function LeadForm() {
     }
 
     return (
-        <Layout path="/standard-inclusions/share-with-a-friend">
-            <OpenGraph title={`Backyard Estates - Share with a friend`} />
+        <>
             <div className={style.content}>
                 <div className={style.centered}>
                     <h1>Share with a friend</h1>
@@ -114,7 +115,7 @@ export default function LeadForm() {
                                             className={style.textarea}
                                             data-1p-ignore
                                             autoComplete="off"
-                                            rows="5"
+                                            rows={5}
                                             value={formData.message}
                                             onChange={handleChange}
                                         />
@@ -127,11 +128,6 @@ export default function LeadForm() {
                                     icon={faSpinnerThird}
                                     size="lg"
                                     spin
-                                    style={{
-                                        '--fa-primary-color': '#fff',
-                                        '--fa-secondary-color': '#fff',
-                                        '--fa-secondary-opacity': '0.25',
-                                    }}
                                     className={style.icon}
                                 />
                             </button>
@@ -162,6 +158,6 @@ export default function LeadForm() {
                     )}
                 </div>
             </div>
-        </Layout>
+        </>
     )
 }
