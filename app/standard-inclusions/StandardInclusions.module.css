@@ -1,3 +1,15 @@
+.base {
+    display: grid;
+    column-gap: 2rem;
+    row-gap: 6rem;
+    grid-template-columns: repeat(12, 1fr);
+    margin: 0;
+    padding: 2rem 0;
+    z-index: 1;
+    width: 100%;
+    overflow: hidden;
+}
+
 .content {
     /* border: 5px solid red; */
     margin: 0;

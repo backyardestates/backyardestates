@@ -28,6 +28,14 @@ export default function Nav() {
                                 </Link>
                             </li>
                             <li>
+                                <Link
+                                    href="/standard-inclusions"
+                                    className={style.link}
+                                >
+                                    Standard inclusions
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/pricing" className={style.link}>
                                     Pricing
                                 </Link>
