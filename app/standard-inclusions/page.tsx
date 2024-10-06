@@ -1,8 +1,8 @@
 // import TabPanel from '@/components/TabPanel'
-// import Tabs from '@/components/Tabs'
-// import Feature from '@/components/Feature'
+import Tabs from '@/components/Tabs'
+import InclusionsPanel from '@/components/InclusionsPanel'
 
-// import { ROOMS } from '../../content/inclusions'
+import { ROOMS } from '../../content/inclusions'
 
 import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
@@ -31,7 +31,9 @@ export default async function StandardInclusions() {
                 explanation="We provide complete transparency on the exact inclusions of our standard and custom ADU builds"
             />
             <Nav />
+            <InclusionsPanel />
             <main className={style.base}>
+                <Tabs tabs={ROOMS} />
                 <Catchall />
             </main>
             <Footer />
