@@ -107,14 +107,6 @@ export default function InclusionsPanel() {
 
                     <div className={style.sidebar}>
                         <Accordion content={ROOMS[roomIndex]} />
-                        <div className={style.ctas}>
-                            <StandaloneLink
-                                theme="beige"
-                                href="/standard-inclusions/share-with-a-friend/"
-                            >
-                                Share with a friend
-                            </StandaloneLink>
-                        </div>
                     </div>
                 </div>
             </div>

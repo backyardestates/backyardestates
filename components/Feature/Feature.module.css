@@ -1,5 +1,6 @@
-.base {
-    /* border: 3px solid blue; */
+.base > img {
+    border-radius: var(--radius);
+    overflow: hidden;
 }
 
 .base > h3 {
