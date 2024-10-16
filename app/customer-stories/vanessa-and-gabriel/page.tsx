@@ -83,7 +83,7 @@ export default async function VanessaAndGabriel() {
                         </p>
                     </blockquote>
                 </CustomerStory>
-                <RelatedContent properties={[1, 2]} />
+                <RelatedContent properties={[12, 13, 15, 16]} />
                 <Catchall />
             </main>
             <Footer />

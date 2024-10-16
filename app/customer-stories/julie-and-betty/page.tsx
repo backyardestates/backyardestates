@@ -86,7 +86,7 @@ export default async function JulieAndBetty() {
                         </p>
                     </blockquote>
                 </CustomerStory>
-                <RelatedContent properties={[1, 2]} />
+                <RelatedContent properties={[2, 5, 6, 7]} />
                 <Catchall />
             </main>
             <Footer />
