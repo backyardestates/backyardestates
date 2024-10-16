@@ -14,6 +14,10 @@
     font-weight: 700;
     line-height: normal;
 }
+.linkGroup {
+    display: flex;
+    gap: 2rem;
+}
 
 .mark {
     background-color: yellow;

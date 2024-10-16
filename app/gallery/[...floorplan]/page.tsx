@@ -103,15 +103,21 @@ export default async function Floorplan({ params }) {
                                 {USDollar.format(property?.price!)}
                             </p>
                         )}
-                        {property?.floorPlanPDF !== null && (
-                            <StandaloneLink
-                                icon="download"
-                                href={`/pdf/${property?.floorPlanPDF}`}
-                                // download
-                            >
-                                Download floor plan
+                        <div className={style.linkGroup}>
+                            {property?.floorPlanPDF !== null && (
+                                <StandaloneLink
+                                    icon="download"
+                                    href={`/pdf/${property?.floorPlanPDF}`}
+                                    // download
+                                >
+                                    Download floor plan
+                                </StandaloneLink>
+                            )}
+
+                            <StandaloneLink href="/standard-inclusions">
+                                View inclusions
                             </StandaloneLink>
-                        )}
+                        </div>
                     </div>
                     <div className={style.videoAndImage}>
                         {property?.floorPlanImage !== null && (

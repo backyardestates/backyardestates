@@ -64,13 +64,21 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
                                 throughout. Your dream home will be thoughtfully
                                 crafted for style and convenience.
                             </p>
-                        )}{' '}
-                        <StandaloneLink
-                            theme="beige"
-                            href={`/gallery/${selectedFloorplan.floorplan}`}
-                        >
-                            View floor plan
-                        </StandaloneLink>
+                        )}
+                        <div className={style.linkGroup}>
+                            <StandaloneLink
+                                theme="beige"
+                                href={`/gallery/${selectedFloorplan.floorplan}`}
+                            >
+                                View floor plan
+                            </StandaloneLink>
+                            <StandaloneLink
+                                href="/standard-inclusions"
+                                theme="beige"
+                            >
+                                View standard inclusions
+                            </StandaloneLink>
+                        </div>
                     </div>
                     <div className={style.columnRight}>
                         {!showVideo || selectedFloorplan.wistiaID === null ? (
