@@ -257,12 +257,7 @@ export default function LeadForm() {
                                     icon={faSpinnerThird}
                                     size="lg"
                                     spin
-                                    // style={{
-                                    //     '--fa-primary-color': '#fff',
-                                    //     '--fa-secondary-color': '#fff',
-                                    //     '--fa-secondary-opacity': '0.25',
-                                    // }}
-                                    className={style.icon}
+                                    className={style.spinner}
                                 />
                             </button>
                             <p className={style.legal_print}>

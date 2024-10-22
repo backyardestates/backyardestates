@@ -58,14 +58,12 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    /* border: 1px solid magenta; */
 }
 
 .left {
     display: flex;
     gap: 3rem;
     flex-grow: 1;
-    /* border: 1px solid magenta; */
 }
 
 .right {
@@ -73,7 +71,6 @@
     gap: 1.5rem;
     flex-grow: 1;
     justify-content: flex-end;
-    /* border: 1px solid magenta; */
 }
 
 .menu {
@@ -132,11 +129,9 @@
 /* fluid */
 @media only screen and (min-width: 960px) {
     .root {
-        /* background: white; */
         box-shadow: 0px 4px 16px 0px rgba(54, 72, 75, 0.15);
     }
     .container {
-        /* border-top: 16px solid green; */
         width: 100%;
     }
     .links {
@@ -159,13 +154,11 @@
 /* fixed */
 @media only screen and (min-width: 1400px) {
     .root {
-        /* background: white; */
         box-shadow: 0px 4px 16px 0px rgba(54, 72, 75, 0.15);
     }
     .container {
-        /* border-top: 16px solid blue; */
         margin: 0 auto;
-        width: 90rem;
+        max-width: 90rem;
     }
     .links {
         display: flex;

@@ -211,3 +211,7 @@
         width: 1440px;
     }
 }
+
+.spinner {
+    display: none;
+}

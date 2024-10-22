@@ -162,7 +162,7 @@
     .container {
         /* border-top: 16px solid blue; */
         margin: 0 auto;
-        width: 90rem;
+        max-width: 90rem;
     }
     .links {
         display: flex;
