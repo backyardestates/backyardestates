@@ -14,7 +14,8 @@ export default function LeadForm() {
     const router = useRouter()
 
     const searchParams = useSearchParams()
-    const collection = setPackage(searchParams.get('package'))
+    const p = searchParams.get('package')
+    const collection = setPackage(p)
 
     function goBack() {
         router.back()
@@ -195,7 +196,7 @@ export default function LeadForm() {
                             </div>
                         )}
                     </div>
-                </div>{' '}
+                </div>
             </main>
         </>
     )
