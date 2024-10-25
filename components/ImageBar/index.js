@@ -33,7 +33,7 @@ export default function ImageBar() {
 
                 const isMobile = window.innerWidth < 1440
                 setShowTooltip(isMobile)
-                console.log(isMobile)
+                // console.log(isMobile)
             }
 
             // Add event listener

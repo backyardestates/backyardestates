@@ -6,7 +6,7 @@ export const ROOMS = [
                 image: 'cabinets.png',
                 header: 'Cabinets',
                 text: 'Wood construction cabinets with soft-close shaker style wooden doors and face frames',
-                options: [],
+                options: ['light', 'dark', 'blue', 'monochrome', 'olive'],
             },
             {
                 image: 'countertops.png',
@@ -30,7 +30,7 @@ export const ROOMS = [
                 image: 'kitchen-faucet.png',
                 header: 'Faucet',
                 text: 'Single-handle faucet with pulldown sprayer',
-                options: [],
+                options: ['Pewter', 'Black'],
             },
             {
                 image: 'kitchen-lighting.png',

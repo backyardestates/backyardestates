@@ -11,33 +11,32 @@ export default function TabBar() {
     const pathname = usePathname()
     const context = pathname === '/' ? PreviewHomeContext : PreviewContext
 
-    const { preview, setPreview } = useContext(context)
+    const { preview } = useContext(context)
+
+    const collections = [
+        { id: 0, name: 'Contemporary light', value: 'light' },
+        { id: 1, name: 'Contemporary dark', value: 'dark' },
+        { id: 2, name: 'Modern blue', value: 'blue' },
+        { id: 3, name: 'Modern monochrome', value: 'monochrome' },
+        { id: 4, name: 'Urban olive', value: 'olive' },
+    ]
 
     return (
         <>
             <ul className={style.base}>
-                <li>
-                    <TabBarButton value="light">
-                        Contemporary light
-                    </TabBarButton>
-                </li>
-                <li>
-                    <TabBarButton value="dark">Contemporary dark</TabBarButton>
-                </li>
-                <li>
-                    <TabBarButton value="blue">Modern blue</TabBarButton>
-                </li>
-                <li>
-                    <TabBarButton value="monochrome">
-                        Modern monochrome
-                    </TabBarButton>
-                </li>
-                <li>
-                    <TabBarButton value="olive">Urban olive</TabBarButton>
-                </li>
+                {collections.map((collection, index) => (
+                    <li key={index}>
+                        <TabBarButton
+                            id={collection.id}
+                            value={collection.value}
+                        >
+                            {collection.name}
+                        </TabBarButton>
+                    </li>
+                ))}
                 {preview.isCustom && (
                     <li>
-                        <TabBarButton value="custom">
+                        <TabBarButton id={99} value="custom">
                             Custom package
                         </TabBarButton>
                     </li>

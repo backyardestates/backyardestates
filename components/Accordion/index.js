@@ -1,6 +1,8 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import AccordionPanel from '@/components/AccordionPanel'
 import { PreviewContext } from '@/components/InclusionsPanel'
+
+import { COLLECTIONS } from '@/content/inclusions'
 
 import style from './Accordion.module.css'
 
@@ -12,6 +14,10 @@ export default function Accordion({ content }) {
     }
 
     const { preview, setPreview } = useContext(PreviewContext)
+
+    const updatePreview = (changes) => {
+        setPreview({ ...preview, ...changes })
+    }
 
     return (
         <div className={style.base}>
@@ -33,24 +39,30 @@ export default function Accordion({ content }) {
                                 <li
                                     key={index}
                                     className={
+                                        // if the selected cabinets equal the cabinets in collection
                                         preview.kitchenCabinets === option
                                             ? style.selected
                                             : ''
                                     }
-                                    onClick={() => {
-                                        setPreview({
+                                    onClick={() =>
+                                        updatePreview({
+                                            kitchenCabinets: option,
                                             collection:
-                                                option !== 'White'
+                                                option !==
+                                                COLLECTIONS[
+                                                    preview.collectionID
+                                                ].rooms[0].cabinet
                                                     ? 'custom'
-                                                    : 'light',
-                                            room: preview.room,
+                                                    : option,
                                             isCustom:
-                                                option !== 'White'
+                                                option !==
+                                                COLLECTIONS[
+                                                    preview.collectionID
+                                                ].rooms[0].cabinet
                                                     ? true
                                                     : false,
-                                            kitchenCabinets: option,
                                         })
-                                    }}
+                                    }
                                 >
                                     {option}
                                 </li>

@@ -53,7 +53,7 @@ export default function Preview() {
 
     return (
         <div className={style.base}>
-            {preview.room === 'kitchen' && <PreviewKitchen />}
+            {preview.room === 'kitchen' && <PreviewKitchen preview={preview} />}
             {preview.room === 'living' && <PreviewInterior />}
             {preview.room === 'bedroom' && <PreviewBedroom />}
             {preview.room === 'bathroom' && <PreviewBathroom />}

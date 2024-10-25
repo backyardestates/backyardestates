@@ -15,10 +15,11 @@ import Preview from '@/components/Preview'
 
 export default function InclusionsPanel() {
     const [preview, setPreview] = useState({
+        collectionID: 0,
         collection: 'light',
         room: 'kitchen',
         isCustom: false,
-        kitchenCabinets: 'White',
+        kitchenCabinets: 'light',
     })
 
     const collectionDescriptions = [

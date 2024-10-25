@@ -49,7 +49,7 @@ export default function Carousel(images) {
         // const w = slidesViewerRef.current.offsetWidth
 
         const imageWidth = slidesRef.current.getBoundingClientRect().width
-        console.log(imageWidth)
+        // console.log(imageWidth)
         let xPos = imageWidth * -1 * (position - 1)
         gsap.to(slidesRef.current, {
             x: xPos,
