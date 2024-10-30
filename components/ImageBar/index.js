@@ -6,12 +6,12 @@ import style from './ImageBar.module.css'
 export default function ImageBar() {
     const size = useWindowSize()
 
-    const [room, setRoom] = useState('kitchen')
+    // const [room, setRoom] = useState('kitchen')
     const [showTooltip, setShowTooltip] = useState(true)
 
-    function handleClick(rm) {
-        setRoom(rm)
-    }
+    // function handleClick(rm) {
+    //     setRoom(rm)
+    // }
 
     function useWindowSize() {
         // Initialize state with undefined width/height so server and client renders match

@@ -171,7 +171,7 @@ export const ROOMS = [
                 image: 'hose-bib.png',
                 header: 'Vanity',
                 text: '30” wood construction with soft-close doors and square white undermount sink',
-                options: [],
+                options: ['light', 'dark', 'blue', 'monochrome', 'olive'],
             },
             {
                 image: 'hose-bib.png',
@@ -283,6 +283,14 @@ export const COLLECTIONS = [
                 hardware: 'brushed-nickel',
             },
             {
+                name: 'living',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'oyster',
+                hardware: 'brushed-nickel',
+            },
+            {
                 name: 'bathroom',
                 flooring: 'oyster',
                 cabinet: 'light',
@@ -290,12 +298,13 @@ export const COLLECTIONS = [
                 hardware: 'brushed-nickel',
             },
             {
-                name: 'interiors',
+                name: 'exteriors',
                 flooring: 'oyster',
                 hardware: 'brushed-nickel',
             },
+            ,
             {
-                name: 'bedroom',
+                name: 'construction',
                 flooring: 'oyster',
                 hardware: 'brushed-nickel',
             },
@@ -312,6 +321,16 @@ export const COLLECTIONS = [
                 hardware: 'black-matte',
             },
             {
+                name: 'living',
+                flooring: 'espresso',
+                hardware: 'black-matte',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'espresso',
+                hardware: 'black-matte',
+            },
+            {
                 name: 'bathroom',
                 flooring: 'espresso',
                 cabinet: 'dark',
@@ -320,11 +339,6 @@ export const COLLECTIONS = [
             },
             {
                 name: 'interiors',
-                flooring: 'espresso',
-                hardware: 'black-matte',
-            },
-            {
-                name: 'bedroom',
                 flooring: 'espresso',
                 hardware: 'black-matte',
             },
@@ -341,6 +355,14 @@ export const COLLECTIONS = [
                 hardware: 'black-matte',
             },
             {
+                name: 'living',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'oyster',
+                hardware: 'brushed-nickel',
+            },
+            {
                 name: 'bathroom',
                 flooring: 'malibu',
                 cabinet: 'blue',
@@ -349,11 +371,6 @@ export const COLLECTIONS = [
             },
             {
                 name: 'interiors',
-                flooring: 'malibu',
-                hardware: 'black-matte',
-            },
-            {
-                name: 'bedroom',
                 flooring: 'malibu',
                 hardware: 'black-matte',
             },
@@ -370,6 +387,14 @@ export const COLLECTIONS = [
                 hardware: 'brushed-nickel',
             },
             {
+                name: 'living',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'oyster',
+                hardware: 'brushed-nickel',
+            },
+            {
                 name: 'bathroom',
                 flooring: 'gentry',
                 cabinet: 'monochrome',
@@ -378,11 +403,6 @@ export const COLLECTIONS = [
             },
             {
                 name: 'interiors',
-                flooring: 'gentry',
-                hardware: 'brushed-nickel',
-            },
-            {
-                name: 'bedroom',
                 flooring: 'gentry',
                 hardware: 'brushed-nickel',
             },
@@ -399,6 +419,14 @@ export const COLLECTIONS = [
                 hardware: 'brushed-nickel',
             },
             {
+                name: 'living',
+            },
+            {
+                name: 'bedroom',
+                flooring: 'fox-and-hound',
+                hardware: 'brushed-nickel',
+            },
+            {
                 name: 'bathroom',
                 flooring: 'fox-and-hound',
                 cabinet: 'olive',
@@ -407,11 +435,6 @@ export const COLLECTIONS = [
             },
             {
                 name: 'interiors',
-                flooring: 'fox-and-hound',
-                hardware: 'brushed-nickel',
-            },
-            {
-                name: 'bedroom',
                 flooring: 'fox-and-hound',
                 hardware: 'brushed-nickel',
             },

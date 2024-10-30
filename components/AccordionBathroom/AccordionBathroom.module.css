@@ -1,0 +1,53 @@
+.base {
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+    /* border: 2px solid magenta; */
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid rgba(173, 141, 95, 0.5);
+    background-color: var(--color-white);
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+.base > div:last-child div {
+    /* border-bottom: 3px solid red; */
+    border-bottom: none;
+}
+
+.content ul {
+    /* border-left: 5px solid red; */
+    margin-left: 0;
+    padding-left: 0.875rem;
+}
+
+.options {
+    margin: 1rem 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+}
+
+.options li {
+    margin: 0;
+    padding: 0.25rem 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 300ms ease;
+    color: var(--color-brand-beige);
+    border: 2px solid var(--color-brand-beige-subtle);
+    border-radius: var(--radius);
+}
+
+.options li:hover {
+    color: var(--color-brand-beige-hover);
+    cursor: pointer;
+}
+
+.options li.selected {
+    border: 2px solid var(--color-brand-beige);
+    border-radius: var(--radius);
+}

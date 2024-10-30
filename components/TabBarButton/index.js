@@ -12,6 +12,10 @@ export default function TabBarButton({ id, children, value }) {
 
     const { preview, setPreview } = useContext(context)
 
+    const updatePreview = (changes) => {
+        setPreview({ ...preview, ...changes })
+    }
+
     return (
         <div
             href="#"
@@ -19,13 +23,14 @@ export default function TabBarButton({ id, children, value }) {
                 preview.collection === value ? style.selected : ''
             }`}
             onClick={() => {
-                // console.log(preview)
-                setPreview({
+                updatePreview({
                     collectionID: id,
                     collection: value,
+                    roomID: preview.roomID,
                     room: preview.room,
                     isCustom: false,
                     kitchenCabinets: COLLECTIONS[id].rooms[0].cabinet,
+                    bathroomCabinets: COLLECTIONS[id].rooms[3].cabinet,
                 })
             }}
         >

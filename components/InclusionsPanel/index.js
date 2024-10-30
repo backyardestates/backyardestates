@@ -8,6 +8,7 @@ import TabBar from '@/components/TabBar'
 import style from './InclusionsPanel.module.css'
 import ImageBar from '@/components/ImageBar'
 import Accordion from '@/components/Accordion'
+import AccordionBathroom from '@/components/AccordionBathroom'
 
 import { ROOMS } from '../../content/inclusions'
 import StandaloneLink from '@/components/StandaloneLink'
@@ -17,9 +18,11 @@ export default function InclusionsPanel() {
     const [preview, setPreview] = useState({
         collectionID: 0,
         collection: 'light',
+        roomID: 0,
         room: 'kitchen',
         isCustom: false,
         kitchenCabinets: 'light',
+        bathroomCabinets: 'light',
     })
 
     const collectionDescriptions = [
@@ -29,55 +32,6 @@ export default function InclusionsPanel() {
         'A harmonious array of various shades of gray. From soft gray to rich charcoal tones, this palette offers a sophisticated and versatile backdrop. Together, these layers of grey create a timeless and elegant atmosphere throughout the space, inviting comfort and style in equal measure.',
         'An appealing themed design featuring olive green cabinetry at the base, white cabinetry above, white quartz countertops, brushed nickel hardware, rustic brown flooring, and a soft, creamy off-white interior paint color throughout the house.',
     ]
-
-    let collectionDescription = 0
-
-    switch (preview.collection) {
-        case 'light':
-            collectionDescription = 0
-            break
-        case 'dark':
-            collectionDescription = 1
-            break
-        case 'blue':
-            collectionDescription = 2
-            break
-        case 'monochrome':
-            collectionDescription = 3
-            break
-        case 'olive':
-            collectionDescription = 4
-            break
-        default:
-            collectionDescription = 0
-            break
-    }
-
-    let roomIndex = 0
-
-    switch (preview.room) {
-        case 'kitchen':
-            roomIndex = 0
-            break
-        case 'living':
-            roomIndex = 1
-            break
-        case 'bedroom':
-            roomIndex = 2
-            break
-        case 'bathroom':
-            roomIndex = 3
-            break
-        case 'exterior':
-            roomIndex = 4
-            break
-        case 'construction':
-            roomIndex = 5
-            break
-        default:
-            roomIndex = 0
-            break
-    }
 
     return (
         <PreviewContext.Provider
@@ -102,13 +56,32 @@ export default function InclusionsPanel() {
                             <Preview />
                         </div>
                         <p className={style.description}>
-                            {collectionDescriptions[collectionDescription]}
+                            {collectionDescriptions[preview.collectionID]}
                         </p>
                     </div>
 
                     <div className={style.sidebar}>
                         <div className={style.sidebarTop}>
-                            <Accordion content={ROOMS[roomIndex]} />
+                            {preview.roomID === 0 && (
+                                <Accordion content={ROOMS[preview.roomID]} />
+                            )}
+                            {preview.roomID === 1 && (
+                                <Accordion content={ROOMS[preview.roomID]} />
+                            )}
+                            {preview.roomID === 2 && (
+                                <Accordion content={ROOMS[preview.roomID]} />
+                            )}
+                            {preview.roomID === 3 && (
+                                <AccordionBathroom
+                                    content={ROOMS[preview.roomID]}
+                                />
+                            )}
+                            {preview.roomID === 4 && (
+                                <Accordion content={ROOMS[preview.roomID]} />
+                            )}
+                            {preview.roomID === 5 && (
+                                <Accordion content={ROOMS[preview.roomID]} />
+                            )}
                         </div>
                         <StandaloneLink
                             href={`/standard-inclusions/share-with-a-friend?package=${preview.collection}`}

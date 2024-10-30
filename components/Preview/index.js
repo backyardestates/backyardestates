@@ -10,55 +10,16 @@ import PreviewExterior from '../PreviewExterior'
 import PreviewConstruction from '../PreviewConstruction'
 
 export default function Preview() {
-    const { preview, setPreview } = useContext(PreviewContext)
-
-    let collectionIndex = 0
-    let roomID = 0
-
-    switch (preview.collection) {
-        case 'light':
-            collectionIndex = 0
-            break
-        case 'dark':
-            collectionIndex = 1
-            break
-        case 'blue':
-            collectionIndex = 2
-            break
-        case 'monochrome':
-            collectionIndex = 3
-            break
-        case 'olive':
-            collectionIndex = 4
-            break
-        default:
-            collectionIndex = 5
-            break
-    }
-
-    switch (preview.room) {
-        case 'kitchen':
-            roomID = 0
-            break
-        case 'bathroom':
-            roomID = 1
-            break
-        case 'interior':
-            roomID = 2
-            break
-        default:
-            roomID = 0
-            break
-    }
+    const { preview } = useContext(PreviewContext)
 
     return (
         <div className={style.base}>
-            {preview.room === 'kitchen' && <PreviewKitchen preview={preview} />}
-            {preview.room === 'living' && <PreviewInterior />}
-            {preview.room === 'bedroom' && <PreviewBedroom />}
-            {preview.room === 'bathroom' && <PreviewBathroom />}
-            {preview.room === 'exterior' && <PreviewExterior />}
-            {preview.room === 'construction' && <PreviewConstruction />}
+            {preview.roomID === 0 && <PreviewKitchen preview={preview} />}
+            {preview.roomID === 1 && <PreviewInterior />}
+            {preview.roomID === 2 && <PreviewBedroom />}
+            {preview.roomID === 3 && <PreviewBathroom preview={preview} />}
+            {preview.roomID === 4 && <PreviewExterior />}
+            {preview.roomID === 5 && <PreviewConstruction />}
         </div>
     )
 }

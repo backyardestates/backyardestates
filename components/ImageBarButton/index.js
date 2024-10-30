@@ -2,7 +2,6 @@ import { useContext } from 'react'
 import { PreviewContext } from '@/components/InclusionsPanel'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import Tooltip from '../Tooltip'
 
 import style from './ImageBarButton.module.css'
@@ -27,6 +26,36 @@ export default function ImageBarButton({
 
     const { preview, setPreview } = useContext(PreviewContext)
 
+    let roomID = 0
+
+    switch (value) {
+        case 'kitchen':
+            roomID = 0
+            break
+        case 'living':
+            roomID = 1
+            break
+        case 'bedroom':
+            roomID = 2
+            break
+        case 'bathroom':
+            roomID = 3
+            break
+        case 'exterior':
+            roomID = 4
+            break
+        case 'construction':
+            roomID = 5
+            break
+        default:
+            roomID = 0
+            break
+    }
+
+    const updatePreview = (changes) => {
+        setPreview({ ...preview, ...changes })
+    }
+
     return (
         <div
             className={`${style.base} ${
@@ -35,7 +64,12 @@ export default function ImageBarButton({
             onMouseOver={() => handleMouseOver()}
             onMouseOut={() => handleMouseOut()}
             onClick={() => {
-                setPreview({ collection: preview.collection, room: value })
+                updatePreview({
+                    collectionID: preview.collectionID,
+                    collection: preview.collection,
+                    roomID: roomID,
+                    room: value,
+                })
             }}
         >
             {!showTooltip && <Tooltip show={show}>{tooltip}</Tooltip>}
