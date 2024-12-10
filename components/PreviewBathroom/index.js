@@ -28,7 +28,7 @@ export default function PreviewBathroom({ preview }) {
             />
             <Image
                 src={`/images/inclusions/${preview.room}/cabinet/${preview.bathroomCabinets}.png`}
-                alt={`Preview of the ${preview.collection} ${preview.room} bla`}
+                alt={`Preview of the ${preview.collection} ${preview.room}`}
                 className={style.imageCabinets}
                 fill
                 priority

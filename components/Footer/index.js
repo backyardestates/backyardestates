@@ -119,6 +119,12 @@ export default async function Footer() {
                                 <li>
                                     <Link href="/pricing">Pricing</Link>
                                 </li>
+
+                                <li>
+                                    <Link href="/frequently-asked-questions">
+                                        Frequently asked questions
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
                         <div className={style.linkColumn}>

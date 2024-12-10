@@ -41,6 +41,14 @@ export default function Nav() {
                                 </Link>
                             </li>
                             <li>
+                                <Link
+                                    href="/frequently-asked-questions"
+                                    className={style.link}
+                                >
+                                    FAQs
+                                </Link>
+                            </li>
+                            <li>
                                 <Dropdown isHomepage={true} label="Company">
                                     <ul>
                                         <li>

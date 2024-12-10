@@ -1,0 +1,85 @@
+.content {
+    margin: 0;
+    padding: 0 1.5rem;
+    grid-column: span 12;
+    width: 100%;
+    overflow: hidden;
+}
+
+.content a {
+    margin: 0;
+    padding: 0;
+    color: var(--color-brand-light-blue);
+}
+
+.root {
+    margin: 0;
+    padding: 0;
+    list-style-type: none !important;
+}
+
+.faq {
+    margin-bottom: 4.5rem !important;
+}
+
+.title {
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+    color: #ad8d5f;
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.25em;
+}
+
+.content p {
+    margin: 0 0 1rem 0;
+    color: var(--color-neutral-500);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem;
+}
+
+.content ol {
+    margin: 0 0 1rem 0;
+}
+
+.content ul {
+    list-style-type: disc;
+    margin: 0 0 1rem 0;
+}
+
+.content ol li,
+.content ul li {
+    margin: 0;
+    color: var(--color-neutral-500);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem !important;
+}
+
+.date {
+    color: var(--color-neutral-500);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5rem; /* 150% */
+    font-variant: all-small-caps;
+    letter-spacing: 0.1rem;
+}
+
+/* fixed */
+@media only screen and (min-width: 1440px) {
+    .content {
+        grid-column-start: 3;
+        grid-column-end: 11;
+    }
+}

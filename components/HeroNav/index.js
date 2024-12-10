@@ -60,6 +60,14 @@ export default function HeroNav() {
                                 </Link>
                             </li>
                             <li>
+                                <Link
+                                    href="/frequently-asked-questions"
+                                    className={style.link}
+                                >
+                                    FAQs
+                                </Link>
+                            </li>
+                            <li>
                                 <Dropdown
                                     label="Company"
                                     isHomepage={isTransparent ? false : true}
