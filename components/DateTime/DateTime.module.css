@@ -1,0 +1,13 @@
+.base {
+    border: 1px solid var(--color-neutral-100);
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    text-align: center;
+    margin: 0;
+    color: var(--color-neutral-500);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5em;
+}
