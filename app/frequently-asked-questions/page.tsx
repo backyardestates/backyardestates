@@ -1,5 +1,3 @@
-// 'use client'
-
 import { PortableText, type SanityDocument } from 'next-sanity'
 
 import { client } from '@/sanity/client'
@@ -33,11 +31,7 @@ export default async function FrequentlyAskedQuestions() {
                 <div className={style.content}>
                     <div className={style.faqs}>
                         {faqs.map((faq, index) => (
-                            <Faq
-                                key={index}
-                                question={faq.title}
-                                className={style.faq}
-                            >
+                            <Faq key={index} question={faq.title}>
                                 {Array.isArray(faq.body) && (
                                     <PortableText value={faq.body} />
                                 )}
