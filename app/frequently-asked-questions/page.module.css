@@ -12,14 +12,27 @@
     color: var(--color-brand-light-blue);
 }
 
+.faqs {
+    margin: 0 0 1rem 0;
+    padding: 0;
+    grid-column: span 12;
+    width: 100%;
+
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid rgba(173, 141, 95, 0.5);
+    background-color: var(--color-white);
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
 .root {
     margin: 0;
     padding: 0;
     list-style-type: none !important;
 }
 
-.faq {
-    margin-bottom: 4.5rem !important;
+.faqs div:last-child div {
+    border-bottom: none !important;
 }
 
 .title {

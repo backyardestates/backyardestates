@@ -1,4 +1,5 @@
-// import { type SanityDocument } from 'next-sanity'
+// 'use client'
+
 import { PortableText, type SanityDocument } from 'next-sanity'
 
 import { client } from '@/sanity/client'
@@ -6,6 +7,7 @@ import { client } from '@/sanity/client'
 import type { Metadata } from 'next'
 
 import Catchall from '@/components/Catchall'
+import Faq from '@/components/Faq'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
@@ -29,10 +31,13 @@ export default async function FrequentlyAskedQuestions() {
             <Masthead title="Frequently asked questions" explanation="" />
             <main className="centered">
                 <div className={style.content}>
-                    <ul className={style.root}>
-                        {faqs.map((faq) => (
-                            <li className={style.faq} key={faq._id}>
-                                <h3 className={style.title}>{faq.title}</h3>
+                    <div className={style.faqs}>
+                        {faqs.map((faq, index) => (
+                            <Faq
+                                key={index}
+                                question={faq.title}
+                                className={style.faq}
+                            >
                                 {Array.isArray(faq.body) && (
                                     <PortableText value={faq.body} />
                                 )}
@@ -42,9 +47,9 @@ export default async function FrequentlyAskedQuestions() {
                                         faq.publishedAt
                                     ).toLocaleDateString()}
                                 </p>
-                            </li>
+                            </Faq>
                         ))}
-                    </ul>
+                    </div>
                 </div>
 
                 <Catchall />
