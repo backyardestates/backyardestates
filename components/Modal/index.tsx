@@ -15,22 +15,27 @@ export default function Modal() {
     const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowModal(true)
-        }, 5000)
+        const isModalDismissed = localStorage.getItem('isModalDismissed')
+        if (!isModalDismissed) {
+            const timer = setTimeout(() => {
+                setShowModal(true)
+            }, 5000)
 
-        return () => clearTimeout(timer)
+            return () => clearTimeout(timer)
+        }
     }, [])
 
     const showImages = false
 
+    const handleClose = () => {
+        setShowModal(false)
+        localStorage.setItem('isModalDismissed', 'true')
+    }
+
     return (
         <>
             {showModal && (
-                <div
-                    className={style.overlay}
-                    onClick={() => setShowModal(false)}
-                >
+                <div className={style.overlay} onClick={handleClose}>
                     <div className={style.modal}>
                         {showImages && (
                             <div className={style.top}>
@@ -83,7 +88,7 @@ export default function Modal() {
                                     icon={faXmark}
                                     size="xl"
                                     className={style.icon}
-                                    onClick={() => setShowModal(false)}
+                                    onClick={handleClose}
                                 />
                             </div>
                             <p className={style.smallCaps}>ADU open house</p>

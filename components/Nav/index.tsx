@@ -40,14 +40,14 @@ export default function Nav() {
                                     Pricing
                                 </Link>
                             </li>
-                            <li>
+                            {/* <li>
                                 <Link
                                     href="/frequently-asked-questions"
                                     className={style.link}
                                 >
                                     FAQs
                                 </Link>
-                            </li>
+                            </li> */}
                             <li>
                                 <Dropdown isHomepage={true} label="Company">
                                     <ul>
