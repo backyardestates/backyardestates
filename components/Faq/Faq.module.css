@@ -1,0 +1,27 @@
+.base {
+    margin: 0;
+    padding: 0;
+}
+
+.base p {
+    /* color: var(--color-brand-beige); */
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem;
+}
+
+.open {
+    display: block;
+    composes: base;
+    padding: 1rem 1.5rem 0rem 1.5rem;
+    border-bottom: 1px solid rgba(173, 141, 95, 0.5);
+}
+
+.closed {
+    composes: base;
+    /* border-bottom: none; */
+    /* border-bottom: 1px solid rgba(173, 141, 95, 1); */
+    display: none;
+}
