@@ -59,14 +59,14 @@ export default function HeroNav() {
                                     Pricing
                                 </Link>
                             </li>
-                            {/* <li>
+                            <li>
                                 <Link
                                     href="/frequently-asked-questions"
                                     className={style.link}
                                 >
                                     FAQs
                                 </Link>
-                            </li> */}
+                            </li>
                             <li>
                                 <Dropdown
                                     label="Company"

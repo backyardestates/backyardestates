@@ -109,21 +109,21 @@ export default async function Footer() {
                             <h3 className={style.display3}>Resources</h3>
                             <ul>
                                 <li>
+                                    <Link href="/frequently-asked-questions">
+                                        Frequently asked questions
+                                    </Link>
+                                </li>
+                                <li>
                                     <Link href="/gallery">Gallery</Link>
+                                </li>
+                                <li>
+                                    <Link href="/pricing">Pricing</Link>
                                 </li>
                                 <li>
                                     <Link href="/standard-inclusions">
                                         Standard inclusions
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link href="/pricing">Pricing</Link>
-                                </li>
-                                {/* <li>
-                                    <Link href="/frequently-asked-questions">
-                                        Frequently asked questions
-                                    </Link>
-                                </li> */}
                             </ul>
                         </div>
                         <div className={style.linkColumn}>
