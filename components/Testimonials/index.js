@@ -1,3 +1,13 @@
+// add sanity support
+import { client } from '@/sanity/client'
+
+// property, featured, names, slug, purpose, quote, wistiaId, body, relatedProperties, publishedAt
+
+const STORIES_QUERY = `*[_type == "story" && featured]|order(publishedAt asc){names,portrait,property->{location,floorplan->{name}},slug,quote}`
+const options = { next: { revalidate: 30 } }
+
+const stories = await client.fetch(STORIES_QUERY, {}, options)
+
 import Testimonial from '../Testimonial'
 import style from './Testimonials.module.css'
 
@@ -7,24 +17,9 @@ export default function Testimonials() {
             <h2>Trusted by Californian homeowners</h2>
             <p className="small-caps">greater los angeles area</p>
             <div className={style.carousel}>
-                <Testimonial
-                    name="Vanessa and Gabriel"
-                    portrait="portrait-02.jpg"
-                    location="Rancho Cucamonga, CA"
-                    floorplan="Estate 800"
-                >
-                    I feel like Backyard Estates is taking a vested interest in
-                    our family
-                </Testimonial>
-                <Testimonial
-                    name="Julie and Betty"
-                    portrait="portrait-01.jpg"
-                    location="Diamond Bar, CA"
-                    floorplan="Estate 500"
-                >
-                    Everything has fallen into place. It was easy&hellip; so
-                    easy
-                </Testimonial>
+                {stories.map((story, index) => (
+                    <Testimonial story={story} key={index}></Testimonial>
+                ))}
             </div>
         </div>
     )
