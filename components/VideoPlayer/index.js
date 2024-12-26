@@ -5,7 +5,7 @@ import style from './VideoPlayer.module.css'
 
 import { WistiaProvider, WistiaPlayer } from '@wistia/react-embeds'
 
-export default function VideoPlayer({ wistiaID = '8qm3203jcf' }) {
+export default function VideoPlayer({ wistiaID }) {
     const [showComponent, setShowComponent] = useState(false)
 
     useEffect(() => {

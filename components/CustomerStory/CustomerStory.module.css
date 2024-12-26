@@ -15,8 +15,7 @@
     padding: 0;
 }
 
-.columnLeft blockquote p {
-    /* display: inline-block; */
+.columnLeft blockquote {
     margin-bottom: 1rem;
     color: var(--color-neutral-500);
     font-family: var(--font-serif);

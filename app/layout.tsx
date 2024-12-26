@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 
 // import { GoogleTagManager } from '@next/third-parties/google'
 
+// import { SanityLive } from '@/sanity/live'
+
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
@@ -48,6 +50,7 @@ export default function RootLayout({
                 {children}
 
                 {/* <GoogleTagManager gtmId="GTM-WZR3TD5L" /> */}
+                {/* <SanityLive /> */}
             </body>
         </html>
     )

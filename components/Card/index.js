@@ -1,31 +1,44 @@
+'use client'
+
 import Link from 'next/link'
 import style from './Card.module.css'
-import Image from 'next/image'
+import { CldImage } from 'next-cloudinary'
 import PropertyInformation from '../PropertyInformation'
 
-export default function Card({ estate }) {
-    // build full url slug
-    let urlSlug = ''
-    if (estate.location !== '') {
-        urlSlug = `${estate.floorplan}/${estate.location}`
-    } else {
-        urlSlug = `${estate.floorplan}/${estate.location}`
-    }
+import { Cloudinary } from '@cloudinary/url-gen'
+
+// Import the responsive plugin
+import { AdvancedImage, responsive } from '@cloudinary/react'
+
+// Create and configure your Cloudinary instance.
+const cld = new Cloudinary({
+    cloud: {
+        cloudName: 'backyardestates',
+    },
+})
+
+export default function Card({ property }) {
+    // console.log(property.thumbnail.public_id)
+
+    const myImage = cld.image(property.thumbnail.public_id)
+
+    // const cloudinaryURL = `https://res.cloudinary.com/backyardestates/image/upload/c_limit/h_186/w_330/v1/`
+    // https://res.cloudinary.com/backyardestates/image/upload/c_scale,w_320/properties/ys555uupm1fhaimacpps
     return (
-        <Link href={`/gallery/${urlSlug}`} className={style.base}>
-            <Image
-                src={`/images/property/${estate.image}`}
-                width={640}
-                height={360}
-                alt={estate.title}
+        <Link
+            href={`/gallery/${property.floorplan.slug.current}/${property.slug.current}`}
+            className={style.base}
+        >
+            <AdvancedImage
+                cldImg={myImage}
+                plugins={[responsive({ steps: [330, 640] })]}
                 className={style.img}
-                style={{ maxWidth: '100%', height: 'auto' }}
             />
             <div className={style.content}>
                 <p className={style.location}>
-                    <strong>{estate.title}</strong>
+                    <strong>{property.floorplan.name}</strong>
                 </p>
-                <PropertyInformation floorplan={estate} />
+                <PropertyInformation property={property} />
             </div>
         </Link>
     )

@@ -4,11 +4,11 @@ import style from './PropertyInformation.module.css'
 
 import { USDollar } from '@/utils/currency'
 
-export default function PropertyInformation({ floorplan, showPrice = false }) {
-    const bed = floorplan.bed
-    const bath = floorplan.bath
-    const sqft = floorplan.sqft
-    const price = USDollar.format(floorplan.price)
+export default function PropertyInformation({ property, showPrice = false }) {
+    const bed = property.floorplan.bed
+    const bath = property.floorplan.bath
+    const sqft = property.floorplan.sqft
+    const price = USDollar.format(property.floorplan.price)
 
     return (
         <ul className={style.base}>
