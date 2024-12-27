@@ -8,7 +8,7 @@ import ExploreFloorplans from '@/components/ExploreFloorplans'
 
 import style from './Floorplans.module.css'
 
-const FLOORPLANS_QUERY = `*[_type == "floorplan"]|order(orderID asc){orderID, isClickable, wistiaID,slug, name, bed, bath, length, width, price}`
+const FLOORPLANS_QUERY = `*[_type == "floorplan"]|order(orderID asc){orderID, isClickable, wistiaID,slug, name, bed, bath, sqft, length, width, price, videoID, drawing, download, images}`
 const options = { next: { revalidate: 30 } }
 
 export default async function Floorplans({ showNav = false }) {

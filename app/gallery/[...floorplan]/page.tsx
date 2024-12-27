@@ -81,16 +81,11 @@ export default async function Floorplan({ params }) {
 
     return (
         <>
-            {/* <OpenGraph
-                title={`Backyard Estates`}
-                description={`${property?.title} floor plan`}
-                image={property?.ogImage}
-            /> */}
             <Nav />
             <main className="centered generous">
                 <div className={style.content}>
                     <h1>{property?.title}</h1>
-                    <PropertyInformation floorplan={property} />
+                    {/* <PropertyInformation floorplan={property} /> */}
                     <div className={style.price}>
                         {property?.price !== null && (
                             <h3 className={style.subhead}>
@@ -136,7 +131,7 @@ export default async function Floorplan({ params }) {
                         )}
                     </div>
                 </div>
-                <CustomerStory story={property} hideDetails>
+                {/* <CustomerStory story={property} hideDetails>
                     <h2 style={{ textAlign: 'left' }}>
                         Every estate includes:
                     </h2>
@@ -153,8 +148,8 @@ export default async function Floorplan({ params }) {
                         <li>Mirrored closet doors in bedrooms</li>
                         <li>Smart ceiling fans</li>
                     </ul>
-                </CustomerStory>
-                <RelatedContent properties={property?.related} />
+                </CustomerStory> */}
+                {/* <RelatedContent properties={property?.related} /> */}
                 <Catchall />
             </main>
             <Footer />

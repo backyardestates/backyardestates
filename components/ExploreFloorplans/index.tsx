@@ -1,6 +1,7 @@
 'use client'
+
 import { useState } from 'react'
-import Image from 'next/image'
+import { CldImage } from 'next-cloudinary'
 
 import ButtonTags from '../ButtonTags'
 import StandaloneLink from '../StandaloneLink'
@@ -17,8 +18,6 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
     let selectedFloorplan = floorplans.find(
         (floorplan) => floorplan.orderID === selected
     )
-
-    console.log(selectedFloorplan)
 
     return (
         <>
@@ -70,7 +69,7 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
                         <div className={style.linkGroup}>
                             <StandaloneLink
                                 theme="beige"
-                                href={`/gallery/${selectedFloorplan.floorplan}`}
+                                href={`/gallery/${selectedFloorplan.slug.current}`}
                             >
                                 View floor plan
                             </StandaloneLink>
@@ -83,23 +82,21 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
                         </div>
                     </div>
                     <div className={style.columnRight}>
-                        {!showVideo || selectedFloorplan.wistiaID === null ? (
-                            <Image
-                                src={`/images/floor-plans/${selectedFloorplan.floorPlanImage}`}
-                                alt={`3D floor plan image of ${selectedFloorplan.title}`}
-                                width={640}
-                                height={360}
+                        {!showVideo || selectedFloorplan.videoID === null ? (
+                            <CldImage
+                                src={selectedFloorplan.drawing.secure_url}
+                                width="640"
+                                height="360"
                                 className={style.img}
+                                alt={`3D floor plan image of ${selectedFloorplan.name}`}
                             />
                         ) : (
-                            <VideoPlayer
-                                wistiaID={selectedFloorplan.wistiaID}
-                            />
+                            <VideoPlayer wistiaID={selectedFloorplan.videoID} />
                         )}
                     </div>
                 </div>
 
-                {selectedFloorplan.wistiaID !== null && (
+                {selectedFloorplan.videoID !== null && (
                     <div className={style.buttonGroup}>
                         <button
                             className={

@@ -1,6 +1,7 @@
 'use client'
 
 import { CldImage } from 'next-cloudinary'
+
 import StandaloneLink from '../StandaloneLink'
 import style from './Testimonial.module.css'
 
