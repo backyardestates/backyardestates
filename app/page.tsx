@@ -33,7 +33,7 @@ export default function Home() {
 
             <Benefits />
             <Process />
-            {/* <Properties /> */}
+            <Properties />
             <Footer />
         </>
     )

@@ -1,30 +1,28 @@
-import Image from 'next/image'
+'use client'
+import { CldImage } from 'next-cloudinary'
+
 import Link from 'next/link'
 import style from './Property.module.css'
 import PropertyInformation from '../PropertyInformation'
 
-export default function Property({ floorplan }) {
-    // build full url slug
-    let urlSlug = ''
-    if (floorplan.location !== '') {
-        urlSlug = `${floorplan.floorplan}/${floorplan.location}`
-    } else {
-        urlSlug = `${floorplan.floorplan}/${floorplan.location}`
-    }
+export default function Property({ property }) {
     return (
-        <Link href={`/gallery/${urlSlug}`} className={style.base}>
-            <Image
-                src={`/images/property/${floorplan.image}`}
+        <Link
+            href={`/gallery/${property.floorplan.slug.current}/${property.slug.current}`}
+            className={style.base}
+        >
+            <CldImage
+                src={property.thumbnail.secure_url}
+                width="640"
+                height="360"
                 className={style.image}
-                width={640}
-                height={360}
-                alt={floorplan.title}
+                alt={property.name}
             />
             <div className={style.container}>
                 <p>
-                    <strong>{floorplan.title}</strong>
+                    <strong>{property.floorplan.name}</strong>
                 </p>
-                <PropertyInformation floorplan={floorplan} />
+                <PropertyInformation property={property} />
             </div>
         </Link>
     )
