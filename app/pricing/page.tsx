@@ -1,3 +1,6 @@
+import { type SanityDocument } from 'next-sanity'
+import { client } from '@/sanity/client'
+
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -15,30 +18,11 @@ import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
-// import OpenGraph from '@/components/OpenGraph'
 import StandaloneLink from '@/components/StandaloneLink'
 
 import style from './page.module.css'
 
 import { USDollar } from '@/utils/currency'
-import db from '@/utils/db'
-
-const getProperties = async () => {
-    const properties = await db.floorplan.findMany({
-        orderBy: [
-            {
-                order: 'asc',
-            },
-            {
-                title: 'asc',
-            },
-        ],
-        where: {
-            isFloorplan: true,
-        },
-    })
-    return properties
-}
 
 export const metadata: Metadata = {
     title: 'Pricing - Backyard Estates',
@@ -46,12 +30,18 @@ export const metadata: Metadata = {
         "They say money doesn't grow on trees, but it can certainly grow in your backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow.",
 }
 
+const FLOORPLANS_QUERY = `*[_type == "floorplan"]|order(orderID asc){orderID, isClickable, slug, name, bed, bath, length, width, price}`
+const options = { next: { revalidate: 30 } }
+
 export default async function Pricing() {
-    const properties = await getProperties()
+    const floorplans = await client.fetch<SanityDocument[]>(
+        FLOORPLANS_QUERY,
+        {},
+        options
+    )
 
     return (
         <>
-            {/* <OpenGraph title={`Backyard Estates - Pricing`} /> */}
             <Nav />
             <Masthead
                 title="Pricing"
@@ -131,29 +121,25 @@ export default async function Pricing() {
                             </tr>
                         </thead>
                         <tbody>
-                            {properties.map((floorplan, index) => (
+                            {floorplans.map((floorplan, index) => (
                                 <tr key={index}>
                                     {floorplan.isClickable ? (
                                         <td>
                                             <Link
-                                                href={`/gallery/${floorplan.floorplan}`}
+                                                href={`/gallery/${floorplan.slug.current}`}
                                                 className={style.link}
                                             >
-                                                {floorplan.title}
+                                                {floorplan.name}
                                             </Link>
                                         </td>
                                     ) : (
-                                        <td>{floorplan.title}</td>
+                                        <td>{floorplan.name}</td>
                                     )}
 
                                     <td>{floorplan.bed}</td>
                                     <td>{floorplan.bath}</td>
                                     <td>
-                                        {floorplan.dimension[0]}&prime;
-                                        {floorplan.dimension[1]}&Prime; x{' '}
-                                        {floorplan.dimension[2]}
-                                        &prime;{floorplan.dimension[3]}
-                                        &Prime;
+                                        {`${floorplan.length} x ${floorplan.width}`}
                                     </td>
                                     <td>{USDollar.format(floorplan.price)}</td>
                                 </tr>
