@@ -18,7 +18,7 @@ export default function Home() {
             <HeroNav />
             <Hero />
             <Testimonials />
-            {/* <Floorplans showNav /> */}
+            <Floorplans showNav />
             <div className={style.inclusions}>
                 <h2 className={style.title}>Standard inclusions</h2>
                 <p className={style.explanation}>

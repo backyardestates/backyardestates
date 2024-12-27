@@ -23,8 +23,8 @@ export default function ButtonTags({
                 {tags.map((tag, index) => (
                     <li key={index}>
                         <ButtonTag
-                            id={tag.id}
-                            label={tag.title}
+                            id={tag.orderID}
+                            label={tag.name}
                             setSelected={setSelected}
                             selectedID={selectedID}
                         />

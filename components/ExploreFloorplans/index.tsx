@@ -5,7 +5,7 @@ import Image from 'next/image'
 import ButtonTags from '../ButtonTags'
 import StandaloneLink from '../StandaloneLink'
 import VideoPlayer from '../VideoPlayer'
-import PropertyInformation from '../PropertyInformation'
+import FloorplanInformation from '@/components/FloorplanInformation'
 
 import style from './ExploreFloorplans.module.css'
 
@@ -15,8 +15,10 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
 
     // return an object using .find instead of .filter
     let selectedFloorplan = floorplans.find(
-        (floorplan) => floorplan.id === selected
+        (floorplan) => floorplan.orderID === selected
     )
+
+    console.log(selectedFloorplan)
 
     return (
         <>
@@ -31,14 +33,14 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
             <div className={style.container}>
                 <div className={style.columns}>
                     <div className={style.columnLeft}>
-                        <h2>{selectedFloorplan.title}</h2>
-                        <PropertyInformation
+                        <h2>{selectedFloorplan.name}</h2>
+                        <FloorplanInformation
                             floorplan={selectedFloorplan}
                             showPrice
                         />
-                        {selectedFloorplan.id === '350-000' ||
-                        selectedFloorplan.id === '400-000' ||
-                        selectedFloorplan.id === '450-000' ? (
+                        {selectedFloorplan.orderID === '1' ||
+                        selectedFloorplan.orderID === '2' ||
+                        selectedFloorplan.orderID === '3' ? (
                             <p>
                                 Inclusions: Discover our modern open floorplan,
                                 designed for optimal use of every square foot.
@@ -92,11 +94,6 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
                         ) : (
                             <VideoPlayer
                                 wistiaID={selectedFloorplan.wistiaID}
-                                // style={
-                                //     showVideo
-                                //         ? { display: 'block' }
-                                //         : { display: 'none' }
-                                // }
                             />
                         )}
                     </div>

@@ -1,0 +1,35 @@
+.base {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    list-style: none;
+    color: var(--color-neutral-500);
+    line-height: 0.75rem;
+}
+
+.base li {
+    margin: 0;
+    padding: 0;
+}
+
+@media only screen and (min-width: 1440px) {
+    .base {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-sans);
+        list-style: none;
+        color: var(--color-neutral-500);
+        line-height: 0.75rem;
+    }
+
+    .base li {
+        margin: 0;
+        padding: 0;
+    }
+}

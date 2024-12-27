@@ -1,31 +1,22 @@
+import { type SanityDocument } from 'next-sanity'
+import { client } from '@/sanity/client'
+
 import Image from 'next/image'
 
-import SectionTitle from '../SectionTitle'
+import SectionTitle from '@/components/SectionTitle'
+import ExploreFloorplans from '@/components/ExploreFloorplans'
+
 import style from './Floorplans.module.css'
 
-import db from '@/utils/db'
-import ExploreFloorplans from '../ExploreFloorplans'
-
-const getFloorplans = async () => {
-    const floorplans = await db.floorplan.findMany({
-        orderBy: [
-            {
-                order: 'asc',
-            },
-            {
-                title: 'asc',
-            },
-        ],
-        where: {
-            isFloorplan: true,
-            isClickable: true,
-        },
-    })
-    return floorplans
-}
+const FLOORPLANS_QUERY = `*[_type == "floorplan"]|order(orderID asc){orderID, isClickable, wistiaID,slug, name, bed, bath, length, width, price}`
+const options = { next: { revalidate: 30 } }
 
 export default async function Floorplans({ showNav = false }) {
-    const floorplans = await getFloorplans()
+    const floorplans = await client.fetch<SanityDocument[]>(
+        FLOORPLANS_QUERY,
+        {},
+        options
+    )
 
     return (
         <div className={style.base}>
@@ -47,7 +38,7 @@ export default async function Floorplans({ showNav = false }) {
                     style={{
                         objectFit: 'cover',
                         objectPosition: 'center center',
-                        opacity: 0.15,
+                        opacity: 0.5,
                     }}
                 />
             </div>
