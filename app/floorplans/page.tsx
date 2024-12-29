@@ -14,7 +14,7 @@ import PropertiesGrid from '@/components/PropertiesGrid'
 import style from './page.module.css'
 
 export const metadata: Metadata = {
-    title: 'Gallery - Backyard Estates',
+    title: 'ADU floorplans - Backyard Estates',
     description:
         'Browse recent projects and customer stories to discover the right Accessory Dwelling Unit (ADU) for your family',
 }
@@ -29,8 +29,8 @@ export default async function Floorplan({ params }) {
     return (
         <>
             <Masthead
-                title="Gallery"
-                explanation="Browse recent projects and customer stories to discover the right Accessory Dwelling Unit (ADU) for your family"
+                title="ADU floorplans"
+                explanation="Browse our floorplans stories to discover the right Accessory Dwelling Unit (ADU) for your family"
             />
             <Nav />
             <main className={style.base}>

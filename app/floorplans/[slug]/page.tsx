@@ -33,11 +33,14 @@ const PROPERTIES_QUERY = `
 
 export default async function Floorplan({ params }) {
     const { slug } = params
+
     const floorplan = await client.fetch<SanityDocument>(
         FLOORPLAN_QUERY,
         { slug },
         options
     )
+
+    const { bed, bath, sqft, price } = floorplan
 
     if (!floorplan) {
         notFound()
@@ -60,7 +63,12 @@ export default async function Floorplan({ params }) {
             <main className="centered generous">
                 <div className={style.content}>
                     <h1>{floorplan.name}</h1>
-                    <FloorplanInformation floorplan={floorplan} />
+                    <FloorplanInformation
+                        bed={bed}
+                        bath={bath}
+                        sqft={sqft}
+                        price={price}
+                    />
                     <div className={style.price}>
                         {floorplan.price !== null && (
                             <h3 className={style.subhead}>
@@ -70,7 +78,7 @@ export default async function Floorplan({ params }) {
 
                         {floorplan.price !== null && (
                             <p className={style.price}>
-                                {USDollar.format(floorplan.price!)}
+                                {USDollar.format(price!)}
                             </p>
                         )}
                         <div className={style.linkGroup}>
