@@ -96,14 +96,7 @@ export default async function Pricing() {
                         <tfoot>
                             <tr>
                                 <td className="left">Total</td>
-                                <td>
-                                    $185K
-                                    <br />
-                                    <br />
-                                    <Button href="/talk-to-an-adu-specialist">
-                                        Save up to $65K
-                                    </Button>
-                                </td>
+                                <td>$185K</td>
                                 <td>$250K+</td>
                             </tr>
                         </tfoot>
@@ -126,7 +119,7 @@ export default async function Pricing() {
                                     {floorplan.isClickable ? (
                                         <td>
                                             <Link
-                                                href={`/gallery/${floorplan.slug.current}`}
+                                                href={`/floorplans/${floorplan.slug.current}`}
                                                 className={style.link}
                                             >
                                                 {floorplan.name}
