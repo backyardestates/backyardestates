@@ -49,12 +49,12 @@ export default function HeroNav() {
                                     <ul>
                                         <li>
                                             <Link href="/floorplans">
-                                                All floorplans
+                                                ADU floorplans
                                             </Link>
                                         </li>
                                         <li>
                                             <Link href="/projects">
-                                                Completed projects
+                                                Completed ADUs
                                             </Link>
                                         </li>
                                         <li>

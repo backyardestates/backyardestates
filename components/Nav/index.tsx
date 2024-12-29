@@ -23,17 +23,25 @@ export default function Nav() {
                         <Logo mode={'light'} />
                         <ul className={style.links}>
                             <li>
-                                <Link href="/gallery" className={style.link}>
-                                    Gallery
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/standard-inclusions"
-                                    className={style.link}
-                                >
-                                    Standard inclusions
-                                </Link>
+                                <Dropdown label="Plans" isHomepage={true}>
+                                    <ul>
+                                        <li>
+                                            <Link href="/floorplans">
+                                                ADU floorplans
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/projects">
+                                                Completed ADUs
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/standard-inclusions">
+                                                Standard inclusions
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </Dropdown>
                             </li>
                             <li>
                                 <Link href="/pricing" className={style.link}>
