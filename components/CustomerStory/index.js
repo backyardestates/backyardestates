@@ -6,7 +6,7 @@ import Carousel from '../Carousel'
 
 import style from './CustomerStory.module.css'
 
-export default function CustomerStory({ story, hideDetails = false }) {
+export default function CustomerStory({ story }) {
     return (
         <div className={style.base}>
             <div className={style.columnLeft}>

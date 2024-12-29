@@ -26,6 +26,8 @@ export default function PropertiesGrid({ properties }) {
         filteredProperties = properties
     }
 
+    // console.log(filteredProperties)
+
     return (
         <>
             <ButtonTags
@@ -37,7 +39,7 @@ export default function PropertiesGrid({ properties }) {
             <ul className={style.cards}>
                 {filteredProperties.map((property, index) => (
                     <li key={index}>
-                        <Card estate={property} />
+                        <Card content={property} />
                     </li>
                 ))}
             </ul>

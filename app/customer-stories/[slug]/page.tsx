@@ -1,10 +1,5 @@
-// import { client } from '@/sanity/client'
 import { sanityFetch } from '@/sanity/live'
-// import imageUrlBuilder from '@sanity/image-url'
-// import { SanityImageSource } from '@sanity/image-url/lib/types/types'
-import { defineQuery, PortableText } from 'next-sanity'
-// import Image from 'next/image'
-// import Link from 'next/link'
+import { defineQuery } from 'next-sanity'
 import { notFound } from 'next/navigation'
 
 import type { Metadata } from 'next'
@@ -51,7 +46,7 @@ export const metadata: Metadata = {
 const STORY_QUERY = defineQuery(`*[
     _type == "story" &&
     slug.current == $slug
-  ][0]{names, purpose, wistiaId, body,images, property->{floorplan->{name,bed,bath,sqft,price}},relatedProperties[]->{thumbnail,slug,floorplan->{name,bed,bath,sqft,slug}}}`)
+  ][0]{names, purpose, wistiaId, body, images, property->{floorplan->{name,bed,bath,sqft,price}},relatedProperties[]->{thumbnail,slug,floorplan->{name,bed,bath,sqft,slug}}}`)
 
 export default async function Story({
     params,
@@ -66,8 +61,6 @@ export default async function Story({
     if (!story) {
         notFound()
     }
-
-    console.log(story)
 
     return (
         <>

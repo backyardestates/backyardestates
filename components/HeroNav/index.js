@@ -42,18 +42,42 @@ export default function HeroNav() {
                         <Logo mode={isTransparent ? 'dark' : 'light'} />
                         <ul className={style.links}>
                             <li>
+                                <Dropdown
+                                    label="Plans"
+                                    isHomepage={isTransparent ? false : true}
+                                >
+                                    <ul>
+                                        <li>
+                                            <Link href="/floorplans">
+                                                All floorplans
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/projects">
+                                                Completed projects
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/standard-inclusions">
+                                                Standard inclusions
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </Dropdown>
+                            </li>
+                            {/* <li>
                                 <Link href="/gallery" className={style.link}>
                                     Gallery
                                 </Link>
-                            </li>
-                            <li>
+                            </li> */}
+                            {/* <li>
                                 <Link
                                     href="/standard-inclusions"
                                     className={style.link}
                                 >
                                     Standard inclusions
                                 </Link>
-                            </li>
+                            </li> */}
                             <li>
                                 <Link href="/pricing" className={style.link}>
                                     Pricing

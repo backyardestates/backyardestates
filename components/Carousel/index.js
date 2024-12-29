@@ -1,19 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 
-import Image from 'next/image'
-
+import { CldImage } from 'next-cloudinary'
 import gsap from 'gsap'
 
 import ArrowButton from '../ArrowButton'
-
-import { CldImage } from 'next-cloudinary'
 
 import style from './Carousel.module.css'
 
 export default function Carousel(content) {
     const images = content.content
     const imageCount = images.length
-
     const [position, setPosition] = useState(1)
     const [buttonLeftVisible, setButtonLeftVisible] = useState(false)
     const [buttonRightVisible, setButtonRightVisible] = useState(true)

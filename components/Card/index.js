@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import style from './Card.module.css'
 import { CldImage } from 'next-cloudinary'
-import PropertyInformation from '../PropertyInformation'
+import FloorplanInformation from '../FloorplanInformation'
 
 import { Cloudinary } from '@cloudinary/url-gen'
 
@@ -17,28 +17,34 @@ const cld = new Cloudinary({
     },
 })
 
-export default function Card({ property }) {
-    // console.log(property.thumbnail.public_id)
+export default function Card({ content, isFloorplan = false }) {
+    // console.log(content)
+    // console.log(content.drawing.secure_url)
 
-    const myImage = cld.image(property.thumbnail.public_id)
+    const { bed, bath, sqft, price } = content
+
+    const myImage = cld.image(content.drawing.public_id)
 
     // const cloudinaryURL = `https://res.cloudinary.com/backyardestates/image/upload/c_limit/h_186/w_330/v1/`
     // https://res.cloudinary.com/backyardestates/image/upload/c_scale,w_320/properties/ys555uupm1fhaimacpps
     return (
-        <Link
-            href={`/gallery/${property.floorplan.slug.current}/${property.slug.current}`}
-            className={style.base}
-        >
+        <Link href={`/${content.slug.current}`} className={style.base}>
             <AdvancedImage
                 cldImg={myImage}
-                plugins={[responsive({ steps: [330, 640] })]}
+                plugins={[responsive({ steps: [330] })]}
                 className={style.img}
             />
             <div className={style.content}>
                 <p className={style.location}>
-                    <strong>{property.floorplan.name}</strong>
+                    <strong>{content.name}</strong>
                 </p>
-                <PropertyInformation property={property} />
+                <FloorplanInformation
+                    bed={bed}
+                    bath={bath}
+                    sqft={sqft}
+                    price={price}
+                    // showPrice
+                />
             </div>
         </Link>
     )

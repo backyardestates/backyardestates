@@ -36,9 +36,11 @@
     font-size: 1rem;
     font-style: normal;
     font-weight: 400;
-    line-height: 1.5rem; /* 150% */
+    line-height: 1.5rem;
+}
 
-    /* background-color: yellow; */
+.columnLeft h2 {
+    text-align: left;
 }
 
 .customer {

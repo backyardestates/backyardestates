@@ -4,15 +4,18 @@ import style from './FloorplanInformation.module.css'
 
 import { USDollar } from '@/utils/currency'
 
-export default function FloorplanInformation({ floorplan, showPrice = false }) {
-    const bed = floorplan.bed
-    const bath = floorplan.bath
-    const sqft = floorplan.sqft
-    const price = USDollar.format(floorplan.price)
+export default function FloorplanInformation({
+    bed,
+    bath,
+    sqft,
+    price = 0,
+    showPrice = false,
+}) {
+    const priceFormatted = USDollar.format(price)
 
     return (
         <ul className={style.base}>
-            <li>{bed === 'Studio' ? `${bed}` : `${bed} Bed`}</li>
+            <li>{bed === 0 ? `Studio` : `${bed} Bed`}</li>
             <li>
                 <Divider />
             </li>
@@ -26,7 +29,7 @@ export default function FloorplanInformation({ floorplan, showPrice = false }) {
                     <Divider />
                 </li>
             )}
-            {showPrice && <li>{`${price}`}</li>}
+            {showPrice && <li>{`${priceFormatted}`}</li>}
         </ul>
     )
 }
