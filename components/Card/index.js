@@ -18,17 +18,14 @@ const cld = new Cloudinary({
 })
 
 export default function Card({ content, isFloorplan = false }) {
-    // console.log(content)
-    // console.log(content.drawing.secure_url)
-
     const { bed, bath, sqft, price } = content
-
     const myImage = cld.image(content.drawing.public_id)
 
-    // const cloudinaryURL = `https://res.cloudinary.com/backyardestates/image/upload/c_limit/h_186/w_330/v1/`
-    // https://res.cloudinary.com/backyardestates/image/upload/c_scale,w_320/properties/ys555uupm1fhaimacpps
     return (
-        <Link href={`/${content.slug.current}`} className={style.base}>
+        <Link
+            href={`/floorplans/${content.slug.current}`}
+            className={style.base}
+        >
             <AdvancedImage
                 cldImg={myImage}
                 plugins={[responsive({ steps: [330] })]}
