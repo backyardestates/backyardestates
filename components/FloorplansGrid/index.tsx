@@ -3,9 +3,9 @@
 import { useState } from 'react'
 
 import ButtonTags from '../ButtonTags'
-import PropertyCard from '../PropertyCard'
+import Card from '../Card'
 
-import style from './PropertiesGrid.module.css'
+import style from './FloorplansGrid.module.css'
 
 export default function PropertiesGrid({ properties }) {
     const [selected, setSelected] = useState(99)
@@ -37,7 +37,7 @@ export default function PropertiesGrid({ properties }) {
             <ul className={style.cards}>
                 {filteredProperties.map((property, index) => (
                     <li key={index}>
-                        <PropertyCard content={property} />
+                        <Card content={property} />
                     </li>
                 ))}
             </ul>

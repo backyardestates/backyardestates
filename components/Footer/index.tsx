@@ -9,31 +9,9 @@ import Newsletter from '../Newsletter'
 
 import style from './Footer.module.css'
 
-// import db from '@/utils/db'
-
 const FLOORPLANS_QUERY = `*[_type == "floorplan"]|order(orderID asc){name,slug}`
 
-// const getFloorplans = async () => {
-
-//     const floorplans = await db.floorplan.findMany({
-//         orderBy: [
-//             {
-//                 order: 'asc',
-//             },
-//             {
-//                 title: 'asc',
-//             },
-//         ],
-//         where: {
-//             isFloorplan: true,
-//             isClickable: true,
-//         },
-//     })
-//     return floorplans
-// }
-
 export default async function Footer() {
-    // const floorplans = await getFloorplans()
     const floorplans = await client.fetch<SanityDocument[]>(
         FLOORPLANS_QUERY,
         {},

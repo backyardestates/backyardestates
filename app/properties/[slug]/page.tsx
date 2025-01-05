@@ -6,20 +6,22 @@ import { notFound } from 'next/navigation'
 
 import Catchall from '@/components/Catchall'
 import CustomerStory from '@/components/CustomerStory'
-import FloorplanHero from '@/components/FloorplanHero'
+import PropertyHero from '@/components/PropertyHero'
 import FloorplanInformation from '@/components/FloorplanInformation'
 import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
-import RelatedContent from '@/components/RelatedContent'
+import RelatedProperties from '@/components/RelatedProperties'
 import StandaloneLink from '@/components/StandaloneLink'
 
 import style from './page.module.css'
 
 import { USDollar } from '@/utils/currency'
 
-const FLOORPLAN_QUERY = `
-    *[_type == "floorplan" && slug.current == $slug][0]{
-    _id,name,body,images,bed,bath,sqft,price,drawing,download,videoID,relatedProperties[]->{thumbnail,slug,floorplan->{name,bed,bath,sqft,slug}}}`
+const PROPERTY_QUERY = `
+    *[_type == "property" && slug.current == $slug][0]{
+    _id,name,body,images,bed,bath,sqft,price,download,videoID,floorplan->{name,drawing,floorPlanPDF,download,relatedProperties[]->{name,thumbnail,slug,name,bed,bath,sqft,floorplan->{name,bed,bath,sqft,slug}}}}`
+
+// ,relatedProperties[]->{thumbnail,slug,floorplan->{name,bed,bath,sqft,slug}}
 
 const PROPERTIES_QUERY = `
   *[_type == "property" && references($floorplanId)]{
@@ -31,38 +33,38 @@ const PROPERTIES_QUERY = `
   }
 `
 
-export default async function Floorplan({ params }) {
+export default async function Property({ params }) {
     const { slug } = params
 
-    const floorplan = await client.fetch<SanityDocument>(
-        FLOORPLAN_QUERY,
+    const property = await client.fetch<SanityDocument>(
+        PROPERTY_QUERY,
         { slug },
         options
     )
 
-    const { bed, bath, sqft, price } = floorplan
+    const { bed, bath, sqft, price } = property
 
-    if (!floorplan) {
+    if (!property) {
         notFound()
     }
 
-    const properties = await client.fetch(
-        PROPERTIES_QUERY,
-        {
-            floorplanId: floorplan._id,
-        },
-        options
-    )
+    // const properties = await client.fetch(
+    //     PROPERTIES_QUERY,
+    //     {
+    //         floorplanId: property._id,
+    //     },
+    //     options
+    // )
 
-    // console.log(floorplan)
-    //console.log(properties)
+    //console.log(property.floorplan.relatedProperties)
+    // console.log(properties)
 
     return (
         <>
             <Nav />
             <main className="centered generous">
                 <div className={style.content}>
-                    <h1>{floorplan.name}</h1>
+                    <h1>{property.floorplan.name}</h1>
                     <FloorplanInformation
                         bed={bed}
                         bath={bath}
@@ -70,22 +72,24 @@ export default async function Floorplan({ params }) {
                         price={price}
                     />
                     <div className={style.price}>
-                        {floorplan.price !== null && (
+                        {property.price !== null && (
                             <h3 className={style.subhead}>
                                 all-in-price starts at
                             </h3>
                         )}
 
-                        {floorplan.price !== null && (
+                        {property.price !== null && (
                             <p className={style.price}>
                                 {USDollar.format(price!)}
                             </p>
                         )}
                         <div className={style.linkGroup}>
-                            {floorplan.floorPlanPDF !== null && (
+                            {property.floorPlanPDF !== null && (
                                 <StandaloneLink
                                     icon="download"
-                                    href={floorplan.download.secure_url}
+                                    href={
+                                        property.floorplan.download.secure_url
+                                    }
                                 >
                                     Download floor plan
                                 </StandaloneLink>
@@ -96,11 +100,13 @@ export default async function Floorplan({ params }) {
                             </StandaloneLink>
                         </div>
                     </div>
-                    <FloorplanHero floorplan={floorplan} />
+                    <PropertyHero property={property} />
                 </div>
-                <CustomerStory story={floorplan} />
-                {/* {properties.length !== 0 && (
-                    <RelatedContent properties={properties} />
+                <CustomerStory story={property} />
+                {/* {property.floorplan.relatedProperties.length !== 0 && (
+                    <RelatedProperties
+                        properties={property.floorplan.relatedProperties}
+                    />
                 )} */}
                 <Catchall />
             </main>

@@ -33,9 +33,9 @@ export async function POST(req: Request) {
         } catch (error) {
             return Response.json({ error }, { status: 500 })
         } finally {
-            console.log('email sent')
+            //console.log('email sent')
         }
     } else {
-        console.log('Not allowed')
+        //console.log('Not allowed')
     }
 }

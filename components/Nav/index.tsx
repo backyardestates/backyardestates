@@ -31,7 +31,7 @@ export default function Nav() {
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link href="/projects">
+                                            <Link href="/properties">
                                                 Completed ADUs
                                             </Link>
                                         </li>

@@ -123,9 +123,9 @@ export default function LeadForm() {
         const data = await res.json()
 
         if (!data) {
-            console.log('Problem')
+            //console.log('Problem')
         } else {
-            console.log(data)
+            //console.log(data)
         }
     }
 

@@ -53,7 +53,7 @@ export default function HeroNav() {
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link href="/projects">
+                                            <Link href="/properties">
                                                 Completed ADUs
                                             </Link>
                                         </li>
@@ -65,19 +65,6 @@ export default function HeroNav() {
                                     </ul>
                                 </Dropdown>
                             </li>
-                            {/* <li>
-                                <Link href="/gallery" className={style.link}>
-                                    Gallery
-                                </Link>
-                            </li> */}
-                            {/* <li>
-                                <Link
-                                    href="/standard-inclusions"
-                                    className={style.link}
-                                >
-                                    Standard inclusions
-                                </Link>
-                            </li> */}
                             <li>
                                 <Link href="/pricing" className={style.link}>
                                     Pricing

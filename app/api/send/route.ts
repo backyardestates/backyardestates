@@ -125,6 +125,6 @@ export async function POST(req: Request, res: Response) {
             return Response.json({ error }, { status: 500 })
         }
     } else {
-        console.log('Not a POST request')
+        //console.log('Not a POST request')
     }
 }

@@ -80,7 +80,7 @@ export default function MultiStepForm() {
                 const data = await response.json()
             }
         } catch (err) {
-            console.log('Failed to submit', err)
+            //console.log('Failed to submit', err)
         }
     }
 

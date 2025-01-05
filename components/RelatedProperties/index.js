@@ -1,10 +1,14 @@
-import Card from '../Card'
+import PropertyCard from '../PropertyCard'
 import SectionTitle from '../SectionTitle'
 import StandaloneLink from '../StandaloneLink'
 
-import style from './RelatedContent.module.css'
+import style from './RelatedProperties.module.css'
 
-export default function RelatedContent({ properties }) {
+export default function RelatedProperties({ properties }) {
+    // const relatedProperties = await getProperties(properties)
+
+    //console.log(properties)
+
     return (
         <div className={style.base}>
             <SectionTitle
@@ -13,7 +17,8 @@ export default function RelatedContent({ properties }) {
             />
             <div className={style.properties}>
                 {properties.map((property, index) => (
-                    <Card key={index} content={property} />
+                    // <p key={index}>{property.name}</p>
+                    <PropertyCard key={index} content={property} />
                 ))}
             </div>
             <div className={style.centered}>

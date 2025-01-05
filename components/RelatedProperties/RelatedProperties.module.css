@@ -1,0 +1,112 @@
+.base {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    grid-column: span 12;
+}
+
+.properties {
+    display: grid;
+    column-gap: 1.5rem;
+    row-gap: 1.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0;
+    padding: 1.5rem;
+    overflow-x: scroll;
+}
+
+.properties > * {
+    /* border: 3px solid magenta; */
+    min-width: 75vw;
+}
+
+.properties::-webkit-scrollbar {
+    display: none;
+}
+
+.base h2 {
+    margin: 0 0 1rem 0;
+    padding: 0 1.5rem;
+    color: var(--brand-dark-blue, #36484b);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.7em;
+}
+
+.base p {
+    margin: 0 auto 1rem auto;
+    padding: 0 1.5rem;
+    color: var(--color-neutral-500, #787878);
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5em;
+    max-width: 35rem;
+    text-align: center;
+}
+
+.centered {
+    margin: 0 auto;
+}
+
+/* fixed */
+@media only screen and (min-width: 1440px) {
+    .base {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        margin: 0;
+        padding: 0;
+        grid-column: span 12;
+    }
+
+    .properties {
+        display: grid;
+        column-gap: 1.5rem;
+        row-gap: 1.5rem;
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .properties > * {
+        min-width: 0;
+    }
+
+    .root h2 {
+        margin: 0 0 1rem 0;
+        padding: 0;
+        color: var(--brand-dark-blue, #36484b);
+        leading-trim: both;
+        text-edge: cap;
+        font-family: var(--font-serif);
+        font-size: 1.5rem;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 1.7em;
+    }
+
+    .root p {
+        margin: 0 auto 3rem auto;
+        padding: 0;
+        color: var(--color-neutral-500, #787878);
+        text-align: center;
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.5em;
+        max-width: 35rem;
+        text-align: center;
+    }
+
+    .centered {
+        margin: 0 auto;
+    }
+}

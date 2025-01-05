@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { CldImage } from 'next-cloudinary'
 
-import ButtonTags from '../ButtonTags'
+import ExploreButtonTags from '../ExploreButtonTags'
 import StandaloneLink from '../StandaloneLink'
 import VideoPlayer from '../VideoPlayer'
 import FloorplanInformation from '@/components/FloorplanInformation'
@@ -22,7 +22,7 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
     return (
         <>
             {showNav && (
-                <ButtonTags
+                <ExploreButtonTags
                     tags={floorplans}
                     selectedID={selected}
                     setSelected={setSelected}
@@ -34,7 +34,10 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
                     <div className={style.columnLeft}>
                         <h2>{selectedFloorplan.name}</h2>
                         <FloorplanInformation
-                            floorplan={selectedFloorplan}
+                            bed={selectedFloorplan.bed}
+                            bath={selectedFloorplan.bath}
+                            sqft={selectedFloorplan.sqft}
+                            price={selectedFloorplan.price}
                             showPrice
                         />
                         {selectedFloorplan.orderID === '1' ||
@@ -69,7 +72,7 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
                         <div className={style.linkGroup}>
                             <StandaloneLink
                                 theme="beige"
-                                href={`/gallery/${selectedFloorplan.slug.current}`}
+                                href={`/floorplans/${selectedFloorplan.slug.current}`}
                             >
                                 View floor plan
                             </StandaloneLink>
