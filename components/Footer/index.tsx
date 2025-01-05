@@ -1,4 +1,6 @@
-// 'use client'
+import { type SanityDocument } from 'next-sanity'
+import { client } from '@/sanity/client'
+const options = { next: { revalidate: 30 } }
 
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -7,28 +9,36 @@ import Newsletter from '../Newsletter'
 
 import style from './Footer.module.css'
 
-import db from '@/utils/db'
+// import db from '@/utils/db'
 
-const getFloorplans = async () => {
-    const floorplans = await db.floorplan.findMany({
-        orderBy: [
-            {
-                order: 'asc',
-            },
-            {
-                title: 'asc',
-            },
-        ],
-        where: {
-            isFloorplan: true,
-            isClickable: true,
-        },
-    })
-    return floorplans
-}
+const FLOORPLANS_QUERY = `*[_type == "floorplan"]|order(orderID asc){name,slug}`
+
+// const getFloorplans = async () => {
+
+//     const floorplans = await db.floorplan.findMany({
+//         orderBy: [
+//             {
+//                 order: 'asc',
+//             },
+//             {
+//                 title: 'asc',
+//             },
+//         ],
+//         where: {
+//             isFloorplan: true,
+//             isClickable: true,
+//         },
+//     })
+//     return floorplans
+// }
 
 export default async function Footer() {
-    const floorplans = await getFloorplans()
+    // const floorplans = await getFloorplans()
+    const floorplans = await client.fetch<SanityDocument[]>(
+        FLOORPLANS_QUERY,
+        {},
+        options
+    )
     return (
         <footer className={style.root}>
             <div className={style.container}>
@@ -97,9 +107,9 @@ export default async function Footer() {
                                 {floorplans.map((floorplan, index) => (
                                     <li key={index}>
                                         <Link
-                                            href={`/gallery/${floorplan.floorplan}`}
+                                            href={`/floorplans/${floorplan.slug.current}/`}
                                         >
-                                            {floorplan.title}
+                                            {floorplan.name}
                                         </Link>
                                     </li>
                                 ))}
