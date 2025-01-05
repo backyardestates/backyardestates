@@ -10,7 +10,7 @@ import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
 import PropertyInformation from '@/components/PropertyInformation'
 import VideoPlayer from '@/components/VideoPlayer'
-import RelatedContent from '@/components/RelatedContent'
+import RelatedProperties from '@/components/RelatedProperties'
 
 import style from './page.module.css'
 
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
 const STORY_QUERY = defineQuery(`*[
     _type == "story" &&
     slug.current == $slug
-  ][0]{names, purpose, wistiaId, body, images, property->{floorplan->{name,bed,bath,sqft,price}},relatedProperties[]->{thumbnail,slug,floorplan->{name,bed,bath,sqft,slug}}}`)
+  ][0]{names, purpose, wistiaId, body, images, property->{floorplan->{name,bed,bath,sqft,price}},relatedProperties[]->{bed,bath,sqft,thumbnail,slug,floorplan->{name,bed,bath,sqft,slug}}}`)
 
 export default async function Story({
     params,
@@ -74,7 +74,7 @@ export default async function Story({
                     <VideoPlayer wistiaID={story.wistiaId} />
                 </div>
                 <CustomerStory story={story} />
-                <RelatedContent properties={story.relatedProperties} />
+                <RelatedProperties properties={story.relatedProperties} />
                 <Catchall />
             </main>
             <Footer />

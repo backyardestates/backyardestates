@@ -19,19 +19,7 @@ import { USDollar } from '@/utils/currency'
 
 const PROPERTY_QUERY = `
     *[_type == "property" && slug.current == $slug][0]{
-    _id,name,body,images,bed,bath,sqft,price,download,videoID,floorplan->{name,drawing,floorPlanPDF,download,relatedProperties[]->{name,thumbnail,slug,name,bed,bath,sqft,floorplan->{name,bed,bath,sqft,slug}}}}`
-
-// ,relatedProperties[]->{thumbnail,slug,floorplan->{name,bed,bath,sqft,slug}}
-
-const PROPERTIES_QUERY = `
-  *[_type == "property" && references($floorplanId)]{
-    _id,
-    name,
-    thumbnail,
-    slug,
-    floorplan->{name,bed,bath,sqft,slug}
-  }
-`
+    _id,name,location,body,images,bed,bath,sqft,price,download,videoID,floorplan->{name,drawing,floorPlanPDF,download,relatedProperties[]->{name,thumbnail,slug,name,bed,bath,sqft,floorplan->{name,bed,bath,sqft,slug}}}}`
 
 export default async function Property({ params }) {
     const { slug } = params
@@ -48,29 +36,20 @@ export default async function Property({ params }) {
         notFound()
     }
 
-    // const properties = await client.fetch(
-    //     PROPERTIES_QUERY,
-    //     {
-    //         floorplanId: property._id,
-    //     },
-    //     options
-    // )
-
-    //console.log(property.floorplan.relatedProperties)
-    // console.log(properties)
-
     return (
         <>
             <Nav />
             <main className="centered generous">
                 <div className={style.content}>
                     <h1>{property.floorplan.name}</h1>
+
                     <FloorplanInformation
                         bed={bed}
                         bath={bath}
                         sqft={sqft}
                         price={price}
                     />
+                    <p className={style.subhead}>{property.location}</p>
                     <div className={style.price}>
                         {property.price !== null && (
                             <h3 className={style.subhead}>
@@ -103,11 +82,11 @@ export default async function Property({ params }) {
                     <PropertyHero property={property} />
                 </div>
                 <CustomerStory story={property} />
-                {/* {property.floorplan.relatedProperties.length !== 0 && (
+                {property.floorplan.relatedProperties.length !== 0 && (
                     <RelatedProperties
                         properties={property.floorplan.relatedProperties}
                     />
-                )} */}
+                )}
                 <Catchall />
             </main>
             <Footer />

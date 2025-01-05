@@ -10,7 +10,7 @@ import FloorplanHero from '@/components/FloorplanHero'
 import FloorplanInformation from '@/components/FloorplanInformation'
 import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
-import RelatedContent from '@/components/RelatedContent'
+import RelatedProperties from '@/components/RelatedProperties'
 import StandaloneLink from '@/components/StandaloneLink'
 
 import style from './page.module.css'
@@ -19,17 +19,7 @@ import { USDollar } from '@/utils/currency'
 
 const FLOORPLAN_QUERY = `
     *[_type == "floorplan" && slug.current == $slug][0]{
-    _id,name,body,images,bed,bath,sqft,price,drawing,download,videoID,relatedProperties[]->{thumbnail,slug,floorplan->{name,bed,bath,sqft,slug}}}`
-
-const PROPERTIES_QUERY = `
-  *[_type == "property" && references($floorplanId)]{
-    _id,
-    name,
-    thumbnail,
-    slug,
-    floorplan->{name,bed,bath,sqft,slug}
-  }
-`
+    _id,name,body,images,bed,bath,sqft,price,drawing,download,videoID,relatedProperties[]->{name,thumbnail,slug,name,bed,bath,sqft,floorplan->{name,bed,bath,sqft,slug}}}`
 
 export default async function Floorplan({ params }) {
     const { slug } = params
@@ -45,17 +35,6 @@ export default async function Floorplan({ params }) {
     if (!floorplan) {
         notFound()
     }
-
-    const properties = await client.fetch(
-        PROPERTIES_QUERY,
-        {
-            floorplanId: floorplan._id,
-        },
-        options
-    )
-
-    // console.log(floorplan)
-    //console.log(properties)
 
     return (
         <>
@@ -99,9 +78,11 @@ export default async function Floorplan({ params }) {
                     <FloorplanHero floorplan={floorplan} />
                 </div>
                 <CustomerStory story={floorplan} />
-                {/* {properties.length !== 0 && (
-                    <RelatedContent properties={properties} />
-                )} */}
+                {floorplan.relatedProperties.length !== 0 && (
+                    <RelatedProperties
+                        properties={floorplan.relatedProperties}
+                    />
+                )}
                 <Catchall />
             </main>
             <Footer />
