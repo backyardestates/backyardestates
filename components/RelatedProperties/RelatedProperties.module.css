@@ -9,16 +9,18 @@
 
 .properties {
     display: grid;
+    /* align-items: center; */
+    /* justify-content: center; */
     column-gap: 1.5rem;
     row-gap: 1.5rem;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columzns: repeat(4, 1fr);
     margin: 0;
     padding: 1.5rem;
     overflow-x: scroll;
+    /* border: 3px solid magenta; */
 }
 
 .properties > * {
-    /* border: 3px solid magenta; */
     min-width: 75vw;
 }
 
@@ -69,7 +71,8 @@
     }
 
     .properties {
-        display: grid;
+        display: flex;
+        justify-content: center;
         column-gap: 1.5rem;
         row-gap: 1.5rem;
         grid-template-columns: repeat(4, 1fr);
