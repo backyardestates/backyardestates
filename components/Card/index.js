@@ -17,7 +17,7 @@ const cld = new Cloudinary({
     },
 })
 
-export default function Card({ content, isFloorplan = false }) {
+export default function Card({ content }) {
     const { bed, bath, sqft, price } = content
     const myImage = cld.image(content.drawing.public_id)
 

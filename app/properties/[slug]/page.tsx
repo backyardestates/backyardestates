@@ -62,7 +62,7 @@ export default async function Property({ params }) {
                                 {USDollar.format(price!)}
                             </p>
                         )}
-                        <div className={style.linkGroup}>
+                        {/* <div className={style.linkGroup}>
                             {property.floorPlanPDF !== null && (
                                 <StandaloneLink
                                     icon="download"
@@ -77,7 +77,7 @@ export default async function Property({ params }) {
                             <StandaloneLink href="/standard-inclusions">
                                 View inclusions
                             </StandaloneLink>
-                        </div>
+                        </div> */}
                     </div>
                     <PropertyHero property={property} />
                 </div>

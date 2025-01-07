@@ -7,7 +7,7 @@ import Card from '../Card'
 
 import style from './FloorplansGrid.module.css'
 
-export default function PropertiesGrid({ properties }) {
+export default function FloorplansGrid({ properties }) {
     const [selected, setSelected] = useState(99)
     const bedroomCounts = [
         { id: 0, title: 'Studio' },

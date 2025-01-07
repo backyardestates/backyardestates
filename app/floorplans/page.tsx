@@ -1,6 +1,6 @@
 import { PortableText, type SanityDocument } from 'next-sanity'
 import { client } from '@/sanity/client'
-const FLOORPLANS_QUERY = `*[_type == "floorplan"]|order(orderID asc){_id, bed, bath, sqft, price, name, body, publishedAt, drawing, slug}`
+const FLOORPLANS_QUERY = `*[_type == "floorplan" && isClickable != false]|order(orderID asc){_id, bed, bath, sqft, price, name, body, publishedAt, drawing, slug}`
 const options = { next: { revalidate: 30 } }
 
 import type { Metadata } from 'next'

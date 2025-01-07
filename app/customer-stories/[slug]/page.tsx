@@ -46,7 +46,7 @@ export const metadata: Metadata = {
 const STORY_QUERY = defineQuery(`*[
     _type == "story" &&
     slug.current == $slug
-  ][0]{names, purpose, wistiaId, body, images, property->{floorplan->{name,bed,bath,sqft,price}},relatedProperties[]->{bed,bath,sqft,thumbnail,slug,floorplan->{name,bed,bath,sqft,slug}}}`)
+  ][0]{names, purpose, wistiaId, body, images, property->{floorplan->{name,bed,bath,sqft,price,relatedProperties[]->{bed,bath,sqft,thumbnail,slug}}}}`)
 
 export default async function Story({
     params,
@@ -62,6 +62,8 @@ export default async function Story({
         notFound()
     }
 
+    console.log(story.property.floorplan.relatedProperties)
+
     return (
         <>
             <Nav />
@@ -74,7 +76,9 @@ export default async function Story({
                     <VideoPlayer wistiaID={story.wistiaId} />
                 </div>
                 <CustomerStory story={story} />
-                <RelatedProperties properties={story.relatedProperties} />
+                <RelatedProperties
+                    properties={story.property.floorplan.relatedProperties}
+                />
                 <Catchall />
             </main>
             <Footer />
