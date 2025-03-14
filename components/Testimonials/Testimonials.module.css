@@ -1,13 +1,23 @@
 .base {
     margin: 4rem 0;
     padding: 1.5rem;
-    width: 100%;
+    /* width: 100%; */
     /* border: 3px solid pink; */
 }
 
+.spacer {
+    margin: 0;
+    padding: 0;
+    width: 1rem;
+    height: 1rem;
+    background-color: transparent;
+}
+
 .carousel {
-    margin: 4rem 0;
-    /* border: 3px solid magenta; */
+    display: flex;
+    justify-content: flex-start;
+    gap: 0;
+    overflow: hidden;
 }
 
 /* fixed */
@@ -15,15 +25,21 @@
     .base {
         margin: 0 auto;
         padding: 6rem;
-        /* width: 100%; */
         width: 1440px;
     }
 
     .carousel {
         display: flex;
-        /* gap: 2rem; */
-        justify-content: center;
+        justify-content: flex-start;
         margin: 6rem 0;
-        padding: 0;
+        padding: 3rem 0 0 0;
+        overflow: hidden;
+    }
+
+    .container {
+        display: flex;
+        gap: 2rem;
+        justify-content: space-between;
+        align-items: center;
     }
 }

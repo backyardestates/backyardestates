@@ -62,8 +62,6 @@ export default async function Story({
         notFound()
     }
 
-    console.log(story.property.floorplan.relatedProperties)
-
     return (
         <>
             <Nav />

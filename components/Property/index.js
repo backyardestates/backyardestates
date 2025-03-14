@@ -8,16 +8,28 @@ import PropertyInformation from '../PropertyInformation'
 export default function Property({ property }) {
     return (
         <Link
-            href={`/gallery/${property.floorplan.slug.current}/${property.slug.current}`}
+            href={`/properties/${property.slug.current}`}
             className={style.base}
         >
-            <CldImage
-                src={property.thumbnail.secure_url}
-                width="640"
-                height="360"
-                className={style.image}
-                alt={property.name}
-            />
+            <div
+                style={{
+                    aspectRatio: '16 / 9',
+                }}
+            >
+                <CldImage
+                    src={property.thumbnail.secure_url}
+                    width="384"
+                    height="216"
+                    className={style.image}
+                    alt="Thumbnail image of a property"
+                    sizes="100vw"
+                    // aspectRatio="16:9"
+                    crop="fill"
+                    // fill={true}
+                    // alt=""
+                    aspectRatio="16:9"
+                />
+            </div>
             <div className={style.container}>
                 <p>
                     <strong>{property.floorplan.name}</strong>

@@ -22,7 +22,7 @@ const PROPERTY_QUERY = `
     _id,name,location,body,images,bed,bath,sqft,price,download,videoID,floorplan->{name,drawing,floorPlanPDF,download,relatedProperties[]->{name,thumbnail,slug,name,bed,bath,sqft,floorplan->{name,bed,bath,sqft,slug}}}}`
 
 export default async function Property({ params }) {
-    const { slug } = params
+    const { slug } = await params
 
     const property = await client.fetch<SanityDocument>(
         PROPERTY_QUERY,

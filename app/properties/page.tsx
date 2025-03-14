@@ -26,6 +26,8 @@ export default async function Floorplan() {
         options
     )
 
+    // console.log(properties)
+
     return (
         <>
             <Masthead

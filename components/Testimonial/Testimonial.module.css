@@ -1,20 +1,16 @@
 .base {
-    margin: 0 0 4rem 0;
+    margin: 0 0 6rem 0;
     position: relative;
-    padding: 1rem;
-    width: 100%;
-    /* border: 3px solid pink; */
+    /* padding: 1rem; */
 }
 
 .border {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* width: 50%; */
     border-radius: 0.5rem;
     border: 2px solid var(--color-neutral-100);
-    padding: 3rem 0;
-    /* height: 100%; */
+    padding: 6rem 0 3rem 0;
 }
 
 .portrait {
@@ -23,7 +19,6 @@
     width: 6rem;
     height: 6rem;
     border-radius: 0.5rem;
-    /* background: #f0f; */
     outline: 1rem solid white;
 }
 
@@ -33,6 +28,7 @@
     font-size: 1rem;
     font-style: normal;
     font-weight: 600;
+    margin-top: 2rem;
 }
 
 .small_caps {
@@ -68,14 +64,12 @@
     font-size: 1rem;
     font-style: normal;
     font-weight: 600;
-    /* line-height: 1.75rem; 175% */
 }
 
 .floor_plan span {
     text-align: center;
     leading-trim: both;
     text-edge: cap;
-    /* font-family: Roboto; */
     font-size: 0.75rem;
     font-style: normal;
     font-weight: 600;
@@ -91,9 +85,9 @@
         align-items: center;
         position: relative;
         margin: 0 auto;
-        padding: 1rem;
-        /* width: 30rem; */
-        /* border: 3px solid pink; */
+        padding: 0;
+        flex: 0 0 50%;
+        /* border: 3px solid magenta; */
     }
 
     .border {

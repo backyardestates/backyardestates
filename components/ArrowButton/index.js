@@ -1,8 +1,10 @@
+// 'use client'
+
 import style from './ArrowButton.module.css'
 
-export default function Arrow({ direction = 'right' }) {
+export default function ArrowButton({ direction = 'right' }) {
     return (
-        <button className={style.base}>
+        <div className={style.base}>
             {direction === 'left' && (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +22,6 @@ export default function Arrow({ direction = 'right' }) {
                     />
                 </svg>
             )}
-
             {direction === 'right' && (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -38,6 +39,6 @@ export default function Arrow({ direction = 'right' }) {
                     />
                 </svg>
             )}
-        </button>
+        </div>
     )
 }
