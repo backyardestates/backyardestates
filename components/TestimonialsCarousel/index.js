@@ -58,7 +58,7 @@ export default function TestimonialsCarousel({ testimonials }) {
             duration: 0.5,
             ease: 'power2.out',
         })
-    }, [position, slideCount])
+    }, [position, slideCount, width])
 
     return (
         <div className={style.base}>
