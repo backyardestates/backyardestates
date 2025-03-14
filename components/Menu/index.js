@@ -38,7 +38,20 @@ export default function Menu({ showMenu, toggleMenu }) {
                 </div>
                 <ul>
                     <li>
-                        <Link href="/gallery">Gallery</Link>
+                        <ul>
+                            <li>Plans</li>
+                            <li>
+                                <Link href="/floorplans">ADU floorplans</Link>
+                            </li>
+                            <li>
+                                <Link href="/properties">Completed ADUs</Link>
+                            </li>
+                            <li>
+                                <Link href="/standard-inclusions">
+                                    Standard inclusions
+                                </Link>
+                            </li>
+                        </ul>
                     </li>
                     <li>
                         <Link href="/standard-inclusions">
