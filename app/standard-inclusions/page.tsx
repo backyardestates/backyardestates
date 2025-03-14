@@ -9,20 +9,20 @@ import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
 
-import db from '@/utils/db'
+// import db from '@/utils/db'
 import style from './StandardInclusions.module.css'
 
-const getFloorplans = async () => {
-    const floorplans = await db.floorplan.findMany({
-        where: {
-            isFloorplan: true,
-        },
-    })
-    return floorplans
-}
+// const getFloorplans = async () => {
+//     const floorplans = await db.floorplan.findMany({
+//         where: {
+//             isFloorplan: true,
+//         },
+//     })
+//     return floorplans
+// }
 
 export default async function StandardInclusions() {
-    const floorplans = await getFloorplans()
+    // const floorplans = await getFloorplans()
 
     return (
         <>
