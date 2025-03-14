@@ -11,31 +11,26 @@ export async function POST(req: Request) {
     const message = body.message
     const collection = body.collection
 
-    if (req.method === 'POST') {
-        try {
-            const { data, error } = await resend.emails.send({
-                from: `${name} <${email}>`,
-                to: [email],
-                subject: `${name} shared an ADU by Backyard Estates`,
-                react: EmailTemplate({
-                    from: from,
-                    name: name,
-                    email: email,
-                    message: message,
-                    collection: collection,
-                }),
-            })
+    try {
+        const { data, error } = await resend.emails.send({
+            from: `${name} <${email}>`,
+            to: [email],
+            subject: `${name} shared an ADU by Backyard Estates`,
+            // @ts-ignore
+            react: EmailTemplate({
+                from: from,
+                name: name,
+                email: email,
+                message: message,
+                collection: collection,
+            }),
+        })
 
-            if (error) {
-                return Response.json({ error }, { status: 500 })
-            }
-            return Response.json(data)
-        } catch (error) {
-            return Response.json({ error }, { status: 500 })
-        } finally {
-            //console.log('email sent')
+        if (error) {
+            return new Response(JSON.stringify({ error }), { status: 500 })
         }
-    } else {
-        //console.log('Not allowed')
+        return new Response(JSON.stringify(data))
+    } catch (error) {
+        return new Response(JSON.stringify({ error }), { status: 500 })
     }
 }

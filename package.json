@@ -22,14 +22,14 @@
         "@gsap/react": "^2.1.2",
         "@next/third-parties": "^15.2.2",
         "@prisma/client": "^6.5.0",
-        "@react-email/components": "^0.0.13",
+        "@react-email/components": "^0.0.33",
         "@sanity/image-url": "^1.1.0",
-        "@wistia/react-embeds": "^0.0.20",
+        "@wistia/react-embeds": "^0.0.24",
         "@wistia/wistia-player-react": "^0.0.100",
         "gsap": "^3.12.7",
         "next": "^15.2.2",
         "next-cloudinary": "^6.16.0",
-        "next-sanity": "^0.8.5",
+        "next-sanity": "^9.9.3",
         "react": "^19.0.0",
         "react-calendly": "^4.3.1",
         "react-dom": "^19.0.0",
@@ -39,8 +39,8 @@
         "zod": "^3.24.2"
     },
     "devDependencies": {
-        "@types/node": "22.5.4",
-        "@types/react": "18.3.5",
+        "@types/node": "22.13.10",
+        "@types/react": "19.0.10",
         "eslint": "^9.22.0",
         "eslint-config-next": "^15.2.2",
         "prisma": "^6.5.0"
