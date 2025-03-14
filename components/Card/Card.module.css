@@ -16,7 +16,9 @@
     text-decoration: none;
     font-family: var(--font-sans);
     color: var(--color-neutral-500);
-    transition: transform 300ms ease, box-shadow 300ms ease;
+    transition:
+        transform 300ms ease,
+        box-shadow 300ms ease;
 }
 
 .base:hover {
@@ -28,6 +30,9 @@
 .img {
     border-top-left-radius: 0.5rem;
     border-top-right-radius: 0.5rem;
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 .content {

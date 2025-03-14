@@ -33,25 +33,32 @@ export default function PropertyCard({ content }) {
                     aspectRatio: '16 / 9',
                 }}
             >
-                <CldImage
+                {/* <CldImage
                     src={content.thumbnail.public_id}
-                    width="330"
-                    height="186"
+                    width="328"
+                    height="185"
                     className={style.img}
-                    // alt={property.name}
                     sizes="100vw"
-                    // aspectRatio="16:9"
                     crop="fill"
-                    // fill={true}
                     alt="Thumbnail image of a property"
                     aspectRatio="16:9"
+                /> */}
+                <CldImage
+                    src={content.thumbnail.public_id}
+                    width="328"
+                    height="185"
+                    className={style.img}
+                    sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    crop="fill"
+                    alt="Thumbnail image of a property"
+                    aspectRatio="16:9"
+                    srcSet={`
+                        ${content.thumbnail.public_id}?w=328&h=185 328w,
+                        ${content.thumbnail.public_id}?w=656&h=370 656w,
+                        ${content.thumbnail.public_id}?w=984&h=555 984w
+                    `}
                 />
             </div>
-            {/* <AdvancedImage
-                cldImg={myImage}
-                plugins={[responsive({ steps: [330] })]}
-                className={style.img}
-            /> */}
             <div className={style.content}>
                 <p className={style.location}>
                     <strong>{content.name}</strong>

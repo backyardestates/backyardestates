@@ -111,7 +111,15 @@
         gap: 2rem;
         margin: 5rem 0 0 0;
         padding: 0;
+        width: calc(1440px - 2rem);
         list-style: none;
+        /* border: 5px solid pink; */
+        /* overflow: hidden; */
+    }
+
+    .cards li {
+        min-width: 0;
+        min-height: 0;
     }
 
     .tag,

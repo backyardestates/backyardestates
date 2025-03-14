@@ -1,5 +1,5 @@
 .base {
-    width: 24rem;
+    /* width: 24rem; */
     background-color: var(--color-white);
     color: var(--color-brand-dark-blue);
     text-decoration: none;
@@ -9,10 +9,12 @@
 .image {
     margin: 0;
     padding: 0;
-    width: 18rem;
-    height: auto;
     border-radius: 0.5rem;
     box-shadow: 0px 4px 16px 0px rgba(54, 72, 75, 0.15);
+
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 .container {
