@@ -12,10 +12,11 @@
     font-family: var(--font-serif);
     color: white;
     max-width: 38rem;
+    font-size: 1.8rem;
 }
 
 .explanation {
-    margin: 0 auto 2rem auto;
+    margin: 0 0 0.5rem 0;
     padding: 0;
     font-family: var(--font-sans);
     font-size: 1rem;
@@ -32,6 +33,16 @@
     .base {
         padding: 4rem 0;
     }
+
+    .title {
+        margin: 0 auto 1rem auto;
+        padding: 0;
+        font-family: var(--font-serif);
+        font-size: 3rem;
+        color: white;
+        max-width: 38rem;
+    }
+
     .explanation {
         font-size: 1.5rem;
         font-weight: 300;
