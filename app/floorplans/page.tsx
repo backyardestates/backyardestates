@@ -1,6 +1,6 @@
 import { PortableText, type SanityDocument } from 'next-sanity'
 import { client } from '@/sanity/client'
-const FLOORPLANS_QUERY = `*[_type == "floorplan" && isClickable != false]|order(orderID asc){_id, bed, bath, sqft, price, name, body, publishedAt, drawing, slug}`
+const FLOORPLANS_QUERY = `*[_type == "floorplan" && isClickable != false && name != "Custom Estate"]|order(orderID asc){_id, bed, bath, sqft, price, name, body, publishedAt, drawing, slug}`
 const options = { next: { revalidate: 30 } }
 
 import type { Metadata } from 'next'
@@ -19,12 +19,14 @@ export const metadata: Metadata = {
         'Browse recent projects and customer stories to discover the right Accessory Dwelling Unit (ADU) for your family',
 }
 
-export default async function Floorplan({ params }) {
+export default async function Floorplan() {
     const properties = await client.fetch<SanityDocument[]>(
         FLOORPLANS_QUERY,
         {},
         options
     )
+
+    console.log(properties)
 
     return (
         <>

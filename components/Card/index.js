@@ -40,7 +40,6 @@ export default function Card({ content }) {
                     bath={bath}
                     sqft={sqft}
                     price={price}
-                    // showPrice
                 />
             </div>
         </Link>
