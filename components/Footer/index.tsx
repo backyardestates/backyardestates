@@ -9,7 +9,7 @@ import Newsletter from '../Newsletter'
 
 import style from './Footer.module.css'
 
-const FLOORPLANS_QUERY = `*[_type == "floorplan"]|order(orderID asc){name,slug}`
+const FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){name,slug}`
 
 export default async function Footer() {
     const floorplans = await client.fetch<SanityDocument[]>(
