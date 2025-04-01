@@ -11,10 +11,12 @@ import InclusionsHomePanel from '@/components/InclusionsHomePanel'
 
 import '../public/styles.css'
 import style from './page.module.css'
+import Modal from '@/components/Modal'
 
 export default function Home() {
     return (
         <>
+            <Modal />
             <HeroNav />
             <Hero />
             <Testimonials />

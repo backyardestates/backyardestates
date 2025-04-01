@@ -19,7 +19,7 @@ export default function Modal() {
         if (!isModalDismissed) {
             const timer = setTimeout(() => {
                 setShowModal(true)
-            }, 5000)
+            }, 1000)
 
             return () => clearTimeout(timer)
         }
@@ -91,21 +91,23 @@ export default function Modal() {
                                     onClick={handleClose}
                                 />
                             </div>
-                            <p className={style.smallCaps}>ADU open house</p>
-                            <p className={style.location}>La Verne</p>
+                            <p className={style.smallCaps}>
+                                ADU open house &amp; showcase
+                            </p>
+                            <p className={style.location}>Claremount, CA</p>
                             <ul className={style.dates}>
                                 <DateTime
-                                    date="12/20/24"
+                                    date="04/04/25"
                                     start="10am"
-                                    finish="6pm"
+                                    finish="7pm"
                                 />
                                 <DateTime
-                                    date="12/21/24"
-                                    start="8am"
-                                    finish="2pm"
+                                    date="04/05/24"
+                                    start="10am"
+                                    finish="4pm"
                                 />
                             </ul>
-                            <Button href="https://calendly.com/adam-735/adu-open-house-laverne?month=2024-12">
+                            <Button href="https://www.eventbrite.com/e/adu-open-house-showcase-in-claremont-tickets-1290368530009">
                                 Book your spot
                             </Button>
                         </div>
