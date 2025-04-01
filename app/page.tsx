@@ -32,7 +32,6 @@ export default function Home() {
                 </StandaloneLink>
                 <InclusionsHomePanel />
             </div>
-
             <Benefits />
             <Process />
             <Properties />
