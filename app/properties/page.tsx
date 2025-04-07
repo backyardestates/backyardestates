@@ -1,6 +1,6 @@
 import { type SanityDocument } from 'next-sanity'
 import { client } from '@/sanity/client'
-const PROPERTIES_QUERY = `*[_type == "property"]{_id, bed, bath, sqft, price, name, body, publishedAt, thumbnail, slug}`
+const PROPERTIES_QUERY = `*[_type == "property"] | order(featured asc, publishedAt asc) {_id, bed, bath, sqft, price, name, body, publishedAt, thumbnail, slug}`
 const options = { next: { revalidate: 30 } }
 
 import type { Metadata } from 'next'
