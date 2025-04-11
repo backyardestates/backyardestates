@@ -19,14 +19,14 @@
         "@fortawesome/pro-solid-svg-icons": "^6.7.2",
         "@fortawesome/react-fontawesome": "^0.2.2",
         "@gsap/react": "^2.1.2",
-        "@next/third-parties": "^15.2.4",
-        "@react-email/components": "^0.0.34",
+        "@next/third-parties": "^15.3.0",
+        "@react-email/components": "^0.0.36",
         "@sanity/image-url": "^1.1.0",
-        "@wistia/wistia-player-react": "^0.0.103",
+        "@wistia/wistia-player-react": "^0.0.106",
         "gsap": "^3.12.7",
-        "next": "^15.2.4",
+        "next": "^15.3.0",
         "next-cloudinary": "^6.16.0",
-        "next-sanity": "^9.9.9",
+        "next-sanity": "^9.10.1",
         "react": "^19.1.0",
         "react-calendly": "^4.3.1",
         "react-dom": "^19.1.0",
@@ -39,6 +39,6 @@
         "@types/node": "^22.14.0",
         "@types/react": "^19.1.0",
         "eslint": "^9.24.0",
-        "eslint-config-next": "^15.2.4"
+        "eslint-config-next": "^15.3.0"
     }
 }
