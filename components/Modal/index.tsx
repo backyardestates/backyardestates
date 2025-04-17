@@ -94,20 +94,22 @@ export default function Modal() {
                             <p className={style.smallCaps}>
                                 ADU open house &amp; showcase
                             </p>
-                            <p className={style.location}>Claremount, CA</p>
+                            <p className={style.location}>
+                                Rancho Cucamonga, CA
+                            </p>
                             <ul className={style.dates}>
                                 <DateTime
-                                    date="04/04/25"
+                                    date="04/18/25"
                                     start="10am"
-                                    finish="7pm"
+                                    finish="6pm"
                                 />
                                 <DateTime
-                                    date="04/05/24"
+                                    date="04/19/24"
                                     start="10am"
-                                    finish="4pm"
+                                    finish="2pm"
                                 />
                             </ul>
-                            <Button href="https://www.eventbrite.com/e/adu-open-house-showcase-in-claremont-tickets-1290368530009">
+                            <Button href="https://www.eventbrite.com/e/adu-open-house-showcase-in-rancho-cucamonga-tickets-1323792441829">
                                 Book your spot
                             </Button>
                         </div>
