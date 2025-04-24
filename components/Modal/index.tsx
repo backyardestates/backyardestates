@@ -16,6 +16,21 @@ export default function Modal() {
 
     useEffect(() => {
         const isModalDismissed = localStorage.getItem('isModalDismissed')
+        const isModalDismissedExpired = localStorage.getItem(
+            'isModalDismissedExpired'
+        )
+
+        if (isModalDismissedExpired) {
+            const now = Date.now()
+            const elapsedTime = now - parseInt(isModalDismissedExpired, 10)
+
+            // Check if 1 hours (in milliseconds) have passed
+            if (elapsedTime > 1 * 60 * 60 * 1000) {
+                localStorage.removeItem('isModalDismissed')
+                localStorage.removeItem('isModalDismissedExpired')
+            }
+        }
+
         if (!isModalDismissed) {
             const timer = setTimeout(() => {
                 setShowModal(true)
@@ -30,6 +45,7 @@ export default function Modal() {
     const handleClose = () => {
         setShowModal(false)
         localStorage.setItem('isModalDismissed', 'true')
+        localStorage.setItem('dismissedTimestamp', Date.now().toString())
     }
 
     return (
@@ -94,22 +110,15 @@ export default function Modal() {
                             <p className={style.smallCaps}>
                                 ADU open house &amp; showcase
                             </p>
-                            <p className={style.location}>
-                                Rancho Cucamonga, CA
-                            </p>
+                            <p className={style.location}>Glendora, CA</p>
                             <ul className={style.dates}>
                                 <DateTime
-                                    date="04/18/25"
-                                    start="10am"
-                                    finish="6pm"
-                                />
-                                <DateTime
-                                    date="04/19/24"
-                                    start="10am"
-                                    finish="2pm"
+                                    date="04/26/24"
+                                    start="9am"
+                                    finish="4pm"
                                 />
                             </ul>
-                            <Button href="https://www.eventbrite.com/e/adu-open-house-showcase-in-rancho-cucamonga-tickets-1323792441829">
+                            <Button href="https://www.eventbrite.com/e/adu-open-house-showcase-in-glendora-tickets-1333165697489">
                                 Book your spot
                             </Button>
                         </div>
