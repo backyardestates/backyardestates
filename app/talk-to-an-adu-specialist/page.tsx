@@ -110,7 +110,7 @@ export default function LeadForm() {
         if (data.success) {
             // if ADU Event sourceschedule Twilio thank you message
             console.log('Lead created successfully:', d)
-            if (lead.source === 'ADU Event') {
+            if (lead.source === 'Open House') {
                 await sendMessage(d, lead)
             } else {
                 console.log('Not an ADU Event source, no message sent.')
