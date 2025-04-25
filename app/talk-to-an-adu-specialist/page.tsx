@@ -108,6 +108,15 @@ export default function LeadForm() {
         const data = await res.json()
 
         if (data.success) {
+            // if ADU Event sourceschedule Twilio thank you message
+            console.log('Lead created successfully:', d)
+            if (lead.source === 'ADU Event') {
+                await sendMessage(d, lead)
+            } else {
+                console.log('Not an ADU Event source, no message sent.')
+            }
+            // redirect to Calendly
+
             router.push(
                 `/talk-to-an-adu-specialist/calendly?name=${d.first_name} ${d.last_name}&address=${lead.address}&email=${d.primary_email}`
             )
@@ -125,7 +134,73 @@ export default function LeadForm() {
         if (!data) {
             //console.log('Problem')
         } else {
-            //console.log(data)
+            console.log(data)
+        }
+    }
+
+    const sendMessage = async (d, lead) => {
+        try {
+            // Send the Twilio message
+            const response = await fetch('/api/send-twilio-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: lead.phone[0].value, // Use the lead's phone number
+                    message: 'You attended an ADU event with Backyard Estates.',
+                }),
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                console.log(`Message sent to ${lead.phone[0].value}:`, data)
+
+                // Log the activity in Pipedrive
+                // await logActivityInPipedrive(d, lead)
+            } else {
+                console.error('Failed to send message:', data.error)
+            }
+        } catch (error) {
+            console.error(`Failed to send message:`, error)
+        }
+    }
+
+    const logActivityInPipedrive = async (d, lead) => {
+        try {
+            const activity = {
+                subject: `Text message sent to ${lead.firstname} ${lead.lastname}`,
+                type: 'SMS',
+                note: 'You attended an ADU event with Backyard Estates.',
+                person_id: d.id,
+                done: true,
+            }
+
+            const res = await fetch(
+                `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/activities?api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(activity),
+                }
+            )
+
+            const data = await res.json()
+            // console.log('Logging activity in Pipedrive:', data)
+
+            if (data.success) {
+                console.log('Activity logged in Pipedrive:', data.data)
+            } else {
+                console.error(
+                    'Failed to log activity in Pipedrive:',
+                    data.error
+                )
+            }
+        } catch (error) {
+            console.error('Error logging activity in Pipedrive:', error)
         }
     }
 

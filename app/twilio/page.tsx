@@ -2,20 +2,28 @@
 
 export default function Twilio() {
     const sendMessage = async () => {
-        const response = await fetch('/api/send-twilio-message', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                // to: '+18777804236',
-                to: '+18018503070',
-                message: 'Test message from Backyard Estates.',
-            }),
-        })
+        const phoneNumbers = ['+18018503070', '+13854994168']
 
-        const data = await response.json()
-        console.log('Twilio', data)
+        for (const to of phoneNumbers) {
+            try {
+                const response = await fetch('/api/send-twilio-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        to: to,
+                        message:
+                            'Backyard Estates: Single message to multiple recipients',
+                    }),
+                })
+
+                const data = await response.json()
+                console.log(`Message sent to ${to}:`, data)
+            } catch (error) {
+                console.error(`Failed to send message to ${to}:`, error)
+            }
+        }
     }
 
     return (
@@ -25,8 +33,8 @@ export default function Twilio() {
                     <a
                         href="#"
                         onClick={(e) => {
-                            e.preventDefault() // Prevent default link behavior
-                            sendMessage() // Call the function
+                            e.preventDefault()
+                            sendMessage()
                         }}
                     >
                         Send Twilio message
