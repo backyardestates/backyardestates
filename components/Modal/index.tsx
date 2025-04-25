@@ -24,8 +24,8 @@ export default function Modal() {
             const now = Date.now()
             const elapsedTime = now - parseInt(isModalDismissedExpired, 10)
 
-            // Check if 1 hours (in milliseconds) have passed
-            if (elapsedTime > 1 * 60 * 60 * 1000) {
+            // Check if 24 hours (in milliseconds) have passed
+            if (elapsedTime > 24 * 60 * 60 * 1000) {
                 localStorage.removeItem('isModalDismissed')
                 localStorage.removeItem('isModalDismissedExpired')
             }
@@ -45,7 +45,7 @@ export default function Modal() {
     const handleClose = () => {
         setShowModal(false)
         localStorage.setItem('isModalDismissed', 'true')
-        localStorage.setItem('dismissedTimestamp', Date.now().toString())
+        localStorage.setItem('isModalDismissedExpired', Date.now().toString())
     }
 
     return (
