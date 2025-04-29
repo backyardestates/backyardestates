@@ -42,13 +42,15 @@ export async function generateMetadata({
 
     // Get the property thumbnail or use a default image
     const imagePath =
-        story.property.thumbnail?.url || '/images/og/backyard-estates-OG.png'
+        story.property.thumbnail?.url || '/images/backyard-estates-OG.png'
 
     // Generate Cloudinary URLs for OG and Twitter images
     const ogImage = `${cloudinaryBase}/w_1200,h_630,c_fill/${imagePath}`
     const twitterImage = `${cloudinaryBase}/w_800,h_418,c_fill/${imagePath}`
 
     return {
+        metadataBase: new URL('https://www.backyardestates.com'),
+
         title: title,
         description: description,
         openGraph: {

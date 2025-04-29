@@ -12,6 +12,37 @@ import InclusionsHomePanel from '@/components/InclusionsHomePanel'
 import '../public/styles.css'
 import style from './page.module.css'
 
+const title = 'Backyard Estates - Premier ADU builder'
+const description =
+    'Backyard Estates specializes in custom Accessory Dwelling Units (ADUs) in Los Angeles. Transform your property with our expert ADU solutions.'
+
+export const metadata = {
+    metadataBase: new URL('https://www.backyardestates.com'),
+    title: title,
+    description: description,
+    openGraph: {
+        title: title,
+        description: description,
+        url: 'https://www.backyardestates.com',
+        siteName: 'Backyard Estates',
+        images: [
+            {
+                url: '/images/backyard-estates-OG.png',
+                width: 1200,
+                height: 630,
+                alt: title,
+            },
+        ],
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: title,
+        description: description,
+        images: ['/images/backyard-estates-Twitter.png'],
+    },
+}
+
 export default function Home() {
     return (
         <>
