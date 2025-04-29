@@ -3,7 +3,6 @@ import Floorplans from '@/components/Floorplans'
 import Footer from '@/components/Footer'
 import Hero from '@/components/Hero'
 import HeroNav from '@/components/HeroNav'
-import Modal from '@/components/Modal'
 import Process from '@/components/Process'
 import Properties from '@/components/Properties'
 import StandaloneLink from '@/components/StandaloneLink'
@@ -16,7 +15,6 @@ import style from './page.module.css'
 export default function Home() {
     return (
         <>
-            <Modal />
             <HeroNav />
             <Hero />
             <Testimonials />
