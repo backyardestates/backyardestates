@@ -15,7 +15,7 @@ import style from './page.module.css'
 const STORY_QUERY = defineQuery(`*[
     _type == "story" &&
     slug.current == $slug
-  ][0]{names, purpose, wistiaId, body, images, property->{floorplan->{name,bed,bath,sqft,price,relatedProperties[]->{bed,bath,sqft,thumbnail,slug}}}}`)
+  ][0]{names, purpose, wistiaId, body, images, property->{thumbnail, floorplan->{name,bed,bath,sqft,price,relatedProperties[]->{bed,bath,sqft,thumbnail,slug}}}}`)
 
 const PROPERTY_QUERY = defineQuery(`*[
     _type == "story" &&
@@ -36,8 +36,17 @@ export async function generateMetadata({
     const title = `${story.names}'s customer story - Backyard Estates`
     const description = `${story.names}'s Backyard Estates customer story. ${story.purpose}`
 
-    // Twitter 800px by 418px
-    // Open Graph 1200px by 630px
+    // Cloudinary base URL
+    const cloudinaryBase =
+        'https://res.cloudinary.com/backyardestates/image/upload'
+
+    // Get the property thumbnail or use a default image
+    const imagePath =
+        story.property.thumbnail?.url || '/images/og/backyard-estates-OG.png'
+
+    // Generate Cloudinary URLs for OG and Twitter images
+    const ogImage = `${cloudinaryBase}/w_1200,h_630,c_fill/${imagePath}`
+    const twitterImage = `${cloudinaryBase}/w_800,h_418,c_fill/${imagePath}`
 
     return {
         title: title,
@@ -49,7 +58,7 @@ export async function generateMetadata({
             siteName: 'Backyard Estates',
             images: [
                 {
-                    url: story.images?.[0]?.url || '/images/default-og.jpg',
+                    url: ogImage,
                     width: 1200,
                     height: 630,
                     alt: title,
@@ -61,7 +70,7 @@ export async function generateMetadata({
             card: 'summary_large_image',
             title: title,
             description: description,
-            images: [story.images?.[0]?.url || '/images/default-og.jpg'],
+            images: [twitterImage],
         },
     }
 }
@@ -83,12 +92,6 @@ export default async function Story({
 
     if (!story) {
         notFound()
-    }
-
-    if (property) {
-        console.log('Property:', property)
-    } else {
-        console.error('Property not found for story:', story.slug)
     }
 
     return (
