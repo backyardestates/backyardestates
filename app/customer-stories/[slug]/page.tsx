@@ -12,11 +12,21 @@ import RelatedProperties from '@/components/RelatedProperties'
 
 import style from './page.module.css'
 
+const STORY_QUERY = defineQuery(`*[
+    _type == "story" &&
+    slug.current == $slug
+  ][0]{names, purpose, wistiaId, body, images, property->{floorplan->{name,bed,bath,sqft,price,relatedProperties[]->{bed,bath,sqft,thumbnail,slug}}}}`)
+
+const PROPERTY_QUERY = defineQuery(`*[
+    _type == "story" &&
+    slug.current == $slug
+  ][0]{property->{bed,bath,sqft}}`)
+
 // Dynamic metadata generation
 export async function generateMetadata({
     params,
 }: {
-    params: { slug: string }
+    params: Promise<{ slug: string }>
 }) {
     const { data: story } = await sanityFetch({
         query: STORY_QUERY,
@@ -35,7 +45,7 @@ export async function generateMetadata({
         openGraph: {
             title: title,
             description: description,
-            url: `https://www.backyardestates.com/customer-stories/${params.slug}`,
+            url: `https://www.backyardestates.com/customer-stories/${story.slug}`,
             siteName: 'Backyard Estates',
             images: [
                 {
@@ -55,16 +65,6 @@ export async function generateMetadata({
         },
     }
 }
-
-const STORY_QUERY = defineQuery(`*[
-    _type == "story" &&
-    slug.current == $slug
-  ][0]{names, purpose, wistiaId, body, images, property->{floorplan->{name,bed,bath,sqft,price,relatedProperties[]->{bed,bath,sqft,thumbnail,slug}}}}`)
-
-const PROPERTY_QUERY = defineQuery(`*[
-    _type == "story" &&
-    slug.current == $slug
-  ][0]{property->{bed,bath,sqft}}`)
 
 export default async function Story({
     params,
