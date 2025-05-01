@@ -97,9 +97,7 @@ export default async function Footer() {
                             <h3 className={style.display3}>Resources</h3>
                             <ul>
                                 <li>
-                                    <Link href="/frequently-asked-questions">
-                                        Frequently asked questions
-                                    </Link>
+                                    <Link href="/blog">Blog</Link>
                                 </li>
                                 <li>
                                     <Link href="/properties">
@@ -123,13 +121,18 @@ export default async function Footer() {
                                     <Link href="/about-us">About us</Link>
                                 </li>
                                 <li>
-                                    <Link href="/about-us/our-team">
-                                        Our team
+                                    <Link href="/frequently-asked-questions">
+                                        Frequently asked questions
                                     </Link>
                                 </li>
                                 <li>
                                     <Link href="/about-us/our-process">
                                         Our process
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/about-us/our-team">
+                                        Our team
                                     </Link>
                                 </li>
                             </ul>
@@ -138,7 +141,7 @@ export default async function Footer() {
                     <div className={style.columnRightBottom}>
                         <ul className={style.legal}>
                             <li>
-                                © 2023 Backyard Estates. All Rights Reserved.
+                                © 2025 Backyard Estates. All Rights Reserved.
                             </li>
                             <li>
                                 <Link href="/legal/privacy-policy">

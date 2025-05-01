@@ -136,12 +136,24 @@
     }
 }
 
-.legal li,
+.legal li:first-child {
+    text-decoration: none;
+    color: white;
+    font-family: var(--font-sans);
+    opacity: var(--link-opacity);
+    /* transition: opacity 300ms ease; */
+}
+
 .legal li a {
-    color: #ababab !important;
-    font-size: 1rem;
-    font-style: normal;
-    font-weight: 300;
+    text-decoration: none;
+    color: white;
+    font-family: var(--font-sans);
+    opacity: var(--link-opacity);
+    transition: opacity 300ms ease;
+}
+
+.legal li a:hover {
+    opacity: var(--link-opacity-hover);
 }
 
 .intro {

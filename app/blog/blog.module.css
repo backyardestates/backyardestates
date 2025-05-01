@@ -1,0 +1,22 @@
+.main {
+    margin: 0 auto;
+    padding: 3rem 0;
+    width: 1440px;
+    background-color: pink;
+    color: purple;
+    font-family: var(--font-sans);
+}
+
+.headline {
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: purple;
+}
+
+.blogLink {
+    color: purple;
+    text-decoration: none;
+    font-weight: 600;
+}
