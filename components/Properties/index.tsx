@@ -23,7 +23,7 @@ export default async function Properties() {
                 ))}
             </div>
             <div className={style.centered}>
-                <StandaloneLink href="/gallery">
+                <StandaloneLink href="/properties">
                     View all projects
                 </StandaloneLink>
             </div>

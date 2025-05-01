@@ -40,7 +40,10 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
         </p>
         <ul style={list}>
             <li style={listItem}>
-                <a href="https://www.backyardestates.com/gallery" style={link}>
+                <a
+                    href="https://www.backyardestates.com/properties"
+                    style={link}
+                >
                     View floor plans
                 </a>
             </li>
