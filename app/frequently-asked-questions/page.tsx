@@ -23,6 +23,26 @@ const options = { next: { revalidate: 30 } }
 
 export default async function FrequentlyAskedQuestions() {
     const faqs = await client.fetch<SanityDocument[]>(FAQS_QUERY, {}, options)
+
+    // Generate FAQ schema
+    const faqSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((faq) => ({
+            '@type': 'Question',
+            name: faq.title,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: Array.isArray(faq.body)
+                    ? faq.body
+                          .map((block) =>
+                              block.children.map((child) => child.text).join('')
+                          )
+                          .join('\n')
+                    : '',
+            },
+        })),
+    }
     return (
         <>
             <Nav />
@@ -49,6 +69,12 @@ export default async function FrequentlyAskedQuestions() {
                 <Catchall />
             </main>
             <Footer />
+
+            {/* Add FAQ schema as JSON-LD */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+            />
         </>
     )
 }
