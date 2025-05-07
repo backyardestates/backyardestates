@@ -58,7 +58,6 @@
     display: inline-block;
     font-weight: 400;
     color: var(--color-neutral-500);
-    /* border: 2px solid pink; */
 }
 
 .input {
@@ -114,10 +113,6 @@
     border-radius: 0.5rem;
 }
 
-/* .icon {
-    display: none;
-} */
-
 .success {
     display: none;
     margin-bottom: 2rem;
@@ -159,24 +154,6 @@
     grid-column: span 12;
 }
 
-/* fixed */
-@media only screen and (min-width: 1400px) {
-    .content {
-        grid-column-start: 5;
-        grid-column-end: 9;
-    }
-
-    .calendly {
-        grid-column-start: 1;
-        grid-column-end: 13;
-    }
-
-    /* .calendlySentence {
-        border: 1px solid red;
-        margin: 0 auto 0 auto !important;
-    } */
-}
-
 .root {
     display: grid;
     column-gap: 2rem;
@@ -204,14 +181,90 @@
     cursor: pointer;
 }
 
-/* fixed */
-@media only screen and (min-width: 1440px) {
+.spinner {
+    display: none;
+}
+
+.field {
+    margin-bottom: 1.5rem;
+}
+
+.customCheckbox {
+    border: 1px solid green;
+    /* display: flex; */
+    /* align-items: center; */
+    /* gap: 1rem; */
+    cursor: pointer;
+}
+
+.customCheckbox input[type='checkbox'] {
+    display: none; /* Hide the default checkbox */
+}
+
+.customCheckbox::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-neutral-300);
+    border-radius: 4px; /* Rounded corners */
+    background-color: var(--color-white);
+    transition:
+        background-color 0.2s,
+        border-color 0.2s;
+}
+
+.customCheckbox input[type='checkbox']:checked + span::before {
+    background-color: var(--color-brand-light-blue);
+    border-color: var(--color-brand-light-blue);
+    content: '✔'; /* Add a checkmark */
+    color: var(--color-white);
+    font-size: 16px;
+    text-align: center;
+    line-height: 20px;
+}
+
+.customCheckbox:hover::before {
+    border-color: var(--color-brand-dark-blue);
+}
+
+.customCheckbox input[type='checkbox']:focus-visible + span::before {
+    outline: 2px solid var(--color-brand-light-blue);
+    outline-offset: 2px;
+}
+
+.customCheckbox input[type='checkbox']:disabled + span::before {
+    background-color: var(--color-neutral-200);
+    border-color: var(--color-neutral-200);
+    cursor: not-allowed;
+}
+
+.checkbox {
+    border: 1px solid magenta;
+}
+
+.checkboxText {
+    /* display: block; */
+    border: 1px solid magenta;
+    /* padding-left: 0.5rem; */
+    display: inline-block;
+    font-weight: 400;
+    color: var(--color-neutral-500);
+}
+
+@media only screen and (min-width: 1400px) {
+    .content {
+        grid-column-start: 5;
+        grid-column-end: 9;
+    }
+
+    .calendly {
+        grid-column-start: 1;
+        grid-column-end: 13;
+    }
+
     .root {
         margin: 0 auto;
         width: 1440px;
     }
-}
-
-.spinner {
-    display: none;
 }

@@ -1,7 +1,6 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-// import type { Metadata } from 'next'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/pro-solid-svg-icons'
@@ -10,13 +9,9 @@ import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
 import Link from 'next/link'
 
 import Logo from '@/components/Logo'
-// import OpenGraph from '@/components/OpenGraph'
 
 import style from './Form.module.css'
-
-// export const metadata: Metadata = {
-//     title: 'Talk to an ADU specialist - Backyard Estates',
-// }
+import Checkbox from '@/components/Checkbox'
 
 export default function LeadForm() {
     const router = useRouter()
@@ -33,10 +28,16 @@ export default function LeadForm() {
 
         const names = e.target.name.value.split(' ')
 
+        // if (!e.target.gdprConsent.checked) {
+        //     alert('You must agree to the GDPR consent to proceed.')
+        //     return
+        // }
+
         const person = {
             name: e.target.name.value,
             email: [{ value: e.target.email.value }],
             phone: [{ value: e.target.mobile.value }],
+            marketing_status: 'subscribed',
         }
 
         const lead = {
@@ -121,12 +122,14 @@ export default function LeadForm() {
             `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/dealFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`
         )
         const data = await res.json()
+    }
 
-        if (!data) {
-            //console.log('Problem')
-        } else {
-            //console.log(data)
-        }
+    function checkCheck(e) {
+        e.preventDefault()
+        console.log(
+            'e.target.gdprConsent.checked',
+            e.target.gdprConsent.checked
+        )
     }
 
     return (
@@ -142,11 +145,11 @@ export default function LeadForm() {
             </div>
 
             <main className={style.root}>
-                {/* <OpenGraph title={`Backyard Estates - Contact form`} /> */}
                 <div className={style.content}>
                     <div className={style.centered}>
                         <h1>Talk to an ADU specialist</h1>
-                        <form onSubmit={createPerson}>
+                        {/* <form onSubmit={createPerson}> */}
+                        <form onSubmit={checkCheck}>
                             {/* <form onSubmit={getAllFields}> */}
                             <fieldset id="fields">
                                 <div className={style.field}>
@@ -157,7 +160,7 @@ export default function LeadForm() {
                                         type="text"
                                         name="address"
                                         id="address"
-                                        required
+                                        // required
                                         className={style.textfield}
                                         data-1p-ignore
                                     />
@@ -168,7 +171,7 @@ export default function LeadForm() {
                                         type="text"
                                         name="name"
                                         id="name"
-                                        required
+                                        // required
                                         className={style.textfield}
                                         data-1p-ignore
                                     />
@@ -179,7 +182,7 @@ export default function LeadForm() {
                                         type="email"
                                         name="email"
                                         id="email"
-                                        required
+                                        // required
                                         className={style.textfield}
                                         data-1p-ignore
                                         autoComplete="off"
@@ -191,7 +194,7 @@ export default function LeadForm() {
                                         type="text"
                                         name="mobile"
                                         id="mobile"
-                                        required
+                                        // required
                                         className={style.textfield}
                                     />
                                 </div>
@@ -202,7 +205,7 @@ export default function LeadForm() {
                                             type="radio"
                                             name="source"
                                             value="ADU Event"
-                                            required
+                                            // required
                                         />
                                         <span className={style.option_label}>
                                             ADU event
@@ -250,6 +253,21 @@ export default function LeadForm() {
                                         </span>
                                     </label>
                                 </div>
+                                <Checkbox
+                                    label="I consent to receive promotional emails and
+                                    text messages from Backyard Estates."
+                                    explanation={
+                                        <>
+                                            Your consent indicates that you have
+                                            read and understood our{' '}
+                                            <Link href="/legal/privacy-policy">
+                                                Privacy Policy
+                                            </Link>
+                                            . You may unsubscribe at any time by
+                                            using the opt-out links provided.
+                                        </>
+                                    }
+                                />
                             </fieldset>
                             <button id="btn" className={style.inputButton}>
                                 <span>Submit</span>
@@ -260,24 +278,6 @@ export default function LeadForm() {
                                     className={style.spinner}
                                 />
                             </button>
-                            <p className={style.legal_print}>
-                                By clicking &ldquo;Submit,&rdquo; you are
-                                granting consent to receive promotional emails
-                                and text messages from Backyard Estates. These
-                                communications aim to keep you informed about
-                                updates, special offers, and pertinent
-                                information regarding our ADU construction
-                                services. Additionally, your consent indicates
-                                that you have read and understood our{' '}
-                                <Link href="/legal/privacy-policy">
-                                    Privacy Policy
-                                </Link>
-                                . You may choose to unsubscribe from our
-                                promotional emails and texts by using the
-                                opt-out link provided in our communications.
-                                Thank you for considering Backyard Estates for
-                                your ADU needs.
-                            </p>
                         </form>
                     </div>
                 </div>
