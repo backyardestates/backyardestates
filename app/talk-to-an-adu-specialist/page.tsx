@@ -11,6 +11,7 @@ import Link from 'next/link'
 import Logo from '@/components/Logo'
 
 import style from './Form.module.css'
+import RadioGroup from '@/components/RadioGroup'
 import Checkbox from '@/components/Checkbox'
 
 export default function LeadForm() {
@@ -27,94 +28,87 @@ export default function LeadForm() {
         e.target.btn.lastChild.style.display = 'block'
 
         const names = e.target.name.value.split(' ')
-
-        // if (!e.target.gdprConsent.checked) {
-        //     alert('You must agree to the GDPR consent to proceed.')
-        //     return
-        // }
-
         const person = {
             name: e.target.name.value,
             email: [{ value: e.target.email.value }],
             phone: [{ value: e.target.mobile.value }],
             marketing_status: 'subscribed',
         }
-
-        const lead = {
-            name: e.target.name.value,
-            address: e.target.address.value,
-            firstname: names[0],
-            lastname: names[names.length - 1],
-            email: [{ value: e.target.email.value }],
-            phone: [{ value: e.target.mobile.value }],
-            source: e.target.source.value,
-        }
-
-        const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/persons?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
-            {
+        try {
+            const res = await fetch('/api/pipedrive/create-person', {
                 method: 'POST',
-                body: JSON.stringify(person),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        )
-        const data = await res.json()
+                body: JSON.stringify({ person }),
+                headers: { 'Content-Type': 'application/json' },
+            })
 
-        createLead(data.data, lead)
+            const createdPerson = await res.json()
+
+            if (createdPerson.success) {
+                console.log('Person created:', createdPerson.data)
+                const lead = {
+                    person_id: createdPerson.data.id,
+                    name: e.target.name.value,
+                    address: e.target.address.value,
+                    firstname: names[0],
+                    lastname: names[names.length - 1],
+                    email: [{ value: e.target.email.value }],
+                    phone: [{ value: e.target.mobile.value }],
+                    source: e.target.source.value,
+                }
+
+                console.log('Lead:', lead)
+
+                let source = 0
+
+                switch (lead.source) {
+                    case 'ADU Event':
+                        source = 58
+                        break
+                    case 'Open House':
+                        source = 59
+                        break
+                    case 'Referral':
+                        source = 60
+                        break
+                    case 'Search':
+                        source = 61
+                        break
+                    case 'Social Media':
+                        source = 28
+                        break
+                    default:
+                        source = 56
+                }
+
+                const submittedLead = {
+                    title: `${lead.firstname} ${lead.lastname}`,
+                    person_id: lead.person_id,
+                    // prettier-ignore
+                    'fd49bc4881f7bdffdeaa1868171df24bea5925fe': source,
+                    '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
+                }
+                try {
+                    const leadRes = await fetch('/api/pipedrive/submit-lead', {
+                        method: 'POST',
+                        body: JSON.stringify({ submittedLead }),
+                        headers: { 'Content-Type': 'application/json' },
+                    })
+
+                    const leadData = await leadRes.json()
+
+                    if (leadData.success) {
+                        // router.push(`/talk-to-an-adu-specialist/calendly`)
+                    }
+                } catch (error) {
+                    console.log('Error submitting lead:', error)
+                }
+            }
+        } catch (error) {
+            console.log('Error creating person:', error)
+        }
     }
 
-    async function createLead(d, lead) {
-        let source = 0
-
-        switch (lead.source) {
-            case 'ADU Event':
-                source = 58
-                break
-            case 'Open House':
-                source = 59
-                break
-            case 'Referral':
-                source = 60
-                break
-            case 'Search':
-                source = 61
-                break
-            case 'Social Media':
-                source = 28
-                break
-            default:
-                source = 56
-        }
-
-        const submittedLead = {
-            title: `${d.first_name} ${d.last_name}`,
-            person_id: d.id,
-            // prettier-ignore
-            'fd49bc4881f7bdffdeaa1868171df24bea5925fe': source,
-            '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
-        }
-
-        const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/deals?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
-            {
-                method: 'POST',
-                body: JSON.stringify(submittedLead),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        )
-        const data = await res.json()
-
-        if (data.success) {
-            router.push(
-                `/talk-to-an-adu-specialist/calendly?name=${d.first_name} ${d.last_name}&address=${lead.address}&email=${d.primary_email}`
-            )
-        }
-    }
-
+    /*
     async function getAllFields(e) {
         e.preventDefault()
 
@@ -123,14 +117,30 @@ export default function LeadForm() {
         )
         const data = await res.json()
     }
+    */
 
-    function checkCheck(e) {
-        e.preventDefault()
-        console.log(
-            'e.target.gdprConsent.checked',
-            e.target.gdprConsent.checked
-        )
-    }
+    const sources = [
+        {
+            label: 'ADU Event',
+            value: 'ADU Event',
+        },
+        {
+            label: 'Open House',
+            value: 'Open House',
+        },
+        {
+            label: 'Referral',
+            value: 'Referral',
+        },
+        {
+            label: 'Search',
+            value: 'Search',
+        },
+        {
+            label: 'Social Media',
+            value: 'Social Media',
+        },
+    ]
 
     return (
         <>
@@ -148,8 +158,8 @@ export default function LeadForm() {
                 <div className={style.content}>
                     <div className={style.centered}>
                         <h1>Talk to an ADU specialist</h1>
-                        {/* <form onSubmit={createPerson}> */}
-                        <form onSubmit={checkCheck}>
+                        <form onSubmit={createPerson}>
+                            {/* <form onSubmit={checkCheck}> */}
                             {/* <form onSubmit={getAllFields}> */}
                             <fieldset id="fields">
                                 <div className={style.field}>
@@ -160,7 +170,7 @@ export default function LeadForm() {
                                         type="text"
                                         name="address"
                                         id="address"
-                                        // required
+                                        required
                                         className={style.textfield}
                                         data-1p-ignore
                                     />
@@ -171,7 +181,7 @@ export default function LeadForm() {
                                         type="text"
                                         name="name"
                                         id="name"
-                                        // required
+                                        required
                                         className={style.textfield}
                                         data-1p-ignore
                                     />
@@ -182,7 +192,7 @@ export default function LeadForm() {
                                         type="email"
                                         name="email"
                                         id="email"
-                                        // required
+                                        required
                                         className={style.textfield}
                                         data-1p-ignore
                                         autoComplete="off"
@@ -194,65 +204,11 @@ export default function LeadForm() {
                                         type="text"
                                         name="mobile"
                                         id="mobile"
-                                        // required
+                                        required
                                         className={style.textfield}
                                     />
                                 </div>
-                                <div className={style.field}>
-                                    <label>How did you hear about us?</label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="ADU Event"
-                                            // required
-                                        />
-                                        <span className={style.option_label}>
-                                            ADU event
-                                        </span>
-                                    </label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="Open House"
-                                        />
-                                        <span className={style.option_label}>
-                                            Open house
-                                        </span>
-                                    </label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="Referral (Friend/Real Estate Agent/Lender etc.)"
-                                        />
-                                        <span className={style.option_label}>
-                                            Referral (Friend/Real Estate
-                                            Agent/Lender etc.)
-                                        </span>
-                                    </label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="Search"
-                                        />
-                                        <span className={style.option_label}>
-                                            Search
-                                        </span>
-                                    </label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="Social Media"
-                                        />
-                                        <span className={style.option_label}>
-                                            Social media
-                                        </span>
-                                    </label>
-                                </div>
+                                <RadioGroup name="source" options={sources} />
                                 <Checkbox
                                     label="I consent to receive promotional emails and
                                     text messages from Backyard Estates."
