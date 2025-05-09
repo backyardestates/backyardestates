@@ -27,6 +27,28 @@ export default function LeadForm() {
         e.target.btn.firstChild.innerText = 'Submitting...'
         e.target.btn.lastChild.style.display = 'block'
 
+        // Validate RadioGroup
+        /*
+        const source = e.target.source.value
+        if (!source) {
+            alert('Please select how you heard about us.')
+            e.target.fields.disabled = false
+            e.target.btn.firstChild.innerText = 'Submit'
+            e.target.btn.lastChild.style.display = 'none'
+            return
+        }
+            */
+
+        // Validate Checkbox
+        const gdprConsent = e.target.gdprConsent.checked
+        if (!gdprConsent) {
+            alert('You must agree to the terms and conditions to proceed.')
+            e.target.fields.disabled = false
+            e.target.btn.firstChild.innerText = 'Submit'
+            e.target.btn.lastChild.style.display = 'none'
+            return
+        }
+
         const person = {
             name: e.target.name.value,
             email: [{ value: e.target.email.value }],
@@ -37,7 +59,6 @@ export default function LeadForm() {
         const names = e.target.name.value.split(' ')
 
         const lead = {
-            // person_id: createdPerson.data.id,
             name: e.target.name.value,
             address: e.target.address.value,
             firstname: names[0],
@@ -54,7 +75,7 @@ export default function LeadForm() {
             })
 
             const personCreated = await res.json()
-            // console.log('Person created:', createdPerson.data.data.id)
+
             if (personCreated.success) {
                 submitLead(personCreated, lead)
             }
@@ -103,7 +124,7 @@ export default function LeadForm() {
             const leadData = await leadRes.json()
 
             if (leadData.success) {
-                // router.push(`/talk-to-an-adu-specialist/calendly`)
+                router.push(`/talk-to-an-adu-specialist/calendly`)
             }
         } catch (error) {
             console.log('Error submitting lead:', error)
@@ -161,7 +182,6 @@ export default function LeadForm() {
                     <div className={style.centered}>
                         <h1>Talk to an ADU specialist</h1>
                         <form onSubmit={createPerson}>
-                            {/* <form onSubmit={checkCheck}> */}
                             {/* <form onSubmit={getAllFields}> */}
                             <fieldset id="fields">
                                 <div className={style.field}>

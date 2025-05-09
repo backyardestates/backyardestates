@@ -6,12 +6,12 @@ export default function Radio({
     name,
     value,
     isChecked,
-    onClick,
+    onChange,
 }: {
     name: string
     value: string
     isChecked: boolean
-    onClick: () => void
+    onChange: () => void
 }) {
     const [checked, setChecked] = useState(false)
 
@@ -23,7 +23,7 @@ export default function Radio({
                 value={value}
                 className={style.hidden}
                 checked={isChecked}
-                // onChange={() => onClick(value)} // Notify parent when selected
+                onChange={onChange}
                 required
             />
             <button
@@ -32,10 +32,7 @@ export default function Radio({
                 aria-checked={isChecked}
                 data-state={isChecked ? 'checked' : 'unchecked'}
                 className={style.radio}
-                onClick={() => {
-                    setChecked(!checked)
-                    onClick()
-                }}
+                onClick={onChange}
             >
                 <div className={style.disc} />
             </button>

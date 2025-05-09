@@ -16,9 +16,6 @@ export default function RadioGroup({
     return (
         <div className={style.base}>
             <label className={style.label}>How did you hear about us?</label>
-            <p
-                style={{ color: 'magenta', marginBottom: '1rem' }}
-            >{`selectedValue: ${selected}`}</p>
             <div className={style.options}>
                 {options.map((option) => (
                     <Radio
@@ -26,7 +23,7 @@ export default function RadioGroup({
                         name={name}
                         value={option.value}
                         isChecked={selected === option.value}
-                        onClick={() => {
+                        onChange={() => {
                             setSelected(option.value)
                         }}
                     />
