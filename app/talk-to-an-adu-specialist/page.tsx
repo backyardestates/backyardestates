@@ -27,12 +27,24 @@ export default function LeadForm() {
         e.target.btn.firstChild.innerText = 'Submitting...'
         e.target.btn.lastChild.style.display = 'block'
 
-        const names = e.target.name.value.split(' ')
         const person = {
             name: e.target.name.value,
             email: [{ value: e.target.email.value }],
             phone: [{ value: e.target.mobile.value }],
             marketing_status: 'subscribed',
+        }
+
+        const names = e.target.name.value.split(' ')
+
+        const lead = {
+            // person_id: createdPerson.data.id,
+            name: e.target.name.value,
+            address: e.target.address.value,
+            firstname: names[0],
+            lastname: names[names.length - 1],
+            email: [{ value: e.target.email.value }],
+            phone: [{ value: e.target.mobile.value }],
+            source: e.target.source.value,
         }
         try {
             const res = await fetch('/api/pipedrive/create-person', {
@@ -41,70 +53,60 @@ export default function LeadForm() {
                 headers: { 'Content-Type': 'application/json' },
             })
 
-            const createdPerson = await res.json()
-
-            if (createdPerson.success) {
-                console.log('Person created:', createdPerson.data)
-                const lead = {
-                    person_id: createdPerson.data.id,
-                    name: e.target.name.value,
-                    address: e.target.address.value,
-                    firstname: names[0],
-                    lastname: names[names.length - 1],
-                    email: [{ value: e.target.email.value }],
-                    phone: [{ value: e.target.mobile.value }],
-                    source: e.target.source.value,
-                }
-
-                console.log('Lead:', lead)
-
-                let source = 0
-
-                switch (lead.source) {
-                    case 'ADU Event':
-                        source = 58
-                        break
-                    case 'Open House':
-                        source = 59
-                        break
-                    case 'Referral':
-                        source = 60
-                        break
-                    case 'Search':
-                        source = 61
-                        break
-                    case 'Social Media':
-                        source = 28
-                        break
-                    default:
-                        source = 56
-                }
-
-                const submittedLead = {
-                    title: `${lead.firstname} ${lead.lastname}`,
-                    person_id: lead.person_id,
-                    // prettier-ignore
-                    'fd49bc4881f7bdffdeaa1868171df24bea5925fe': source,
-                    '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
-                }
-                try {
-                    const leadRes = await fetch('/api/pipedrive/submit-lead', {
-                        method: 'POST',
-                        body: JSON.stringify({ submittedLead }),
-                        headers: { 'Content-Type': 'application/json' },
-                    })
-
-                    const leadData = await leadRes.json()
-
-                    if (leadData.success) {
-                        // router.push(`/talk-to-an-adu-specialist/calendly`)
-                    }
-                } catch (error) {
-                    console.log('Error submitting lead:', error)
-                }
+            const personCreated = await res.json()
+            // console.log('Person created:', createdPerson.data.data.id)
+            if (personCreated.success) {
+                submitLead(personCreated, lead)
             }
         } catch (error) {
             console.log('Error creating person:', error)
+        }
+    }
+
+    async function submitLead(person, lead) {
+        let sourceNumber = 0
+
+        switch (lead.source) {
+            case 'ADU Event':
+                sourceNumber = 58
+                break
+            case 'Open House':
+                sourceNumber = 59
+                break
+            case 'Referral':
+                sourceNumber = 60
+                break
+            case 'Search':
+                sourceNumber = 61
+                break
+            case 'Social Media':
+                sourceNumber = 28
+                break
+            default:
+                sourceNumber = 56
+        }
+
+        const submittedLead = {
+            title: `${lead.firstname} ${lead.lastname}`,
+            person_id: person.data.data.id,
+            // prettier-ignore
+            'fd49bc4881f7bdffdeaa1868171df24bea5925fe': sourceNumber,
+            '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
+        }
+        try {
+            const leadRes = await fetch('/api/pipedrive/submit-lead', {
+                method: 'POST',
+                body: JSON.stringify({ submittedLead }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+
+            const leadData = await leadRes.json()
+
+            if (leadData.success) {
+                // router.push(`/talk-to-an-adu-specialist/calendly`)
+            }
+        } catch (error) {
+            console.log('Error submitting lead:', error)
         }
     }
 
