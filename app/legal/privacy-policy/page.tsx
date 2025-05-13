@@ -1020,8 +1020,9 @@ export default function PrivacyPolicy() {
                         <a href="mailto:support@backyardestates.com">
                             support@backyardestates.com
                         </a>
-                        . You may also visit our "Do Not Sell or Share My
-                        Personal Information" page to submit an opt-out request.
+                        . You may also visit our &ldquo;Do Not Sell or Share My
+                        Personal Information&rdquo; page to submit an opt-out
+                        request.
                     </p>
                     <p>
                         Additionally, if your browser supports Global Privacy
