@@ -1,5 +1,5 @@
 'use client'
-
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,6 +15,8 @@ import RadioGroup from '@/components/RadioGroup'
 import Checkbox from '@/components/Checkbox'
 
 export default function LeadForm() {
+    const [showError, setShowError] = useState(false)
+
     const router = useRouter()
 
     function goBack() {
@@ -27,22 +29,12 @@ export default function LeadForm() {
         e.target.btn.firstChild.innerText = 'Submitting...'
         e.target.btn.lastChild.style.display = 'block'
 
-        // Validate RadioGroup
-        /*
-        const source = e.target.source.value
-        if (!source) {
-            alert('Please select how you heard about us.')
-            e.target.fields.disabled = false
-            e.target.btn.firstChild.innerText = 'Submit'
-            e.target.btn.lastChild.style.display = 'none'
-            return
-        }
-            */
+        // Validate checkboxes
+        const consentEmail = e.target.consentEmail.checked
+        const consentTextMessages = e.target.consentTextMessages.checked
 
-        // Validate Checkbox
-        const gdprConsent = e.target.gdprConsent.checked
-        if (!gdprConsent) {
-            alert('You must agree to the terms and conditions to proceed.')
+        if (!consentEmail || !consentTextMessages) {
+            setShowError(true)
             e.target.fields.disabled = false
             e.target.btn.firstChild.innerText = 'Submit'
             e.target.btn.lastChild.style.display = 'none'
@@ -232,19 +224,16 @@ export default function LeadForm() {
                                 </div>
                                 <RadioGroup name="source" options={sources} />
                                 <Checkbox
-                                    label="I consent to receive promotional emails and
-                                    text messages from Backyard Estates."
-                                    explanation={
-                                        <>
-                                            Your consent indicates that you have
-                                            read and understood our{' '}
-                                            <Link href="/legal/privacy-policy">
-                                                Privacy Policy
-                                            </Link>
-                                            . You may unsubscribe at any time by
-                                            using the opt-out links provided.
-                                        </>
-                                    }
+                                    name="consentEmail"
+                                    label="I consent to receive marketing emails from Backyard Estates."
+                                    errorMessage="You must agree to receive marketing emails to proceed."
+                                    error={showError}
+                                />
+                                <Checkbox
+                                    name="consentTextMessages"
+                                    label="I consent to receive automated text messages from Backyard Estates."
+                                    errorMessage="You must agree to receive automated text messages to proceed."
+                                    error={showError}
                                 />
                             </fieldset>
                             <button id="btn" className={style.inputButton}>
@@ -256,6 +245,27 @@ export default function LeadForm() {
                                     className={style.spinner}
                                 />
                             </button>
+                            <p className={style.legal_print}>
+                                By clicking submit, you consent to receive
+                                marketing emails and automated text messages
+                                from Backyard Estates at the email address and
+                                phone number you provided. These messages may be
+                                sent using an automatic telephone dialing
+                                system. Consent is not a condition of purchase.
+                                Message and data rates may apply. Message
+                                frequency varies. You can opt out at any time by
+                                clicking the unsubscribe link in our emails or
+                                replying STOP to our text messages. For more
+                                information, please review our{' '}
+                                <Link href="/legal/terms-and-conditions">
+                                    Terms and Conditions
+                                </Link>{' '}
+                                and{' '}
+                                <Link href="/legal/privacy-policy">
+                                    Privacy Policy
+                                </Link>
+                                .
+                            </p>
                         </form>
                     </div>
                 </div>

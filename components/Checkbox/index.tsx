@@ -3,11 +3,17 @@ import { useState } from 'react'
 import style from './Checkbox.module.css'
 
 export default function Checkbox({
+    name,
     label,
     explanation,
+    errorMessage,
+    error,
 }: {
+    name: string
     label: string
-    explanation: React.ReactNode
+    explanation?: React.ReactNode
+    errorMessage?: string
+    error?: boolean
 }) {
     const [isChecked, setIsChecked] = useState(false)
 
@@ -19,8 +25,8 @@ export default function Checkbox({
             <input
                 aria-hidden="true"
                 type="checkbox"
-                name="gdprConsent"
-                id="gdprConsent"
+                name={name}
+                id={name}
                 value="on"
                 checked={isChecked}
                 onChange={toggleCheckbox}
@@ -59,6 +65,9 @@ export default function Checkbox({
             <div>
                 <label className={style.label}>{label}</label>
                 <p className={style.explanation}>{explanation}</p>
+                {error && !isChecked && (
+                    <p className={style.error}>{errorMessage}</p>
+                )}
             </div>
         </div>
     )
