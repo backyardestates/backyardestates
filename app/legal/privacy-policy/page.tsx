@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
-// import OpenGraph from '@/components/OpenGraph'
 
 import style from '../page.module.css'
 
@@ -14,12 +13,10 @@ export const metadata: Metadata = {
 export default function PrivacyPolicy() {
     return (
         <>
-            {/* <OpenGraph title={`Backyard Estates - Privacy policy`} /> */}
             <Nav />
-
             <Masthead
                 title="Privacy policy"
-                explanation="Last updated December 01, 2020"
+                explanation="Last updated May 12, 2025"
             />
             <main className="centered">
                 <div className={style.content}>
@@ -530,19 +527,21 @@ export default function PrivacyPolicy() {
                         </strong>
                         <em>
                             Yes, if you are a resident of California, you are
-                            granted specific rights regarding access to your
-                            personal information.
+                            granted specific rights regarding access to and
+                            control over your personal information under the
+                            California Consumer Privacy Act (CCPA) and the
+                            California Privacy Rights Act (CPRA).
                         </em>
                     </p>
                     <p>
                         California Civil Code Section 1798.83, also known as the
-                        &ldquo;Shine The Light&rdquo; law, permits our users who
-                        are California residents to request and obtain from us,
-                        once a year and free of charge, information about
-                        categories of personal information (if any) we disclosed
-                        to third parties for direct marketing purposes and the
-                        names and addresses of all third parties with which we
-                        shared personal information in the immediately preceding
+                        “Shine The Light” law, permits our users who are
+                        California residents to request and obtain from us, once
+                        a year and free of charge, information about categories
+                        of personal information (if any) we disclosed to third
+                        parties for direct marketing purposes and the names and
+                        addresses of all third parties with which we shared
+                        personal information in the immediately preceding
                         calendar year. If you are a California resident and
                         would like to make such a request, please submit your
                         request in writing to us using the contact information
@@ -556,10 +555,9 @@ export default function PrivacyPolicy() {
                         data, please contact us using the contact information
                         provided below, and include the email address associated
                         with your account and a statement that you reside in
-                        California. We will make sure the data is not publicly
-                        displayed on the Website, but please be aware that the
-                        data may not be completely or comprehensively removed
-                        from all our systems (e.g. backups, etc.).
+                        California. We will ensure the data is not publicly
+                        displayed on the Website, though it may not be
+                        completely removed from our systems (e.g., backups).
                     </p>
                     <h3>CCPA Privacy Notice</h3>
                     <p>
@@ -890,38 +888,47 @@ export default function PrivacyPolicy() {
                     </p>
 
                     <p>
-                        Depending on the circumstances, you have a right to
-                        know:
+                        Under the CCPA and CPRA, if you are a California
+                        resident, and depending upon the circumstances, you are
+                        entitled to the following rights:
                     </p>
                     <ul>
                         <li>
-                            whether we collect and use your personal
+                            The right to know whether we collect and use your
+                            personal information;
+                        </li>
+                        <li>
+                            The right to know the purposes for which the
+                            collected personal information is used;
+                        </li>
+                        <li>
+                            The right to know what personal information we
+                            collect, use, disclose, share, and sell;
+                        </li>
+                        <li>
+                            The right to know whether we sell your personal
+                            information to third parties;
+                        </li>
+                        <li>
+                            The right to delete personal information collected
+                            from you (with some exceptions);
+                        </li>
+                        <li>
+                            The right to correct inaccurate personal
                             information;
                         </li>
                         <li>
-                            the categories of personal information that we
-                            collect;
+                            The right to opt out of the sale or sharing of your
+                            personal information, including data shared for
+                            cross-context behavioral advertising;
                         </li>
                         <li>
-                            the purposes for which the collected personal
-                            information is used;
+                            The right to limit the use and disclosure of
+                            sensitive personal information, if applicable;
                         </li>
                         <li>
-                            whether we sell your personal information to third
-                            parties;
-                        </li>
-                        <li>
-                            the categories of personal information that we sold
-                            or disclosed for a business purpose;
-                        </li>
-                        <li>
-                            the categories of third parties to whom the personal
-                            information was sold or disclosed for a business
-                            purpose; and
-                        </li>
-                        <li>
-                            the business or commercial purpose for collecting or
-                            selling personal information.
+                            The right not to receive discriminatory treatment
+                            for exercising your privacy rights.
                         </li>
                     </ul>
                     <p>
@@ -1009,11 +1016,40 @@ export default function PrivacyPolicy() {
                         </li>
                     </ul>
                     <p>
-                        To exercise these rights, you can contact us by email at
-                        support@backyardestates.com, or by referring to the
-                        contact details at the bottom of this document. If you
-                        have a complaint about how we handle your data, we would
-                        like to hear from you.
+                        To exercise these rights, you may contact us by email at
+                        <a href="mailto:support@backyardestates.com">
+                            support@backyardestates.com
+                        </a>
+                        . You may also visit our "Do Not Sell or Share My
+                        Personal Information" page to submit an opt-out request.
+                    </p>
+                    <p>
+                        Additionally, if your browser supports Global Privacy
+                        Control (GPC) signals, we will treat those signals as
+                        valid requests to opt out of the sale or sharing of
+                        personal information.
+                    </p>
+                    <p>
+                        If you use an authorized agent to submit a request on
+                        your behalf, we may require proof that the agent has
+                        been authorized to act on your behalf in accordance with
+                        the law. We will respond to verified requests within the
+                        timeframes set forth in applicable law.
+                    </p>
+                    <p>
+                        If we collect sensitive personal information as defined
+                        under California law (e.g., government identifiers,
+                        precise geolocation, or racial/ethnic data), you may
+                        also request to limit our use and disclosure of such
+                        information to only those purposes necessary to perform
+                        our services.
+                    </p>
+
+                    <p>
+                        If you have questions or complaints about how we handle
+                        your data or how to exercise your rights, please contact
+                        us using the information provided at the end of this
+                        policy. We would like to hear from you.
                     </p>
                     <h3 id="policyupdates">
                         9. DO WE MAKE UPDATES TO THIS NOTICE?
