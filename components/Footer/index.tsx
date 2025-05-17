@@ -1,22 +1,24 @@
-import { type SanityDocument } from 'next-sanity'
+// sanity cms setup'
 import { client } from '@/sanity/client'
-const options = { next: { revalidate: 30 } }
+import { FLOORPLANS_QUERY } from '@/sanity/queries'
 
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone } from '@fortawesome/pro-regular-svg-icons'
+
 import Newsletter from '../Newsletter'
 
 import style from './Footer.module.css'
 
-const FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){name,slug}`
+type Floorplan = {
+    name: string
+    slug: {
+        current: string
+    }
+}
 
 export default async function Footer() {
-    const floorplans = await client.fetch<SanityDocument[]>(
-        FLOORPLANS_QUERY,
-        {},
-        options
-    )
+    const floorplans = await client.fetch<Floorplan[]>(FLOORPLANS_QUERY)
     return (
         <footer className={style.root}>
             <div className={style.container}>
@@ -138,7 +140,7 @@ export default async function Footer() {
                     <div className={style.columnRightBottom}>
                         <ul className={style.legal}>
                             <li>
-                                © 2023 Backyard Estates. All Rights Reserved.
+                                © 2025 Backyard Estates. All Rights Reserved.
                             </li>
                             <li>
                                 <Link href="/legal/privacy-policy">
