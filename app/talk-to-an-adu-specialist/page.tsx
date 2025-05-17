@@ -235,8 +235,6 @@ export default function LeadForm() {
                                 <Checkbox
                                     name="consentTextMessages"
                                     label="I consent to receive automated text messages from Backyard Estates. Reply STOP to opt out."
-                                    errorMessage="You must agree to receive automated text messages to proceed."
-                                    error={showError}
                                 />
                             </fieldset>
                             <button id="btn" className={style.inputButton}>
