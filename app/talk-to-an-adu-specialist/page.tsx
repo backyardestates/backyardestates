@@ -29,11 +29,12 @@ export default function LeadForm() {
         e.target.btn.firstChild.innerText = 'Submitting...'
         e.target.btn.lastChild.style.display = 'block'
 
-        // Validate checkboxes
+        // 05/17/25 - get checkboxes' values
         const consentEmail = e.target.consentEmail.checked
-        const consentTextMessages = e.target.consentTextMessages.checked
+        // const consentTextMessages = e.target.consentTextMessages.checked
 
-        if (!consentEmail || !consentTextMessages) {
+        // 05/17/25 - To comply with JustCall requirements, I removed '|| !consentTextMessages' to set text messaging to optional
+        if (!consentEmail) {
             setShowError(true)
             e.target.fields.disabled = false
             e.target.btn.firstChild.innerText = 'Submit'
@@ -45,7 +46,9 @@ export default function LeadForm() {
             name: e.target.name.value,
             email: [{ value: e.target.email.value }],
             phone: [{ value: e.target.mobile.value }],
-            marketing_status: 'subscribed',
+            // marketing_status: consentTextMessages
+            //     ? 'subscribed'
+            //     : 'unsubscribed',
         }
 
         const names = e.target.name.value.split(' ')
@@ -231,7 +234,7 @@ export default function LeadForm() {
                                 />
                                 <Checkbox
                                     name="consentTextMessages"
-                                    label="I consent to receive automated text messages from Backyard Estates."
+                                    label="I consent to receive automated text messages from Backyard Estates. Reply STOP to opt out."
                                     errorMessage="You must agree to receive automated text messages to proceed."
                                     error={showError}
                                 />
@@ -257,8 +260,8 @@ export default function LeadForm() {
                                 clicking the unsubscribe link in our emails or
                                 replying STOP to our text messages. For more
                                 information, please review our{' '}
-                                <Link href="/legal/terms-and-conditions">
-                                    Terms and Conditions
+                                <Link href="/legal/terms-of-use">
+                                    Terms of Use
                                 </Link>{' '}
                                 and{' '}
                                 <Link href="/legal/privacy-policy">
