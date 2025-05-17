@@ -1,40 +1,59 @@
 {
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@/components/*": ["components/*"],
-            "@/utils/*": ["utils/*"],
-            "@/lib/*": ["lib/*"],
-            "@/sanity/*": ["sanity/*"],
-            "@/content/*": ["content/*"],
-            "@/hooks/*": ["hooks/*"]
-        },
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "strict": false,
-        "noEmit": true,
-        "incremental": true,
-        "module": "esnext",
-        "esModuleInterop": true,
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "jsx": "preserve",
-        "plugins": [
-            {
-                "name": "next"
-            }
-        ],
-        "strictNullChecks": true,
-        "target": "ES2017"
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ],
+      "@/sanity/*": [
+        "sanity/*"
+      ],
+      "@/content/*": [
+        "content/*"
+      ],
+      "@/hooks/*": [
+        "hooks/*"
+      ]
     },
-    "include": [
-        "next-env.d.ts",
-        ".next/types/**/*.ts",
-        "**/*.ts",
-        "**/*.tsx",
-        "app/layout.jsx"
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
     ],
-    "exclude": ["node_modules"]
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true,
+    "target": "ES2017",
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "app/layout.jsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
