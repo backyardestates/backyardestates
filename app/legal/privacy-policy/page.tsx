@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
             <Nav />
             <Masthead
                 title="Privacy policy"
-                explanation="Last updated May 12, 2025"
+                explanation="Last updated May 17, 2025"
             />
             <main className="centered">
                 <div className={style.content}>
