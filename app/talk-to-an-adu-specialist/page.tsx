@@ -30,17 +30,18 @@ export default function LeadForm() {
         e.target.btn.lastChild.style.display = 'block'
 
         // 05/17/25 - get checkboxes' values
-        const consentEmail = e.target.consentEmail.checked
+        // const consentEmail = e.target.consentEmail.checked
         // const consentTextMessages = e.target.consentTextMessages.checked
 
         // 05/17/25 - To comply with JustCall requirements, I removed '|| !consentTextMessages' to set text messaging to optional
-        if (!consentEmail) {
-            setShowError(true)
-            e.target.fields.disabled = false
-            e.target.btn.firstChild.innerText = 'Submit'
-            e.target.btn.lastChild.style.display = 'none'
-            return
-        }
+        // 05/20/25 - Remove consentEmail check to allow form submission without email consent
+        // if (!consentEmail) {
+        //     setShowError(true)
+        //     e.target.fields.disabled = false
+        //     e.target.btn.firstChild.innerText = 'Submit'
+        //     e.target.btn.lastChild.style.display = 'none'
+        //     return
+        // }
 
         const person = {
             name: e.target.name.value,
@@ -229,8 +230,6 @@ export default function LeadForm() {
                                 <Checkbox
                                     name="consentEmail"
                                     label="I consent to receive marketing emails from Backyard Estates."
-                                    errorMessage="You must agree to receive marketing emails to proceed."
-                                    error={showError}
                                 />
                                 <Checkbox
                                     name="consentTextMessages"
