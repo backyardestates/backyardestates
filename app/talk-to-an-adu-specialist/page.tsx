@@ -29,9 +29,8 @@ export default function LeadForm() {
         e.target.btn.firstChild.innerText = 'Submitting...'
         e.target.btn.lastChild.style.display = 'block'
 
-        // 05/17/25 - get checkboxes' values
-        // const consentEmail = e.target.consentEmail.checked
-        // const consentTextMessages = e.target.consentTextMessages.checked
+        const consentEmail = e.target.consentEmail.checked
+        const consentTexts = e.target.consentTextMessages.checked
 
         // 05/17/25 - To comply with JustCall requirements, I removed '|| !consentTextMessages' to set text messaging to optional
         // 05/20/25 - Remove consentEmail check to allow form submission without email consent
@@ -47,9 +46,12 @@ export default function LeadForm() {
             name: e.target.name.value,
             email: [{ value: e.target.email.value }],
             phone: [{ value: e.target.mobile.value }],
-            // marketing_status: consentTextMessages
-            //     ? 'subscribed'
-            //     : 'unsubscribed',
+            '733d97610511293c521189a69a776c732bae881c': consentEmail
+                ? 'subscribed'
+                : 'unsubscribed',
+            '3397c6015c59f81b73082a78efb98a6bcc88b258': consentTexts
+                ? 'subscribed'
+                : 'unsubscribed',
         }
 
         const names = e.target.name.value.split(' ')
@@ -109,6 +111,10 @@ export default function LeadForm() {
             // prettier-ignore
             'fd49bc4881f7bdffdeaa1868171df24bea5925fe': sourceNumber,
             '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
+            // prettier-ignore
+            'c30b635d9bdcdd388eff5bf6f1358f0dc43286a7': lead.emailConsent,
+            // prettier-ignore
+            'fce207a36d761025490865bae5bd77b19aaf5779': lead.textConsent,
         }
         try {
             const leadRes = await fetch('/api/pipedrive/submit-lead', {
@@ -127,16 +133,27 @@ export default function LeadForm() {
         }
     }
 
-    /*
-    async function getAllFields(e) {
+    async function getDealFields(e) {
         e.preventDefault()
 
         const res = await fetch(
             `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/dealFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`
         )
         const data = await res.json()
+
+        console.log('All fields:', data)
     }
-    */
+
+    async function getPersonFields(e) {
+        e.preventDefault()
+
+        const res = await fetch(
+            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/personFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`
+        )
+        const data = await res.json()
+
+        console.log('All person fields:', data)
+    }
 
     const sources = [
         {
@@ -178,7 +195,6 @@ export default function LeadForm() {
                     <div className={style.centered}>
                         <h1>Talk to an ADU specialist</h1>
                         <form onSubmit={createPerson}>
-                            {/* <form onSubmit={getAllFields}> */}
                             <fieldset id="fields">
                                 <div className={style.field}>
                                     <label htmlFor="address">
