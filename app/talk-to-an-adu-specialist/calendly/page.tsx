@@ -70,7 +70,7 @@ export default function Calendly() {
                         prefill={{
                             name: name!,
                             email: email!,
-                            smsReminderNumber: `+1${phone}`,
+                            // smsReminderNumber: `+1${phone}`,
                             customAnswers: {
                                 a1: address!,
                             },
