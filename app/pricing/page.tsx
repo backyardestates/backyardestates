@@ -12,7 +12,7 @@ import {
     faRulerCombined,
 } from '@fortawesome/pro-light-svg-icons'
 
-import Button from '@/components/Button'
+import Annoucement from '@/components/Announcement'
 import CallToAction from '@/components/CallToAction'
 import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
@@ -42,6 +42,7 @@ export default async function Pricing() {
 
     return (
         <>
+            <Annoucement />
             <Nav />
             <Masthead
                 title="Pricing"
