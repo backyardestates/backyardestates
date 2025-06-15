@@ -1,4 +1,3 @@
-import Annoucement from '@/components/Announcement'
 import Benefits from '@/components/Benefits'
 import Floorplans from '@/components/Floorplans'
 import Footer from '@/components/Footer'
@@ -47,7 +46,6 @@ export const metadata = {
 export default function Home() {
     return (
         <>
-            <Annoucement />
             <HeroNav />
             <Hero />
             <Testimonials />
