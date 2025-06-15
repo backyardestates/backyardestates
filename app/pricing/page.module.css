@@ -80,6 +80,16 @@
     padding: 0;
 }
 
+.paragraph {
+    margin: 1.5rem 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    color: var(--color-neutral-500);
+    line-height: 1.5rem;
+    text-align: center;
+}
+/* responsive */
+
 /* fixed */
 @media only screen and (min-width: 1440px) {
     .content {
