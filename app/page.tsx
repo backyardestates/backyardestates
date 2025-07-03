@@ -43,13 +43,17 @@ export const metadata = {
     },
 }
 
-export default function Home() {
+import { sanityFetch } from '@/sanity/live'
+import { CUSTOMER_STORIES_QUERY } from '@/sanity/queries'
+
+export default async function Home() {
+    const { data: stories } = await sanityFetch({
+        query: CUSTOMER_STORIES_QUERY,
+    })
     return (
         <div className={style.container}>
             <Nav />
-            <CustomerStories />
-            {/* <Hero /> */}
-            {/* <Testimonials /> */}
+            <CustomerStories stories={stories} />
             <Floorplans showNav />
             <div className={style.inclusions}>
                 <h2 className={style.title}>Standard inclusions</h2>
