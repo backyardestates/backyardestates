@@ -1,0 +1,109 @@
+.base {
+    padding: 2rem 0 2rem 0;
+    /* color: magenta; */
+    /* border: 1px solid magenta; */
+}
+
+.content {
+    display: flex;
+    gap: 2rem;
+    /* border: 1px solid magenta; */
+    width: 100%; /* or a fixed width if you prefer */
+    overflow: hidden; /* hides the cropped parts */
+    /* display: flex; */
+    justify-content: center; /* centers the carousel track */
+    align-items: center;
+    position: relative;
+}
+
+.item {
+    flex: 0 0 15%;
+    color: magenta;
+    border: 1px solid magenta;
+    aspect-ratio: 2/3;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    font-family: var(--font-sans);
+}
+
+.video {
+    flex: 0 0 40%;
+    color: magenta;
+    border: 1px solid magenta;
+    aspect-ratio: 16/9;
+
+    padding: 2rem;
+    border-radius: 0.5rem;
+    font-family: var(--font-sans);
+}
+
+/* .base {
+    position: relative;
+    top: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    border-bottom: 1rem solid #ad8d5f;
+    width: 100vw;
+    height: 580px;
+} */
+
+.bottom {
+    /* position: absolute; */
+    /* top: 0; */
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 0 auto;
+    width: 100vw;
+    padding: 3rem 0;
+}
+
+.title {
+    display: block;
+    margin: 0 0 0.25rem 0;
+}
+
+.small_caps {
+    color: var(--color-neutral-500);
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 600;
+    font-variant: all-small-caps;
+    letter-spacing: 0.1125rem;
+    text-align: center;
+}
+
+.small_caps span {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.bottom h1 {
+    color: var(--color-brand-light-blue);
+    padding: 0;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/* fixed */
+@media only screen and (min-width: 1440px) {
+    /* .title {
+        display: block;
+        margin: 0 0 0.25rem 0;
+    } */
+
+    .bottom {
+        max-width: 42rem;
+        margin: 0 auto;
+    }
+
+    .bottom h1 {
+        font-size: 2.75rem;
+        line-height: 1.25em;
+    }
+}
