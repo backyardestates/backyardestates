@@ -24,6 +24,7 @@
         "@sanity/image-url": "^1.1.0",
         "@wistia/wistia-player-react": "^0.1.4",
         "gsap": "^3.13.0",
+        "keen-slider": "^6.8.6",
         "next": "^15.3.2",
         "next-cloudinary": "^6.16.0",
         "next-sanity": "^9.12.0",
