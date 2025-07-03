@@ -24,9 +24,28 @@ export default function CustomerStories({ stories }) {
             spacing: 32,
             origin: 'center',
         },
+        breakpoints: {
+            '(max-width: 500px)': {
+                loop: true,
+                slides: {
+                    perView: 1,
+                    spacing: 16,
+                    origin: 'center',
+                },
+            },
+        },
         slideChanged(s) {
             setCurrent(s.track.details.rel)
+            console.log('dragStart')
         },
+        // dragStart() {
+        //     console.log('dragStart')
+        //     // setDragging(true)
+        // },
+        // dragEnd() {
+        //     console.log('dragEnd')
+        //     // setDragging(false)
+        // },
     })
 
     const phrases = [
@@ -78,6 +97,7 @@ export default function CustomerStories({ stories }) {
                         key={index}
                     >
                         <VideoPlayerCarousel
+                            story={story}
                             wistiaId={story.wistiaId}
                             isActive={index === current ? true : false}
                         />
