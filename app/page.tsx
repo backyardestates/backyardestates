@@ -1,8 +1,7 @@
 import Benefits from '@/components/Benefits'
 import Floorplans from '@/components/Floorplans'
 import Footer from '@/components/Footer'
-import Hero from '@/components/Hero'
-import HeroNav from '@/components/HeroNav'
+import Nav from '@/components/Nav'
 import Process from '@/components/Process'
 import Properties from '@/components/Properties'
 import StandaloneLink from '@/components/StandaloneLink'
@@ -11,6 +10,7 @@ import InclusionsHomePanel from '@/components/InclusionsHomePanel'
 
 import '../public/styles.css'
 import style from './page.module.css'
+import CustomerStories from '@/components/CustomerStories'
 
 const title = 'Backyard Estates - Premier ADU builder'
 const description =
@@ -45,10 +45,11 @@ export const metadata = {
 
 export default function Home() {
     return (
-        <>
-            <HeroNav />
-            <Hero />
-            <Testimonials />
+        <div className={style.container}>
+            <Nav />
+            <CustomerStories />
+            {/* <Hero /> */}
+            {/* <Testimonials /> */}
             <Floorplans showNav />
             <div className={style.inclusions}>
                 <h2 className={style.title}>Standard inclusions</h2>
@@ -65,6 +66,6 @@ export default function Home() {
             <Process />
             <Properties />
             <Footer />
-        </>
+        </div>
     )
 }
