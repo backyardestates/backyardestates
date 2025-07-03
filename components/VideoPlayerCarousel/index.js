@@ -1,25 +1,39 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Divider from '@/components/Divider'
 
 import { WistiaPlayer } from '@wistia/wistia-player-react'
 import style from './VideoPlayerCarousel.module.css'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlay, faPause } from '@fortawesome/pro-solid-svg-icons'
+
 export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
     const player = useRef(null)
-    console.log(story)
+    const [isPlaying, setIsPlaying] = useState(false)
+    // console.log(story)
     useEffect(() => {
         // This code runs every time isActive changes
         console.log('player.current:', player.current)
         // You can perform any action here
         if (!isActive && player.current !== null) {
             player.current.pause()
+            setIsPlaying(false)
         }
     }, [isActive])
+
+    function handlePlay() {
+        setIsPlaying(true)
+        player.current.play()
+    }
+    function handlePause() {
+        setIsPlaying(false)
+        player.current.pause()
+    }
     return (
         <div className={style.base}>
             {!isActive && <div className={style.blocker}></div>}
-            <div className={style.topBar}>Plan</div>
+            <div className={style.estate}>{story.property.floorplan.name}</div>
             <WistiaPlayer
                 ref={player}
                 id={`video-player-${wistiaId}`}
@@ -29,25 +43,36 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
                 className={style.player}
                 controlsVisibleOnLoad={false}
             />
-            <div className={style.bottomBar}>
-                <button onClick={() => player.current.play()}>Play</button>
-                <button onClick={() => player.current.pause()}>Pause</button>
-                <ul className={style.infoBase}>
-                    <li>
-                        {story.property.bed === 'Studio'
-                            ? `${story.property.bed}`
-                            : `${story.property.bed} Bed`}
-                    </li>
-                    <li>
-                        <Divider />
-                    </li>
-                    <li>{`${story.property.bath} Bath`}</li>
-                    <li>
-                        <Divider />
-                    </li>
-                    <li>{`${story.property.sqft} sq. ft.`}</li>
-                </ul>
-            </div>
+            {isActive && (
+                <div className={style.buttons}>
+                    {!isPlaying && (
+                        <button onClick={handlePlay} className={style.btn}>
+                            <FontAwesomeIcon icon={faPlay} size="lg" />
+                        </button>
+                    )}
+                    {isPlaying && (
+                        <button onClick={handlePause} className={style.btn}>
+                            <FontAwesomeIcon icon={faPause} size="lg" />
+                        </button>
+                    )}
+                </div>
+            )}
+
+            <ul className={style.infoBase}>
+                <li>
+                    {story.property.bed === 'Studio'
+                        ? `${story.property.bed}`
+                        : `${story.property.bed} Bed`}
+                </li>
+                <li>
+                    <Divider size="short" />
+                </li>
+                <li>{`${story.property.bath} Bath`}</li>
+                <li>
+                    <Divider size="short" />
+                </li>
+                <li>{`${story.property.sqft} sq. ft.`}</li>
+            </ul>
         </div>
     )
 }
