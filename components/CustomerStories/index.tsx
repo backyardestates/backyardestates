@@ -16,6 +16,7 @@ import style from './CustomerStories.module.css'
 
 export default function CustomerStories({ stories }) {
     const [current, setCurrent] = useState(0)
+    const [show, setShow] = useState(true)
 
     const [sliderRef] = useKeenSlider({
         loop: true,
@@ -34,9 +35,12 @@ export default function CustomerStories({ stories }) {
                 },
             },
         },
+        created() {
+            console.log('slider created')
+            // setShow(true)
+        },
         slideChanged(s) {
             setCurrent(s.track.details.rel)
-            console.log('dragStart')
         },
         // dragStart() {
         //     console.log('dragStart')
@@ -90,20 +94,22 @@ export default function CustomerStories({ stories }) {
 
     return (
         <div className={style.base}>
-            <div ref={sliderRef} className={`keen-slider ${style.slider}`}>
-                {stories.map((story, index) => (
-                    <div
-                        className={`keen-slider__slide ${index === current ? style.video : style.slide}`}
-                        key={index}
-                    >
-                        <VideoPlayerCarousel
-                            story={story}
-                            wistiaId={story.wistiaId}
-                            isActive={index === current ? true : false}
-                        />
-                    </div>
-                ))}
-            </div>
+            {show && (
+                <div ref={sliderRef} className={`keen-slider ${style.slider}`}>
+                    {stories.map((story, index) => (
+                        <div
+                            className={`keen-slider__slide ${index === current ? style.video : style.slide}`}
+                            key={index}
+                        >
+                            <VideoPlayerCarousel
+                                story={story}
+                                wistiaId={story.wistiaId}
+                                isActive={index === current ? true : false}
+                            />
+                        </div>
+                    ))}
+                </div>
+            )}
             <div className={style.bottom}>
                 <h1 ref={titleRef}>
                     <span className={style.title}>Build an ADU to</span>

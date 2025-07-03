@@ -18,6 +18,7 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
         // You can perform any action here
         if (!isActive && player.current !== null) {
             player.current.pause()
+            player.current.currentTime = 0
             setIsPlaying(false)
         }
     }, [isActive])

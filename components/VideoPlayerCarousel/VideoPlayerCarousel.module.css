@@ -50,7 +50,7 @@
     font-family: var(--font-sans);
     list-style: none;
     color: var(--color-neutral-500);
-    line-height: 0.75rem;
+    /* line-height: 0.75rem; */
 
     position: absolute;
 

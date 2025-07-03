@@ -18,7 +18,18 @@
 
 .slide,
 .video {
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
+    /* border: 2px solid magenta; */
+    /* height: 256px !important; */
+    /* width: 456px !important; */
+    /* aspect-ratio: 16 / 9; */
+
+    width: 100%; /* or a fixed width if needed */
+    aspect-ratio: 16 / 9; /* or use height: 300px; */
+    min-height: 256px; /* fallback for browsers without aspect-ratio */
+    box-sizing: border-box;
+    /* Optionally, add a background color to avoid white flashes */
+    /* background: magenta; */
 }
 
 .bottom {
