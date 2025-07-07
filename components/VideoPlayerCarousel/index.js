@@ -11,11 +11,7 @@ import { faPlay, faPause } from '@fortawesome/pro-solid-svg-icons'
 export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
     const player = useRef(null)
     const [isPlaying, setIsPlaying] = useState(false)
-    // console.log(story)
     useEffect(() => {
-        // This code runs every time isActive changes
-        console.log('player.current:', player.current)
-        // You can perform any action here
         if (!isActive && player.current !== null) {
             player.current.pause()
             // player.current.currentTime = 0
