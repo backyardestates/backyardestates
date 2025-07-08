@@ -1,11 +1,12 @@
 'use client'
 
-import { useKeenSlider } from 'keen-slider/react'
+import { useRef, useState, useEffect } from 'react'
 
-import { useRef, useState } from 'react'
+import { useKeenSlider } from 'keen-slider/react'
 import { gsap } from 'gsap/dist/gsap'
 import { TextPlugin } from 'gsap/dist/TextPlugin'
 import { useGSAP } from '@gsap/react'
+
 import Button from '../Button'
 import VideoPlayerCarousel from '@/components/VideoPlayerCarousel'
 
@@ -16,41 +17,69 @@ import style from './CustomerStories.module.css'
 
 export default function CustomerStories({ stories }) {
     const [current, setCurrent] = useState(0)
-    const [show, setShow] = useState(true)
+    const [loaded, setLoaded] = useState(false)
+    const [playing, setPlaying] = useState(false)
 
-    const [sliderRef] = useKeenSlider({
-        loop: true,
-        slides: {
-            perView: 4,
-            spacing: 32,
-            origin: 'center',
-        },
-        breakpoints: {
-            '(max-width: 500px)': {
-                loop: true,
-                slides: {
-                    perView: 1,
-                    spacing: 16,
-                    origin: 'center',
+    const [sliderRef, instanceRef] = useKeenSlider(
+        {
+            loop: true,
+            slides: {
+                perView: 4,
+                spacing: 32,
+                origin: 'center',
+            },
+            breakpoints: {
+                '(max-width: 500px)': {
+                    loop: true,
+                    slides: {
+                        perView: 1,
+                        spacing: 16,
+                        origin: 'center',
+                    },
                 },
             },
+            created() {
+                setLoaded(true)
+            },
+            slideChanged(s) {
+                setCurrent(s.track.details.rel)
+            },
         },
-        created() {
-            console.log('slider created')
-            // setShow(true)
-        },
-        slideChanged(s) {
-            setCurrent(s.track.details.rel)
-        },
-        // dragStart() {
-        //     console.log('dragStart')
-        //     // setDragging(true)
-        // },
-        // dragEnd() {
-        //     console.log('dragEnd')
-        //     // setDragging(false)
-        // },
-    })
+        [
+            (slider) => {
+                let timeout
+                let mouseOver = false
+                function clearNextTimeout() {
+                    clearTimeout(timeout)
+                }
+                function nextTimeout() {
+                    clearTimeout(timeout)
+                    if (mouseOver) return
+                    timeout = setTimeout(() => {
+                        slider.next()
+                    }, 5000)
+                }
+                slider.on('created', () => {
+                    // slider.container.addEventListener('mouseover', () => {
+                    //     mouseOver = true
+                    //     clearNextTimeout()
+                    //     console.log('playing:', playing)
+                    // })
+                    // slider.container.addEventListener('mouseout', () => {
+                    //     mouseOver = false
+                    //     nextTimeout()
+                    //     console.log('playing:', playing)
+                    // })
+                    // nextTimeout()
+                })
+                slider.on('dragStarted', clearNextTimeout)
+                // slider.on('animationEnded', nextTimeout)
+                // slider.on('updated', () => {
+                //     console.log('slider updated')
+                // })
+            },
+        ]
+    )
 
     const phrases = [
         'bring parents closer',
@@ -63,6 +92,10 @@ export default function CustomerStories({ stories }) {
     const titleRef = useRef(null)
     const phraseRef = useRef(null)
     const cursorRef = useRef(null)
+
+    useEffect(() => {
+        console.log('>>> playing:', playing)
+    }, [playing])
 
     useGSAP(
         () => {
@@ -94,22 +127,47 @@ export default function CustomerStories({ stories }) {
 
     return (
         <div className={style.base}>
-            {show && (
-                <div ref={sliderRef} className={`keen-slider ${style.slider}`}>
-                    {stories.map((story, index) => (
-                        <div
-                            className={`keen-slider__slide ${index === current ? style.video : style.slide}`}
-                            key={index}
-                        >
-                            <VideoPlayerCarousel
-                                story={story}
-                                wistiaId={story.wistiaId}
-                                isActive={index === current ? true : false}
-                            />
-                        </div>
-                    ))}
+            {/* <p>{playing ? 'Playing' : 'Paused'}</p> */}
+            <div ref={sliderRef} className={`keen-slider ${style.slider}`}>
+                {stories.map((story, index) => (
+                    <div
+                        className={`keen-slider__slide ${index === current ? style.video : style.slide}`}
+                        key={index}
+                    >
+                        <VideoPlayerCarousel
+                            story={story}
+                            wistiaId={story.wistiaId}
+                            isActive={index === current ? true : false}
+                            setPlaying={setPlaying}
+                        />
+                    </div>
+                ))}
+            </div>
+            {loaded && instanceRef.current && (
+                <div className={style.dots}>
+                    {/* <p>{`current: ${current}`}</p> */}
+                    {[
+                        ...Array(
+                            instanceRef.current.track.details.slides.length
+                        ).keys(),
+                    ].map((index) => {
+                        return (
+                            <button
+                                key={index}
+                                onClick={() => {
+                                    instanceRef.current?.moveToIdx(index)
+                                }}
+                                className={
+                                    current === index
+                                        ? style.dot_active
+                                        : style.dot
+                                }
+                            ></button>
+                        )
+                    })}
                 </div>
             )}
+
             <div className={style.bottom}>
                 <h1 ref={titleRef}>
                     <span className={style.title}>Build an ADU to</span>

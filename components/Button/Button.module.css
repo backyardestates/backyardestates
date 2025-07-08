@@ -12,12 +12,15 @@
     font-family: var(--font-sans);
     font-weight: 500;
     border: none;
-    transition: background-color 300ms ease, border-color 300ms ease;
+    transition:
+        background-color 300ms ease,
+        border-color 300ms ease;
 }
 
 .primary {
     composes: base;
     background-color: var(--color-brand-light-blue);
+
     color: var(--color-white);
 }
 
@@ -33,7 +36,9 @@
 .secondary svg {
     opacity: 0.75;
     stroke: var(--color-white);
-    transition: transform 200ms ease, opacity 200ms ease;
+    transition:
+        transform 200ms ease,
+        opacity 200ms ease;
 }
 
 .primary:hover svg,
@@ -49,7 +54,8 @@
 }
 
 .theme_blue {
-    background-color: var(--color-brand-light-blue);
+    /* background-color: var(--color-brand-light-blue); */
+    background-color: rgba(29, 164, 186, 0.8);
 }
 
 .theme_beige {
@@ -79,5 +85,6 @@
 }
 
 .primary.theme_blue:hover {
-    background-color: var(--color-brand-light-blue-hover);
+    /* background-color: var(--color-brand-light-blue-hover); */
+    background-color: rgba(29, 164, 186, 1);
 }

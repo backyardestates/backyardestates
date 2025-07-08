@@ -8,7 +8,12 @@ import style from './VideoPlayerCarousel.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay, faPause } from '@fortawesome/pro-solid-svg-icons'
 
-export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
+export default function VideoPlayerCarousel({
+    story,
+    wistiaId,
+    isActive,
+    setPlaying,
+}) {
     const player = useRef(null)
     const [isPlaying, setIsPlaying] = useState(false)
     useEffect(() => {
@@ -16,15 +21,18 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
             player.current.pause()
             // player.current.currentTime = 0
             setIsPlaying(false)
+            setPlaying(false)
         }
     }, [isActive])
 
     function handlePlay() {
         setIsPlaying(true)
+        setPlaying(true)
         player.current.play()
     }
     function handlePause() {
         setIsPlaying(false)
+        setPlaying(false)
         player.current.pause()
     }
     return (

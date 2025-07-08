@@ -89,3 +89,39 @@
         line-height: 1.25em;
     }
 }
+
+.dots {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    padding: 0;
+    justify-content: left;
+}
+
+@media only screen and (min-width: 1440px) {
+    .dots {
+        margin: 2rem 0;
+        justify-content: center;
+    }
+}
+
+.dot {
+    border: none;
+    width: 2rem;
+    height: 0.375rem;
+    background: var(--color-neutral-200);
+    border-radius: 0.1875rem;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.dot:focus {
+    outline: none;
+}
+
+.dot_active {
+    composes: dot;
+    width: 4rem;
+    background: var(--color-neutral-700);
+}

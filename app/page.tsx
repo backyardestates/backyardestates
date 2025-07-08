@@ -5,7 +5,6 @@ import Nav from '@/components/Nav'
 import Process from '@/components/Process'
 import Properties from '@/components/Properties'
 import StandaloneLink from '@/components/StandaloneLink'
-import Testimonials from '@/components/Testimonials'
 import InclusionsHomePanel from '@/components/InclusionsHomePanel'
 
 import '../public/styles.css'
@@ -50,6 +49,13 @@ export default async function Home() {
     const { data: stories } = await sanityFetch({
         query: CUSTOMER_STORIES_QUERY,
     })
+
+    // const stories = ['nk2c5mc5tt', '6uuuug0oiv', '9ibyx34564']
+
+    // https://rayelder.wistia.com/medias/nk2c5mc5tt
+    // https://rayelder.wistia.com/medias/6uuuug0oiv
+    // https://rayelder.wistia.com/medias/9ibyx34564
+
     return (
         <div className={style.container}>
             <Nav />
