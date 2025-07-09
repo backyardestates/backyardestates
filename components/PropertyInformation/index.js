@@ -7,7 +7,7 @@ import { USDollar } from '@/utils/currency'
 export default function PropertyInformation({ property, showPrice = false }) {
     const bed = property.floorplan.bed
     const bath = property.floorplan.bath
-    const sqft = property.floorplan.sqft
+    const sqft = property.sqft
     const price = USDollar.format(property.floorplan.price)
 
     return (
