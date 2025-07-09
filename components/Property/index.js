@@ -2,8 +2,8 @@
 import { CldImage } from 'next-cloudinary'
 
 import Link from 'next/link'
-import style from './Property.module.css'
 import PropertyInformation from '../PropertyInformation'
+import style from './Property.module.css'
 
 export default function Property({ property }) {
     return (
