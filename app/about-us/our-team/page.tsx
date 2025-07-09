@@ -25,7 +25,7 @@ export default function OurTeam() {
                 <Bio
                     portrait="adam-stewart.png"
                     name="Adam Stewart"
-                    title="CEO and Founder"
+                    title="President and Founder"
                 >
                     Meet Adam Stewart, an experienced construction professional
                     based in Los Angeles County. Adam holds a Bachelor of
@@ -48,7 +48,7 @@ export default function OurTeam() {
                 <Bio
                     portrait="tom-gibson.png"
                     name="Tom Gibson"
-                    title="Head of Construction"
+                    title="Director of Construction"
                 >
                     Tom Gibson is an experienced construction industry
                     professional who has been working in the field for over 50
@@ -95,7 +95,7 @@ export default function OurTeam() {
                 <Bio
                     portrait="dusty-gravatt.png"
                     name="Dusty Gravatt"
-                    title="Senior Superintendent"
+                    title="Senior Construction Manager"
                 >
                     With over 50 years of hands-on experience, Dusty is the
                     cornerstone of our construction operations. He&rsquo;s built
