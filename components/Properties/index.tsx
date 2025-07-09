@@ -5,7 +5,7 @@ import Property from '../Property'
 import StandaloneLink from '../StandaloneLink'
 import style from './Properties.module.css'
 
-const PROPERTIES_QUERY = `*[_type == "property"]|order(publishedAt desc){_id, slug, thumbnail, sqft, floorplan->{slug,name,bed,bath,sqft,price},publishedAt}`
+const PROPERTIES_QUERY = `*[_type == "property"]|order(publishedAt desc){_id, slug, thumbnail, sqft, bed, bath, floorplan->{slug,name,price},publishedAt}`
 const options = { next: { revalidate: 30 } }
 
 export default async function Properties() {

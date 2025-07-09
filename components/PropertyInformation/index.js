@@ -5,8 +5,8 @@ import style from './PropertyInformation.module.css'
 import { USDollar } from '@/utils/currency'
 
 export default function PropertyInformation({ property, showPrice = false }) {
-    const bed = property.floorplan.bed
-    const bath = property.floorplan.bath
+    const bed = property.bed
+    const bath = property.bath
     const sqft = property.sqft
     const price = USDollar.format(property.floorplan.price)
 
