@@ -55,7 +55,7 @@
 
 .theme_blue {
     /* background-color: var(--color-brand-light-blue); */
-    background-color: rgba(29, 164, 186, 0.8);
+    background-color: rgba(29, 164, 186, 1);
 }
 
 .theme_beige {
@@ -85,6 +85,5 @@
 }
 
 .primary.theme_blue:hover {
-    /* background-color: var(--color-brand-light-blue-hover); */
-    background-color: rgba(29, 164, 186, 1);
+    background-color: rgba(22, 124, 141, 1);
 }
