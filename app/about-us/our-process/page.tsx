@@ -80,10 +80,10 @@ export default function OurProcess() {
                         </p>
                         <p>
                             Together, we&rsquo;ll explore what&rsquo;s truly
-                            possible in your backyard. We'll test different ADU
-                            sizes and layouts, place them on your lot in
-                            real-time, and even review multiple design options
-                            to see what works best. It&rsquo;s the most
+                            possible in your backyard. We&rsquo;ll test
+                            different ADU sizes and layouts, place them on your
+                            lot in real-time, and even review multiple design
+                            options to see what works best. It&rsquo;s the most
                             informative and personalized way to understand the
                             full potential of your space.
                         </p>
