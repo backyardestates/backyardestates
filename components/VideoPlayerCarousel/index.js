@@ -23,7 +23,7 @@ export default function VideoPlayerCarousel({
             setIsPlaying(false)
             setPlaying(false)
         }
-    }, [isActive])
+    }, [isActive, setPlaying])
 
     function handlePlay() {
         setIsPlaying(true)
