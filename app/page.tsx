@@ -50,12 +50,6 @@ export default async function Home() {
         query: CUSTOMER_STORIES_QUERY,
     })
 
-    // const stories = ['nk2c5mc5tt', '6uuuug0oiv', '9ibyx34564']
-
-    // https://rayelder.wistia.com/medias/nk2c5mc5tt
-    // https://rayelder.wistia.com/medias/6uuuug0oiv
-    // https://rayelder.wistia.com/medias/9ibyx34564
-
     return (
         <div className={style.container}>
             <Nav />

@@ -5,26 +5,25 @@ import Divider from '@/components/Divider'
 import { WistiaPlayer } from '@wistia/wistia-player-react'
 import style from './VideoPlayerCarousel.module.css'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlay, faPause } from '@fortawesome/pro-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faPlay, faPause } from '@fortawesome/pro-solid-svg-icons'
 
 export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
     const player = useRef(null)
     const [isPlaying, setIsPlaying] = useState(false)
     const [showInformation, setShowInformation] = useState(true)
 
-    if (isActive && !isPlaying && player.current !== null) {
-        player.current.bigPlayButton = true
-    }
-
     useEffect(() => {
-        if (isActive && player.current !== null) {
+        // console.log(isActive, isPlaying, player.current !== null)
+        if (isActive && !isPlaying && player.current !== null) {
+            console.log('Setting bigPlayButton to true')
             player.current.bigPlayButton = true
         } else if (!isActive && player.current !== null) {
+            console.log('Setting bigPlayButton to false')
             player.current.bigPlayButton = false
             player.current.pause()
         }
-    }, [isActive, showInformation])
+    }, [isActive, player, isPlaying])
 
     function handlePlay() {
         setIsPlaying(true)
@@ -36,6 +35,12 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
         setIsPlaying(false)
         player.current.pause()
         setShowInformation(true)
+    }
+
+    function handleLoadedMediaData() {
+        if (isActive && !isPlaying && player.current !== null) {
+            player.current.bigPlayButton = true
+        }
     }
 
     return (
@@ -58,22 +63,8 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
                 className={style.player}
                 onPlay={handlePlay}
                 onPause={handlePause}
+                onLoadedMediaData={handleLoadedMediaData}
             />
-            {isActive && (
-                <div className={style.buttons}>
-                    {!isPlaying && (
-                        <button onClick={handlePlay} className={style.btn}>
-                            <FontAwesomeIcon icon={faPlay} size="lg" />
-                        </button>
-                    )}
-                    {isPlaying && (
-                        <button onClick={handlePause} className={style.btn}>
-                            <FontAwesomeIcon icon={faPause} size="lg" />
-                        </button>
-                    )}
-                </div>
-            )}
-
             {showInformation && (
                 <ul className={style.infoBase}>
                     <li>

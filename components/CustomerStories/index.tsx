@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState } from 'react'
 
 import { useKeenSlider } from 'keen-slider/react'
 import { gsap } from 'gsap/dist/gsap'
@@ -18,7 +18,6 @@ import style from './CustomerStories.module.css'
 export default function CustomerStories({ stories }) {
     const [current, setCurrent] = useState(0)
     const [loaded, setLoaded] = useState(false)
-    const [playing, setPlaying] = useState(false)
 
     const [sliderRef, instanceRef] = useKeenSlider(
         {
@@ -108,10 +107,6 @@ export default function CustomerStories({ stories }) {
     const titleRef = useRef(null)
     const phraseRef = useRef(null)
     const cursorRef = useRef(null)
-
-    useEffect(() => {
-        console.log('>>> playing:', playing)
-    }, [playing])
 
     useGSAP(
         () => {
