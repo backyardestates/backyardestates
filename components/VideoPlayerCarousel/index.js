@@ -8,45 +8,56 @@ import style from './VideoPlayerCarousel.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay, faPause } from '@fortawesome/pro-solid-svg-icons'
 
-export default function VideoPlayerCarousel({
-    story,
-    wistiaId,
-    isActive,
-    setPlaying,
-}) {
+export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
     const player = useRef(null)
     const [isPlaying, setIsPlaying] = useState(false)
+    const [showInformation, setShowInformation] = useState(true)
+
+    if (isActive && !isPlaying && player.current !== null) {
+        player.current.bigPlayButton = true
+    }
+
     useEffect(() => {
-        if (!isActive && player.current !== null) {
+        if (isActive && player.current !== null) {
+            player.current.bigPlayButton = true
+        } else if (!isActive && player.current !== null) {
+            player.current.bigPlayButton = false
             player.current.pause()
-            // player.current.currentTime = 0
-            setIsPlaying(false)
-            setPlaying(false)
         }
-    }, [isActive, setPlaying])
+    }, [isActive, showInformation])
 
     function handlePlay() {
         setIsPlaying(true)
-        setPlaying(true)
         player.current.play()
+        setShowInformation(false)
     }
+
     function handlePause() {
         setIsPlaying(false)
-        setPlaying(false)
         player.current.pause()
+        setShowInformation(true)
     }
+
     return (
         <div className={style.base}>
             {!isActive && <div className={style.blocker}></div>}
-            <div className={style.estate}>{story.property.floorplan.name}</div>
+            {showInformation && (
+                <div className={style.names}>{`${story.names}`}</div>
+            )}
+            {showInformation && (
+                <div className={style.estate}>
+                    {story.property.floorplan.name}
+                </div>
+            )}
             <WistiaPlayer
                 ref={player}
                 id={`video-player-${wistiaId}`}
                 mediaId={wistiaId}
-                playerColor="#405256"
+                playerColor="#1da4ba"
                 aspect={16 / 9}
                 className={style.player}
-                controlsVisibleOnLoad={false}
+                onPlay={handlePlay}
+                onPause={handlePause}
             />
             {isActive && (
                 <div className={style.buttons}>
@@ -63,21 +74,23 @@ export default function VideoPlayerCarousel({
                 </div>
             )}
 
-            <ul className={style.infoBase}>
-                <li>
-                    {story.property.bed === 'Studio'
-                        ? `${story.property.bed}`
-                        : `${story.property.bed} Bed`}
-                </li>
-                <li>
-                    <Divider size="short" />
-                </li>
-                <li>{`${story.property.bath} Bath`}</li>
-                <li>
-                    <Divider size="short" />
-                </li>
-                <li>{`${story.property.sqft} sq. ft.`}</li>
-            </ul>
+            {showInformation && (
+                <ul className={style.infoBase}>
+                    <li>
+                        {story.property.bed === 'Studio'
+                            ? `${story.property.bed}`
+                            : `${story.property.bed} Bed`}
+                    </li>
+                    <li>
+                        <Divider size="short" />
+                    </li>
+                    <li>{`${story.property.bath} Bath`}</li>
+                    <li>
+                        <Divider size="short" />
+                    </li>
+                    <li>{`${story.property.sqft} sq. ft.`}</li>
+                </ul>
+            )}
         </div>
     )
 }
