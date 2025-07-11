@@ -24,16 +24,32 @@ export default function CustomerStories({ stories }) {
         {
             loop: true,
             slides: {
-                perView: 4,
-                spacing: 32,
+                perView: 1,
+                spacing: 16,
                 origin: 'center',
             },
             breakpoints: {
-                '(max-width: 500px)': {
+                '(min-width: 700px) and (max-width: 1023px)': {
                     loop: true,
                     slides: {
-                        perView: 1,
-                        spacing: 16,
+                        perView: 2,
+                        spacing: 24,
+                        origin: 'center',
+                    },
+                },
+                '(min-width: 1024px) and (max-width: 1749px)': {
+                    loop: true,
+                    slides: {
+                        perView: 3,
+                        spacing: 24,
+                        origin: 'center',
+                    },
+                },
+                '(min-width: 1750px)': {
+                    loop: true,
+                    slides: {
+                        perView: 4,
+                        spacing: 32,
                         origin: 'center',
                     },
                 },
@@ -138,7 +154,7 @@ export default function CustomerStories({ stories }) {
                             story={story}
                             wistiaId={story.wistiaId}
                             isActive={index === current ? true : false}
-                            setPlaying={setPlaying}
+                            // setPlaying={setPlaying}
                         />
                     </div>
                 ))}
