@@ -1,10 +1,16 @@
 import style from './Masthead.module.css'
 
-export default function Masthead({ title, explanation }) {
+export default function Masthead({
+    title,
+    showExplanation = true,
+    explanation,
+}) {
     return (
         <div className={style.base}>
             <h1 className={style.title}>{title}</h1>
-            <p className={style.explanation}>{explanation}</p>
+            {showExplanation && (
+                <p className={style.explanation}>{explanation}</p>
+            )}
         </div>
     )
 }

@@ -1,0 +1,25 @@
+.base {
+    display: flex;
+    height: 32px;
+    padding: 6px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    border-radius: var(--Radius-SM, 6px);
+    background: var(--Color-Beige-A100, #ad8d5f);
+
+    color: #fff;
+    text-align: center;
+    leading-trim: both;
+    text-edge: cap;
+
+    /* Body/Bold */
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px; /* 150% */
+
+    text-transform: capitalize;
+}

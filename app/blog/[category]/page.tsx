@@ -5,19 +5,23 @@ import { notFound } from 'next/navigation'
 import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
 import Masthead from '@/components/Masthead'
-import Link from 'next/link'
+import BlogCard from '@/components/BlogCard'
+import Advert from '@/components/Advert'
+import Breadcrumbs from '@/components/Breadcrumbs'
 
 import style from '../blog.module.css'
 
-const CATEGORY_QUERY = defineQuery(`*[
-	_type == "category" &&
-	slug.current == $category
-  ][0]`)
+const CATEGORY_QUERY = defineQuery(
+    `*[_type == "category" && slug.current == $category][0]`
+)
 
-const POST_QUERY = defineQuery(`*[
-    _type == "post" &&
-    $categoryId in categories[]._ref
-  ]{title, slug}`)
+const POST_QUERY_LG = defineQuery(
+    `*[_type == "post" && categories[0]->slug.current == $category][0...1]{title, slug, _updatedAt, categories[0]->{slug}}`
+)
+
+const POST_QUERY_MD = defineQuery(
+    `*[_type == "post" && categories[0]->slug.current == $category][1...5]{title, slug, _updatedAt, categories[0]->{slug}}`
+)
 
 export default async function Category({
     params,
@@ -29,39 +33,54 @@ export default async function Category({
         params: await params,
     })
 
-    // Fetch posts that reference the category
-    const { data: posts } = await sanityFetch({
-        query: POST_QUERY,
-        params: { categoryId: category._id }, // Pass the category's _id
+    const { data: features } = await sanityFetch({
+        query: POST_QUERY_LG,
+        params: { category: category.slug.current },
     })
 
-    if (!category) {
+    const { data: posts } = await sanityFetch({
+        query: POST_QUERY_MD,
+        params: { category: category.slug.current },
+    })
+
+    if (!category || !features || !posts) {
         notFound()
     }
+
+    const pages = [
+        { title: 'Blog', href: '/blog' },
+        { title: category.title, href: `/blog/${category.slug.current}` },
+    ]
 
     return (
         <>
             <Nav />
             <Masthead
                 title={category.title}
+                showExplanation={false}
                 explanation="Your go-to resource for everything related to Accessory Dwelling Units (ADUs). Stay updated with the latest trends, tips, and stories from our community."
             />
             <main className={style.main}>
-                <h2
-                    className={style.headline}
-                >{`Display all posts for ${category.title} category page`}</h2>
-                <ul>
-                    {posts.map((post, index) => (
-                        <li key={index}>
-                            <Link
-                                href={`/blog/#/${post.slug.current}`}
-                                className={style.blogLink}
-                            >
-                                {post.title}
-                            </Link>
-                        </li>
+                <Breadcrumbs pages={pages} />
+                <div className={style.blogCards}>
+                    {features.map((feature, index) => (
+                        <BlogCard
+                            key={index}
+                            post={feature}
+                            size="LG"
+                            featured={true}
+                            showCategory={false}
+                        />
                     ))}
-                </ul>
+                    <Advert />
+                    {posts.map((post, index) => (
+                        <BlogCard
+                            key={index}
+                            post={post}
+                            showCategory={false}
+                        />
+                    ))}
+                </div>
             </main>
             <Footer />
         </>
