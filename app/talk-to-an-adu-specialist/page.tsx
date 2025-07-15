@@ -1,7 +1,6 @@
 'use client'
-
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-// import type { Metadata } from 'next'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/pro-solid-svg-icons'
@@ -10,15 +9,14 @@ import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
 import Link from 'next/link'
 
 import Logo from '@/components/Logo'
-// import OpenGraph from '@/components/OpenGraph'
 
 import style from './Form.module.css'
-
-// export const metadata: Metadata = {
-//     title: 'Talk to an ADU specialist - Backyard Estates',
-// }
+import RadioGroup from '@/components/RadioGroup'
+import Checkbox from '@/components/Checkbox'
 
 export default function LeadForm() {
+    const [showError, setShowError] = useState(false)
+
     const router = useRouter()
 
     function goBack() {
@@ -31,13 +29,32 @@ export default function LeadForm() {
         e.target.btn.firstChild.innerText = 'Submitting...'
         e.target.btn.lastChild.style.display = 'block'
 
-        const names = e.target.name.value.split(' ')
+        const consentEmail = e.target.consentEmail.checked
+        const consentTexts = e.target.consentTextMessages.checked
+
+        // 05/17/25 - To comply with JustCall requirements, I removed '|| !consentTextMessages' to set text messaging to optional
+        // 05/20/25 - Remove consentEmail check to allow form submission without email consent
+        // if (!consentEmail) {
+        //     setShowError(true)
+        //     e.target.fields.disabled = false
+        //     e.target.btn.firstChild.innerText = 'Submit'
+        //     e.target.btn.lastChild.style.display = 'none'
+        //     return
+        // }
 
         const person = {
             name: e.target.name.value,
             email: [{ value: e.target.email.value }],
             phone: [{ value: e.target.mobile.value }],
+            '733d97610511293c521189a69a776c732bae881c': consentEmail
+                ? 'subscribed'
+                : 'unsubscribed',
+            '3397c6015c59f81b73082a78efb98a6bcc88b258': consentTexts
+                ? 'subscribed'
+                : 'unsubscribed',
         }
+
+        const names = e.target.name.value.split(' ')
 
         const lead = {
             name: e.target.name.value,
@@ -48,73 +65,75 @@ export default function LeadForm() {
             phone: [{ value: e.target.mobile.value }],
             source: e.target.source.value,
         }
-
-        const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/persons?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
-            {
+        try {
+            const res = await fetch('/api/pipedrive/create-person', {
                 method: 'POST',
-                body: JSON.stringify(person),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        )
-        const data = await res.json()
+                body: JSON.stringify({ person }),
+                headers: { 'Content-Type': 'application/json' },
+            })
 
-        createLead(data.data, lead)
+            const personCreated = await res.json()
+
+            if (personCreated.success) {
+                submitLead(personCreated, lead)
+            }
+        } catch (error) {
+            console.log('Error creating person:', error)
+        }
     }
 
-    async function createLead(d, lead) {
-        let source = 0
+    async function submitLead(person, lead) {
+        let sourceNumber = 0
 
         switch (lead.source) {
             case 'ADU Event':
-                source = 58
+                sourceNumber = 58
                 break
             case 'Open House':
-                source = 59
+                sourceNumber = 59
                 break
             case 'Referral':
-                source = 60
+                sourceNumber = 60
                 break
             case 'Search':
-                source = 61
+                sourceNumber = 61
                 break
             case 'Social Media':
-                source = 28
+                sourceNumber = 28
                 break
             default:
-                source = 56
+                sourceNumber = 56
         }
 
         const submittedLead = {
-            title: `${d.first_name} ${d.last_name}`,
-            person_id: d.id,
+            title: `${lead.firstname} ${lead.lastname}`,
+            person_id: person.data.data.id,
             // prettier-ignore
-            'fd49bc4881f7bdffdeaa1868171df24bea5925fe': source,
+            'fd49bc4881f7bdffdeaa1868171df24bea5925fe': sourceNumber,
             '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
+            // prettier-ignore
+            'c30b635d9bdcdd388eff5bf6f1358f0dc43286a7': lead.emailConsent,
+            // prettier-ignore
+            'fce207a36d761025490865bae5bd77b19aaf5779': lead.textConsent,
         }
-
-        const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/deals?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
-            {
+        try {
+            const leadRes = await fetch('/api/pipedrive/submit-lead', {
                 method: 'POST',
-                body: JSON.stringify(submittedLead),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        )
-        const data = await res.json()
+                body: JSON.stringify({ submittedLead }),
+                headers: { 'Content-Type': 'application/json' },
+            })
 
-        if (data.success) {
-            router.push(
-                `/talk-to-an-adu-specialist/calendly?name=${d.first_name} ${d.last_name}&address=${lead.address}&email=${d.primary_email}`
-            )
+            const leadData = await leadRes.json()
+
+            if (leadData.success) {
+                router.push(`/talk-to-an-adu-specialist/calendly`)
+            }
+        } catch (error) {
+            console.log('Error submitting lead:', error)
         }
     }
 
-    async function getAllFields(e) {
+    async function getDealFields(e) {
         e.preventDefault()
 
         const res = await fetch(
@@ -122,12 +141,42 @@ export default function LeadForm() {
         )
         const data = await res.json()
 
-        if (!data) {
-            //console.log('Problem')
-        } else {
-            //console.log(data)
-        }
+        console.log('All fields:', data)
     }
+
+    async function getPersonFields(e) {
+        e.preventDefault()
+
+        const res = await fetch(
+            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/personFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`
+        )
+        const data = await res.json()
+
+        console.log('All person fields:', data)
+    }
+
+    const sources = [
+        {
+            label: 'ADU Event',
+            value: 'ADU Event',
+        },
+        {
+            label: 'Open House',
+            value: 'Open House',
+        },
+        {
+            label: 'Referral',
+            value: 'Referral',
+        },
+        {
+            label: 'Search',
+            value: 'Search',
+        },
+        {
+            label: 'Social Media',
+            value: 'Social Media',
+        },
+    ]
 
     return (
         <>
@@ -142,12 +191,10 @@ export default function LeadForm() {
             </div>
 
             <main className={style.root}>
-                {/* <OpenGraph title={`Backyard Estates - Contact form`} /> */}
                 <div className={style.content}>
                     <div className={style.centered}>
                         <h1>Talk to an ADU specialist</h1>
                         <form onSubmit={createPerson}>
-                            {/* <form onSubmit={getAllFields}> */}
                             <fieldset id="fields">
                                 <div className={style.field}>
                                     <label htmlFor="address">
@@ -195,61 +242,15 @@ export default function LeadForm() {
                                         className={style.textfield}
                                     />
                                 </div>
-                                <div className={style.field}>
-                                    <label>How did you hear about us?</label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="ADU Event"
-                                            required
-                                        />
-                                        <span className={style.option_label}>
-                                            ADU event
-                                        </span>
-                                    </label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="Open House"
-                                        />
-                                        <span className={style.option_label}>
-                                            Open house
-                                        </span>
-                                    </label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="Referral (Friend/Real Estate Agent/Lender etc.)"
-                                        />
-                                        <span className={style.option_label}>
-                                            Referral (Friend/Real Estate
-                                            Agent/Lender etc.)
-                                        </span>
-                                    </label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="Search"
-                                        />
-                                        <span className={style.option_label}>
-                                            Search
-                                        </span>
-                                    </label>
-                                    <label className={style.option}>
-                                        <input
-                                            type="radio"
-                                            name="source"
-                                            value="Social Media"
-                                        />
-                                        <span className={style.option_label}>
-                                            Social media
-                                        </span>
-                                    </label>
-                                </div>
+                                <RadioGroup name="source" options={sources} />
+                                <Checkbox
+                                    name="consentEmail"
+                                    label="I consent to receive marketing emails from Backyard Estates."
+                                />
+                                <Checkbox
+                                    name="consentTextMessages"
+                                    label="I consent to receive automated text messages from Backyard Estates. Reply STOP to opt out."
+                                />
                             </fieldset>
                             <button id="btn" className={style.inputButton}>
                                 <span>Submit</span>
@@ -261,22 +262,25 @@ export default function LeadForm() {
                                 />
                             </button>
                             <p className={style.legal_print}>
-                                By clicking &ldquo;Submit,&rdquo; you are
-                                granting consent to receive promotional emails
-                                and text messages from Backyard Estates. These
-                                communications aim to keep you informed about
-                                updates, special offers, and pertinent
-                                information regarding our ADU construction
-                                services. Additionally, your consent indicates
-                                that you have read and understood our{' '}
+                                By clicking submit, you consent to receive
+                                marketing emails and automated text messages
+                                from Backyard Estates at the email address and
+                                phone number you provided. These messages may be
+                                sent using an automatic telephone dialing
+                                system. Consent is not a condition of purchase.
+                                Message and data rates may apply. Message
+                                frequency varies. You can opt out at any time by
+                                clicking the unsubscribe link in our emails or
+                                replying STOP to our text messages. For more
+                                information, please review our{' '}
+                                <Link href="/legal/terms-of-use">
+                                    Terms of Use
+                                </Link>{' '}
+                                and{' '}
                                 <Link href="/legal/privacy-policy">
                                     Privacy Policy
                                 </Link>
-                                . You may choose to unsubscribe from our
-                                promotional emails and texts by using the
-                                opt-out link provided in our communications.
-                                Thank you for considering Backyard Estates for
-                                your ADU needs.
+                                .
                             </p>
                         </form>
                     </div>

@@ -25,7 +25,7 @@ export default function OurTeam() {
                 <Bio
                     portrait="adam-stewart.png"
                     name="Adam Stewart"
-                    title="CEO and Founder"
+                    title="President and Founder"
                 >
                     Meet Adam Stewart, an experienced construction professional
                     based in Los Angeles County. Adam holds a Bachelor of
@@ -48,7 +48,7 @@ export default function OurTeam() {
                 <Bio
                     portrait="tom-gibson.png"
                     name="Tom Gibson"
-                    title="Head of Construction"
+                    title="Director of Construction"
                 >
                     Tom Gibson is an experienced construction industry
                     professional who has been working in the field for over 50
@@ -93,25 +93,64 @@ export default function OurTeam() {
                     Backyard Estates.
                 </Bio>
                 <Bio
-                    portrait="mary-martin.png"
-                    name="Mary Martin"
-                    title="Office Manager"
+                    portrait="dusty-gravatt.png"
+                    name="Dusty Gravatt"
+                    title="Senior Construction Manager"
                 >
-                    Mary Martin is a key employee at Backyard Estates, having
-                    joined the company during its founding. With over five years
-                    of experience in the industry, Mary brings a wealth of
-                    knowledge to her role as an ADU specialist. She has become
-                    an expert in all of the city ordinances and permits related
-                    to ADUs, which has been invaluable to the company&rsquo;s
-                    success. Mary has been instrumental in building the
-                    organization that Backyard Estates is today. Her expertise
-                    and guidance have helped the company navigate the
-                    complexities of the ADU market and grow into a leader in the
-                    industry. Her contributions have been vital to the
-                    company&rsquo;s success. Her dedication to her craft, her
-                    expert knowledge of ADUs and city ordinances, and her
-                    commitment to excellence make her a valuable asset to the
-                    company and a highly respected member of the industry.
+                    With over 50 years of hands-on experience, Dusty is the
+                    cornerstone of our construction operations. He&rsquo;s built
+                    thousands of residential units throughout his career and
+                    brings unmatched knowledge, precision, and leadership to
+                    every ADU project. From foundation to final inspection,
+                    Dusty ensures that each build meets the highest standards of
+                    craftsmanship and care. His lifelong dedication to the trade
+                    has helped countless homeowners turn their visions into
+                    reality—creating spaces that reflect their needs, values,
+                    and dreams. For Dusty, building ADUs isn&rsquo;t just about
+                    construction—it&rsquo;s about building lasting impact for
+                    families and communities.
+                </Bio>
+                <Bio
+                    portrait="erika-ruiz.png"
+                    name="Erika Ruiz"
+                    title="Project Engineer"
+                >
+                    Erika plays a vital role in guiding homeowners through the
+                    early stages of their ADU journey, overseeing the client
+                    experience from sign-on to design. With five years of
+                    experience in administration and project management, she
+                    specializes in client coordination, operational efficiency,
+                    and seamless cross-team communication. Erika ensures that
+                    each project gets off to a smooth start by aligning internal
+                    schedules and helping the sales team prepare accurate,
+                    transparent estimates. She believes in the power of ADUs to
+                    provide practical, affordable housing that strengthens
+                    families and communities—a mission that drives her work
+                    every day.
+                </Bio>
+                <Bio
+                    portrait="jose-cervantes.png"
+                    name="Jose Cervantes"
+                    title="Project Manager"
+                >
+                    Jose oversees the entire lifecycle of ADU projects—from
+                    permitting and finish selections to construction management
+                    and final closeout—ensuring each home is delivered with
+                    quality, efficiency, and care for the homeowner&rsquo;s
+                    vision. With over 12 years of experience in the construction
+                    industry, he brings deep expertise across a variety of
+                    project types, including multi-family and single-family
+                    housing, mixed-use developments, and complex renovation
+                    work. Jose has extensive experience navigating regulatory
+                    compliance, including CASp inspections, ADA standards, and
+                    Green Building requirements, and regularly coordinates with
+                    agencies like Caltrans, Public Works, and SoCal Edison. His
+                    well-rounded background in both public and private sector
+                    projects enables him to deliver high-quality, code-compliant
+                    ADUs that meet the highest standards. Jose believes in ADUs
+                    as a way to keep families connected—offering independence,
+                    comfort, and lasting value through thoughtful design and
+                    construction.
                 </Bio>
                 <Catchall />
             </main>

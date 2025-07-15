@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 
+import Link from 'next/link'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
+
 // import OpenGraph from '@/components/OpenGraph'
 
 import style from '../page.module.css'
@@ -14,11 +16,10 @@ export const metadata: Metadata = {
 export default function TermsOfUse() {
     return (
         <>
-            {/* <OpenGraph title={`Backyard Estates - Terms of use`} /> */}
             <Nav />
             <Masthead
                 title="Terms of use"
-                explanation="Last updated December 01, 2020"
+                explanation="Last updated May 17, 2025"
             />
             <main className="centered">
                 <div className={style.content}>
@@ -80,9 +81,7 @@ export default function TermsOfUse() {
                         old. Persons under the age of 18 are not permitted to
                         use or register for the Site.
                     </p>
-                    <h2>
-                        <strong>INTELLECTUAL PROPERTY RIGHTS</strong>
-                    </h2>
+                    <h2>INTELLECTUAL PROPERTY RIGHTS</h2>
                     <p>
                         Unless otherwise indicated, the Site is our proprietary
                         property and all source code, databases, functionality,
@@ -115,9 +114,7 @@ export default function TermsOfUse() {
                         rights not expressly granted to you in and to the Site,
                         the Content and the Marks.
                     </p>
-                    <h2>
-                        <strong>USER REPRESENTATIONS</strong>
-                    </h2>
+                    <h2>USER REPRESENTATIONS</h2>
                     <p>
                         By using the Site, you represent and warrant that: (1)
                         you have the legal capacity and you agree to comply with
@@ -136,9 +133,7 @@ export default function TermsOfUse() {
                         any and all current or future use of the Site (or any
                         portion thereof).
                     </p>
-                    <h2>
-                        <strong>PROHIBITED ACTIVITIES</strong>
-                    </h2>
+                    <h2>PROHIBITED ACTIVITIES</h2>
                     <p>
                         You may not access or use the Site for any purpose other
                         than that for which we make the Site available. The Site
@@ -279,9 +274,7 @@ export default function TermsOfUse() {
                             enterprise.
                         </li>
                     </ol>
-                    <h2>
-                        <strong>USER GENERATED CONTRIBUTIONS</strong>
-                    </h2>
+                    <h2>USER GENERATED CONTRIBUTIONS</h2>
                     <p>
                         The Site does not offer users to submit or post content.
                         We may provide you with the opportunity to create,
@@ -388,9 +381,7 @@ export default function TermsOfUse() {
                         other things, termination or suspension of your rights
                         to use the Site.
                     </p>
-                    <h2>
-                        <strong>CONTRIBUTION LICENSE</strong>
-                    </h2>
+                    <h2>CONTRIBUTION LICENSE</h2>
                     <p>
                         You and the Site agree that we may access, store,
                         process, and use any information and personal data that
@@ -433,9 +424,7 @@ export default function TermsOfUse() {
                         infringement or misappropriation of any proprietary
                         right in your Submissions.
                     </p>
-                    <h2>
-                        <strong>SITE MANAGEMENT</strong>
-                    </h2>
+                    <h2>SITE MANAGEMENT</h2>
                     <p>
                         We reserve the right, but not the obligation, to: (1)
                         monitor the Site for violations of these Terms of Use;
@@ -455,18 +444,13 @@ export default function TermsOfUse() {
                         property and to facilitate the proper functioning of the
                         Site.
                     </p>
-                    <h2>
-                        <strong>PRIVACY POLICY</strong>
-                    </h2>
+                    <h2>PRIVACY POLICY</h2>
                     <p>
                         We care about data privacy and security. Please review
-                        our Privacy Policy:{' '}
-                        <a
-                            href="https://www.backyardestates.com/privacy-policy/"
-                            data-custom-class="link"
-                        >
-                            https://www.backyardestates.com/privacy-policy/
-                        </a>
+                        our :{' '}
+                        <Link href="/legal/privacy-policy/">
+                            Privacy Policy
+                        </Link>
                         . By using the Site, you agree to be bound by our
                         Privacy Policy, which is incorporated into these Terms
                         of Use. Please be advised the Site is hosted in United
@@ -479,9 +463,7 @@ export default function TermsOfUse() {
                         America, and you agree to have your data transferred to
                         and processed in United States of America.
                     </p>
-                    <h2>
-                        <strong>TERM AND TERMINATION</strong>
-                    </h2>
+                    <h2>TERM AND TERMINATION</h2>
                     <p>
                         These Terms of Use shall remain in full force and effect
                         while you use the Site. WITHOUT LIMITING ANY OTHER
@@ -572,12 +554,12 @@ export default function TermsOfUse() {
                         applicable law, and any award may be challenged if the
                         arbitrator fails to do so. Except where otherwise
                         required by the applicable AAA rules or applicable law,
-                        the arbitration will take place in{' '}
-                        <mark>__________.</mark> Except as otherwise provided
-                        herein, the Parties may litigate in court to compel
-                        arbitration, stay proceedings pending arbitration, or to
-                        confirm, modify, vacate, or enter judgment on the award
-                        entered by the arbitrator.
+                        the arbitration will take place in San Bernardino
+                        County, California. Except as otherwise provided herein,
+                        the Parties may litigate in court to compel arbitration,
+                        stay proceedings pending arbitration, or to confirm,
+                        modify, vacate, or enter judgment on the award entered
+                        by the arbitrator.
                     </p>
                     <p>
                         If for any reason, a Dispute proceeds in court rather

@@ -3,12 +3,8 @@
     /* overflow: hidden; */
 }
 
-/* fixed */
-@media only screen and (min-width: 1440px) {
-    .wrapper {
-        /* width: 1440px; */
-        /* margin: 0 auto; */
-    }
+.container {
+    padding-top: 6.75rem;
 }
 
 .inclusions {

@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import { CldImage } from 'next-cloudinary'
+import { useState } from 'react'
 
+import FloorplanInformation from '@/components/FloorplanInformation'
 import ExploreButtonTags from '../ExploreButtonTags'
 import StandaloneLink from '../StandaloneLink'
 import VideoPlayer from '../VideoPlayer'
-import FloorplanInformation from '@/components/FloorplanInformation'
 
 import style from './ExploreFloorplans.module.css'
 
@@ -19,6 +19,32 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
         (floorplan) => floorplan.orderID === selected
     )
 
+    const floorplanDescription =
+        selectedFloorplan.orderID === 1 ||
+        selectedFloorplan.orderID === 2 ||
+        selectedFloorplan.orderID === 3 ? (
+            <p>
+                Inclusions: Discover our modern open floorplan, designed for
+                optimal use of every square foot. Our all-inclusive price covers
+                everything from architectural, structural, and title 24 plans,
+                permit running, standard city fees, and construction with
+                utility connection (50&prime;). Revel in the luxury of stainless
+                steel kitchen appliances, quartz countertops, asphalt
+                dimensional roofing, and LVP throughout. Your dream home will be
+                thoughtfully crafted for style and convenience.
+            </p>
+        ) : (
+            <p>
+                Inclusions: Discover our modern open floorplan, designed for
+                optimal use of every square foot. Our all-inclusive price covers
+                everything from architectural, structural, and title 24 plans,
+                permit running, standard city fees, construction with utility
+                connection (50&prime;), and solar. Revel in the luxury of
+                stainless steel kitchen appliances, quartz countertops, asphalt
+                dimensional roofing, and LVP throughout. Your dream home will be
+                thoughtfully crafted for style and convenience.
+            </p>
+        )
     return (
         <>
             {showNav && (
@@ -40,35 +66,7 @@ export default function ExploreFloorplans({ showNav = false, floorplans }) {
                             price={selectedFloorplan.price}
                             showPrice
                         />
-                        {selectedFloorplan.orderID === '1' ||
-                        selectedFloorplan.orderID === '2' ||
-                        selectedFloorplan.orderID === '3' ? (
-                            <p>
-                                Inclusions: Discover our modern open floorplan,
-                                designed for optimal use of every square foot.
-                                Our all-inclusive price covers everything from
-                                architectural, structural, and title 24 plans,
-                                permit running, standard city fees, and
-                                construction with utility connection
-                                (50&prime;). Revel in the luxury of stainless
-                                steel kitchen appliances, quartz countertops,
-                                and LVP throughout. Your dream home will be
-                                thoughtfully crafted for style and convenience.
-                            </p>
-                        ) : (
-                            <p>
-                                Inclusions: Discover our modern open floorplan,
-                                designed for optimal use of every square foot.
-                                Our all-inclusive price covers everything from
-                                architectural, structural, and title 24 plans,
-                                permit running, standard city fees, construction
-                                with utility connection (50&prime;), and solar.
-                                Revel in the luxury of stainless steel kitchen
-                                appliances, quartz countertops, and LVP
-                                throughout. Your dream home will be thoughtfully
-                                crafted for style and convenience.
-                            </p>
-                        )}
+                        {floorplanDescription}
                         <div className={style.linkGroup}>
                             <StandaloneLink
                                 theme="beige"

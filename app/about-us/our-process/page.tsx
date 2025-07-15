@@ -1,18 +1,18 @@
 import type { Metadata } from 'next'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faPhoneVolume,
-    faExcavator,
     faArrowDown,
     faCalendarCircleUser,
-    faPenRuler,
+    faClipboardListCheck,
+    faExcavator,
+    faFileCertificate,
     faHouseLaptop,
     faMoneyCheckDollarPen,
-    faClipboardListCheck,
-    faFileCertificate,
+    faPenRuler,
+    faPhoneVolume,
     faUserHelmetSafety,
 } from '@fortawesome/pro-light-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
@@ -70,16 +70,22 @@ export default function OurProcess() {
                             size="xl"
                             className={style.icon}
                         />
-                        <h3>Virtual site visit</h3>
+                        <h3>Office Visit</h3>
                         <p>
-                            As we meet over Zoom, your ADU Specialist will help
-                            you visualize your new ADU using Backyard
-                            Estates&rsquo; ADU Software.
+                            During your office visit we will guide you through
+                            our advanced Backyard Estates software. This tool
+                            gives us a detailed view of your property, including
+                            lot dimensions, zoning data, setbacks, and other key
+                            city requirements.
                         </p>
                         <p>
-                            Place your ADU where you want it, walk inside to
-                            make sure it is perfect, and discover what may be
-                            unique about your specific backyard.
+                            Together, we&rsquo;ll explore what&rsquo;s truly
+                            possible in your backyard. We&rsquo;ll test
+                            different ADU sizes and layouts, place them on your
+                            lot in real-time, and even review multiple design
+                            options to see what works best. It&rsquo;s the most
+                            informative and personalized way to understand the
+                            full potential of your space.
                         </p>
                     </div>
                     <FontAwesomeIcon
@@ -129,8 +135,8 @@ export default function OurProcess() {
                     </div>
                     <Phase
                         number={2}
-                        explanation="Financing to Manufacturing"
-                        weeks="8-16"
+                        explanation="Financing to Permitting"
+                        weeks="10-22"
                     />
                     <div className={style.milestone}>
                         <FontAwesomeIcon
@@ -187,7 +193,7 @@ export default function OurProcess() {
                     <Phase
                         number={3}
                         explanation="Construction to occupancy"
-                        weeks="12-16"
+                        weeks="6-12"
                     />
                     <div className={style.milestone}>
                         <FontAwesomeIcon

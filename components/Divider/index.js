@@ -1,9 +1,9 @@
-export default function Divider() {
+export default function Divider({ size = 'tall' }) {
     return (
         <svg
             width="2"
-            height="24"
-            viewBox="0 0 2 24"
+            height={size === 'tall' ? '24' : '16'}
+            viewBox={size === 'tall' ? '0 0 2 24' : '0 0 2 16'}
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
         >
@@ -11,9 +11,8 @@ export default function Divider() {
                 x1="1"
                 y1="0"
                 x2="1"
-                y2="24"
+                y2={size === 'tall' ? '24' : '16'}
                 stroke="#c4c4c4"
-                // stroke="red"
                 strokeWidth="2"
                 strokeLinecap="round"
             />

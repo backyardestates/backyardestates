@@ -1,5 +1,6 @@
-import { type SanityDocument } from 'next-sanity'
+// sanity cms setup'
 import { client } from '@/sanity/client'
+import { PRICING_FLOORPLANS_QUERY } from '@/sanity/queries'
 
 import Link from 'next/link'
 import type { Metadata } from 'next'
@@ -12,7 +13,6 @@ import {
     faRulerCombined,
 } from '@fortawesome/pro-light-svg-icons'
 
-import Button from '@/components/Button'
 import CallToAction from '@/components/CallToAction'
 import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
@@ -30,15 +30,21 @@ export const metadata: Metadata = {
         "They say money doesn't grow on trees, but it can certainly grow in your backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow.",
 }
 
-const FLOORPLANS_QUERY = `*[_type == "floorplan"]|order(orderID asc){orderID, isClickable, slug, name, bed, bath, length, width, price}`
-const options = { next: { revalidate: 30 } }
+type Floorplan = {
+    isClickable: boolean
+    bed: number
+    bath: number
+    length: number
+    width: number
+    price: number
+    name: string
+    slug: {
+        current: string
+    }
+}
 
 export default async function Pricing() {
-    const floorplans = await client.fetch<SanityDocument[]>(
-        FLOORPLANS_QUERY,
-        {},
-        options
-    )
+    const floorplans = await client.fetch<Floorplan[]>(PRICING_FLOORPLANS_QUERY)
 
     return (
         <>
@@ -96,7 +102,7 @@ export default async function Pricing() {
                         <tfoot>
                             <tr>
                                 <td className="left">Total</td>
-                                <td>$185K</td>
+                                <td>$199K</td>
                                 <td>$250K+</td>
                             </tr>
                         </tfoot>
@@ -139,6 +145,16 @@ export default async function Pricing() {
                             ))}
                         </tbody>
                     </table>
+                    <h2>Need a custom floorplan?</h2>
+                    <p className={style.paragraph}>
+                        <Link
+                            href="/talk-to-an-adu-specialist"
+                            className={style.link}
+                        >
+                            Talk to an ADU specialist
+                        </Link>{' '}
+                        to design your ideal Backyard Estate.
+                    </p>
 
                     <div className={style.cost_factors}>
                         <h2>Cost and time factors</h2>
