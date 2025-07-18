@@ -1,5 +1,5 @@
 .base {
-    display: flex;
+    display: inline-flex;
     height: 32px;
     padding: 6px 12px;
     justify-content: center;

@@ -6,6 +6,7 @@
     padding: 0;
     margin: 0 0 2rem 0;
     /* border: 1px solid red; */
+    grid-column: span 12;
 }
 
 .base li {
@@ -19,9 +20,9 @@
     leading-trim: both;
     text-edge: cap;
     font-family: Roboto;
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-style: normal;
-    font-weight: 300;
+    font-weight: 400;
     text-decoration: none;
 }
 

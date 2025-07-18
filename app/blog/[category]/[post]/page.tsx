@@ -4,16 +4,19 @@ import { notFound } from 'next/navigation'
 import { PortableText } from 'next-sanity'
 
 import Footer from '@/components/Footer'
-import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
 
 import style from '../../blog.module.css'
 import Link from 'next/link'
+import Breadcrumbs from '@/components/Breadcrumbs'
+import Catchall from '@/components/Catchall'
+import BlogCategory from '@/components/BlogCategory'
+import BlogTag from '@/components/BlogTag'
 
 const POST_QUERY = defineQuery(`*[
 	_type == "post" &&
 	slug.current == $post
-  ][0]{title, description, content, categories[0]->{title, slug}}`)
+  ][0]{title, description, content, slug, categories->{title, slug}, tags[]->{title, slug}}`)
 
 export default async function Category({
     params,
@@ -29,23 +32,38 @@ export default async function Category({
         notFound()
     }
 
+    const pages = [
+        { title: 'Blog', href: '/blog' },
+        {
+            title: post.categories.title,
+            href: `/blog/${post.categories.slug.current}`,
+        },
+        {
+            title: post.title,
+            href: `/blog/${post.categories.slug.current}/${post.slug.current}`,
+        },
+    ]
+
+    const tags = post.tags
+
     return (
         <>
             <Nav />
-            <Masthead title={post.title} explanation={post.description} />
-            <main className={style.main}>
-                <PortableText value={post.content} />
-                <h3>Tags</h3>
-                <ul>
-                    <li>
-                        <Link
-                            href={`/blog/${post.categories.slug.current}`}
-                            className={style.blogLink}
-                        >
-                            {post.categories.title}
-                        </Link>
-                    </li>
-                </ul>
+            <main className={style.main} style={{ paddingTop: '9rem' }}>
+                <Breadcrumbs pages={pages} />
+                <div className={style.content}>
+                    <BlogCategory category={post.categories.title} />
+                    <h1>{post.title}</h1>
+                    <p className={style.description}>{post.description}</p>
+                    <PortableText value={post.content} />
+                    <h3>Blog post tags</h3>
+                    <div className={style.tags}>
+                        {tags.map((tag, index) => (
+                            <BlogTag key={index} tag={tag} />
+                        ))}
+                    </div>
+                </div>
+                <Catchall />
             </main>
             <Footer />
         </>

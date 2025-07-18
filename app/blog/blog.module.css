@@ -1,8 +1,9 @@
 .main {
-    margin: 0 auto;
-    padding: 2rem 0 6rem 0;
-    width: 1440px;
-    font-family: var(--font-sans);
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2rem;
+    margin: 0 2rem;
+    padding: 0 0 4rem 0;
 }
 
 .headline {
@@ -23,4 +24,111 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
+}
+
+.content {
+    grid-column: 4 / span 6;
+}
+
+.content h1 {
+    margin: 1.5rem 0;
+    padding: 0;
+    color: var(--Brand-Dark-blue-Default, #36484b);
+    leading-trim: both;
+    text-edge: cap;
+
+    /* H1 */
+    font-family: 'Roboto Slab';
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.content h2 {
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+    color: var(--color-brand-beige);
+    font-family: 'Roboto Slab';
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 40px;
+    text-align: left;
+}
+
+.content h3 {
+    margin: 1rem 0 1.5rem 0;
+    padding: 0;
+    color: var(--color-brand-beige);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: Roboto;
+    font-size: 1.25rem !important;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px;
+    font-variant: all-small-caps;
+    letter-spacing: 1.6px;
+}
+
+.content p.description {
+    color: var(--color-brand-dark-blue);
+    font-family: Roboto;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 36px;
+}
+
+.content p {
+    margin: 0 0 2rem 0;
+    color: var(--color-brand-dark-blue);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+}
+
+.content blockquote {
+    margin: 0 0 2rem -2rem;
+    padding: 2rem 2rem 2rem 4rem;
+    color: var(--color-brand-dark-blue);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: Roboto;
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 125%;
+    border-left: 4px solid var(--color-brand-beige);
+}
+
+.content ul {
+    margin: 0 0 2rem -1rem;
+    padding: 0;
+}
+
+.content ul li {
+    margin: 0 0 0.25rem 0;
+    padding: 0 0 0 1rem;
+    color: var(--Brand-Dark-blue-Default, #36484b);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 150% */
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0 0 8rem 0;
+    padding: 0;
 }

@@ -7,6 +7,7 @@ export default function BlogCard({
     featured = false,
     showCategory = true,
 }) {
+    console.log('BlogCard', post)
     const formattedDate = new Date(post._updatedAt).toLocaleDateString(
         'en-US',
         {
