@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import style from './Card.module.css'
-import { CldImage } from 'next-cloudinary'
 import FloorplanInformation from '../FloorplanInformation'
 
 import { Cloudinary } from '@cloudinary/url-gen'

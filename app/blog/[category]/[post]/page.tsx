@@ -7,18 +7,19 @@ import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
 
 import style from '../../blog.module.css'
-import Link from 'next/link'
+// import Link from 'next/link'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import Catchall from '@/components/Catchall'
 import BlogCategory from '@/components/BlogCategory'
 import BlogTag from '@/components/BlogTag'
+import BlogAuthor from '@/components/BlogAuthor'
 
 const POST_QUERY = defineQuery(`*[
 	_type == "post" &&
 	slug.current == $post
-  ][0]{title, description, content, slug, categories->{title, slug}, tags[]->{title, slug}}`)
+  ][0]{title, author->{firstname, lastname, portrait}, _updatedAt, description, content, slug, categories->{title, slug}, tags[]->{title, slug}}`)
 
-export default async function Category({
+export default async function Post({
     params,
 }: {
     params: Promise<{ slug: string }>
@@ -49,11 +50,12 @@ export default async function Category({
     return (
         <>
             <Nav />
-            <main className={style.main} style={{ paddingTop: '9rem' }}>
+            <main className={`${style.main} ${style.mainPadded}`}>
                 <Breadcrumbs pages={pages} />
                 <div className={style.content}>
                     <BlogCategory category={post.categories.title} />
                     <h1>{post.title}</h1>
+                    <BlogAuthor author={post.author} date={post._updatedAt} />
                     <p className={style.description}>{post.description}</p>
                     <PortableText value={post.content} />
                     <h3>Blog post tags</h3>

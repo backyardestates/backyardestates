@@ -3,16 +3,14 @@
     align-items: center;
     gap: 1rem;
     list-style: none;
+    margin: 0;
     padding: 0;
-    margin: 0 0 2rem 0;
-    /* border: 1px solid red; */
     grid-column: span 12;
 }
 
 .base li {
     margin: 0;
     padding: 0;
-    /* border: 1px solid red; */
 }
 
 .base li a {
