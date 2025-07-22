@@ -20,7 +20,7 @@ const POST_QUERY_LG = defineQuery(
 )
 
 const POST_QUERY_MD = defineQuery(
-    `*[_type == "post" && categories->slug.current == $category][1...5]{title, slug, _updatedAt, categories->{slug}}`
+    `*[_type == "post" && categories->slug.current == $category][1..-1]{title, slug, _updatedAt, categories->{slug}}`
 )
 
 export default async function Category({
@@ -65,7 +65,8 @@ export default async function Category({
         <>
             <Nav />
             <Masthead
-                title={category[0].title}
+                eyebrow="Category"
+                title={`${category[0].title}`}
                 showExplanation={false}
                 explanation="Your go-to resource for everything related to Accessory Dwelling Units (ADUs). Stay updated with the latest trends, tips, and stories from our community."
             />

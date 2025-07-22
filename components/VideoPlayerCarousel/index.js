@@ -16,12 +16,14 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
     useEffect(() => {
         // console.log(isActive, isPlaying, player.current !== null)
         if (isActive && !isPlaying && player.current !== null) {
-            console.log('Setting bigPlayButton to true')
+            // console.log('Setting bigPlayButton to true')
             player.current.bigPlayButton = true
         } else if (!isActive && player.current !== null) {
-            console.log('Setting bigPlayButton to false')
+            // console.log('Setting bigPlayButton to false')
             player.current.bigPlayButton = false
-            player.current.pause()
+            if (isPlaying) {
+                player.current.pause()
+            }
         }
     }, [isActive, player, isPlaying])
 

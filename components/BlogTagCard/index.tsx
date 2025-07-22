@@ -1,12 +1,12 @@
-import BlogCategory from '../BlogCategory'
-import style from './BlogCard.module.css'
+import style from './BlogTagCard.module.css'
 
 export default function BlogCard({
     post,
+    tag,
     size = 'MD',
     featured = false,
-    showCategory = true,
-    // type = 'post',
+    // showCategory = true,
+    type = 'post',
 }) {
     // console.log('BlogCard', post)
     const formattedDate = new Date(post._updatedAt).toLocaleDateString(
@@ -40,9 +40,6 @@ export default function BlogCard({
             ) : null}
             <div className={style.content}>
                 <div className={style.header}>
-                    {showCategory && (
-                        <BlogCategory category={post.categories.slug.current} />
-                    )}
                     <h2 className={style.title}>{post.title}</h2>
                 </div>
                 <p className={style.dateCreated}>{formattedDate}</p>
