@@ -6,6 +6,19 @@
     text-align: center;
 }
 
+.eyebrow {
+    margin: 0 0 0.75rem 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    /* line-height: 1.5em; */
+    opacity: 0.6;
+    color: var(--color-white);
+    /* max-width: 38rem; */
+}
+
 .title {
     margin: 0 auto 1rem auto;
     padding: 0;
@@ -29,7 +42,7 @@
 }
 
 /* fixed */
-@media only screen and (min-width: 1440px) {
+@media only screen and (min-width: 601px) {
     .base {
         padding: 4rem 0;
     }

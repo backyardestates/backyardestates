@@ -38,6 +38,8 @@
     --color-wireframe-subtle: rgba(255, 0, 255, 0.1);
 
     --drop-shadow-on-beige: 0px 4px 8px 0px rgba(173, 141, 95, 0.25);
+
+    --breakpoint: 601px;
 }
 
 * {
@@ -202,7 +204,7 @@ ol li {
     padding: 0;
 }
 
-@media only screen and (min-width: 1400px) {
+@media only screen and (min-width: 601px) {
     .wistia_responsive_wrapper {
         max-height: 360px;
     }
@@ -221,7 +223,7 @@ ol li {
 }
 
 /* fixed */
-@media only screen and (min-width: 1440px) {
+@media only screen and (min-width: 601px) {
     .centered {
         margin: 0 auto;
         padding: 6rem 0;

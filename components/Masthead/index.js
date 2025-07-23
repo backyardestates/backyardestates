@@ -8,7 +8,7 @@ export default function Masthead({
 }) {
     return (
         <div className={style.base}>
-            <p>{eyebrow}</p>
+            <p className={style.eyebrow}>{eyebrow}</p>
             <h1 className={style.title}>{title}</h1>
             {showExplanation && (
                 <p className={style.explanation}>{explanation}</p>

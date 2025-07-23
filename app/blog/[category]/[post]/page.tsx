@@ -39,10 +39,6 @@ export default async function Post({
             title: post.categories.title,
             href: `/blog/${post.categories.slug.current}`,
         },
-        {
-            title: post.title,
-            href: `/blog/${post.categories.slug.current}/${post.slug.current}`,
-        },
     ]
 
     const tags = post.tags
