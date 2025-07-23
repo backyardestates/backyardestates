@@ -24,6 +24,7 @@
     font-style: normal;
     font-weight: 400;
     text-decoration: none;
+    text-wrap: no-wrap;
 }
 
 .base li a:hover {
