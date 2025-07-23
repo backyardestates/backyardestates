@@ -1,14 +1,8 @@
+import Image from 'next/image'
+
 import style from './BlogTagCard.module.css'
 
-export default function BlogCard({
-    post,
-    tag,
-    size = 'MD',
-    featured = false,
-    // showCategory = true,
-    type = 'post',
-}) {
-    // console.log('BlogCard', post)
+export default function BlogCard({ post, tag, size = 'MD', featured = false }) {
     const formattedDate = new Date(post._updatedAt).toLocaleDateString(
         'en-US',
         {
@@ -33,9 +27,10 @@ export default function BlogCard({
             }
         >
             {size === 'LG' ? (
-                <img
+                <Image
                     src="https://fpoimg.com/400x350?text=Preview&bg_color=e6e6e6&text_color=8F8F8F"
                     className={style.image}
+                    alt="Blog Post Image"
                 />
             ) : null}
             <div className={style.content}>
