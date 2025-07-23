@@ -34,9 +34,12 @@ export default function BlogCard({
         >
             {size === 'LG' ? (
                 <Image
-                    src="https://fpoimg.com/400x350?text=Preview&bg_color=e6e6e6&text_color=8F8F8F"
+                    src="/images/fpo-320-180@3x.png"
                     className={style.image}
-                    alt="Blog Post Image"
+                    alt="Blog post thumbnail"
+                    width={320}
+                    height={180}
+                    // fill={true}
                 />
             ) : null}
             <div className={style.content}>
