@@ -61,6 +61,8 @@
         justify-content: space-between;
         align-items: flex-start;
 
+        grid-column: span 1;
+
         border-radius: var(--Radius-MD, 12px);
         border: 1px solid var(--Color-Neutral-100, #dedede);
         background: var(--Color-Neutral-0, #f7f7f7);

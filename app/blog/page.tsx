@@ -1,3 +1,5 @@
+// 'use client'
+
 import { sanityFetch } from '@/sanity/live'
 import { defineQuery } from 'next-sanity'
 import { notFound } from 'next/navigation'
@@ -13,11 +15,11 @@ import Advert from '@/components/Advert'
 import Breadcrumbs from '@/components/Breadcrumbs'
 
 const POST_QUERY_MD = defineQuery(
-    `*[_type == "post"][2...5]{title, slug, _updatedAt, categories->{slug}}`
+    `*[_type == "post"][2...5]{title, slug, image, _updatedAt, categories->{slug}}`
 )
 
 const POST_QUERY_LG = defineQuery(
-    `*[_type == "post"][0...2]{title, slug, _updatedAt, categories->{slug}}`
+    `*[_type == "post"][0...2]{title, slug, image, _updatedAt, categories->{slug}}`
 )
 
 export default async function Blog() {

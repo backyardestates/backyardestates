@@ -1,4 +1,6 @@
-import Image from 'next/image'
+'use client'
+
+import { CldImage } from 'next-cloudinary'
 
 import style from './BlogTagCard.module.css'
 
@@ -26,16 +28,24 @@ export default function BlogCard({ post, tag, size = 'MD', featured = false }) {
                     : {}
             }
         >
-            {size === 'LG' ? (
-                <Image
-                    src="/images/fpo-320-180@3x.png"
-                    className={style.image}
-                    alt="Blog post thumbnail"
-                    width={320}
-                    height={180}
-                    // fill={true}
-                />
-            ) : null}
+            {size === 'LG' && (
+                <div
+                    style={{
+                        position: 'relative',
+                        width: '100%',
+                        aspectRatio: '16/9',
+                    }}
+                >
+                    <CldImage
+                        src={post.image.public_id}
+                        alt="Blog Post Image"
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="100vw"
+                        priority
+                    />
+                </div>
+            )}
             <div className={style.content}>
                 <div className={style.header}>
                     <h2 className={style.title}>{post.title}</h2>

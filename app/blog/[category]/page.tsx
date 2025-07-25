@@ -16,11 +16,11 @@ const CATEGORY_QUERY = defineQuery(
 )
 
 const POST_QUERY_LG = defineQuery(
-    `*[_type == "post" && categories->slug.current == $category][0...1]{title, slug, _updatedAt, categories->{slug}}`
+    `*[_type == "post" && categories->slug.current == $category][0...1]{title, slug, image, _updatedAt, categories->{slug}}`
 )
 
 const POST_QUERY_MD = defineQuery(
-    `*[_type == "post" && categories->slug.current == $category][1..-1]{title, slug, _updatedAt, categories->{slug}}`
+    `*[_type == "post" && categories->slug.current == $category][1..-1]{title, slug, image, _updatedAt, categories->{slug}}`
 )
 
 export default async function Category({

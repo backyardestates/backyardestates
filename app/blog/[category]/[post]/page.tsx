@@ -1,3 +1,7 @@
+// 'use client'
+
+import { CldImage } from 'next-cloudinary'
+
 import { sanityFetch } from '@/sanity/live'
 import { defineQuery } from 'next-sanity'
 import { notFound } from 'next/navigation'
@@ -13,11 +17,12 @@ import Catchall from '@/components/Catchall'
 import BlogCategory from '@/components/BlogCategory'
 import BlogTag from '@/components/BlogTag'
 import BlogAuthor from '@/components/BlogAuthor'
+import BlogImage from '@/components/BlogImage'
 
 const POST_QUERY = defineQuery(`*[
 	_type == "post" &&
 	slug.current == $post
-  ][0]{title, author->{firstname, lastname, portrait}, _updatedAt, description, content, slug, categories->{title, slug}, tags[]->{title, slug}}`)
+  ][0]{title, image, author->{firstname, lastname, portrait}, _updatedAt, description, content, slug, categories->{title, slug}, tags[]->{title, slug}}`)
 
 export default async function Post({
     params,
@@ -52,6 +57,7 @@ export default async function Post({
                     <BlogCategory category={post.categories.title} />
                     <h1>{post.title}</h1>
                     <BlogAuthor author={post.author} date={post._updatedAt} />
+                    <BlogImage public_id={post.image.public_id} />
                     <p className={style.description}>{post.description}</p>
                     <PortableText value={post.content} />
                     <h3>Blog post tags</h3>

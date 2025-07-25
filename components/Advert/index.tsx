@@ -7,8 +7,7 @@ export default function Advert() {
             <div className={style.header}>
                 <h2 className={style.title}>Need a custom ADU?</h2>
                 <p className={style.description}>
-                    We can deliver your ideal ADU for your unique needs. Any
-                    ofour floor plans can be customized for a single flat fee.
+                    We can deliver your ideal ADU for your unique needs.
                 </p>
             </div>
             <StandaloneLink href="/talk-to-an-adu-specialist">

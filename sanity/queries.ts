@@ -8,6 +8,7 @@ export const POSTS_BY_TAG_QUERY_FEATURED = `*[_type == "post" && $tag in tags[]-
 categories->{slug},
   title,
   slug,
+  image,
   _updatedAt,
   tags
 }`
@@ -16,6 +17,7 @@ export const POSTS_BY_TAG_QUERY = `*[_type == "post" && $tag in tags[]->slug.cur
 categories->{slug},
   title,
   slug,
+  image,
   _updatedAt,
   tags
 }`

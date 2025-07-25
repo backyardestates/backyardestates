@@ -177,12 +177,14 @@
         font-weight: 600;
     }
 
-    /* .blogCards {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-column: span 2;
-        gap: 2rem;
-    } */
+    .blogCards {
+        /* display: grid; */
+        /* grid-template-columns: repeat(2, 1fr); */
+        /* grid-column: span 2; */
+        /* gap: 2rem; */
+        width: 80vw;
+        margin: 0 auto;
+    }
 
     .content {
         padding: 3rem 0 0 0;
