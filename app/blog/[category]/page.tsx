@@ -1,6 +1,26 @@
 import { sanityFetch } from '@/sanity/live'
 import { defineQuery } from 'next-sanity'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
+
+type Props = {
+    params: Promise<{ category: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { category } = await params
+
+    // Fetch category data from Sanity instead of HTTP request
+    const { data: categoryObj } = await sanityFetch({
+        query: CATEGORY_QUERY,
+        params: { category },
+    })
+
+    return {
+        title: `${categoryObj?.[0]?.title} category - Blog - Backyard Estates`,
+        description: `Posts in the ${categoryObj?.[0]?.title} category`,
+    }
+}
 
 import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
@@ -23,34 +43,21 @@ const POST_QUERY_MD = defineQuery(
     `*[_type == "post" && categories->slug.current == $category][1..-1]{title, slug, image, _updatedAt, categories->{slug}}`
 )
 
-export default async function Category({
-    params,
-}: {
-    params: Promise<{ category: string }>
-}) {
-    // console.log('Category params', await params)
-    // const categorySlug = await params.category
-    // console.log('Category is ', categorySlug)
+export default async function Category({ params }: Props) {
     const { data: category } = await sanityFetch({
         query: CATEGORY_QUERY,
         params: await params,
     })
-
-    // console.log('Category is ', category)
 
     const { data: features } = await sanityFetch({
         query: POST_QUERY_LG,
         params: { category: category[0].slug.current },
     })
 
-    // console.log('Features are ', features)
-
     const { data: posts } = await sanityFetch({
         query: POST_QUERY_MD,
         params: { category: category[0].slug.current },
     })
-
-    // console.log('Posts are ', posts)
 
     if (!category || !features || !posts) {
         notFound()

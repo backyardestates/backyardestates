@@ -1,17 +1,34 @@
-// 'use client'
-
-import { CldImage } from 'next-cloudinary'
-
 import { sanityFetch } from '@/sanity/live'
 import { defineQuery } from 'next-sanity'
 import { notFound } from 'next/navigation'
 import { PortableText } from 'next-sanity'
+import type { Metadata } from 'next'
+
+type Props = {
+    params: Promise<{ post: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { post } = await params
+
+    // Fetch category data from Sanity instead of HTTP request
+    const { data: postObj } = await sanityFetch({
+        query: POST_QUERY,
+        params: { post },
+    })
+
+    console.log('Post is', postObj)
+
+    return {
+        title: `${postObj?.title} - Blog - Backyard Estates`,
+        description: `Read the latest post about ${postObj?.title}`,
+    }
+}
 
 import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
 
 import style from '../../blog.module.css'
-// import Link from 'next/link'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import Catchall from '@/components/Catchall'
 import BlogCategory from '@/components/BlogCategory'

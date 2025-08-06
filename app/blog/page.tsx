@@ -1,9 +1,7 @@
-// 'use client'
-
 import { sanityFetch } from '@/sanity/live'
 import { defineQuery } from 'next-sanity'
 import { notFound } from 'next/navigation'
-// import Link from 'next/link'
+import { Metadata } from 'next'
 
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
@@ -21,6 +19,11 @@ const POST_QUERY_MD = defineQuery(
 const POST_QUERY_LG = defineQuery(
     `*[_type == "post"][0...2]{title, slug, image, _updatedAt, categories->{slug}}`
 )
+
+export const metadata: Metadata = {
+    title: 'Blog - Backyard Estates',
+    description: 'The official Next.js Learn Dashboard built with App Router.',
+}
 
 export default async function Blog() {
     const { data: features } = await sanityFetch({

@@ -1,11 +1,29 @@
-// 'use client'
-
 import { sanityFetch } from '@/sanity/live'
 import {
     TAG_QUERY,
     POSTS_BY_TAG_QUERY_FEATURED,
     POSTS_BY_TAG_QUERY,
 } from '@/sanity/queries'
+import type { Metadata } from 'next'
+
+type Props = {
+    params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { slug } = await params
+
+    // Fetch tag data from Sanity instead of HTTP request
+    const { data: tag } = await sanityFetch({
+        query: TAG_QUERY,
+        params: { slug },
+    })
+
+    return {
+        title: `${tag?.[0]?.title} tag - Blog - Backyard Estates`,
+        description: `Posts tagged with ${tag?.[0]?.title || slug}`,
+    }
+}
 
 import Advert from '@/components/Advert'
 import Breadcrumbs from '@/components/Breadcrumbs'
@@ -16,17 +34,13 @@ import Masthead from '@/components/Masthead'
 import style from '../../blog.module.css'
 import BlogTagCard from '@/components/BlogTagCard'
 
-export default async function Tags({ params }) {
+export default async function Tags({ params }: Props) {
     const { slug } = await params
-
-    // console.log(slug)
 
     const { data: tag } = await sanityFetch({
         query: TAG_QUERY,
         params: { slug: slug },
     })
-
-    // console.log('Tag is', tag[0].slug.current)
 
     const { data: features } = await sanityFetch({
         query: POSTS_BY_TAG_QUERY_FEATURED,
