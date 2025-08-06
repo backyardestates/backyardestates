@@ -13,7 +13,6 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params
 
-    // Fetch tag data from Sanity instead of HTTP request
     const { data: tag } = await sanityFetch({
         query: TAG_QUERY,
         params: { slug },

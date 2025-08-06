@@ -11,13 +11,10 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { post } = await params
 
-    // Fetch category data from Sanity instead of HTTP request
     const { data: postObj } = await sanityFetch({
         query: POST_QUERY,
         params: { post },
     })
-
-    console.log('Post is', postObj)
 
     return {
         title: `${postObj?.title} - Blog - Backyard Estates`,

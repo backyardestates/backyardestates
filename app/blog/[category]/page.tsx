@@ -10,7 +10,6 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { category } = await params
 
-    // Fetch category data from Sanity instead of HTTP request
     const { data: categoryObj } = await sanityFetch({
         query: CATEGORY_QUERY,
         params: { category },
