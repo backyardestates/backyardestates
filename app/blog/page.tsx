@@ -22,7 +22,8 @@ const POST_QUERY_LG = defineQuery(
 
 export const metadata: Metadata = {
     title: 'Blog - Backyard Estates',
-    description: 'The official Next.js Learn Dashboard built with App Router.',
+    description:
+        'Your go-to resource for everything related to Accessory Dwelling Units (ADUs) for the greater Los Angeles area.',
 }
 
 export default async function Blog() {
