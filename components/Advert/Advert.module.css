@@ -1,0 +1,105 @@
+.base {
+    display: inline-flex;
+    flex-direction: column;
+    /* width: 320px; */
+    /* height: 279px; */
+    padding: 2rem;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    grid-column: span 2;
+
+    border-radius: var(--Radius-MD, 12px);
+    border: 1px solid var(--Color-Neutral-100, #dedede);
+    background: var(--Color-Neutral-0, #f7f7f7);
+
+    /* Dropshadow/Default */
+    box-shadow: 0px 8px 12px 0px rgba(235, 235, 235, 0.5);
+}
+
+.title {
+    text-align: left;
+    align-self: stretch;
+    color: var(--Brand-Dark-blue-Default, #36484b);
+    font-family: 'Roboto Slab';
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 130%;
+    max-width: 560px;
+    /* margin-bottom: 3rem; */
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.description {
+    color: var(--Color-Neutral-600, #5e5e5e);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 150% */
+}
+
+@media (min-width: 601px) {
+    .base {
+        display: inline-flex;
+        flex-direction: column;
+        /* width: 320px; */
+        /* height: 279px; */
+        padding: 2rem;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        grid-column: span 1;
+
+        border-radius: var(--Radius-MD, 12px);
+        border: 1px solid var(--Color-Neutral-100, #dedede);
+        background: var(--Color-Neutral-0, #f7f7f7);
+
+        /* Dropshadow/Default */
+        box-shadow: 0px 8px 12px 0px rgba(235, 235, 235, 0.5);
+    }
+
+    .title {
+        text-align: left;
+        align-self: stretch;
+        color: var(--Brand-Dark-blue-Default, #36484b);
+        font-family: 'Roboto Slab';
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 130%;
+        max-width: 560px;
+        /* margin-bottom: 3rem; */
+    }
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .description {
+        color: var(--Color-Neutral-600, #5e5e5e);
+        leading-trim: both;
+        text-edge: cap;
+        font-family: Roboto;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 24px; /* 150% */
+    }
+}

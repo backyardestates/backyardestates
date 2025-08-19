@@ -1,0 +1,30 @@
+.base {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 6px 12px;
+    height: 2rem;
+    border-radius: var(--radius-SM);
+    color: var(--color-brand-beige);
+    text-align: center;
+    leading-trim: both;
+    text-edge: cap;
+    font-family: Roboto;
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 400;
+    text-transform: capitalize;
+    border: 1px solid var(--color-brand-beige-A040);
+    background: var(--color-brand-beige-A010);
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    text-decoration: none;
+}
+
+.base:hover {
+    color: white;
+    background: var(--color-brand-beige);
+    border-color: var(--color-brand-beige);
+}

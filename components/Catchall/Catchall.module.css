@@ -1,6 +1,6 @@
 .base {
     background-color: var(--color-brand-light-blue);
-    margin: 0 1.5rem;
+    margin: 0;
     padding: 2rem 1rem;
     text-align: center;
     border-radius: 0.75rem;
@@ -49,12 +49,11 @@
 }
 
 /* fixed */
-@media only screen and (min-width: 1440px) {
+@media only screen and (min-width: 601px) {
     .base {
-        margin: 0;
+        margin: 0 auto;
         padding: 6rem 0;
-        grid-column-start: 4;
-        grid-column-end: 10;
+        max-width: 60vw;
     }
 
     .intro {

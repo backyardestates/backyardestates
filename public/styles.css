@@ -4,6 +4,7 @@
     --color-black: #000;
     --color-blue: #1da3ba;
     --radius: 0.5rem;
+    --radius-SM: 0.375rem;
     --link-opacity: 0.7;
     --link-opacity-hover: 1;
 
@@ -27,10 +28,18 @@
     --color-brand-beige-hover: #91744a;
     --color-brand-beige-subtle: rgba(246, 243, 238, 1);
 
+    --color-brand-beige-A080: hsla(35, 32%, 53%, 0.8);
+    --color-brand-beige-A060: hsla(35, 32%, 53%, 0.6);
+    --color-brand-beige-A040: hsla(35, 32%, 53%, 0.4);
+    --color-brand-beige-A020: hsla(35, 32%, 53%, 0.2);
+    --color-brand-beige-A010: hsla(35, 32%, 53%, 0.1);
+
     --color-wireframe: rgba(255, 0, 255, 0.5);
     --color-wireframe-subtle: rgba(255, 0, 255, 0.1);
 
     --drop-shadow-on-beige: 0px 4px 8px 0px rgba(173, 141, 95, 0.25);
+
+    --breakpoint: 601px;
 }
 
 * {
@@ -195,7 +204,7 @@ ol li {
     padding: 0;
 }
 
-@media only screen and (min-width: 1400px) {
+@media only screen and (min-width: 601px) {
     .wistia_responsive_wrapper {
         max-height: 360px;
     }
@@ -214,7 +223,7 @@ ol li {
 }
 
 /* fixed */
-@media only screen and (min-width: 1440px) {
+@media only screen and (min-width: 601px) {
     .centered {
         margin: 0 auto;
         padding: 6rem 0;

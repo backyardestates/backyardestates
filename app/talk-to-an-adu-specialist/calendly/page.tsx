@@ -55,7 +55,7 @@ export default function Calendly() {
                     </p>
                     {/* <Suspense> */}
                     <InlineWidget
-                        url="https://calendly.com/adam-735/15min?hide_gdpr_banner=1"
+                        url="https://calendly.com/backyard-estates/intro-call"
                         styles={{
                             margin: '0px',
                             height: '1000px',
