@@ -1,18 +1,18 @@
 'use client'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faXmark } from '@fortawesome/pro-solid-svg-icons'
 import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
+import { faXmark } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import Link from 'next/link'
 
 import Logo from '@/components/Logo'
 
-import style from './Form.module.css'
-import RadioGroup from '@/components/RadioGroup'
 import Checkbox from '@/components/Checkbox'
+import RadioGroup from '@/components/RadioGroup'
+import style from './Form.module.css'
 
 export default function LeadForm() {
     const [showError, setShowError] = useState(false)
@@ -194,21 +194,8 @@ export default function LeadForm() {
                 <div className={style.content}>
                     <div className={style.centered}>
                         <h1>Talk to an ADU specialist</h1>
-                        <form onSubmit={createPerson}>
+                        <form onSubmit={createPerson} autoComplete="on">
                             <fieldset id="fields">
-                                <div className={style.field}>
-                                    <label htmlFor="address">
-                                        What is your property address?
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="address"
-                                        id="address"
-                                        required
-                                        className={style.textfield}
-                                        data-1p-ignore
-                                    />
-                                </div>
                                 <div className={style.field}>
                                     <label htmlFor="name">Full name</label>
                                     <input
@@ -221,6 +208,16 @@ export default function LeadForm() {
                                     />
                                 </div>
                                 <div className={style.field}>
+                                    <label htmlFor="mobile">Mobile phone</label>
+                                    <input
+                                        type="text"
+                                        name="mobile"
+                                        id="mobile"
+                                        required
+                                        className={style.textfield}
+                                    />
+                                </div>
+                                <div className={style.field}>
                                     <label htmlFor="email">Email address</label>
                                     <input
                                         type="email"
@@ -229,17 +226,18 @@ export default function LeadForm() {
                                         required
                                         className={style.textfield}
                                         data-1p-ignore
-                                        autoComplete="off"
                                     />
                                 </div>
                                 <div className={style.field}>
-                                    <label htmlFor="mobile">Mobile phone</label>
+                                    <label htmlFor="address">
+                                        What is your property address?
+                                    </label>
                                     <input
                                         type="text"
-                                        name="mobile"
-                                        id="mobile"
-                                        required
+                                        name="address"
+                                        id="address"
                                         className={style.textfield}
+                                        data-1p-ignore
                                     />
                                 </div>
                                 <RadioGroup name="source" options={sources} />
