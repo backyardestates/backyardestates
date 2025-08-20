@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 config.autoAddCss = false
 
 import { Roboto, Roboto_Slab } from 'next/font/google'
@@ -45,6 +46,7 @@ export default function RootLayout({
             <body className={`${roboto.variable} ${robotoSlab.variable}`}>
                 {children}
                 <Analytics />
+                <SpeedInsights />
             </body>
         </html>
     )
