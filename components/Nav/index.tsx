@@ -79,11 +79,11 @@ export default function Nav() {
                                     </ul>
                                 </Dropdown>
                             </li>
-                            <li>
+                            {/* <li>
                                 <Link href="/blog" className={style.link}>
                                     Blog
                                 </Link>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
 
