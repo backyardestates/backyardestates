@@ -15,8 +15,8 @@ export default function Modal() {
     const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
-        const isModalDismissed = localStorage.getItem('isModalDismissed')
-        const isModalDismissedExpired = localStorage.getItem(
+        const isModalDismissed = sessionStorage.getItem('isModalDismissed')
+        const isModalDismissedExpired = sessionStorage.getItem(
             'isModalDismissedExpired'
         )
 
@@ -26,8 +26,8 @@ export default function Modal() {
 
             // Check if 24 hours (in milliseconds) have passed
             if (elapsedTime > 24 * 60 * 60 * 1000) {
-                localStorage.removeItem('isModalDismissed')
-                localStorage.removeItem('isModalDismissedExpired')
+                sessionStorage.removeItem('isModalDismissed')
+                sessionStorage.removeItem('isModalDismissedExpired')
             }
         }
 
@@ -44,22 +44,22 @@ export default function Modal() {
 
     const handleClose = () => {
         setShowModal(false)
-        localStorage.setItem('isModalDismissed', 'true')
-        localStorage.setItem('isModalDismissedExpired', Date.now().toString())
+        sessionStorage.setItem('isModalDismissed', 'true')
+        sessionStorage.setItem('isModalDismissedExpired', Date.now().toString())
     }
 
     return (
         <>
             {showModal && (
                 <div className={style.overlay} onClick={handleClose}>
-                    <div className={style.modal}>
+                    <div className={style.modal} onClick={(e) => e.stopPropagation()}>
                         {showImages && (
-                            <div className={style.top}>
+                            <div className={style.top} onClick={handleClose}>
                                 <p className={style.close}>
                                     <FontAwesomeIcon icon={faXmark} size="xl" />
                                 </p>
                                 <Image
-                                    src="/images/fpo/fpo-16-9@2x.png"
+                                    src="/images/fpo/fpo.png"
                                     layout="responsive"
                                     width={16}
                                     height={9}
@@ -71,7 +71,7 @@ export default function Modal() {
                             <div className={style.interiorImages}>
                                 <div style={{ flex: 1 }}>
                                     <Image
-                                        src="/images/fpo/fpo-4-3@2x.png"
+                                        src="/images/fpo/fpo.png"
                                         layout="responsive"
                                         width={4}
                                         height={3}
@@ -80,7 +80,7 @@ export default function Modal() {
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <Image
-                                        src="/images/fpo/fpo-4-3@2x.png"
+                                        src="/images/fpo/fpo.png"
                                         layout="responsive"
                                         width={4}
                                         height={3}
@@ -89,7 +89,7 @@ export default function Modal() {
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <Image
-                                        src="/images/fpo/fpo-4-3@2x.png"
+                                        src="/images/fpo/fpo.png"
                                         layout="responsive"
                                         width={4}
                                         height={3}
@@ -110,20 +110,20 @@ export default function Modal() {
                             <p className={style.smallCaps}>
                                 ADU open house &amp; showcase
                             </p>
-                            <p className={style.location}>La Verne, CA</p>
+                            <p className={style.location}>Pomona, CA</p>
                             <ul className={style.dates}>
                                 <DateTime
-                                    date="05/30/25"
+                                    date="09/05/25"
                                     start="10am"
                                     finish="6pm"
                                 />
                                 <DateTime
-                                    date="05/31/25"
+                                    date="09/06/25"
                                     start="9am"
                                     finish="2pm"
                                 />
                             </ul>
-                            <Button href="https://www.eventbrite.com/e/adu-open-house-showcase-in-la-verne-tickets-1367456141129">
+                            <Button newWindow={true} href="https://www.eventbrite.com/e/adu-open-house-showcase-in-pomona-tickets-1612687354289?aff=oddtdtcreator" >
                                 Book your spot
                             </Button>
                         </div>

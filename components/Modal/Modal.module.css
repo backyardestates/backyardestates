@@ -23,6 +23,7 @@
     color: black;
     border-radius: 1.5rem;
     cursor: default;
+    z-index: 9999;
 }
 
 .close {
@@ -96,7 +97,8 @@
     font-size: 1rem;
     font-style: normal;
     font-weight: 500;
-    line-height: 1.5rem; /* 150% */
+    line-height: 1.5rem;
+    /* 150% */
     font-variant: all-small-caps;
     letter-spacing: 0.1rem;
     margin: 0 0 0.5rem 0;
