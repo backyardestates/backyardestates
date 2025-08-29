@@ -10,13 +10,13 @@ export default function Button({
     children,
     href = '#',
     showIcon = true,
+    newWindow = false,
 }) {
     return (
         <Link
             href={href}
-            className={`${isPrimary ? style.primary : style.secondary} ${
-                theme === 'blue' ? style.theme_blue : style.theme_beige
-            }`}
+            className={`${isPrimary ? style.primary : style.secondary} ${theme === 'blue' ? style.theme_blue : style.theme_beige
+                }`} target={newWindow ? '_blank' : '_self'}
         >
             <span>{children}</span>
 

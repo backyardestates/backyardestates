@@ -44,6 +44,7 @@ export const metadata = {
 
 import { sanityFetch } from '@/sanity/live'
 import { CUSTOMER_STORIES_QUERY } from '@/sanity/queries'
+import Modal from '@/components/Modal'
 
 export default async function Home() {
     const { data: stories } = await sanityFetch({
@@ -70,6 +71,7 @@ export default async function Home() {
             <Process />
             <Properties />
             <Footer />
+            <Modal />
         </div>
     )
 }
