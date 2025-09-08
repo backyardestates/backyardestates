@@ -71,7 +71,7 @@ export default async function Home() {
             <Process />
             <Properties />
             <Footer />
-            <Modal />
+            {/* <Modal /> */}
         </div>
     )
 }
