@@ -1,10 +1,12 @@
 // ADUOpenHouse.tsx
+import EventDetails from "@/components/EventDetails";
 import styles from "./page.module.css";
 import Button from "@/components/Button";
 import Nav from "@/components/Nav";
-import { faCalendar, faHome, faUsers, faMapPin } from "@fortawesome/pro-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import OpenHouseFeaturesSection from "@/components/OpenHouseFeatures";
+import { Home, Users, Calendar, MapPin, Construction } from "lucide-react"
+import Image from "next/image";
+import ConstructionTimeline from "@/components/ConstructionTimeline";
 export default function ADUOpenHouse() {
     return (
         <div className={styles.container}>
@@ -16,9 +18,9 @@ export default function ADUOpenHouse() {
 
                     <div className={styles.heroContent}>
                         {/* Left Side */}
-                        <div>
+                        <div >
                             <div className={styles.badge}>
-                                <FontAwesomeIcon icon={faHome} className="mr-2" />
+                                <Home />
                                 Open House Event
                             </div>
 
@@ -29,36 +31,24 @@ export default function ADUOpenHouse() {
                             </p>
 
                             <div className={styles.buttonRow}>
-                                <button className={styles.buttonPrimary}>RSVP Now</button>
-                                <button className={styles.buttonOutline}>Learn More</button>
+                                <Button theme="blue" href="https://www.backyardestates.com/open-house/rsvp" isPrimary={true} showIcon={false}>RSVP Now</Button>
                             </div>
 
-                            <div className={styles.details}>
-                                <div className="flex items-center gap-2">
-                                    <FontAwesomeIcon icon={faCalendar} />
-                                    <span>May 15th, 2025</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <FontAwesomeIcon icon={faMapPin} />
-                                    <span>San Francisco, CA</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <FontAwesomeIcon icon={faUsers} />
-                                    <span>10 AM - 4 PM</span>
-                                </div>
-                            </div>
+                            <EventDetails />
+
+                            <OpenHouseFeaturesSection />
+
                         </div>
 
                         {/* Right Side */}
-                        <div className={styles.featureImage}>
-                            <div>
-                                <FontAwesomeIcon icon={faHome} size="3x" />
-                                <p className="text-lg font-medium">Featured ADU Image</p>
-                                <p className="text-sm opacity-70">Professional photography coming soon</p>
-                            </div>
+                        <div className={styles.featureImageContainer}>
+                            <Image src={"/images/open-house-adu.png"} alt="Open House ADU" width={500} height={600} className={styles.featureImage}>
+                            </Image>
+
                         </div>
                     </div>
                 </div>
+                <ConstructionTimeline />
             </div>
         </div>
 
