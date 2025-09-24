@@ -1,0 +1,67 @@
+@keyframes slideDown {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        background-color: #ffffff;
+    }
+
+    50% {
+        background-color: #faf7ee;
+    }
+}
+
+.banner {
+    display: flex;
+    z-index: 50;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    height: 100%;
+    width: 100%;
+    padding: 0.5em;
+
+    /* animation */
+    animation: slideDown 0.8s ease-out forwards;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 auto;
+    gap: 1rem;
+    align-items: center;
+    overflow: auto;
+}
+
+.text {
+    margin: 0;
+    text-align: center;
+    text-transform: uppercase;
+    color: white;
+    font-weight: 600;
+    font-family: var(--font-serif);
+}
+
+.button {
+    padding: 0.25rem 1.25rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    text-align: center;
+    font-family: var(--font-serif);
+
+    /* subtle pulse animation */
+    animation: pulse 2.5s infinite ease-in-out;
+}

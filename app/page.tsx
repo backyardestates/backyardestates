@@ -6,7 +6,7 @@ import Process from '@/components/Process'
 import Properties from '@/components/Properties'
 import StandaloneLink from '@/components/StandaloneLink'
 import InclusionsHomePanel from '@/components/InclusionsHomePanel'
-
+import Banner from '@/components/Banners/Banner'
 import '../public/styles.css'
 import style from './page.module.css'
 import CustomerStories from '@/components/CustomerStories'
@@ -54,6 +54,7 @@ export default async function Home() {
     return (
         <div className={style.container}>
             <Nav />
+            <Banner text="ADU Open House in Pomona this weekend" buttonText="RSVP" buttonLink="https://www.backyardestates.com/open-house"></Banner>
             <CustomerStories stories={stories} />
             <Floorplans showNav />
             <div className={style.inclusions}>
