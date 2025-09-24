@@ -7,6 +7,8 @@ import OpenHouseFeaturesSection from "@/components/OpenHouseFeatures";
 import { Home, Users, Calendar, MapPin, Construction } from "lucide-react"
 import Image from "next/image";
 import ConstructionTimeline from "@/components/ConstructionTimeline";
+import RsvpSection from "@/components/RsvpSection";
+import Footer from "@/components/Footer";
 export default function ADUOpenHouse() {
     return (
         <div className={styles.container}>
@@ -49,7 +51,10 @@ export default function ADUOpenHouse() {
                     </div>
                 </div>
                 <ConstructionTimeline />
+                <RsvpSection />
             </div>
+            <Footer />
+
         </div>
 
     )
