@@ -45,7 +45,7 @@ export default function ConstructionTimeline({ timeline }: ConstructionTimelineP
                                         {item.socialLink && (
                                             <Link
                                                 className={styles.button}
-                                                href={item.socialLink}
+                                                href={item.socialLink || "https://www.instagram.com/backyardestates/"}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                             >

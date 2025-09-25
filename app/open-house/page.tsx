@@ -10,7 +10,7 @@ import Button from "@/components/Button";
 import Image from "next/image";
 import styles from "./page.module.css";
 import { Home } from "lucide-react";
-import FloatingRsvpButton from '@/components/FloatingButton';
+
 
 export default async function ADUOpenHouse() {
     const openHouse = await sanityFetch({
@@ -73,8 +73,15 @@ export default async function ADUOpenHouse() {
                     </div>
                 </div>
             </div>
+
             <OpenHouseFeaturesSection propertyDetails={openHouse.data.propertyDetails} timeline={buildDuration} />
+            <div className={styles.floatingButton}>
+                <Button theme="blue" href="/open-house/rsvp" isPrimary>
+                    RSVP Now
+                </Button>
+            </div>
             <ConstructionTimeline timeline={openHouse.data.timeline} />
+
             <RsvpSection />
             <Footer />
         </div>

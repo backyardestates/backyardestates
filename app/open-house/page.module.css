@@ -61,6 +61,15 @@
     margin: 2rem 0;
 }
 
+.floatingButton {
+    position: sticky;
+    top: 90vh;
+    /* appears when scrolling near the section */
+    display: flex;
+    justify-content: center;
+    z-index: 999;
+    margin-top: 1rem;
+}
 
 
 .featureImageContainer {
