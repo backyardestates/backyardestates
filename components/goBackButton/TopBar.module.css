@@ -1,0 +1,16 @@
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 1.5rem 2.5rem 1rem 2rem;
+}
+
+.icon {
+    color: var(--color-neutral-300);
+}
+
+.icon:hover {
+    color: var(--color-neutral-500);
+    cursor: pointer;
+}
