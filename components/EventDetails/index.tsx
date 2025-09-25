@@ -1,24 +1,35 @@
-import styles from "./EventDetails.module.css"
-import { Calendar, MapPin, Users } from "lucide-react"
+import styles from "./EventDetails.module.css";
+import { Calendar, MapPin } from "lucide-react";
 
-const eventDetailsData = [
-    { icon: Calendar, label: "October 10th, 2025" },
-    { icon: MapPin, label: "Upland, CA" },
-    // { icon: Users, label: "10 AM - 4 PM" },
-]
+interface EventDetailsProps {
+    dates: string[];
+    location: string;
+}
 
-export default function EventDetails({ details = eventDetailsData }) {
+export default function EventDetails({ dates, location }: EventDetailsProps) {
+    // Format the dates nicely, e.g., "October 10th, 2025 and October 11th, 2025"
+    const formattedDates = dates?.map(date => {
+        const d = new Date(date);
+        return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    }).join(" and ");
+
+    const detailsData = [
+        { icon: Calendar, label: formattedDates },
+        { icon: MapPin, label: location },
+        // Add more items if needed
+    ];
+
     return (
         <div className={styles.detailsContainer}>
-            {details.map((item, index) => {
-                const Icon = item.icon
+            {detailsData.map((item, index) => {
+                const Icon = item.icon;
                 return (
                     <div key={index} className={styles.details}>
                         <Icon />
                         <span>{item.label}</span>
                     </div>
-                )
+                );
             })}
         </div>
-    )
+    );
 }

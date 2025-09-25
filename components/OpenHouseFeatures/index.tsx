@@ -1,36 +1,58 @@
-import styles from "./OpenHouseFeatures.module.css"
-import { Home, Users, Calendar } from "lucide-react"
+import styles from "./OpenHouseFeatures.module.css";
+import { Home, Users, Calendar } from "lucide-react";
 
-export default function OpenHouseFeaturesSection() {
+interface PropertyDetails {
+    sqft: number;
+    beds: number;
+    baths: number;
+
+}
+
+
+interface OpenHouseFeaturesSectionProps {
+    propertyDetails: PropertyDetails;
+    timeline: string;
+}
+
+export default function OpenHouseFeaturesSection({ propertyDetails, timeline }: OpenHouseFeaturesSectionProps) {
+    const { sqft, beds, baths } = propertyDetails;
+
+    console.log(propertyDetails);
+
+    // Calculate build duration from timeline if available
+
     return (
         <div className={styles.section}>
             <div className={styles.container}>
                 <div className={styles.grid}>
+                    {/* Sqft */}
                     <div className={styles.feature}>
                         <div className={styles.iconWrapper}>
                             <Home color="white" />
                         </div>
-                        <h3 className={styles.title}>749 sqft</h3>
+                        <h3 className={styles.title}>{sqft} sqft</h3>
                         <p className={styles.text}>Thoughtfully designed space</p>
                     </div>
 
+                    {/* Beds / Baths */}
                     <div className={styles.feature}>
                         <div className={styles.iconWrapper}>
                             <Users color="white" />
                         </div>
-                        <h3 className={styles.title}>2 Bed / 2 Bath</h3>
+                        <h3 className={styles.title}>{beds} Bed / {baths} Bath</h3>
                         <p className={styles.text}>Perfect for modern living</p>
                     </div>
 
+                    {/* Build Duration */}
                     <div className={styles.feature}>
                         <div className={styles.iconWrapper}>
                             <Calendar color="white" />
                         </div>
-                        <h3 className={styles.title}>7-Week-Built</h3>
+                        <h3 className={styles.title}>{timeline}</h3>
                         <p className={styles.text}>High quality construction</p>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }

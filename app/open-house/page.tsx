@@ -1,61 +1,83 @@
 // ADUOpenHouse.tsx
+import { sanityFetch } from '@/sanity/live'
+import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
 import EventDetails from "@/components/EventDetails";
-import styles from "./page.module.css";
-import Button from "@/components/Button";
-import Nav from "@/components/Nav";
 import OpenHouseFeaturesSection from "@/components/OpenHouseFeatures";
-import { Home, Users, Calendar, MapPin, Construction } from "lucide-react"
-import Image from "next/image";
 import ConstructionTimeline from "@/components/ConstructionTimeline";
 import RsvpSection from "@/components/RsvpSection";
+import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-export default function ADUOpenHouse() {
+import Button from "@/components/Button";
+import Image from "next/image";
+import styles from "./page.module.css";
+import { Home } from "lucide-react";
+
+export default async function ADUOpenHouse() {
+    // Fetch data from Sanity
+    const openHouse = await sanityFetch({
+        query: OPEN_HOUSES_QUERY,
+        params: { slug: "phillips" },
+    });
+
+    console.log(openHouse);
+
+    if (!openHouse) {
+        return <p>Open House not found</p>;
+    }
+
+    const buildDuration = openHouse.data.timeline?.length ? `${openHouse.data.timeline.length}-Week-Built` : "TBD";
+
+
     return (
         <div className={styles.container}>
-
             <Nav />
-            <div className={styles.container}>
-                <div className={styles.hero}>
-                    <div className={styles.heroOverlay}></div>
 
-                    <div className={styles.heroContent}>
-                        {/* Left Side */}
-                        <div >
-                            <div className={styles.badge}>
-                                <Home />
-                                Open House Event
-                            </div>
-
-                            <h1 className={styles.title}>ADU Open House</h1>
-
-                            <p className={styles.subtitle}>
-                                Discover modern living in our beautifully designed Accessory Dwelling Unit
-                            </p>
-
-                            <div className={styles.buttonRow}>
-                                <Button theme="blue" href="https://www.backyardestates.com/open-house/rsvp" isPrimary={true} showIcon={false}>RSVP Now</Button>
-                            </div>
-
-                            <EventDetails />
-
-                            <OpenHouseFeaturesSection />
-
+            <div className={styles.hero}>
+                <div className={styles.heroOverlay}></div>
+                <div className={styles.heroContent}>
+                    {/* Left Side */}
+                    <div>
+                        <div className={styles.badge}>
+                            <Home />
+                            Open House Event
                         </div>
 
-                        {/* Right Side */}
-                        <div className={styles.featureImageContainer}>
-                            <Image src={"/images/open-house-adu.png"} alt="Open House ADU" width={500} height={600} className={styles.featureImage}>
-                            </Image>
+                        <h1 className={styles.title}>ADU Open House - {openHouse.data.title}</h1>
+                        <p className={styles.subtitle}>
+                            Discover modern living in our beautifully designed Accessory Dwelling Unit
+                        </p>
 
+                        <div className={styles.buttonRow}>
+                            <Button
+                                theme="blue"
+                                href="/open-house/rsvp"
+                                isPrimary={true}
+                                showIcon={false}
+                            >
+                                RSVP Now
+                            </Button>
                         </div>
+
+                        <EventDetails dates={openHouse.data.dates} location={openHouse.data.location} />
+                        <OpenHouseFeaturesSection propertyDetails={openHouse.data.propertyDetails} timeline={buildDuration} />
+                    </div>
+
+                    {/* Right Side */}
+                    <div className={styles.featureImageContainer}>
+                        <Image
+                            src={openHouse.data.projectMedia.flyers[0].url}
+                            alt={openHouse.data.title}
+                            width={500}
+                            height={600}
+                            className={styles.featureImage}
+                        />
                     </div>
                 </div>
-                <ConstructionTimeline />
-                <RsvpSection />
             </div>
+
+            <ConstructionTimeline timeline={openHouse.data.timeline} />
+            <RsvpSection />
             <Footer />
-
         </div>
-
-    )
+    );
 }

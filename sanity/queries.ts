@@ -21,3 +21,41 @@ categories->{slug},
   _updatedAt,
   tags
 }`
+
+export const OPEN_HOUSES_QUERY = `
+*[_type == "openHouse" && slug.current == $slug][0]{
+  _id,
+  title,
+  "slug": slug.current,
+  dates,
+  location,
+  propertyDetails {
+    sqft,
+    beds,
+    baths
+  },
+  timeline[]{
+    week,
+    milestone,
+    description,
+    "imageUrl": image.url,
+    "imagePublicId": image.public_id,
+    socialLink
+  },
+  projectMedia {
+    professionalPhotos[] {
+      "url": url,
+      "publicId": public_id
+    },
+    flyers[] {
+      "url": url,
+      "publicId": public_id
+    },
+    floorplans[] {
+      "url": url,
+      "publicId": public_id
+    }
+  },
+  createdAt
+}
+`
