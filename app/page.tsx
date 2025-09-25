@@ -54,7 +54,7 @@ export default async function Home() {
     return (
         <div className={style.container}>
             <Nav />
-            <Banner text="ADU Open House in Pomona this weekend" buttonText="RSVP" buttonLink="https://www.backyardestates.com/open-house"></Banner>
+            <Banner text="ADU Open House in Pomona this weekend" buttonText="RSVP" buttonLink="/open-house"></Banner>
             <CustomerStories stories={stories} />
             <Floorplans showNav />
             <div className={style.inclusions}>
