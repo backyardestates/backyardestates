@@ -1,4 +1,3 @@
-// ADUOpenHouse.tsx
 import { sanityFetch } from '@/sanity/live'
 import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
 import EventDetails from "@/components/EventDetails";
@@ -11,9 +10,9 @@ import Button from "@/components/Button";
 import Image from "next/image";
 import styles from "./page.module.css";
 import { Home } from "lucide-react";
+import FloatingRsvpButton from '@/components/FloatingButton';
 
 export default async function ADUOpenHouse() {
-    // Fetch data from Sanity
     const openHouse = await sanityFetch({
         query: OPEN_HOUSES_QUERY,
         params: { slug: "phillips" },
@@ -52,20 +51,20 @@ export default async function ADUOpenHouse() {
                                 theme="blue"
                                 href="/open-house/rsvp"
                                 isPrimary={true}
-                                showIcon={false}
+                                showIcon={true}
                             >
                                 RSVP Now
                             </Button>
                         </div>
 
                         <EventDetails dates={openHouse.data.dates} location={openHouse.data.location} />
-                        <OpenHouseFeaturesSection propertyDetails={openHouse.data.propertyDetails} timeline={buildDuration} />
+
                     </div>
 
                     {/* Right Side */}
                     <div className={styles.featureImageContainer}>
                         <Image
-                            src={openHouse.data.projectMedia.flyers[0].url}
+                            src={openHouse.data.projectMedia.professionalPhotos[0].url}
                             alt={openHouse.data.title}
                             width={500}
                             height={600}
@@ -74,7 +73,7 @@ export default async function ADUOpenHouse() {
                     </div>
                 </div>
             </div>
-
+            <OpenHouseFeaturesSection propertyDetails={openHouse.data.propertyDetails} timeline={buildDuration} />
             <ConstructionTimeline timeline={openHouse.data.timeline} />
             <RsvpSection />
             <Footer />

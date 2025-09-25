@@ -1,15 +1,21 @@
 .section {
-    margin: 1rem 0;
+    margin: 0;
+    background-color: var(--color-brand-beige-subtle);
+    width: 100%;
+    padding: 1.5rem 0;
+    border-bottom: 0.75rem solid var(--color-brand-beige);
 }
 
 .container {
     max-width: 72rem;
+    margin: 0 auto;
 }
 
 .grid {
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
+    align-items: center;
     gap: 0.5rem;
     width: 100%;
 }
@@ -27,33 +33,35 @@
 .iconWrapper {
     width: 3rem;
     height: 3rem;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1rem;
+    box-shadow: var(--drop-shadow-on-beige);
 }
 
 .title {
     font-size: medium;
     font-weight: bold;
-    color: var(--foreground);
-    margin-bottom: 0.5rem;
+    color: var(--color-brand-dark-blue);
     font-family: var(--font-sans);
+    margin: 0;
 }
 
 .text {
-    color: var(--color-white-subtle);
+    color: var(--color-neutral-500);
     font-family: var(--font-sans);
     font-size: small;
+    font-weight: 300;
 }
 
 
 @media (min-width: 1024px) {
 
     .section {
-        padding: 2rem 0 0;
+        padding: 2rem 0;
     }
 
     .grid {
@@ -86,15 +94,12 @@
     .title {
         font-size: large;
         font-weight: bold;
-        color: var(--foreground);
         margin-bottom: 0.5rem;
-        font-family: var(--font-sans);
     }
 
     .text {
-        color: var(--color-white-subtle);
-        font-family: var(--font-sans);
         font-size: medium;
+        font-weight: 400;
     }
 
 }

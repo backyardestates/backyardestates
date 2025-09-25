@@ -28,7 +28,7 @@ export default function OpenHouseFeaturesSection({ propertyDetails, timeline }: 
                     {/* Sqft */}
                     <div className={styles.feature}>
                         <div className={styles.iconWrapper}>
-                            <Home color="white" />
+                            <Home color="#b99764" />
                         </div>
                         <h3 className={styles.title}>{sqft} sqft</h3>
                         <p className={styles.text}>Thoughtfully designed space</p>
@@ -37,7 +37,7 @@ export default function OpenHouseFeaturesSection({ propertyDetails, timeline }: 
                     {/* Beds / Baths */}
                     <div className={styles.feature}>
                         <div className={styles.iconWrapper}>
-                            <Users color="white" />
+                            <Users color="#b99764" />
                         </div>
                         <h3 className={styles.title}>{beds} Bed / {baths} Bath</h3>
                         <p className={styles.text}>Perfect for modern living</p>
@@ -46,7 +46,7 @@ export default function OpenHouseFeaturesSection({ propertyDetails, timeline }: 
                     {/* Build Duration */}
                     <div className={styles.feature}>
                         <div className={styles.iconWrapper}>
-                            <Calendar color="white" />
+                            <Calendar color="#b99764" />
                         </div>
                         <h3 className={styles.title}>{timeline}</h3>
                         <p className={styles.text}>High quality construction</p>
