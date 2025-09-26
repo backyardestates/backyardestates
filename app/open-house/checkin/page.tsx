@@ -27,6 +27,7 @@ export default async function CheckInPage({ searchParams }: any) {
         console.error("Error marking deal as attended:", err);
     }
 
+
     return (
         <div>
             <TopBar />
