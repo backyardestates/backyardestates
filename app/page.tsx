@@ -47,6 +47,7 @@ import { CUSTOMER_STORIES_QUERY } from '@/sanity/queries'
 import Modal from '@/components/Modal'
 import RSVPModal from '@/components/RSVPSuccessModal'
 import RSVPModalWrapper from '@/components/RSVPSucessWrapper'
+import { Suspense } from 'react'
 
 export default async function Home() {
     const { data: stories } = await sanityFetch({
@@ -74,7 +75,9 @@ export default async function Home() {
             <Process />
             <Properties />
             <Footer />
-            <RSVPModalWrapper />
+            <Suspense fallback={null}>
+                <RSVPModalWrapper />
+            </Suspense>
             {/* <Modal /> */}
         </div>
     )
