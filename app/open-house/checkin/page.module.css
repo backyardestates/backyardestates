@@ -1,0 +1,51 @@
+.container {
+    max-width: 480px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    font-family: system-ui, sans-serif;
+}
+
+.title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2d6a4f;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.infoCard {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e6e6e6;
+    text-align: left;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.label {
+    font-weight: 600;
+    color: #333;
+    margin-right: 0.25rem;
+}
+
+.error {
+    max-width: 400px;
+    margin: 4rem auto;
+    padding: 1.5rem;
+    background: #ffe3e3;
+    color: #d32f2f;
+    border: 1px solid #f5c2c2;
+    border-radius: 12px;
+    font-family: system-ui, sans-serif;
+    text-align: center;
+}

@@ -9,7 +9,7 @@ import formatDate from "@/utils/dates"
 import { isValidUSPhone } from "@/utils/isValidUSPhone"
 import { Select } from "../Select"
 import { useRouter } from "next/navigation"
-
+import { generateRsvpToken } from "@/utils/generateRSVPToken"
 function cn(...classes: (string | undefined | null | boolean)[]): string {
     return classes.filter(Boolean).join(" ")
 }
@@ -309,7 +309,17 @@ export function RSVPForm({ dates }: EventDates) {
             default:
                 hearAboutNumber = 56
         }
+        // 🔑 Request the token from your server
+        const tokenRes = await fetch("/api/rsvp-token", {
+            method: "POST",
+            body: JSON.stringify({
+                dealId: person.data.data.id,
+                email: person.data.data.email,
+            }),
+            headers: { "Content-Type": "application/json" },
+        });
 
+        const { token } = await tokenRes.json();
         const submittedLead = {
             title: `${lead.firstname} ${lead.lastname}`,
             person_id: person.data.data.id,
@@ -321,6 +331,7 @@ export function RSVPForm({ dates }: EventDates) {
             '99c3c4c83c70de6cc3d999b6f2692bb4b59b2036': lead.date,
             // prettier-ignore
             'd51817980c84eec68d862509ea6cc9fd58d2c2c9': hearAboutNumber,
+            '020e272ca1b410845d818c04c69e56d37827ca4e': token,
             pipeline_id: 7,
             stage_id: lead.stage_id
         }
@@ -376,6 +387,7 @@ export function RSVPForm({ dates }: EventDates) {
             fd.append("date", selectedDate ?? "");
             fd.append("time", selectedDate ? (selectedTimes[selectedDate] ?? "") : "");
             fd.append("ticketCount", ticketCount.toString());
+
             createPerson(fd);
         }
     };
