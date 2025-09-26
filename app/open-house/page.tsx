@@ -24,7 +24,7 @@ export default async function ADUOpenHouse() {
         return <p>Open House not found</p>;
     }
 
-    const buildDuration = openHouse.data.timeline?.length ? `${openHouse.data.timeline.length}-Week-Built` : "TBD";
+    const buildDuration = openHouse.data.timeline?.length ? `Built in ${openHouse.data.timeline.length} Weeks` : "TBD";
 
 
     return (

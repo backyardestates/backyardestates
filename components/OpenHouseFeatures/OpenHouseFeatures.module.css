@@ -2,7 +2,7 @@
     margin: 0;
     background-color: var(--color-brand-beige-subtle);
     width: 100%;
-    padding: 1.5rem 0;
+    padding: 2.5rem 0;
     border-bottom: 0.75rem solid var(--color-brand-beige);
 }
 
@@ -13,7 +13,7 @@
 
 .grid {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     flex-wrap: nowrap;
     align-items: center;
     gap: 0.5rem;
@@ -31,8 +31,8 @@
 }
 
 .iconWrapper {
-    width: 3rem;
-    height: 3rem;
+    width: 5rem;
+    height: 5rem;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
     display: flex;
@@ -42,8 +42,13 @@
     box-shadow: var(--drop-shadow-on-beige);
 }
 
+.icon {
+    width: 2rem;
+    height: 2rem;
+}
+
 .title {
-    font-size: medium;
+    font-size: 1rem;
     font-weight: bold;
     color: var(--color-brand-dark-blue);
     font-family: var(--font-sans);
@@ -54,7 +59,7 @@
     color: var(--color-neutral-500);
     font-family: var(--font-sans);
     font-size: small;
-    font-weight: 300;
+    font-weight: 400;
 }
 
 
@@ -82,8 +87,8 @@
     }
 
     .iconWrapper {
-        width: 4rem;
-        height: 4rem;
+        width: 6rem;
+        height: 6rem;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -91,14 +96,19 @@
         margin: 0 auto 1rem;
     }
 
+    .icon {
+        width: 2rem;
+        height: 2rem;
+    }
+
     .title {
-        font-size: large;
+        font-size: 1.3rem;
         font-weight: bold;
         margin-bottom: 0.5rem;
     }
 
     .text {
-        font-size: medium;
+        font-size: 1rem;
         font-weight: 400;
     }
 
