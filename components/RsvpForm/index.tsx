@@ -309,9 +309,12 @@ export function RSVPForm({ dates }: EventDates) {
         })
     }
 
-    const handleInputChange = (field: string, value: string) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
-    }
+    const handleInputChange = (field: keyof typeof formData, value: string) => {
+        setFormData((prev) => ({ ...prev, [field]: value }));
+
+        // Clear the error for this field as the user types
+        setErrors((prev) => ({ ...prev, [field]: "" }));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

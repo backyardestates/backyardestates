@@ -11,7 +11,7 @@ export default function RsvpSection() {
                     future of sustainable living
                 </p>
                 <div className={styles.buttonRow}>
-                    <Button theme="blue" href="https://www.backyardestates.com/open-house/rsvp" isPrimary={true} showIcon={true}>
+                    <Button theme="blue" href="/open-house/rsvp" isPrimary={true} showIcon={true}>
                         Reserve Your Spot
                     </Button>
                 </div>
