@@ -63,7 +63,7 @@
 
 .floatingButton {
     position: sticky;
-    top: 95svh;
+    top: 90dvh;
     /* appears when scrolling near the section */
     display: flex;
     justify-content: center;
