@@ -5,12 +5,7 @@ import { TopBar } from "@/components/goBackButton";
 import style from "./page.module.css";
 
 // Use default export async function
-export default async function CheckInPage({
-    searchParams,
-}: {
-    searchParams?: { token?: string };
-}) {
-    // Make token optional safely
+export default async function CheckInPage({ searchParams }: any) {
     const token = searchParams?.token;
 
     if (!token) {
