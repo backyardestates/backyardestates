@@ -8,6 +8,7 @@ import { CalendarDays, Clock, Users, Minus, Plus, CalendarPlus2 } from "lucide-r
 import formatDate from "@/utils/dates"
 import { isValidUSPhone } from "@/utils/isValidUSPhone"
 import { Select } from "../Select"
+import { useRouter } from "next/navigation"
 
 function cn(...classes: (string | undefined | null | boolean)[]): string {
     return classes.filter(Boolean).join(" ")
@@ -74,6 +75,7 @@ interface EventDates {
     dates: string[];
 }
 
+
 export function RSVPForm({ dates }: EventDates) {
     const [selectedDate, setSelectedDate] = useState<string | null>(null)
     const [selectedTimes, setSelectedTimes] = useState<Record<string, string>>({})
@@ -85,6 +87,8 @@ export function RSVPForm({ dates }: EventDates) {
         phone: "",
         hearAbout: "",
     })
+
+    const router = useRouter()
 
     // Example event configurations - you can modify these based on your actual events
     const eventConfigs = {
@@ -157,7 +161,7 @@ export function RSVPForm({ dates }: EventDates) {
 
 
     // For this example, using Friday+Saturday configuration
-    const eventDates = dates.length > 0 ? eventConfigs.fridaySaturday : eventConfigs.saturdayOnly
+    const eventDates = dates.length > 1 ? eventConfigs.fridaySaturday : eventConfigs.saturdayOnly
 
     const handleDateToggle = (date: string) => {
         setSelectedDate((prev) => {
@@ -214,6 +218,116 @@ export function RSVPForm({ dates }: EventDates) {
         setErrors((prev) => ({ ...prev, [field]: "" }));
     };
 
+
+    async function createPerson(fd) {
+        console.log("FormData:", Object.fromEntries(fd.entries()));
+
+        const rawDate = fd.get("date") as string | null;
+        let stage_id: number | null = null;
+
+        if (rawDate) {
+            const dateObj = new Date(rawDate); // assumes `selectedDate` is an ISO-like string ("2025-09-26")
+            const day = dateObj.getDay();
+            // getDay(): Sunday = 0, Monday = 1, ..., Friday = 5, Saturday = 6
+
+            if (day === 4) {
+                // Friday
+                stage_id = 76; // replace with your Friday stage_id
+            } else if (day === 5) {
+                // Saturday
+                stage_id = 77; // replace with your Saturday stage_id
+            }
+        }
+        console.log(stage_id)
+
+        const person = {
+            name: `${fd.get("firstName")} ${fd.get("lastName")}`,
+            email: [{ value: fd.get("email") }],
+            phone: [{ value: fd.get("phone") }],
+            '733d97610511293c521189a69a776c732bae881c': 'subscribed',
+            '3397c6015c59f81b73082a78efb98a6bcc88b258': 'subscribed'
+        }
+
+        const lead = {
+            name: `${fd.get("firstName")} ${fd.get("lastName")}`,
+            firstname: fd.get("firstName"),
+            lastname: fd.get("lastName"),
+            email: [{ value: fd.get("email") }],
+            phone: [{ value: fd.get("phone") }],
+            hearAbout: fd.get("hearAbout"),
+            stage_id: stage_id
+
+        }
+        try {
+            const res = await fetch('/api/pipedrive/create-person', {
+                method: 'POST',
+                body: JSON.stringify({ person }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+
+            const personCreated = await res.json()
+
+            if (personCreated.success) {
+                submitLead(personCreated, lead)
+            }
+        } catch (error) {
+            console.log('Error creating person:', error)
+        }
+    }
+
+    async function submitLead(person, lead) {
+        let hearAboutNumber = 0
+
+        switch (lead.hearAbout) {
+            case 'ADU Event':
+                hearAboutNumber = 58
+                break
+            case 'Open House':
+                hearAboutNumber = 59
+                break
+            case 'Referral':
+                hearAboutNumber = 60
+                break
+            case 'Search':
+                hearAboutNumber = 61
+                break
+            case 'Social Media':
+                hearAboutNumber = 28
+                break
+            default:
+                hearAboutNumber = 56
+        }
+
+        const submittedLead = {
+            title: `${lead.firstname} ${lead.lastname}`,
+            person_id: person.data.data.id,
+            // prettier-ignore
+            'fd49bc4881f7bdffdeaa1868171df24bea5925fe': hearAboutNumber,
+            // prettier-ignore
+            'c30b635d9bdcdd388eff5bf6f1358f0dc43286a7': lead.emailConsent,
+            // prettier-ignore
+            'fce207a36d761025490865bae5bd77b19aaf5779': lead.textConsent,
+            pipeline_id: 7,
+            stage_id: lead.stage_id
+        }
+        try {
+            const leadRes = await fetch('/api/pipedrive/submit-lead', {
+                method: 'POST',
+                body: JSON.stringify({ submittedLead }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+
+            const leadData = await leadRes.json()
+
+            if (leadData.success) {
+                router.push(`/?rsvp=success`)
+            }
+        } catch (error) {
+            console.log('Error submitting lead:', error)
+        }
+    }
+
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const newErrors = { ...errors };
@@ -237,8 +351,16 @@ export function RSVPForm({ dates }: EventDates) {
 
         const hasError = Object.values(newErrors).some((v) => v);
         if (!hasError) {
-            e.preventDefault()
-            alert("RSVP submitted successfully!")
+            const fd = new FormData();
+            fd.append("firstName", formData.firstName);
+            fd.append("lastName", formData.lastName);
+            fd.append("email", formData.email);
+            fd.append("phone", formData.phone);
+            fd.append("hearAbout", formData.hearAbout);
+            fd.append("date", selectedDate ?? "");
+            fd.append("time", selectedDate ? (selectedTimes[selectedDate] ?? "") : "");
+            fd.append("ticketCount", ticketCount.toString());
+            createPerson(fd);
         }
     };
 
@@ -462,12 +584,13 @@ export function RSVPForm({ dates }: EventDates) {
                                 placeholder="Select an option"
                                 aria-label="How did you hear about us"
                                 options={[
-                                    { value: "social-media", label: "Social Media" },
+                                    { value: "mailer", label: "Mailer" },
+                                    { value: "facebook", label: "Facebook" },
+                                    { value: "instagram", label: "Instagram" },
+                                    { value: "tiktok", label: "TikTok" },
+                                    { value: "youtube", label: "Youtube" },
                                     { value: "google-search", label: "Google Search" },
                                     { value: "friend-referral", label: "Friend/Family Referral" },
-                                    { value: "real-estate-agent", label: "Real Estate Agent" },
-                                    { value: "newspaper", label: "Newspaper/Magazine" },
-                                    { value: "radio", label: "Radio" },
                                     { value: "other", label: "Other" },
                                 ]}
                             />

@@ -155,6 +155,22 @@ export default function LeadForm() {
         console.log('All person fields:', data)
     }
 
+    async function getStageIds(pipeline_id) {
+
+        const res = await fetch(
+            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/stages?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`, {
+            method: 'POST',
+            body: JSON.stringify({ pipeline_id }),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        )
+        const data = await res.json()
+
+        console.log('All stages ids:', data)
+    }
+
+
+
     const sources = [
         {
             label: 'ADU Event',

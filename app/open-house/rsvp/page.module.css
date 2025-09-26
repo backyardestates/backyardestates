@@ -8,14 +8,8 @@
 .container {
     max-width: 1280px;
     /* typical container max width */
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem;
-    /* px-4 */
-    padding-right: 1rem;
-    padding-top: 2rem;
-    /* py-8 */
-    padding-bottom: 2rem;
+    margin: 0 auto;
+    padding: 2rem 1rem 8rem;
 }
 
 .header {
