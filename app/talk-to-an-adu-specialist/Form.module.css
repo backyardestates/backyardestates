@@ -21,7 +21,7 @@
 }
 
 .content fieldset legend,
-.content div.field > label {
+.content div.field>label {
     margin: 0 0 0.5rem 0;
     /* padding: 0; */
     /* border: none; */
@@ -90,20 +90,6 @@
     cursor: not-allowed;
 }
 
-.legal_print {
-    margin: 2rem 0 0 0;
-    padding: 0;
-    font-size: 0.75rem;
-    line-height: 150%;
-    color: var(--color-neutral-300);
-}
-
-.legal_print a {
-    font-size: 0.75rem;
-    line-height: 120%;
-    color: var(--color-neutral-300);
-}
-
 .success {
     margin: 0;
     padding: 1.5rem;
@@ -135,7 +121,8 @@
     font-size: 2rem;
     font-style: normal;
     font-weight: 600;
-    line-height: 1.5em; /* 150% */
+    line-height: 1.5em;
+    /* 150% */
     color: var(--color-brand-dark-blue);
     margin: 0 auto 2rem auto !important;
 }
@@ -147,7 +134,8 @@
     font-size: 1.25rem;
     font-style: normal;
     font-weight: 400;
-    line-height: 1.5em; /* 150% */
+    line-height: 1.5em;
+    /* 150% */
 }
 
 .calendly {
@@ -198,7 +186,8 @@
 }
 
 .customCheckbox input[type='checkbox'] {
-    display: none; /* Hide the default checkbox */
+    display: none;
+    /* Hide the default checkbox */
 }
 
 .customCheckbox::before {
@@ -207,17 +196,19 @@
     width: 20px;
     height: 20px;
     border: 2px solid var(--color-neutral-300);
-    border-radius: 4px; /* Rounded corners */
+    border-radius: 4px;
+    /* Rounded corners */
     background-color: var(--color-white);
     transition:
         background-color 0.2s,
         border-color 0.2s;
 }
 
-.customCheckbox input[type='checkbox']:checked + span::before {
+.customCheckbox input[type='checkbox']:checked+span::before {
     background-color: var(--color-brand-light-blue);
     border-color: var(--color-brand-light-blue);
-    content: '✔'; /* Add a checkmark */
+    content: '✔';
+    /* Add a checkmark */
     color: var(--color-white);
     font-size: 16px;
     text-align: center;
@@ -228,12 +219,12 @@
     border-color: var(--color-brand-dark-blue);
 }
 
-.customCheckbox input[type='checkbox']:focus-visible + span::before {
+.customCheckbox input[type='checkbox']:focus-visible+span::before {
     outline: 2px solid var(--color-brand-light-blue);
     outline-offset: 2px;
 }
 
-.customCheckbox input[type='checkbox']:disabled + span::before {
+.customCheckbox input[type='checkbox']:disabled+span::before {
     background-color: var(--color-neutral-200);
     border-color: var(--color-neutral-200);
     cursor: not-allowed;

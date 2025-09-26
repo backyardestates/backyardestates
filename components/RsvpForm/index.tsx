@@ -255,6 +255,9 @@ export function RSVPForm({ dates }: EventDates) {
             email: [{ value: fd.get("email") }],
             phone: [{ value: fd.get("phone") }],
             hearAbout: fd.get("hearAbout"),
+            ticketCount: fd.get("ticketCount"),
+            time: fd.get("time"),
+            date: fd.get("date"),
             stage_id: stage_id
 
         }
@@ -279,20 +282,29 @@ export function RSVPForm({ dates }: EventDates) {
         let hearAboutNumber = 0
 
         switch (lead.hearAbout) {
-            case 'ADU Event':
-                hearAboutNumber = 58
+            case 'mailer':
+                hearAboutNumber = 87
                 break
-            case 'Open House':
-                hearAboutNumber = 59
+            case 'facebook':
+                hearAboutNumber = 88
                 break
-            case 'Referral':
-                hearAboutNumber = 60
+            case 'instagram':
+                hearAboutNumber = 89
                 break
-            case 'Search':
-                hearAboutNumber = 61
+            case 'tiktok':
+                hearAboutNumber = 90
                 break
-            case 'Social Media':
-                hearAboutNumber = 28
+            case 'youtube':
+                hearAboutNumber = 91
+                break
+            case 'google-search':
+                hearAboutNumber = 92
+                break
+            case 'friend-referral':
+                hearAboutNumber = 93
+                break
+            case 'other':
+                hearAboutNumber = 94
                 break
             default:
                 hearAboutNumber = 56
@@ -302,14 +314,18 @@ export function RSVPForm({ dates }: EventDates) {
             title: `${lead.firstname} ${lead.lastname}`,
             person_id: person.data.data.id,
             // prettier-ignore
-            'fd49bc4881f7bdffdeaa1868171df24bea5925fe': hearAboutNumber,
+            '17e454fc34bb628afc178609b1ef3295c7152877': lead.ticketCount,
             // prettier-ignore
-            'c30b635d9bdcdd388eff5bf6f1358f0dc43286a7': lead.emailConsent,
+            'e37e48f6d0da66dc4e54ba571bc3796091a92be4': lead.time,
             // prettier-ignore
-            'fce207a36d761025490865bae5bd77b19aaf5779': lead.textConsent,
+            '99c3c4c83c70de6cc3d999b6f2692bb4b59b2036': lead.date,
+            // prettier-ignore
+            'd51817980c84eec68d862509ea6cc9fd58d2c2c9': hearAboutNumber,
             pipeline_id: 7,
             stage_id: lead.stage_id
         }
+
+        console.log(submittedLead)
         try {
             const leadRes = await fetch('/api/pipedrive/submit-lead', {
                 method: 'POST',
@@ -600,7 +616,7 @@ export function RSVPForm({ dates }: EventDates) {
 
                     {/* Submit Button */}
                     <Button type="submit" disabled={!isFormValid} className={styles.submitButton}>
-                        Confirm My Attendance
+                        RSVP Now
                     </Button>
                 </form>
 

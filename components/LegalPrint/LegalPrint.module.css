@@ -1,0 +1,14 @@
+.legal_print {
+    margin: 2rem 0 0 0;
+    padding: 0;
+    font-size: 0.75rem;
+    line-height: 150%;
+    color: var(--color-neutral-300);
+    font-family: var(--font-sans);
+}
+
+.legal_print a {
+    font-size: 0.75rem;
+    line-height: 120%;
+    color: var(--color-neutral-300);
+}

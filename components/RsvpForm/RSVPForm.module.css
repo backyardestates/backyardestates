@@ -409,6 +409,10 @@
     transition: background-color 0.2s ease;
 }
 
+.submitButton:hover {
+    background-color: var(--color-brand-beige-hover);
+}
+
 .submitButton:disabled {
     background-color: var(--color-neutral-200);
     cursor: not-allowed;
