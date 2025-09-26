@@ -4,15 +4,14 @@ import { Calendar, MapPin } from "lucide-react";
 interface EventDetailsProps {
     dates: string[];
     location: string;
-    className?: string
 }
 
-export default function EventDetails({ dates, location, className }: EventDetailsProps) {
+export default function EventDetails({ dates, location }: EventDetailsProps) {
     // Format the dates nicely, e.g., "October 10th, 2025 and October 11th, 2025"
     const formattedDates = dates?.map(date => {
         const d = new Date(date);
         return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-    }).join(" & ");
+    }).join(" and ");
 
     const detailsData = [
         { icon: Calendar, label: formattedDates },
@@ -21,11 +20,11 @@ export default function EventDetails({ dates, location, className }: EventDetail
     ];
 
     return (
-        <div className={className ? className : styles.detailsContainer}>
+        <div className={styles.detailsContainer}>
             {detailsData.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                    <div key={index} className={className ? className : styles.detailsContainer}>
+                    <div key={index} className={styles.details}>
                         <Icon />
                         <span>{item.label}</span>
                     </div>

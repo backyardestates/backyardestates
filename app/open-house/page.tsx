@@ -41,7 +41,7 @@ export default async function ADUOpenHouse() {
                             Open House Event
                         </div>
 
-                        <h1 className={styles.title}>ADU Open House - {openHouse.data.title}</h1>
+                        <h1 className={styles.title}>ADU Open House</h1>
                         <p className={styles.subtitle}>
                             Discover modern living in our beautifully designed Accessory Dwelling Unit
                         </p>
