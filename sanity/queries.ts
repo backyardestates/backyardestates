@@ -36,7 +36,7 @@ export const OPEN_HOUSES_QUERY = `
   },
   timeline[]{
     week,
-    milestone,
+    milestoneTitle,
     description,
     "imageUrl": image.url,
     "imagePublicId": image.public_id,
@@ -59,3 +59,24 @@ export const OPEN_HOUSES_QUERY = `
   createdAt
 }
 `
+
+export const ACTIVE_OPEN_HOUSES_QUERY = `
+*[_type == "openHouse" && dates[0] >= now()] | order(dates[0] asc){
+  _id,
+  title,
+  "slug": slug.current,
+  dates,
+  location,
+  propertyDetails {
+    sqft,
+    beds,
+    baths
+  },
+  projectMedia {
+    professionalPhotos[] {
+      "url": url,
+      "publicId": public_id
+    },
+  }
+}
+`;

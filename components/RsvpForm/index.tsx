@@ -412,6 +412,7 @@ export function RSVPForm({ dates }: EventDates) {
         formData.phone &&
         formData.hearAbout
 
+    console.log(eventDates)
     return (
         <Card className={styles.card}>
             <CardHeader>

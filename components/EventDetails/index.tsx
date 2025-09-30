@@ -7,11 +7,12 @@ interface EventDetailsProps {
 }
 
 export default function EventDetails({ dates, location }: EventDetailsProps) {
-    // Format the dates nicely, e.g., "October 10th, 2025 and October 11th, 2025"
+
     const formattedDates = dates?.map(date => {
-        const d = new Date(date);
+        const [year, month, day] = date.split("-").map(Number);
+        const d = new Date(year, month - 1, day); // month is 0-indexed
         return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-    }).join(" and ");
+    }).join(" & ");
 
     const detailsData = [
         { icon: Calendar, label: formattedDates },

@@ -7,10 +7,14 @@ import router from "next/navigation";
 import Footer from "@/components/Footer";
 import LegalPrint from "@/components/LegalPrint";
 
-export default async function Home() {
+export default async function Home({
+    params,
+}: {
+    params: Promise<{ slug: string }>
+}) {
     const openHouse = await sanityFetch({
         query: OPEN_HOUSES_QUERY,
-        params: { slug: "phillips" },
+        params: await params,
     });
 
     async function getStageIds(pipeline_id) {

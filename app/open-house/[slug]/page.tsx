@@ -1,30 +1,36 @@
 import { sanityFetch } from '@/sanity/live'
 import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
 import EventDetails from "@/components/EventDetails";
+import OpenHouseFeaturesSection from "@/components/OpenHouseFeatures";
+import ConstructionTimeline from "@/components/ConstructionTimeline";
+import RsvpSection from "@/components/RsvpSection";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Button from "@/components/Button";
 import Image from "next/image";
 import styles from "./page.module.css";
 import { Home } from "lucide-react";
-import ADUSeminarFeatures from '@/components/ADUSeminarFeatures';
-import ADUSeminarTopics from '@/components/ADUSeminarTopics';
-import ADUSeminarRSVPSection from '@/components/ADUSeminarRSVPSection';
+import { notFound } from 'next/navigation';
 
 
-export default async function ADUOpenHouse() {
+export default async function ADUOpenHouse({
+    params,
+}: {
+    params: Promise<{ slug: string }>
+}) {
     const openHouse = await sanityFetch({
         query: OPEN_HOUSES_QUERY,
-        params: { slug: "phillips" },
+        params: await params,
     });
 
+    const slug = (await params).slug
+
     if (!openHouse) {
-        return <p>Open House not found</p>;
+        notFound()
     }
 
-    const dates = ["2025-10-08"]
+    const buildDuration = openHouse.data.timeline?.length ? `Built in ${openHouse.data.timeline.length} Weeks` : "TBD";
 
-    const location = "2335 W Foothill Blvd #18, Upland CA 91786"
 
     return (
         <div className={styles.container}>
@@ -37,19 +43,18 @@ export default async function ADUOpenHouse() {
                     <div>
                         <div className={styles.badge}>
                             <Home />
-                            ADU Seminar
+                            Open House Event
                         </div>
 
-                        <h1 className={styles.title}>ADUs Made Simple</h1>
-                        <p></p>
+                        <h1 className={styles.title}>ADU Open House</h1>
                         <p className={styles.subtitle}>
-                            If you&rsquo;ve ever wondered if your property qualifies for an ADU, how much it costs, or how fast you can get it done (without the headaches)—this seminar is for you.
+                            Discover modern living in our beautifully designed Accessory Dwelling Unit
                         </p>
 
                         <div className={styles.buttonRow}>
                             <Button
                                 theme="blue"
-                                href="/adu-seminar/rsvp"
+                                href={`/open-house/${slug}/rsvp`}
                                 isPrimary={true}
                                 showIcon={true}
                             >
@@ -57,15 +62,15 @@ export default async function ADUOpenHouse() {
                             </Button>
                         </div>
 
-                        <EventDetails dates={dates} location={location} />
+                        <EventDetails dates={openHouse.data.dates} location={openHouse.data.location} />
 
                     </div>
 
                     {/* Right Side */}
                     <div className={styles.featureImageContainer}>
                         <Image
-                            src={'/images/ADUSeminar.png'}
-                            alt={"ADU Seminar"}
+                            src={openHouse.data.projectMedia.professionalPhotos[0].url}
+                            alt={openHouse.data.title}
                             width={500}
                             height={600}
                             className={styles.featureImage}
@@ -74,15 +79,15 @@ export default async function ADUOpenHouse() {
                 </div>
             </div>
 
-            <ADUSeminarFeatures />
+            <OpenHouseFeaturesSection propertyDetails={openHouse.data.propertyDetails} timeline={buildDuration} />
             <div className={styles.floatingButton}>
-                <Button theme="blue" href="/adu-seminar/rsvp" isPrimary>
+                <Button theme="blue" href={`/open-house/${slug}/rsvp`} isPrimary>
                     RSVP Now
                 </Button>
             </div>
-            <ADUSeminarTopics />
+            <ConstructionTimeline timeline={openHouse.data.timeline} />
 
-            <ADUSeminarRSVPSection />
+            <RsvpSection slug={slug} />
             <Footer />
         </div>
     );

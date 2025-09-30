@@ -1,89 +1,75 @@
-import { sanityFetch } from '@/sanity/live'
-import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
-import EventDetails from "@/components/EventDetails";
-import OpenHouseFeaturesSection from "@/components/OpenHouseFeatures";
-import ConstructionTimeline from "@/components/ConstructionTimeline";
-import RsvpSection from "@/components/RsvpSection";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
-import Button from "@/components/Button";
-import Image from "next/image";
+// pages/events.tsx
+import { sanityFetch } from "@/sanity/live";
 import styles from "./page.module.css";
-import { Home } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { ACTIVE_OPEN_HOUSES_QUERY } from "@/sanity/queries";
+import Nav from "@/components/Nav";
 
 
-export default async function ADUOpenHouse() {
-    const openHouse = await sanityFetch({
-        query: OPEN_HOUSES_QUERY,
-        params: { slug: "phillips" },
-    });
+export default async function EventsPage() {
+    const { data: openHouses } = await sanityFetch({ query: ACTIVE_OPEN_HOUSES_QUERY });
 
-    console.log(openHouse);
+    // ADU Seminar
+    const seminar = {
+        title: "ADU Seminar",
+        slug: "adu-seminar",
+        dates: ["2025-10-08"],
+        location: "2335 W Foothill Blvd #18, Upland CA 91786",
+        propertyDetails: { sqft: 0, beds: 0, baths: 0 },
+        imageUrl: "/images/ADUSeminar.png",
+    };
 
-    if (!openHouse) {
-        return <p>Open House not found</p>;
-    }
-
-    const buildDuration = openHouse.data.timeline?.length ? `Built in ${openHouse.data.timeline.length} Weeks` : "TBD";
-
+    const events = [...openHouses, seminar];
 
     return (
-        <div className={styles.container}>
+        <>
             <Nav />
+            <div className={styles.container}>
+                <header className={styles.headerSection}>
+                    <h1 className={styles.sectionTitle}>Upcoming Events</h1>
+                    <p className={styles.sectionSubtitle}>
+                        Join our open houses and seminars to learn more about ADUs and modern living.
+                    </p>
+                </header>
 
-            <div className={styles.hero}>
-                <div className={styles.heroOverlay}></div>
-                <div className={styles.heroContent}>
-                    {/* Left Side */}
-                    <div>
-                        <div className={styles.badge}>
-                            <Home />
-                            Open House Event
-                        </div>
+                <div className={styles.eventsGrid}>
+                    {events.map((event) => {
+                        const eventDate = event.dates
+                            .map((d) => new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }))
+                            .join(" & ");
 
-                        <h1 className={styles.title}>ADU Open House</h1>
-                        <p className={styles.subtitle}>
-                            Discover modern living in our beautifully designed Accessory Dwelling Unit
-                        </p>
+                        console.log(event.projectMedia?.professionalPhotos[0].url)
 
-                        <div className={styles.buttonRow}>
-                            <Button
-                                theme="blue"
-                                href="/open-house/rsvp"
-                                isPrimary={true}
-                                showIcon={true}
-                            >
-                                RSVP Now
-                            </Button>
-                        </div>
+                        return (
+                            <div key={event._id || event.slug} className={styles.eventCard}>
+                                {event.projectMedia?.professionalPhotos[0].url || event.imageUrl ? (
+                                    <Image
+                                        src={event.projectMedia?.professionalPhotos[0].url || event.imageUrl}
+                                        alt={event.title}
+                                        width={500}
+                                        height={600}
+                                        className={styles.featureImage}
+                                    />
+                                ) : null}
 
-                        <EventDetails dates={openHouse.data.dates} location={openHouse.data.location} />
-
-                    </div>
-
-                    {/* Right Side */}
-                    <div className={styles.featureImageContainer}>
-                        <Image
-                            src={openHouse.data.projectMedia.professionalPhotos[0].url}
-                            alt={openHouse.data.title}
-                            width={500}
-                            height={600}
-                            className={styles.featureImage}
-                        />
-                    </div>
+                                <div className={styles.textContent}>
+                                    <h2 className={styles.weekTitle}>{event.title}</h2>
+                                    <p className={styles.weekDescription}>{eventDate}</p>
+                                    <p className={styles.weekDescription}>{event.location}</p>
+                                    <Link
+                                        href={event.slug === "adu-seminar" ? "/adu-seminar" : `/open-house/${event.slug}`}
+                                        className={styles.button}
+                                    >
+                                        Learn More
+                                    </Link>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
+        </>
 
-            <OpenHouseFeaturesSection propertyDetails={openHouse.data.propertyDetails} timeline={buildDuration} />
-            <div className={styles.floatingButton}>
-                <Button theme="blue" href="/open-house/rsvp" isPrimary>
-                    RSVP Now
-                </Button>
-            </div>
-            <ConstructionTimeline timeline={openHouse.data.timeline} />
-
-            <RsvpSection />
-            <Footer />
-        </div>
     );
 }

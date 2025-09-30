@@ -5,8 +5,8 @@ import Link from "next/link";
 
 interface TimelineItem {
     week: number;
-    milestone: string;
-    description: string;
+    milestoneTitle: string;
+    description: string[]; // Change to string array
     imageUrl?: string;
     socialLink?: string;
 }
@@ -17,7 +17,7 @@ interface ConstructionTimelineProps {
 
 export default function ConstructionTimeline({ timeline }: ConstructionTimelineProps) {
     if (!timeline || timeline.length === 0) return null;
-
+    console.log(timeline)
     return (
         <div>
             <div className={styles.headerSection}>
@@ -37,9 +37,7 @@ export default function ConstructionTimeline({ timeline }: ConstructionTimelineP
                                     <div className={styles.cardContent}>
                                         {item.imageUrl && (
                                             <div className={styles.cardMedia}>
-                                                <div className={styles.mediaContent}>
-                                                    <Image src={item.imageUrl} alt={item.milestone} width={500} height={500} className={styles.image} />
-                                                </div>
+                                                <Image src={item.imageUrl} alt={item.milestoneTitle} width={500} height={500} className={styles.image} />
                                             </div>
                                         )}
                                         {item.socialLink && (
@@ -58,8 +56,15 @@ export default function ConstructionTimeline({ timeline }: ConstructionTimelineP
 
                                 <div className={styles.textContent}>
                                     <h2>Week {item.week}</h2>
-                                    <h3 className={styles.weekTitle}>{item.milestone}</h3>
-                                    <p className={styles.weekDescription}>{item.description}</p>
+                                    <h3 className={styles.weekTitle}>{item.milestoneTitle}</h3>
+
+                                    {item.description && item.description.length > 0 && (
+                                        <ul className={styles.weekDescription}>
+                                            {item.description.map((desc, idx) => (
+                                                <li key={idx}>{desc}</li>
+                                            ))}
+                                        </ul>
+                                    )}
                                 </div>
                             </div>
                         </div>

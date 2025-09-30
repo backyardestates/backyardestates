@@ -1,7 +1,7 @@
 import styles from "./RsvpSection.module.css";
 import Button from "@/components/Button";
 
-export default function RsvpSection() {
+export default function RsvpSection({ slug }: { slug: string }) {
     return (
         <div className={styles.section}>
             <div className={styles.container}>
@@ -11,7 +11,7 @@ export default function RsvpSection() {
                     future of sustainable living
                 </p>
                 <div className={styles.buttonRow}>
-                    <Button theme="blue" href="/open-house/rsvp" isPrimary={true} showIcon={true}>
+                    <Button theme="blue" href={`/open-house/${slug}/rsvp`} isPrimary={true} showIcon={true}>
                         Reserve Your Spot
                     </Button>
                 </div>

@@ -35,7 +35,7 @@ export default function ADUSeminarFeaturesSection() {
                             <TrendingUp color="#b99764" className={styles.icon} />
                         </div>
                         <h3 className={styles.title}>Why Now Is the Time</h3>
-                        <p className={styles.text}>Learn how ADUs could boost your property&rsquo;s value.</p>
+                        <p className={styles.text}>Learn key changes in your city and state-wide.</p>
                     </div>
                 </div>
             </div>
