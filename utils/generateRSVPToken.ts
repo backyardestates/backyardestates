@@ -1,7 +1,7 @@
 // utils/generateRSVPToken.ts
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-const secret = process.env.NEXT_PUBLIC_JWT_SECRET;
+const secret = process.env.JWT_SECRET;
 
 export function generateRsvpToken(personId: string, email: string) {
     return jwt.sign(
