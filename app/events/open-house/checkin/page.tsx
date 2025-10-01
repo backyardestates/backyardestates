@@ -10,16 +10,17 @@ import Footer from "@/components/Footer";
 export default async function CheckInPage({
     params
 }: {
-    params: Promise<{ slug: string, token: string }>
+    params: Promise<{ token: string }>
 }) {
     const token = (await params).token;
-    const slug = (await params).slug
-
     if (!token) {
         return (
             <>
                 <Nav />
-                <div className={style.error}>❌ No token provided</div>
+                <div className={style.container}>
+                    <div className={style.error}>❌ Checkin not available</div>
+                </div>
+
                 <Footer />
             </>
 
@@ -31,7 +32,10 @@ export default async function CheckInPage({
         return (
             <>
                 <Nav />
-                <div className={style.error}>❌ Invalid or expired token</div>
+                <div className={style.container}>
+
+                    <div className={style.error}>❌ Invalid or expired checkin</div>
+                </div>
                 <Footer />
             </>
         )
