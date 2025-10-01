@@ -78,6 +78,11 @@ export default function Menu({ showMenu, toggleMenu }) {
                         </ul>
                     </li>
                     <li>
+                        <Link href="/events" className={style.link}>
+                            Events
+                        </Link>
+                    </li>
+                    <li>
                         <Link href="/blog">Blog</Link>
                     </li>
                 </ul>
