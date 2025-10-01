@@ -6,6 +6,8 @@ import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
 import router from "next/navigation";
 import Footer from "@/components/Footer";
 import LegalPrint from "@/components/LegalPrint";
+import { ADUSeminarRSVPForm } from "@/components/ADUSeminarRSVPForm";
+import formatDate from "@/utils/dates";
 
 export default async function Home() {
     const openHouse = await sanityFetch({
@@ -41,6 +43,9 @@ export default async function Home() {
 
     const fields = await getDealFields(7)
 
+    const dates = ["2025-10-08"]
+    const time = ["6:00 PM"]
+
     return (
         <main className={styles.main}>
             <TopBar></TopBar>
@@ -48,11 +53,12 @@ export default async function Home() {
                 <div className={styles.maxWidth2xl}>
                     <div className={styles.textCenter + " " + styles.mb8}>
                         <h1 className={styles.header}>
-                            ADU Open House Event
+                            ADU Seminar
                         </h1>
+                        <p className={styles.description}>{formatDate(dates[0])} - {time}</p>
                     </div>
 
-                    <RSVPForm dates={openHouse.data.dates} />
+                    <ADUSeminarRSVPForm dates={dates} />
                     <LegalPrint />
                 </div>
             </div>

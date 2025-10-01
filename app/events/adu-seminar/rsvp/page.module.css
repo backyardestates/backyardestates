@@ -17,6 +17,12 @@
     color: var(--color-brand-beige);
 }
 
+.description {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-neutral-500);
+}
+
 .eventDetails {
     display: flex;
     color: var(--color-brand-dark-blue);

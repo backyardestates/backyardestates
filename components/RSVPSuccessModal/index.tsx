@@ -26,7 +26,7 @@ export default function RSVPModal({ isOpen, onClose }: RSVPModalProps) {
 
                     <h2 className={style.title}>🎉 RSVP Confirmed</h2>
                     <p className={style.message}>
-                        Thanks! Your spot at the open house is reserved.
+                        Thanks! Your spot is reserved.
                     </p>
                     <p className={style.subtext}>
                         We look forward to seeing you at the event. Check your email for confirmation.

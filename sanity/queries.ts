@@ -60,8 +60,9 @@ export const OPEN_HOUSES_QUERY = `
 }
 `
 
-export const ACTIVE_OPEN_HOUSES_QUERY = `
-*[_type == "openHouse" && dates[0] >= now()] | order(dates[0] asc){
+// queries.ts
+export const ALL_OPEN_HOUSES_QUERY = `
+*[_type == "openHouse"] | order(dates[0] desc){
   _id,
   title,
   "slug": slug.current,

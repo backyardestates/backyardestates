@@ -49,7 +49,7 @@ export default async function ADUOpenHouse() {
                         <div className={styles.buttonRow}>
                             <Button
                                 theme="blue"
-                                href="/adu-seminar/rsvp"
+                                href="/events/adu-seminar/rsvp"
                                 isPrimary={true}
                                 showIcon={true}
                             >
@@ -76,7 +76,7 @@ export default async function ADUOpenHouse() {
 
             <ADUSeminarFeatures />
             <div className={styles.floatingButton}>
-                <Button theme="blue" href="/adu-seminar/rsvp" isPrimary>
+                <Button theme="blue" href="/events/adu-seminar/rsvp" isPrimary>
                     RSVP Now
                 </Button>
             </div>

@@ -54,7 +54,7 @@ export default async function ADUOpenHouse({
                         <div className={styles.buttonRow}>
                             <Button
                                 theme="blue"
-                                href={`/open-house/${slug}/rsvp`}
+                                href={`/events/open-house/${slug}/rsvp`}
                                 isPrimary={true}
                                 showIcon={true}
                             >
@@ -81,7 +81,7 @@ export default async function ADUOpenHouse({
 
             <OpenHouseFeaturesSection propertyDetails={openHouse.data.propertyDetails} timeline={buildDuration} />
             <div className={styles.floatingButton}>
-                <Button theme="blue" href={`/open-house/${slug}/rsvp`} isPrimary>
+                <Button theme="blue" href={`/events/open-house/${slug}/rsvp`} isPrimary>
                     RSVP Now
                 </Button>
             </div>

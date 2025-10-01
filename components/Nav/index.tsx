@@ -79,6 +79,11 @@ export default function Nav() {
                                     </ul>
                                 </Dropdown>
                             </li>
+                            <li>
+                                <Link href="/events" className={style.link}>
+                                    Events
+                                </Link>
+                            </li>
                             {/* <li>
                                 <Link href="/blog" className={style.link}>
                                     Blog
