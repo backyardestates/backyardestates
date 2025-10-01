@@ -7,12 +7,8 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
 // Use default export async function
-export default async function CheckInPage({
-    params
-}: {
-    params: Promise<{ token: string }>
-}) {
-    const token = (await params).token;
+export default async function CheckInPage({ searchParams }: any) {
+    const token = searchParams?.token;
     if (!token) {
         return (
             <>
