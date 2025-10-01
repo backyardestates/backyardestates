@@ -21,49 +21,49 @@ const seminarTopics = [
         id: 1,
         icon: '/images/adu-seminar/adu-seminar-1.png',
         title: "Find Your Perfect Fit",
-        subtitle: "The ideal ADU layout for your property",
+        subtitle: "Which ADU layout will best suit me?",
         description:
-            "See exactly which ADU floor plans work for your backyard. No guesswork—leave knowing what’s possible for your space and lifestyle.",
+            "Explore the layouts and designs that actually work for your backyard. Leave with a clear picture of what’s possible so you can plan your ADU with confidence.",
     },
     {
         id: 2,
         icon: '/images/adu-seminar/adu-seminar-2.jpg',
         title: "Fast-Track Your Build",
-        subtitle: "Skip the delays most homeowners face",
+        subtitle: "How can I avoid the common delays most homeowners face?",
         description:
-            "Learn the insider steps to get permits and approvals faster than the typical timeline in your city. Avoid the common mistakes that cost months.",
+            "Learn insider strategies to speed up permits and approvals. Avoid costly delays and mistakes that slow most homeowners down.",
     },
     {
         id: 3,
         icon: '/images/adu-seminar/adu-seminar-3.png',
         title: "Unlock Hidden Value",
-        subtitle: "Turn your backyard into a money-making asset",
+        subtitle: "How can my backyard become a profitable asset?",
         description:
-            "Discover the real impact an ADU can have on your property value and potential rental income. Walk away knowing exactly how this investment pays off.",
+            "Discover how an ADU can increase your property value and generate rental income. Walk away with a clear understanding of how this investment can pay for itself.",
     },
     {
         id: 4,
         icon: '/images/adu-seminar/adu-seminar-4.jpg',
         title: "Plan Your Investment",
-        subtitle: "Know the numbers before you start",
+        subtitle: "Which numbers and costs should I know before starting?",
         description:
-            "We break down typical costs, financing strategies, and creative ways to fund your ADU so you can make smart decisions without surprises.",
+            "Break down all the costs, financing options, and funding strategies. Make smart, confident decisions with a clear picture of your budget and ROI.",
     },
     {
         id: 5,
         icon: '/images/adu-seminar/adu-seminar-5.jpg',
         title: "Your ADU, Your Way",
-        subtitle: "Design a space that fits your needs",
+        subtitle: "How can I create a space that perfectly fits my needs?",
         description:
-            "From layout tweaks to full custom options, learn how you can make your ADU truly yours while staying on budget and timeline.",
+            "Learn how to personalize every detail—from finishes to functional features—so your ADU reflects your style and meets your daily needs, all while staying on budget.",
     },
     {
         id: 6,
         icon: '/images/adu-seminar/adu-seminar-6.jpg',
         title: "Don’t Miss Out",
-        subtitle: "Secrets only top builders reveal",
+        subtitle: "What insider tips do top builders use that most homeowners miss?",
         description:
-            "Discover opportunities most homeowners overlook—from design tricks to value-boosting features—so your ADU delivers maximum benefit.",
+            "Uncover little-known strategies and features that maximize your ADU’s value. Learn what top builders know so your project stands out and performs at its best.",
     },
 ];
 

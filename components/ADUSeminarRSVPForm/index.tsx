@@ -74,7 +74,15 @@ interface EventDates {
 }
 
 
-export function ADUSeminarRSVPForm({ dates }: EventDates) {
+interface PageProps {
+    params: { slug: string };
+}
+
+// Combine both into a single props object
+interface RSVPFormProps extends EventDates, PageProps { }
+
+export function ADUSeminarRSVPForm({ dates, params }: RSVPFormProps) {
+    const { slug } = params;
     const [ticketCount, setTicketCount] = useState(1)
     const [formData, setFormData] = useState({
         firstName: "",
@@ -120,22 +128,7 @@ export function ADUSeminarRSVPForm({ dates }: EventDates) {
         console.log("FormData:", Object.fromEntries(fd.entries()));
 
         const rawDate = fd.get("date") as string | null;
-        let stage_id: number | null = null;
-
-        if (rawDate) {
-            const dateObj = new Date(rawDate); // assumes `selectedDate` is an ISO-like string ("2025-09-26")
-            const day = dateObj.getDay();
-            // getDay(): Sunday = 0, Monday = 1, ..., Friday = 5, Saturday = 6
-
-            if (day === 4) {
-                // Friday
-                stage_id = 76; // replace with your Friday stage_id
-            } else if (day === 5) {
-                // Saturday
-                stage_id = 77; // replace with your Saturday stage_id
-            }
-        }
-        console.log(stage_id)
+        const stage_id = 79;
 
         const person = {
             name: `${fd.get("firstName")} ${fd.get("lastName")}`,
@@ -229,7 +222,8 @@ export function ADUSeminarRSVPForm({ dates }: EventDates) {
             // prettier-ignore
             'd51817980c84eec68d862509ea6cc9fd58d2c2c9': hearAboutNumber,
             '020e272ca1b410845d818c04c69e56d37827ca4e': token,
-            pipeline_id: 7,
+            '5b828e59d1a7df6f5ffefac982cac34de1440b49': "adu-seminar",
+            pipeline_id: 8,
             stage_id: lead.stage_id
         }
 

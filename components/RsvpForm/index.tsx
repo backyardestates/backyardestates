@@ -70,13 +70,19 @@ interface BadgeProps {
 export function Badge({ children }: BadgeProps) {
     return <div className={`${styles.badge}`}>{children}</div>
 }
-
 interface EventDates {
     dates: string[];
 }
 
+interface PageProps {
+    params: { slug: string };
+}
 
-export function RSVPForm({ dates }: EventDates) {
+// Combine both into a single props object
+interface RSVPFormProps extends EventDates, PageProps { }
+
+export function RSVPForm({ dates, params }: RSVPFormProps) {
+    const { slug } = params;
     const [selectedDate, setSelectedDate] = useState<string | null>(null)
     const [selectedTimes, setSelectedTimes] = useState<Record<string, string>>({})
     const [ticketCount, setTicketCount] = useState(1)
@@ -332,6 +338,7 @@ export function RSVPForm({ dates }: EventDates) {
             // prettier-ignore
             'd51817980c84eec68d862509ea6cc9fd58d2c2c9': hearAboutNumber,
             '020e272ca1b410845d818c04c69e56d37827ca4e': token,
+            '5b828e59d1a7df6f5ffefac982cac34de1440b49': slug,
             pipeline_id: 7,
             stage_id: lead.stage_id
         }

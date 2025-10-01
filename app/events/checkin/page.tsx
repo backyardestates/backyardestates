@@ -29,7 +29,6 @@ export default async function CheckInPage({ searchParams }: any) {
             <>
                 <Nav />
                 <div className={style.container}>
-
                     <div className={style.error}>❌ Invalid or expired checkin</div>
                 </div>
                 <Footer />

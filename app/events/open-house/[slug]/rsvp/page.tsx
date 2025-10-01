@@ -17,6 +17,8 @@ export default async function Home({
         params: await params,
     });
 
+    const slug = await params;
+
     async function getStageIds(pipeline_id) {
 
         const res = await fetch(
@@ -45,6 +47,8 @@ export default async function Home({
 
     const fields = await getDealFields(7)
 
+    console.log(slug)
+
     return (
         <main className={styles.main}>
             <TopBar></TopBar>
@@ -56,7 +60,7 @@ export default async function Home({
                         </h1>
                     </div>
 
-                    <RSVPForm dates={openHouse.data.dates} />
+                    <RSVPForm dates={openHouse.data.dates} params={slug} />
                     <LegalPrint />
                 </div>
             </div>

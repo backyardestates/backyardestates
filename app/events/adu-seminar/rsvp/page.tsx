@@ -9,12 +9,12 @@ import LegalPrint from "@/components/LegalPrint";
 import { ADUSeminarRSVPForm } from "@/components/ADUSeminarRSVPForm";
 import formatDate from "@/utils/dates";
 
-export default async function Home() {
-    const openHouse = await sanityFetch({
-        query: OPEN_HOUSES_QUERY,
-        params: { slug: "phillips" },
-    });
-
+export default async function Home({
+    params,
+}: {
+    params: Promise<{ slug: string }>
+}) {
+    const slug = await params;
     async function getStageIds(pipeline_id) {
 
         const res = await fetch(
@@ -27,7 +27,7 @@ export default async function Home() {
         console.log('All stages ids:', data)
     }
 
-    const stages = await getStageIds(7)
+    const stages = await getStageIds(8)
 
     async function getDealFields(pipeline_id) {
 
@@ -58,7 +58,7 @@ export default async function Home() {
                         <p className={styles.description}>{formatDate(dates[0])} - {time}</p>
                     </div>
 
-                    <ADUSeminarRSVPForm dates={dates} />
+                    <ADUSeminarRSVPForm dates={dates} params={slug} />
                     <LegalPrint />
                 </div>
             </div>
