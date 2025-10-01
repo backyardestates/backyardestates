@@ -10,6 +10,7 @@ import { Home } from "lucide-react";
 import ADUSeminarFeatures from '@/components/ADUSeminarFeatures';
 import ADUSeminarTopics from '@/components/ADUSeminarTopics';
 import ADUSeminarRSVPSection from '@/components/ADUSeminarRSVPSection';
+import ADUSeminarHosts from '@/components/ADUSeminarHosts';
 
 
 export default async function ADUOpenHouse() {
@@ -80,6 +81,8 @@ export default async function ADUOpenHouse() {
                     RSVP Now
                 </Button>
             </div>
+
+            <ADUSeminarHosts />
             <ADUSeminarTopics />
 
             <ADUSeminarRSVPSection />

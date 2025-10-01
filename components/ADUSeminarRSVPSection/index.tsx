@@ -10,7 +10,7 @@ export default function RsvpSection() {
                     All attendees get a complimentary free property eligibility check — we&rsquo;ll tell you if your backyard is ADU-ready.
                 </p>
                 <div className={styles.buttonRow}>
-                    <Button theme="blue" href="/adu-seminar/rsvp" isPrimary={true} showIcon={true}>
+                    <Button theme="blue" href="/events/adu-seminar/rsvp" isPrimary={true} showIcon={true}>
                         Reserve Your Spot
                     </Button>
                 </div>

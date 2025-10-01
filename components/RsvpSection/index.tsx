@@ -11,7 +11,7 @@ export default function RsvpSection({ slug }: { slug: string }) {
                     future of sustainable living
                 </p>
                 <div className={styles.buttonRow}>
-                    <Button theme="blue" href={`/open-house/${slug}/rsvp`} isPrimary={true} showIcon={true}>
+                    <Button theme="blue" href={`/events/open-house/${slug}/rsvp`} isPrimary={true} showIcon={true}>
                         Reserve Your Spot
                     </Button>
                 </div>

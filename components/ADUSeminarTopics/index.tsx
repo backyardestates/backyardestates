@@ -1,5 +1,6 @@
 import styles from "./ADUSeminarTopics.module.css";
 import Link from "next/link";
+import Image from "next/image";
 import {
     Home,
     LayoutGrid,
@@ -18,7 +19,7 @@ import {
 const seminarTopics = [
     {
         id: 1,
-        icon: <Home size={36} />,
+        icon: '/images/adu-seminar/adu-seminar-1.png',
         title: "Find Your Perfect Fit",
         subtitle: "The ideal ADU layout for your property",
         description:
@@ -26,7 +27,7 @@ const seminarTopics = [
     },
     {
         id: 2,
-        icon: <Rocket size={36} />,
+        icon: '/images/adu-seminar/adu-seminar-2.jpg',
         title: "Fast-Track Your Build",
         subtitle: "Skip the delays most homeowners face",
         description:
@@ -34,7 +35,7 @@ const seminarTopics = [
     },
     {
         id: 3,
-        icon: <TrendingUp size={36} />,
+        icon: '/images/adu-seminar/adu-seminar-3.png',
         title: "Unlock Hidden Value",
         subtitle: "Turn your backyard into a money-making asset",
         description:
@@ -42,7 +43,7 @@ const seminarTopics = [
     },
     {
         id: 4,
-        icon: <Calculator size={36} />,
+        icon: '/images/adu-seminar/adu-seminar-4.jpg',
         title: "Plan Your Investment",
         subtitle: "Know the numbers before you start",
         description:
@@ -50,7 +51,7 @@ const seminarTopics = [
     },
     {
         id: 5,
-        icon: <PenTool size={36} />,
+        icon: '/images/adu-seminar/adu-seminar-5.jpg',
         title: "Your ADU, Your Way",
         subtitle: "Design a space that fits your needs",
         description:
@@ -58,7 +59,7 @@ const seminarTopics = [
     },
     {
         id: 6,
-        icon: <Key size={36} />,
+        icon: '/images/adu-seminar/adu-seminar-6.jpg',
         title: "Don’t Miss Out",
         subtitle: "Secrets only top builders reveal",
         description:
@@ -84,7 +85,7 @@ export default function ADUSeminarTopics() {
                             <div className={`${styles.stageRow} ${isOdd ? "odd" : styles.even}`}>
                                 <div className={styles.card}>
                                     <div className={styles.cardContent}>
-                                        <div className={styles.cardMedia}>{topic.icon}</div>
+                                        <Image src={topic.icon} alt={topic.title} width={500} height={500} className={styles.cardImage} />
                                     </div>
                                 </div>
 
