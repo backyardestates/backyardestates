@@ -17,7 +17,6 @@ interface ConstructionTimelineProps {
 
 export default function ConstructionTimeline({ timeline }: ConstructionTimelineProps) {
     if (!timeline || timeline.length === 0) return null;
-    console.log(timeline)
     return (
         <div>
             <div className={styles.headerSection}>

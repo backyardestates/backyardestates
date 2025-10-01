@@ -226,7 +226,6 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
 
 
     async function createPerson(fd) {
-        console.log("FormData:", Object.fromEntries(fd.entries()));
 
         const rawDate = fd.get("date") as string | null;
         let stage_id: number | null = null;
@@ -244,7 +243,6 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
                 stage_id = 77; // replace with your Saturday stage_id
             }
         }
-        console.log(stage_id)
 
         const person = {
             name: `${fd.get("firstName")} ${fd.get("lastName")}`,
@@ -343,7 +341,6 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
             stage_id: lead.stage_id
         }
 
-        console.log(submittedLead)
         try {
             const leadRes = await fetch('/api/pipedrive/submit-lead', {
                 method: 'POST',
@@ -419,7 +416,6 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
         formData.phone &&
         formData.hearAbout
 
-    console.log(eventDates)
     return (
         <Card className={styles.card}>
             <CardHeader>

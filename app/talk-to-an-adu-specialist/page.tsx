@@ -142,7 +142,6 @@ export default function LeadForm() {
         )
         const data = await res.json()
 
-        console.log('All fields:', data)
     }
 
     async function getPersonFields(e) {
@@ -153,7 +152,6 @@ export default function LeadForm() {
         )
         const data = await res.json()
 
-        console.log('All person fields:', data)
     }
 
     async function getStageIds(pipeline_id) {
@@ -167,7 +165,6 @@ export default function LeadForm() {
         )
         const data = await res.json()
 
-        console.log('All stages ids:', data)
     }
 
 

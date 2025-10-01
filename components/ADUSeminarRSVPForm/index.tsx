@@ -227,7 +227,6 @@ export function ADUSeminarRSVPForm({ dates, params }: RSVPFormProps) {
             stage_id: lead.stage_id
         }
 
-        console.log(submittedLead)
         try {
             const leadRes = await fetch('/api/pipedrive/submit-lead', {
                 method: 'POST',

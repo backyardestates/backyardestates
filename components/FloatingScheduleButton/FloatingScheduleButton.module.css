@@ -1,0 +1,28 @@
+.floatingBtn {
+    position: fixed;
+    top: 90dvh;
+    /* 90% of viewport height */
+    left: 50%;
+    /* push button's left edge to middle */
+    transform: translateX(-50%);
+    /* shift it left by 50% of its own width */
+    background: var(--color-brand-beige);
+    color: white;
+    font-size: 16px;
+    padding: 14px 22px;
+    border: none;
+    border-radius: 9999px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 1000;
+    font-family: var(--font-serif);
+    gap: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.floatingBtn:hover {
+    background: var(--color-brand-beige-hover);
+    transform: translate(-50%, -2px);
+}

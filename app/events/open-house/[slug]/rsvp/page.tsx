@@ -28,7 +28,6 @@ export default async function Home({
         )
         const data = await res.json()
 
-        console.log('All stages ids:', data)
     }
 
     const stages = await getStageIds(7)
@@ -42,12 +41,10 @@ export default async function Home({
         )
         const data = await res.json()
 
-        console.log('All stages ids:', data)
     }
 
     const fields = await getDealFields(7)
 
-    console.log(slug)
 
     return (
         <main className={styles.main}>

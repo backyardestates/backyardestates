@@ -5,10 +5,11 @@ import { TopBar } from "@/components/goBackButton";
 import style from "./page.module.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { SaveToken } from "@/components/SaveToken";
 
-// Use default export async function
 export default async function CheckInPage({ searchParams }: any) {
     const token = (await searchParams).token;
+
     if (!token) {
         return (
             <>
@@ -16,10 +17,8 @@ export default async function CheckInPage({ searchParams }: any) {
                 <div className={style.container}>
                     <div className={style.error}>❌ Checkin not available</div>
                 </div>
-
                 <Footer />
             </>
-
         );
     }
 
@@ -33,24 +32,24 @@ export default async function CheckInPage({ searchParams }: any) {
                 </div>
                 <Footer />
             </>
-        )
+        );
     }
 
     const { personId } = decoded as { personId: string };
 
     let dealData: any = null;
     try {
-        // This is async server logic
         dealData = await markDealAttended(personId);
     } catch (err) {
         console.error("Error marking deal as attended:", err);
     }
 
-
     return (
         <div>
             <TopBar />
+            <SaveToken token={token} />
             <ClientCheckIn dealData={dealData} />
         </div>
     );
 }
+

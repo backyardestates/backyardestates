@@ -1,9 +1,5 @@
-import { RSVPForm } from "@/components/RsvpForm"
 import styles from "./page.module.css"
 import { TopBar } from "@/components/goBackButton"
-import { sanityFetch } from "@/sanity/live";
-import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
-import router from "next/navigation";
 import Footer from "@/components/Footer";
 import LegalPrint from "@/components/LegalPrint";
 import { ADUSeminarRSVPForm } from "@/components/ADUSeminarRSVPForm";
@@ -24,7 +20,6 @@ export default async function Home({
         )
         const data = await res.json()
 
-        console.log('All stages ids:', data)
     }
 
     const stages = await getStageIds(8)
@@ -38,7 +33,6 @@ export default async function Home({
         )
         const data = await res.json()
 
-        console.log('All stages ids:', data)
     }
 
     const fields = await getDealFields(7)

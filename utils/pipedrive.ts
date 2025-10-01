@@ -22,12 +22,10 @@ export async function markDealAttended(personId: string) {
         `https://${DOMAIN}.pipedrive.com/v1/persons/${personId}/deals?api_token=${API_TOKEN}`
     );
     const dealsFromPerson = await getDealsFromPerson.json();
-    console.log(dealsFromPerson)
 
     // 2️⃣ Find the deal in the target pipeline (optional: take first deal)
     const dealId = dealsFromPerson.data[0].id;
 
-    console.log(dealId)
 
     // 3️⃣ Update deal stage
     const dealRes = await fetch(
@@ -43,7 +41,6 @@ export async function markDealAttended(personId: string) {
 
     const dealData = await dealRes.json();
 
-    console.log(dealData)
     if (!dealData.success) {
         throw new Error(
             "Failed to update deal in Pipedrive: " + JSON.stringify(dealData)
