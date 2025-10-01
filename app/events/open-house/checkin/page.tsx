@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 
 // Use default export async function
 export default async function CheckInPage({ searchParams }: any) {
-    const token = searchParams?.token;
+    const token = (await searchParams).token;
     if (!token) {
         return (
             <>

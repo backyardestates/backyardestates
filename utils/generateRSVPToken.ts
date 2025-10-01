@@ -1,13 +1,13 @@
 // utils/generateRSVPToken.ts
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-const secret = process.env.JWT_SECRET || "super-secret"; // ⚠️ store in env file
+const secret = process.env.NEXT_PUBLIC_JWT_SECRET;
 
 export function generateRsvpToken(personId: string, email: string) {
     return jwt.sign(
         { personId, email },
         secret,
-        { expiresIn: "30d" } // e.g. 30 days
+        { expiresIn: "30d" }
     );
 }
 

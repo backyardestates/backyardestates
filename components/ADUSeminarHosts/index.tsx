@@ -17,7 +17,7 @@ const seminarHosts = [
         role: "President & Founder",
         photo: "/portraits/adam-stewart.png", // replace with real path
         description:
-            "Adam Stewart brings years of construction and entrepreneurship experience to Backyard Estates. With a BS in Finance and a Master’s in Business Entrepreneurship, Adam combines business insight with hands-on project-management expertise. As CEO, he ensures every project runs smoothly, on time, and on budget, combining a passion for design with practical expertise.",
+            "With a BS in Finance and a Master’s in Business Entrepreneurship, Adam combines business insight with hands-on project-management expertise. As President of Backyard Estates, he ensures every project runs smoothly, on time, and on budget, combining a passion for design with practical expertise.",
     },
 ];
 
