@@ -24,7 +24,6 @@ export default function Banner({
                 <p className={styles.text}>{text}</p>
                 <a
                     className={styles.button}
-                    style={{ backgroundColor: buttonBackgroundColor || "#ffffff" }}
                     href={buttonLink}
                 >
                     {buttonText}

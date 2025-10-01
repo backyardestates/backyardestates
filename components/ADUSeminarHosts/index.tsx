@@ -2,21 +2,22 @@ import styles from "./ADUSeminarHosts.module.css";
 import Image from "next/image";
 
 const seminarHosts = [
+
     {
         id: 1,
-        name: "Adam Stewart",
-        role: "President & Founder",
-        photo: "/portraits/adam-stewart.png", // replace with real path
-        description:
-            "Adam Stewart brings years of construction and entrepreneurship experience to Backyard Estates. With a BS in Finance and a Master’s in Business Entrepreneurship, Adam combines business insight with hands-on project-management expertise. As CEO, he ensures every project runs smoothly, on time, and on budget, combining a passion for design with practical expertise.",
-    },
-    {
-        id: 2,
         name: "Tom Gibson",
         role: "Director of Construction",
         photo: "/portraits/tom-gibson.png", // replace with real path
         description:
             "Tom Gibson has 50+ years of hands-on experience in construction, from electrical work to leading multi-family and senior housing projects. Founder of Tom W. Gibson, Inc., Tom brings unmatched expertise to Backyard Estates, overseeing projects with precision and ensuring the highest quality builds.",
+    },
+    {
+        id: 2,
+        name: "Adam Stewart",
+        role: "President & Founder",
+        photo: "/portraits/adam-stewart.png", // replace with real path
+        description:
+            "Adam Stewart brings years of construction and entrepreneurship experience to Backyard Estates. With a BS in Finance and a Master’s in Business Entrepreneurship, Adam combines business insight with hands-on project-management expertise. As CEO, he ensures every project runs smoothly, on time, and on budget, combining a passion for design with practical expertise.",
     },
 ];
 
