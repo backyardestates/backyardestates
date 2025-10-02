@@ -21,3 +21,68 @@ categories->{slug},
   _updatedAt,
   tags
 }`
+
+export const OPEN_HOUSES_QUERY = `
+*[_type == "openHouse" && slug.current == $slug][0]{
+  _id,
+  title,
+  "slug": slug.current,
+  dates,
+  location,
+  propertyDetails {
+    sqft,
+    beds,
+    baths
+  },
+  timeline[]{
+    week,
+    milestoneTitle,
+    description,
+    "imageUrl": image.url,
+    "imagePublicId": image.public_id,
+    socialLink
+  },
+  projectMedia {
+    professionalPhotos[] {
+      "url": url,
+      "publicId": public_id
+    },
+    flyers[] {
+      "url": url,
+      "publicId": public_id
+    },
+    floorplans[] {
+      "url": url,
+      "publicId": public_id
+    }
+  },
+  includedItems[] {
+    title,
+    description,
+    items
+  },
+  createdAt
+}
+`
+
+// queries.ts
+export const ALL_OPEN_HOUSES_QUERY = `
+*[_type == "openHouse"] | order(dates[0] desc){
+  _id,
+  title,
+  "slug": slug.current,
+  dates,
+  location,
+  propertyDetails {
+    sqft,
+    beds,
+    baths
+  },
+  projectMedia {
+    professionalPhotos[] {
+      "url": url,
+      "publicId": public_id
+    },
+  }
+}
+`;

@@ -1,0 +1,140 @@
+/* ---------------------- Card Container ---------------------- */
+.card {
+    background-color: var(--color-brand-beige-subtle);
+    border: 8px solid #008d28;
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 480px;
+    margin: 2rem auto;
+    box-shadow: 0 16px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    height: fit-content;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 35px 70px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------------------- Header ---------------------- */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #10b981;
+    /* green check */
+    font-family: var(--font-serif);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    animation: popIn 0.6s ease-out;
+}
+
+/* subtle pop-in animation for header */
+@keyframes popIn {
+    0% {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ---------------------- Message ---------------------- */
+.message {
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    color: #111827;
+    /* high contrast */
+    font-weight: 200;
+    font-family: var(--font-sans);
+    line-height: 1.5;
+}
+
+/* ---------------------- Info Box ---------------------- */
+.info {
+    text-align: center;
+    margin: 2rem auto;
+    background-color: #ffffff;
+    padding: 1.75rem 2rem;
+    border-radius: 1rem;
+    box-shadow: inset 0 10px 25px rgba(0, 0, 0, 0.1);
+    font-size: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Event Title */
+.infoRow {
+    font-weight: 700;
+    font-size: 2.2rem;
+    color: #111827;
+    font-family: var(--font-serif);
+}
+
+/* Reserved Date/Time */
+.reservedRow {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #374151;
+    /* gray-700 */
+}
+
+.reservedLabel {
+    font-weight: 700;
+    color: #10b981;
+}
+
+.reservedValue {
+    font-weight: 200;
+    color: #111827;
+    font-family: var(--font-sans);
+    font-size: 1.5rem;
+}
+
+/* ---------------------- Event Link Button ---------------------- */
+.eventLinkContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+}
+
+.eventLink {
+    display: inline-block;
+    padding: 0.85rem 2.25rem;
+    background: linear-gradient(135deg, var(--color-brand-dark-blue), var(--color-brand-beige));
+    /* CTA gradient */
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.15rem;
+    text-decoration: none;
+    border-radius: 999px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    font-family: var(--font-sans);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.eventLink:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    filter: brightness(1.1);
+}
+
+.eventLink:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    filter: brightness(0.95);
+}

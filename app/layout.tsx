@@ -29,6 +29,7 @@ export const metadata: Metadata = {
 }
 
 import '../public/styles.css'
+import FloatingScheduleButton from '@/components/FloatingScheduleButton';
 
 export default function RootLayout({
     children,
@@ -47,6 +48,7 @@ export default function RootLayout({
                 {children}
                 <Analytics />
                 <SpeedInsights />
+                <FloatingScheduleButton />
             </body>
         </html>
     )

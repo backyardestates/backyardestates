@@ -26,7 +26,7 @@
     --color-brand-light-blue-hover: #202b2c;
     --color-brand-beige: hsla(35, 32%, 53%, 1);
     --color-brand-beige-hover: #91744a;
-    --color-brand-beige-subtle: rgba(246, 243, 238, 1);
+    --color-brand-beige-subtle: rgba(250, 247, 238, 1);
 
     --color-brand-beige-A080: hsla(35, 32%, 53%, 0.8);
     --color-brand-beige-A060: hsla(35, 32%, 53%, 0.6);
@@ -95,7 +95,8 @@ p.intro {
     font-size: 1.5rem;
     font-style: normal;
     font-weight: 400;
-    line-height: 2.25rem; /* 150% */
+    line-height: 2.25rem;
+    /* 150% */
 }
 
 p.small-caps {
@@ -107,7 +108,8 @@ p.small-caps {
     font-size: 1rem;
     font-style: normal;
     font-weight: 500;
-    line-height: 1.5rem; /* 150% */
+    line-height: 1.5rem;
+    /* 150% */
     font-variant: all-small-caps;
     letter-spacing: 0.1rem;
 }

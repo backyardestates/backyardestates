@@ -99,8 +99,11 @@ export default async function Footer() {
                             <h3 className={style.display3}>Resources</h3>
                             <ul>
                                 <li>
-                                    <Link href="/blog">Blog</Link>
+                                    <Link href="/events">
+                                        Events
+                                    </Link>
                                 </li>
+
                                 <li>
                                     <Link href="/properties">
                                         Completed ADUs
@@ -113,6 +116,9 @@ export default async function Footer() {
                                     <Link href="/standard-inclusions">
                                         Standard inclusions
                                     </Link>
+                                </li>
+                                <li>
+                                    <Link href="/blog">Blog</Link>
                                 </li>
                             </ul>
                         </div>

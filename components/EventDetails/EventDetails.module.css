@@ -1,0 +1,33 @@
+.detailsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0 auto 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: fit-content;
+}
+
+.details {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.2rem;
+    color: var(--color-brand-beige-subtle);
+    font-weight: 500;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+}
+
+@media (min-width: 1024px) {
+    .detailsContainer {
+        justify-content: center;
+        gap: 2rem;
+        margin: 0 0 2rem;
+    }
+
+    .details {
+        gap: 0.3rem;
+        font-size: large;
+    }
+}
