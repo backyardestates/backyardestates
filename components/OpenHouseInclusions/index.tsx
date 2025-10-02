@@ -16,7 +16,6 @@ interface IncludedItemsProps {
 
 export default function IncludedItems({ sections }: IncludedItemsProps) {
 
-    console.log(sections)
     // track which sections are open
     const [openSections, setOpenSections] = useState<boolean[]>(sections.map(() => false));
 

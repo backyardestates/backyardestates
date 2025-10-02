@@ -17,8 +17,6 @@ interface OpenHouseFeaturesSectionProps {
 export default function OpenHouseFeaturesSection({ propertyDetails, timeline }: OpenHouseFeaturesSectionProps) {
     const { sqft, beds, baths } = propertyDetails;
 
-    console.log(propertyDetails);
-
     // Calculate build duration from timeline if available
 
     return (

@@ -33,7 +33,6 @@ export default async function ADUOpenHouse({
     }
 
     const buildDuration = openHouse.data.timeline?.length ? `Built in ${openHouse.data.timeline.length} Weeks` : "TBD";
-    console.log(openHouse.data)
     return (
         <div className={styles.container}>
             <Nav />

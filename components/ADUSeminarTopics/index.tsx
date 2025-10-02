@@ -1,27 +1,12 @@
 import styles from "./ADUSeminarTopics.module.css";
-import Link from "next/link";
 import Image from "next/image";
-import {
-    Home,
-    LayoutGrid,
-    Rocket,
-    FastForward,
-    TrendingUp,
-    DollarSign,
-    Calculator,
-    PenTool,
-    Settings,
-    Key,
-    Eye,
-    Instagram,
-} from "lucide-react";
 
 const seminarTopics = [
     {
         id: 1,
         icon: '/images/adu-seminar/adu-seminar-1.png',
         title: "Find Your Perfect Fit",
-        subtitle: "Which ADU layout will best suit me?",
+        subtitle: "Which ADU layout will best suit my property?",
         description:
             "Explore the layouts and designs that actually work for your backyard. Leave with a clear picture of what’s possible so you can plan your ADU with confidence.",
     },
@@ -71,9 +56,9 @@ export default function ADUSeminarTopics() {
     return (
         <div>
             <div className={styles.headerSection}>
-                <h2 className={styles.sectionTitle}>Get Expert Info</h2>
+                <h2 className={styles.sectionTitle}>What You&rsquo;ll Get</h2>
                 <p className={styles.sectionSubtitle}>
-                    Answers to the exact questions homeowners have
+                    Answers to the exact questions most homeowners have
                 </p>
             </div>
 

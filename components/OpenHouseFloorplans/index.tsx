@@ -46,6 +46,8 @@ export default function FloorPlanToggle({ standardFloorPlanUrl, customFloorPlanU
                         src={standardFloorPlanUrl}
                         alt="Standard Floor Plan"
                         className={styles.floorplanImage}
+                        width={500}
+                        height={500}
                     />
                 )}
                 {showCustom && (
@@ -53,6 +55,8 @@ export default function FloorPlanToggle({ standardFloorPlanUrl, customFloorPlanU
                         src={customFloorPlanUrl}
                         alt="Customized Floor Plan"
                         className={styles.floorplanImage}
+                        width={500}
+                        height={500}
                     />
                 )}
             </div>

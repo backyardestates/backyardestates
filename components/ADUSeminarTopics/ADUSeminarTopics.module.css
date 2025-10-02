@@ -227,10 +227,10 @@
     }
 
     .stageRow {
-        flex-direction: column-reverse !important;
-        gap: 1.5rem;
+        flex-direction: column !important;
+        gap: 0.5rem;
         text-align: center;
-        margin: 1rem 0;
+        margin: 3rem 0;
     }
 
     .card {
@@ -243,20 +243,42 @@
         text-align: center;
         align-items: center;
         padding: 0;
-        margin: 0 1rem;
+        margin: 0 3rem;
     }
 
-    .weekTitle {
-        font-size: 1.25rem;
-    }
 
     .weekDescription {
         font-size: 0.95rem;
+        text-align: left;
     }
+
+    .weekTitle {
+        font-size: 2rem;
+        text-align: left;
+    }
+
+    .weekSubtitle {
+        text-align: left;
+    }
+
 
     .button {
         width: 100%;
         max-width: 300px;
+    }
+
+    .cardImage {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        aspect-ratio: 5/5;
+        border-radius: 50%;
+    }
+
+    .card {
+        /* background: linear-gradient(90deg, rgba(131, 58, 180, 0.2) 0%, rgba(253, 29, 29, 0.2) 50%, rgba(252, 176, 69, 0.2) 100%); */
+        width: 350px;
+        height: 350px;
     }
 }
 
@@ -269,12 +291,22 @@
         font-size: 1rem;
     }
 
+    .textContent {
+        margin: 0 2rem;
+    }
+
     .weekTitle {
         font-size: 2rem;
+        text-align: left;
+    }
+
+    .weekSubtitle {
+        text-align: left;
     }
 
     .weekDescription {
         font-size: 0.875rem;
+        text-align: left;
     }
 
     .weekRow {
@@ -290,7 +322,23 @@
     }
 
     .stageRow {
-        margin: 2rem 0;
+        margin: 3rem 0;
+        flex-direction: column !important;
+        gap: 0.5rem
+    }
+
+    .cardImage {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        aspect-ratio: 5/5;
+        border-radius: 50%;
+    }
+
+    .card {
+        /* background: linear-gradient(90deg, rgba(131, 58, 180, 0.2) 0%, rgba(253, 29, 29, 0.2) 50%, rgba(252, 176, 69, 0.2) 100%); */
+        width: 350px;
+        height: 350px;
     }
 
 

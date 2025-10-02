@@ -95,7 +95,6 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
     })
 
     const router = useRouter()
-    console.log(dates)
 
     // Example event configurations - you can modify these based on your actual events
     const eventConfigs = {
