@@ -11,6 +11,9 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { Home } from "lucide-react";
 import { notFound } from 'next/navigation';
+import FloorPlanToggle from '@/components/OpenHouseFloorplans';
+import IncludedItems from '@/components/OpenHouseInclusions';
+import { seedIncludedItems } from '@/sanity/seed';
 
 
 export default async function ADUOpenHouse({
@@ -30,8 +33,7 @@ export default async function ADUOpenHouse({
     }
 
     const buildDuration = openHouse.data.timeline?.length ? `Built in ${openHouse.data.timeline.length} Weeks` : "TBD";
-
-
+    console.log(openHouse.data)
     return (
         <div className={styles.container}>
             <Nav />
@@ -62,7 +64,7 @@ export default async function ADUOpenHouse({
                             </Button>
                         </div>
 
-                        <EventDetails dates={openHouse.data.dates} location={openHouse.data.location} />
+                        <EventDetails dates={openHouse.data.dates} location={openHouse.data.location} eventType='open-house' />
 
                     </div>
 
@@ -85,7 +87,9 @@ export default async function ADUOpenHouse({
                     RSVP Now
                 </Button>
             </div>
+            <FloorPlanToggle standardFloorPlanUrl={openHouse.data.projectMedia.floorplans[0].url} customFloorPlanUrl={openHouse.data.projectMedia.floorplans[1].url} sqft={openHouse.data.propertyDetails.sqft} />
             <ConstructionTimeline timeline={openHouse.data.timeline} />
+            <IncludedItems sections={openHouse.data.includedItems} />
 
             <RsvpSection slug={slug} />
             <Footer />

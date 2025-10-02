@@ -4,7 +4,7 @@ import React from "react"
 
 import { useState } from "react"
 import styles from "./ADUSeminarRSVPForm.module.css"
-import { CalendarDays, Users, Minus, Plus } from "lucide-react"
+import { CalendarDays, Users, Minus, Plus, Loader } from "lucide-react"
 import { isValidUSPhone } from "@/utils/isValidUSPhone"
 import { Select } from "../Select"
 import { useRouter } from "next/navigation"
@@ -91,6 +91,7 @@ export function ADUSeminarRSVPForm({ dates, params }: RSVPFormProps) {
         phone: "",
         hearAbout: "",
     })
+    const [isLoading, setIsLoading] = useState(false);
 
     const router = useRouter()
 
@@ -243,39 +244,6 @@ export function ADUSeminarRSVPForm({ dates, params }: RSVPFormProps) {
             console.log('Error submitting lead:', error)
         }
     }
-
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const newErrors = { ...errors };
-
-        if (!formData.firstName) newErrors.firstName = "First name is required";
-        if (!formData.lastName) newErrors.lastName = "Last name is required";
-        if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Valid email is required";
-        if (!formData.hearAbout) newErrors.hearAbout = "Please select an option";
-        if (!formData.phone || !isValidUSPhone(formData.phone)) {
-            newErrors.phone = "Please enter a valid US phone number"
-        }
-
-        setErrors(newErrors);
-
-        const hasError = Object.values(newErrors).some((v) => v);
-        if (!hasError) {
-            const fd = new FormData();
-            fd.append("firstName", formData.firstName);
-            fd.append("lastName", formData.lastName);
-            fd.append("email", formData.email);
-            fd.append("phone", formData.phone);
-            fd.append("hearAbout", formData.hearAbout);
-            fd.append("date", dates[0]);
-            fd.append("time", eventConfigs.dayOfWeek[0].times[0]);
-            fd.append("ticketCount", ticketCount.toString());
-
-            createPerson(fd);
-        }
-    };
-
-
     const [errors, setErrors] = useState({
         firstName: "",
         lastName: "",
@@ -293,8 +261,52 @@ export function ADUSeminarRSVPForm({ dates, params }: RSVPFormProps) {
         formData.phone &&
         formData.hearAbout
 
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        const newErrors = { ...errors };
+
+        if (!formData.firstName) newErrors.firstName = "First name is required";
+        if (!formData.lastName) newErrors.lastName = "Last name is required";
+        if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Valid email is required";
+        if (!formData.hearAbout) newErrors.hearAbout = "Please select an option";
+        if (!formData.phone || !isValidUSPhone(formData.phone)) {
+            newErrors.phone = "Please enter a valid US phone number"
+        }
+
+        setErrors(newErrors);
+
+        const hasError = Object.values(newErrors).some((v) => v);
+        if (hasError) {
+            setIsLoading(false); // ✅ stop loading
+        }
+        if (!hasError) {
+            const fd = new FormData();
+            fd.append("firstName", formData.firstName);
+            fd.append("lastName", formData.lastName);
+            fd.append("email", formData.email);
+            fd.append("phone", formData.phone);
+            fd.append("hearAbout", formData.hearAbout);
+            fd.append("date", dates[0]);
+            fd.append("time", eventConfigs.dayOfWeek[0].times[0]);
+            fd.append("ticketCount", ticketCount.toString());
+
+            try {
+                createPerson(fd);
+            } catch (error) {
+                console.error("Error submitting form:", error);
+            } finally {
+                setIsLoading(false); // ✅ stop loading
+            }
+        }
+    };
+
+
+
     return (
         <Card className={styles.card}>
+            {isLoading && <Loader className={styles.spinner} />}
             <CardHeader>
                 <CardTitle className={styles.cardTitleFlex}>
                     <CalendarDays />
@@ -441,13 +453,11 @@ export function ADUSeminarRSVPForm({ dates, params }: RSVPFormProps) {
                             {errors.hearAbout && <span role="alert" className={styles.errorText}>{errors.hearAbout}</span>}
                         </div>
                     </div>
-
                     {/* Submit Button */}
-                    <Button type="submit" disabled={!isFormValid} className={styles.submitButton}>
+                    <Button type="submit" disabled={!isFormValid || isLoading} className={styles.submitButton}>
                         RSVP Now
                     </Button>
                 </form>
-
             </CardContent>
         </Card>
     )

@@ -1,0 +1,109 @@
+.floorplansContainer {
+    max-width: 900px;
+    margin: 0 auto 5rem;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0;
+    /* width: 16rem; */
+    top: -1.5rem;
+    /* left: 50%; */
+    border: 2px solid var(--color-brand-beige);
+    border-radius: 3rem;
+}
+
+.buttonGroupButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    border: none;
+    /* padding: 1rem; */
+    /* width: 8rem; */
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 0.02em;
+}
+
+.buttonGroupButtonLeft {
+    composes: buttonGroupButton;
+    padding: 1rem 1.25rem 1rem 1.5rem;
+    color: var(--color-brand-beige);
+    background-color: var(--color-white);
+    border-top-left-radius: 1.5rem;
+    border-bottom-left-radius: 1.5rem;
+}
+
+.buttonGroupButtonLeft:hover {
+    background-color: var(--color-brand-beige-subtle);
+    cursor: pointer;
+}
+
+.buttonGroupButtonRight {
+    composes: buttonGroupButton;
+    padding: 1rem 1.5rem 1rem 1.25rem;
+    color: var(--color-brand-beige);
+    background-color: var(--color-white);
+    border-top-right-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+}
+
+.buttonGroupButtonRight:hover {
+    background-color: var(--color-brand-beige-subtle);
+    cursor: pointer;
+}
+
+.buttonGroupButtonLeft_selected {
+    composes: buttonGroupButtonLeft;
+    color: var(--color-white);
+    background-color: var(--color-brand-beige);
+}
+
+.buttonGroupButtonLeft_selected:hover {
+    background-color: var(--color-brand-beige-hover);
+    cursor: pointer;
+}
+
+.buttonGroupButtonRight_selected {
+    composes: buttonGroupButtonRight;
+    color: var(--color-white);
+    background-color: var(--color-brand-beige);
+}
+
+.buttonGroupButtonRight_selected:hover {
+    color: var(--color-brand-beige-hover);
+    cursor: pointer;
+}
+
+.floorplanImageWrapper {
+    width: fit-content;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    background-color: #fdfdfd;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 2rem auto;
+}
+
+.floorplanImageWrapper:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+
+.floorplanImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 1rem;
+    transition: opacity 0.3s ease;
+    max-width: 600px;
+}

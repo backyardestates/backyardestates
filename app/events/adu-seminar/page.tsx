@@ -23,7 +23,11 @@ export default async function ADUOpenHouse() {
         return <p>Open House not found</p>;
     }
 
-    const dates = ["2025-10-08"]
+    const dates = [{
+        date: "2025-10-08",
+        startTime: "18:00:00",
+        endTime: "19:30:00"
+    }]
 
     const location = "2335 W Foothill Blvd #18, Upland CA 91786"
 
@@ -58,7 +62,7 @@ export default async function ADUOpenHouse() {
                             </Button>
                         </div>
 
-                        <EventDetails dates={dates} location={location} />
+                        <EventDetails dates={dates} location={location} eventType='adu-seminar' />
 
                     </div>
 

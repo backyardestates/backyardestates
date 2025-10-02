@@ -3,6 +3,8 @@
 import Link from "next/link";
 import styles from "./ClientCheckIn.module.css";
 import formatDate from "@/utils/dates";
+import { Calendar, Clock } from "lucide-react";
+import formatTime from "@/utils/times";
 
 interface ClientCheckInProps {
     dealData: {
@@ -27,7 +29,7 @@ export default function ClientCheckIn({ dealData }: ClientCheckInProps) {
     // Determine the link dynamically
     const eventSlug = deal["5b828e59d1a7df6f5ffefac982cac34de1440b49"]; // event slug
     const reservedDate = formatDate(deal["99c3c4c83c70de6cc3d999b6f2692bb4b59b2036"]); // reserved date
-    const reservedTime = deal["e37e48f6d0da66dc4e54ba571bc3796091a92be4"]; // reserved time
+    const reservedTime = formatTime(deal["e37e48f6d0da66dc4e54ba571bc3796091a92be4"]); // reserved time
 
     const isSeminar = eventSlug === "adu-seminar";
     const eventLink = isSeminar
@@ -55,11 +57,11 @@ export default function ClientCheckIn({ dealData }: ClientCheckInProps) {
             </div>
             {/* Reserved Date & Time */}
             <div className={styles.reservedRow}>
-                <span className={styles.reservedLabel}>Date:</span>
+                <Calendar></Calendar>
                 <span className={styles.reservedValue}>{reservedDate}</span>
             </div>
             <div className={styles.reservedRow}>
-                <span className={styles.reservedLabel}>Time:</span>
+                <Clock></Clock>
                 <span className={styles.reservedValue}>{reservedTime}</span>
             </div>
             <div className={styles.eventLinkContainer}>

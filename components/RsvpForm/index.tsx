@@ -71,7 +71,7 @@ export function Badge({ children }: BadgeProps) {
     return <div className={`${styles.badge}`}>{children}</div>
 }
 interface EventDates {
-    dates: string[];
+    dates: { date: string }[];
 }
 
 interface PageProps {
@@ -95,13 +95,14 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
     })
 
     const router = useRouter()
+    console.log(dates)
 
     // Example event configurations - you can modify these based on your actual events
     const eventConfigs = {
         fridaySaturday: [
             {
                 day: "Friday",
-                date: dates[0],
+                date: dates[0].date,
                 times: [
                     "10:00 AM",
                     "10:30 AM",
@@ -124,7 +125,7 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
             },
             {
                 day: "Saturday",
-                date: dates[1],
+                date: dates[1].date,
                 times: [
                     "9:00 AM",
                     "9:30 AM",
@@ -143,7 +144,7 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
         saturdayOnly: [
             {
                 day: "Saturday",
-                date: dates[0],
+                date: dates[0].date,
                 times: [
                     "9:00 AM",
                     "9:30 AM",
@@ -167,7 +168,7 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
 
 
     // For this example, using Friday+Saturday configuration
-    const eventDates = dates.length > 1 ? eventConfigs.fridaySaturday : eventConfigs.saturdayOnly
+    const eventDates = Array.isArray(dates) && dates.length > 1 ? eventConfigs.fridaySaturday : eventConfigs.saturdayOnly
 
     const handleDateToggle = (date: string) => {
         setSelectedDate((prev) => {

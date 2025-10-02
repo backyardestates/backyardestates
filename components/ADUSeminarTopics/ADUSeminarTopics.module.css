@@ -37,7 +37,8 @@
 
 
 .card {
-    background: linear-gradient(90deg, rgba(131, 58, 180, 0.2) 0%, rgba(253, 29, 29, 0.2) 50%, rgba(252, 176, 69, 0.2) 100%);
+    /* background: linear-gradient(90deg, rgba(131, 58, 180, 0.2) 0%, rgba(253, 29, 29, 0.2) 50%, rgba(252, 176, 69, 0.2) 100%); */
+    background: linear-gradient(90deg, rgba(185, 151, 100, 0.21) 31%, rgba(250, 247, 238, 1) 100%);
     border-radius: 50%;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
     overflow: hidden;

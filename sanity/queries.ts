@@ -56,6 +56,11 @@ export const OPEN_HOUSES_QUERY = `
       "publicId": public_id
     }
   },
+  includedItems[] {
+    title,
+    description,
+    items
+  },
   createdAt
 }
 `

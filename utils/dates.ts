@@ -5,5 +5,6 @@ export default function formatDate(dateString: string): string {
         year: "numeric",
         month: "long", // full month name
         day: "2-digit",
+        weekday: "short"
     })
 }
