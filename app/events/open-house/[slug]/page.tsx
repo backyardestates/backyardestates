@@ -75,6 +75,7 @@ export default async function ADUOpenHouse({
                             width={500}
                             height={600}
                             className={styles.featureImage}
+                            quality={100}
                         />
                     </div>
                 </div>

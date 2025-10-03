@@ -11,6 +11,7 @@ import formatTime from "@/utils/times";
 import { Calendar, MapPin } from "lucide-react";
 import { seedIncludedItems } from "@/sanity/seed";
 // const seeded = await seedIncludedItems()
+// console.log(seeded)
 
 function splitEventsByDate(events: any[]) {
     const now = new Date();

@@ -4,8 +4,8 @@ import { createClient } from "next-sanity"
 
 const includedItemsData = [
     {
-        title: "Standard Items Included",
-        description: "Project: Construction of a custom 749 sq ft, 2 bed / 2 bath, turnkey and move-in ready ADU at the project site",
+        title: "What We Built Into This ADU",
+        description: "Project: Construction of a custom 610 sq ft, 2 bed / 1 bath, turnkey and move-in ready Accessory Dwelling Unit (ADU) at the Project Site",
         items: [
             "Standard ADU Plans & Permitting - Architectural (including up to two revisions during design phase), Structural & Title 24",
             "Standard ADU Finishes - Selections made during design meeting prior to breaking ground",
@@ -16,7 +16,7 @@ const includedItemsData = [
         ]
     },
     {
-        title: "Specific Items Included in ADU Construction",
+        title: "The Structure & Systems That Bring It to Life",
         items: [
             "Building foundation",
             "Rebar",
@@ -49,7 +49,7 @@ const includedItemsData = [
         ]
     },
     {
-        title: "Additional Items Included in ADU",
+        title: "Finishes & Features That Make It Move-In Ready",
         items: [
             "Doors and frames",
             "Finish hardware",
@@ -101,21 +101,22 @@ const includedItemsData = [
         ]
     },
     {
-        title: "Site Specific Work Included",
+        title: "Site-Specific Work for This Property",
         items: [
-            "Demo concrete and replace for utility runs",
-            "78 lf of additional trenches & water/sewer",
-            "78 lf of additional electrical lines",
-            "Water meter upgrade",
-            "Taller foundation",
-            "Geotechnical report/letter",
-            "Tie-in into existing drainage system",
-            "Patio removal",
-            "Fire blocking eaves due to ADU distance to main house",
-            "Fire flow test"
+            "Electrical Calcs",
+            "Fire Flow Test",
+            "Fire Sprinklers",
+            "Siding",
+            "Additional 144 lf of trenching",
+            "Additional 144 lf of utilities",
+            "Additional 64 lf of electrical lines",
+            "189 sf of Concrete cut & Repour",
+            "Dual gang 200amp electrical meter",
+            "Second water meter tee’d off existing service line after the street in public right of way"
         ]
     }
-]
+];
+
 const client = createClient({
     projectId: '4sw2w31c',
     dataset: 'production',
@@ -124,7 +125,7 @@ const client = createClient({
     useCdn: false,                 // `false` if you want to ensure fresh data
 })
 
-const openHouseId = '35fc9462-6f67-422e-a635-d4cb10715edc'
+const openHouseId = '8d7bb33c-099b-4d31-92a3-329890c03e33'
 
 export async function seedIncludedItems() {
     try {
