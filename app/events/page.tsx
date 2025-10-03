@@ -82,7 +82,7 @@ export default async function EventsPage() {
 
                 <div className={styles.textContent}>
                     <h2 className={styles.weekTitle}>
-                        {event.slug !== "adu-seminar" ? `Open House: ${event.title}` : event.title}
+                        {event.slug !== "adu-seminar" ? `ADU Open House: ${event.title}` : event.title}
                     </h2>
 
                     {/* Dates */}
