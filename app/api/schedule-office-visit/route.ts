@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { decodeRsvpToken } from "@/utils/generateRSVPToken";
 
 const PIPELINE_ID = "7"; // your pipeline ID
-const API_TOKEN = process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN;
-const DOMAIN = process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN;
+const API_TOKEN = process.env.PIPEDRIVE_API_TOKEN;
+const DOMAIN = process.env.PIPEDRIVE_DOMAIN;
 
 export async function POST(req: Request) {
     try {
