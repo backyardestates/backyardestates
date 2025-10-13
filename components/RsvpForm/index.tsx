@@ -124,7 +124,7 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
             },
             {
                 day: "Saturday",
-                date: dates[1].date,
+                date: dates[1]?.date,
                 times: [
                     "9:00 AM",
                     "9:30 AM",
