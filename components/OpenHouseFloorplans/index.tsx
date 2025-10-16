@@ -25,7 +25,7 @@ export default function FloorPlanToggle({ standardFloorPlanUrl, customFloorPlanU
                     }
                     onClick={() => setShowCustom(false)}
                 >
-                    Estate 600 Floor Plan
+                    Estate {sqft} Floor Plan
                 </button>
                 <button
                     className={
