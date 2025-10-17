@@ -17,6 +17,18 @@
     color: var(--color-brand-beige);
 }
 
+.subHeader {
+    font-family: var(--font-sans);
+    color: var(--color-brand-dark-blue);
+    margin-top: 1rem;
+    font-size: 1rem;
+    /* text-xl */
+    font-weight: 200;
+    /* font-medium */
+    text-align: left;
+}
+
+
 .eventDetails {
     display: flex;
     color: var(--color-brand-dark-blue);
@@ -59,12 +71,4 @@
 .textLg {
     font-size: 1.125rem;
     /* text-lg */
-}
-
-.textForeground {
-    color: var(--foreground);
-}
-
-.textMutedForeground {
-    color: var(--muted-foreground);
 }

@@ -70,18 +70,17 @@ interface BadgeProps {
 export function Badge({ children }: BadgeProps) {
     return <div className={`${styles.badge}`}>{children}</div>
 }
-interface EventDates {
-    dates: { date: string }[];
-}
 
 interface PageProps {
     params: { slug: string };
+    dates: { date: string }[];
+    address: string;
 }
 
-// Combine both into a single props object
-interface RSVPFormProps extends EventDates, PageProps { }
 
-export function RSVPForm({ dates, params }: RSVPFormProps) {
+// Combine both into a single props object
+
+export function RSVPForm({ dates, params, address }: PageProps) {
     const { slug } = params;
     const [selectedDate, setSelectedDate] = useState<string | null>(null)
     const [selectedTimes, setSelectedTimes] = useState<Record<string, string>>({})
@@ -100,7 +99,6 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
     const eventConfigs = {
         fridaySaturday: [
             {
-                day: "Friday",
                 date: dates[0].date,
                 times: [
                     "10:00 AM",
@@ -123,7 +121,6 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
                 ],
             },
             {
-                day: "Saturday",
                 date: dates[1]?.date,
                 times: [
                     "9:00 AM",
@@ -142,7 +139,6 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
         ],
         saturdayOnly: [
             {
-                day: "Saturday",
                 date: dates[0].date,
                 times: [
                     "9:00 AM",
@@ -156,6 +152,11 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
                     "1:00 PM",
                     "1:30 PM",
                     "2:00 PM",
+                    "2:30 PM",
+                    "3:00 PM",
+                    "3:30 PM",
+                    "4:00 PM",
+
                 ],
             },
         ],
@@ -423,6 +424,7 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
                     <CalendarDays />
                     Reserve Your Spot
                 </CardTitle>
+                <p className={styles.address}>{address}</p>
             </CardHeader>
 
             <CardContent>
@@ -445,9 +447,7 @@ export function RSVPForm({ dates, params }: RSVPFormProps) {
                                     className={`${styles.dateButton} ${selectedDate === eventDate.date ? styles.dateButtonSelected : ""}`}
                                     aria-pressed={selectedDate === eventDate.date}
                                 >
-                                    <div>{eventDate.day}</div>
                                     <div>{formatDate(eventDate.date)}</div>
-                                    <div>{eventDate.day === "Friday" ? "10 AM - 6 PM" : "9 AM - 2 PM"}</div>
                                 </button>
                             ))}
                         </div>

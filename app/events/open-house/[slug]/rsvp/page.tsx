@@ -19,32 +19,33 @@ export default async function Home({
 
     const slug = await params;
 
-    async function getStageIds(pipeline_id) {
+    // async function getStageIds(pipeline_id) {
 
-        const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/stages?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}&pipeline_id=${pipeline_id}`, {
-            method: 'GET',
-        }
-        )
-        const data = await res.json()
+    //     const res = await fetch(
+    //         `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/stages?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}&pipeline_id=${pipeline_id}`, {
+    //         method: 'GET',
+    //     }
+    //     )
+    //     const data = await res.json()
 
-    }
+    // }
 
-    const stages = await getStageIds(7)
+    // const stages = await getStageIds(7)
 
-    async function getDealFields(pipeline_id) {
+    // async function getDealFields(pipeline_id) {
 
-        const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/dealFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`, {
-            method: 'GET',
-        }
-        )
-        const data = await res.json()
+    //     const res = await fetch(
+    //         `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/dealFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`, {
+    //         method: 'GET',
+    //     }
+    //     )
+    //     const data = await res.json()
 
-    }
+    // }
 
-    const fields = await getDealFields(7)
-
+    // const fields = await getDealFields(7)
+    const address = openHouse.data.location
+    console.log(address)
 
     return (
         <main className={styles.main}>
@@ -55,9 +56,12 @@ export default async function Home({
                         <h1 className={styles.header}>
                             ADU Open House Event
                         </h1>
+                        <p className={styles.subHeader}>
+                            Join us for an exclusive tour of our beautifully designed Accessory Dwelling Unit (ADU). Explore modern living spaces, innovative features, and discover how an ADU can transform your property.
+                        </p>
                     </div>
 
-                    <RSVPForm dates={openHouse.data.dates} params={slug} />
+                    <RSVPForm dates={openHouse.data.dates} params={slug} address={address} />
                     <LegalPrint />
                 </div>
             </div>
