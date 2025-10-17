@@ -34,6 +34,8 @@ export default async function ADUOpenHouse({
 
     console.log(openHouse.data)
 
+    const sqft = openHouse.data.propertyDetails.sqft === 750 && openHouse.data.propertyDetails.baths === 2 ? "750+" : openHouse.data.propertyDetails.sqft
+
     const buildDuration = openHouse.data.timeline?.length ? `Built in ${openHouse.data.timeline.length} Weeks` : "TBD";
     return (
         <div className={styles.container}>
@@ -89,7 +91,7 @@ export default async function ADUOpenHouse({
                     RSVP Now
                 </Button>
             </div>
-            <FloorPlanToggle standardFloorPlanUrl={openHouse.data.projectMedia.floorplans[0].url} customFloorPlanUrl={openHouse.data.projectMedia.floorplans[1].url} sqft={openHouse.data.propertyDetails.sqft} />
+            <FloorPlanToggle standardFloorPlanUrl={openHouse.data.projectMedia.floorplans[0].url} customFloorPlanUrl={openHouse.data.projectMedia.floorplans[1].url} sqft={sqft} />
             <ConstructionTimeline timeline={openHouse.data.timeline} />
             <IncludedItems sections={openHouse.data.includedItems} />
 

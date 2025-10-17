@@ -28,7 +28,7 @@ export default function OpenHouseFeaturesSection({ propertyDetails, timeline }: 
                         <div className={styles.iconWrapper}>
                             <Home color="#b99764" className={styles.icon} />
                         </div>
-                        <h3 className={styles.title}>Estate {sqft}</h3>
+                        <h3 className={styles.title}>Estate {sqft}{sqft === 750 && baths === 2 ? "+" : ""}</h3>
                         <p className={styles.text}>Thoughtfully designed space</p>
                     </div>
 
