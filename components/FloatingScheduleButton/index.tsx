@@ -39,12 +39,14 @@ export default function FloatingScheduleButton() {
                     newWin.location.href = result.url;
                 }
             } else {
-                if (newWin) newWin.close();
-                alert("Error generating scheduling link: " + result.error);
+                if (newWin) {
+                    newWin.location.href = "https://calendly.com/backyard-estates/new-meeting";
+                }
             }
         } catch (err) {
-            if (newWin) newWin.close();
-            alert("Something went wrong while generating the link.");
+            if (newWin) {
+                newWin.location.href = "https://calendly.com/backyard-estates/new-meeting";
+            }
         }
     }
     return (
