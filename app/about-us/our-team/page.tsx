@@ -111,22 +111,12 @@ export default function OurTeam() {
                     families and communities.
                 </Bio>
                 <Bio
-                    portrait="erika-ruiz.png"
-                    name="Erika Ruiz"
-                    title="Project Engineer"
+                    portrait="hector-tomas.png"
+                    name="Hector Tomas"
+                    title="Director of Finance"
                 >
-                    Erika plays a vital role in guiding homeowners through the
-                    early stages of their ADU journey, overseeing the client
-                    experience from sign-on to design. With five years of
-                    experience in administration and project management, she
-                    specializes in client coordination, operational efficiency,
-                    and seamless cross-team communication. Erika ensures that
-                    each project gets off to a smooth start by aligning internal
-                    schedules and helping the sales team prepare accurate,
-                    transparent estimates. She believes in the power of ADUs to
-                    provide practical, affordable housing that strengthens
-                    families and communities—a mission that drives her work
-                    every day.
+                    With over 15 years of experience in accounting and finance, Hector oversees all financial operations of the company—from accounts payable and receivable to budgeting, forecasting, and cash flow management. He ensures that every project is tracked for accurate costing and that company resources are managed efficiently to maintain healthy financial stability. Hector&rsquo;s strategic oversight helps the team make informed decisions that support growth and long-term sustainability.
+                    He believes that ADUs represent the future of housing—offering flexibility and affordability at a time when traditional housing has become increasingly expensive. Through his work, Hector is proud to help families invest in smarter, more accessible housing solutions that build both financial and personal value.
                 </Bio>
                 <Bio
                     portrait="jose-cervantes.png"
