@@ -71,8 +71,8 @@ export default async function Footer() {
                                     size="lg"
                                     className={style.icon}
                                 />
-                                <Link href="tel:8182083113">
-                                    (818) 208-3113
+                                <Link href="tel:+14254944705">
+                                    (425) 494-4705
                                 </Link>
                             </li>
                         </ul>
