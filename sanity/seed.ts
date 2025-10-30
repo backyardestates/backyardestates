@@ -5,7 +5,7 @@ import { createClient } from "next-sanity"
 const includedItemsData = [
     {
         title: "What We Built Into This ADU",
-        description: "Project: Construction of a custom 610 sq ft, 2 bed / 1 bath, turnkey and move-in ready Accessory Dwelling Unit (ADU) at the Project Site",
+        description: "Project: Construction of a custom 749 square foot, 2 bed / 2 bath, turnkey and move-in ready Accessory Dwelling Unit (ADU) at the Project Site",
         items: [
             "Standard ADU Plans & Permitting - Architectural (including up to two revisions during design phase), Structural & Title 24",
             "Standard ADU Finishes - Selections made during design meeting prior to breaking ground",
@@ -103,16 +103,19 @@ const includedItemsData = [
     {
         title: "Site-Specific Work for This Property",
         items: [
-            "Electrical Calcs",
-            "Fire Flow Test",
-            "Fire Sprinklers",
+            "New water meter",
+            "Encroachment permit",
+            "Second electrical meter",
+            "Grading of flow lines",
+            "Tile roof",
+            "Fire sprinklers",
+            "Sewer scope",
+            "Additional 106 lf of trenching",
+            "Additional 106 lf of utilities",
+            "Additional 169 lf of electrical lines",
+            "174 sf of concrete cut and repour",
             "Siding",
-            "Additional 144 lf of trenching",
-            "Additional 144 lf of utilities",
-            "Additional 64 lf of electrical lines",
-            "189 sf of Concrete cut & Repour",
-            "Dual gang 200amp electrical meter",
-            "Second water meter tee’d off existing service line after the street in public right of way"
+            "Trim"
         ]
     }
 ];
@@ -125,7 +128,7 @@ const client = createClient({
     useCdn: false,                 // `false` if you want to ensure fresh data
 })
 
-const openHouseId = '8d7bb33c-099b-4d31-92a3-329890c03e33'
+const openHouseId = '1b960950-9570-4558-bf77-fc3626f67aa9'
 
 export async function seedIncludedItems() {
     try {

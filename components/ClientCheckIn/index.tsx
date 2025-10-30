@@ -5,6 +5,7 @@ import styles from "./ClientCheckIn.module.css";
 import formatDate from "@/utils/dates";
 import { Calendar, Clock } from "lucide-react";
 import formatTime from "@/utils/times";
+import Button from "../Button";
 
 interface ClientCheckInProps {
     dealData: {
@@ -46,14 +47,15 @@ export default function ClientCheckIn({ dealData }: ClientCheckInProps) {
             <div className={styles.message}>
                 You are now checked in for the {eventLabel}.
             </div>
-
+            <div className={styles.eventLinkContainer}>
+                <Button href={eventLink}>
+                    View {eventLabel} Details
+                </Button>
+            </div>
             <div className={styles.info}>
                 <div className={styles.infoRow}>
                     <span className={styles.infoValue}>{deal.title}</span>
                 </div>
-
-
-
             </div>
             {/* Reserved Date & Time */}
             <div className={styles.reservedRow}>
@@ -64,11 +66,7 @@ export default function ClientCheckIn({ dealData }: ClientCheckInProps) {
                 <Clock></Clock>
                 <span className={styles.reservedValue}>{reservedTime}</span>
             </div>
-            <div className={styles.eventLinkContainer}>
-                <Link href={eventLink} className={styles.eventLink}>
-                    Learn more about this {eventLabel}
-                </Link>
-            </div>
+
         </div>
     );
 }
