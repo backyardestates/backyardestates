@@ -27,7 +27,7 @@
     /* width: 8rem; */
     text-decoration: none;
     font-family: var(--font-sans);
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -36,7 +36,7 @@
 
 .buttonGroupButtonLeft {
     composes: buttonGroupButton;
-    padding: 1rem 1.25rem 1rem 1.5rem;
+    padding: 1rem;
     color: var(--color-brand-beige);
     background-color: var(--color-white);
     border-top-left-radius: 1.5rem;
@@ -50,7 +50,7 @@
 
 .buttonGroupButtonRight {
     composes: buttonGroupButton;
-    padding: 1rem 1.5rem 1rem 1.25rem;
+    padding: 1rem;
     color: var(--color-brand-beige);
     background-color: var(--color-white);
     border-top-right-radius: 1.5rem;
@@ -91,7 +91,7 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     background-color: #fdfdfd;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin: 2rem auto;
+    margin: 2rem;
 }
 
 .floorplanImageWrapper:hover {
@@ -106,4 +106,17 @@
     border-radius: 1rem;
     transition: opacity 0.3s ease;
     max-width: 600px;
+}
+
+@media (min-width: 624px) {
+    .floorplanImageWrapper {
+        margin: 2rem auto;
+    }
+
+}
+
+@media (min-width: 1024px) {
+    .buttonGroupButton {
+        font-size: 1rem;
+    }
 }
