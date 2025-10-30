@@ -115,9 +115,7 @@ export function RSVPForm({ dates, params, address }: PageProps) {
                     "3:30 PM",
                     "4:00 PM",
                     "4:30 PM",
-                    "5:00 PM",
-                    "5:30 PM",
-                    "6:00 PM",
+                    "5:00 PM"
                 ],
             },
             {
@@ -133,7 +131,6 @@ export function RSVPForm({ dates, params, address }: PageProps) {
                     "12:30 PM",
                     "1:00 PM",
                     "1:30 PM",
-                    "2:00 PM",
                 ],
             },
         ],
