@@ -1,12 +1,14 @@
+// app/layout.tsx
 import Script from 'next/script'
 import type { Metadata } from 'next'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 config.autoAddCss = false
 
 import { Roboto, Roboto_Slab } from 'next/font/google'
+import FloatingButtonWrapper from '@/components/FloatingButtonWrapper'
 
 const roboto = Roboto({
     variable: '--font-sans',
@@ -29,7 +31,6 @@ export const metadata: Metadata = {
 }
 
 import '../public/styles.css'
-import FloatingScheduleButton from '@/components/FloatingScheduleButton';
 
 export default function RootLayout({
     children,
@@ -48,7 +49,7 @@ export default function RootLayout({
                 {children}
                 <Analytics />
                 <SpeedInsights />
-                <FloatingScheduleButton />
+                <FloatingButtonWrapper /> {/* ✅ Handles conditional logic */}
                 <Script id="clarity-script" strategy="afterInteractive">
                     {`
             (function(c,l,a,r,i,t,y){
@@ -62,4 +63,3 @@ export default function RootLayout({
         </html>
     )
 }
-

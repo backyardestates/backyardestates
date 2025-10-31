@@ -27,7 +27,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 1rem 0;
+    padding: 0.5rem 1rem;
     z-index: 50;
 
     background-color: var(--color-brand-beige);
@@ -51,7 +51,7 @@
     margin: 0;
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-family: var(--font-serif);
     letter-spacing: 1px;
     text-wrap: nowrap;
