@@ -9,7 +9,11 @@ export function TopBar() {
     const router = useRouter()
 
     function goBack() {
-        router.back()
+        if (document.referrer && window.history.length > 1) {
+            router.back()
+        } else {
+            router.push('/')
+        }
     }
 
     return (
