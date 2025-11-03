@@ -6,6 +6,7 @@ import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
 import router from "next/navigation";
 import Footer from "@/components/Footer";
 import LegalPrint from "@/components/LegalPrint";
+import Link from "next/link";
 
 export default async function Home({
     params,
@@ -51,13 +52,16 @@ export default async function Home({
             <TopBar></TopBar>
             <div className={styles.container}>
                 <div className={styles.maxWidth2xl}>
-                    <div className={styles.textCenter + " " + styles.mb8}>
+                    <div className={styles.textCenter + " " + styles.mb4}>
                         <h1 className={styles.header}>
                             ADU Open House Event
                         </h1>
                         <p className={styles.subHeader}>
                             Join us for an exclusive tour of our beautifully designed Accessory Dwelling Unit (ADU). Explore modern living spaces, innovative features, and discover how an ADU can transform your property.
                         </p>
+                        <Link href={`/events/open-house/${slug.slug}`} className={styles.learnMoreLink}>
+                            Learn more...
+                        </Link>
                     </div>
 
                     <RSVPForm dates={openHouse.data.dates} params={slug} address={address} />
