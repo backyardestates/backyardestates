@@ -4,6 +4,7 @@ import Divider from '@/components/Divider'
 
 import { WistiaPlayer } from '@wistia/wistia-player-react'
 import style from './VideoPlayerCarousel.module.css'
+import Link from 'next/link'
 
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import { faPlay, faPause } from '@fortawesome/pro-solid-svg-icons'
@@ -44,12 +45,12 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
             player.current.bigPlayButton = true
         }
     }
-
+    const slug = story.names.toLowerCase().replace(/\s+/g, '-');
     return (
         <div className={style.base}>
             {!isActive && <div className={style.blocker}></div>}
             {showInformation && (
-                <div className={style.names}>{`${story.names}`}</div>
+                <Link className={style.names} href={`/customer-stories/${slug}`}>{`${story.names}`}</Link>
             )}
             {showInformation && (
                 <div className={style.estate}>
