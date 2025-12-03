@@ -45,13 +45,14 @@
     top: 1rem;
     right: 1rem;
     z-index: 2;
-    pointer-events: none;
     color: white;
     leading-trim: both;
     font-size: 0.875rem;
     font-weight: 500;
     font-variant: all-small-caps;
     letter-spacing: 1.6px;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .buttons {

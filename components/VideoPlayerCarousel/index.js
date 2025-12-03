@@ -45,17 +45,19 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
             player.current.bigPlayButton = true
         }
     }
-    const slug = story.names.toLowerCase().replace(/\s+/g, '-');
+    const customerSlug = story.names.toLowerCase().replace(/\s+/g, '-');
+    const propertySlug = story.property.slug.toLowerCase().replace(/\s+/g, '-');
+    console.log(story)
     return (
         <div className={style.base}>
             {!isActive && <div className={style.blocker}></div>}
             {showInformation && (
-                <Link className={style.names} href={`/customer-stories/${slug}`}>{`${story.names}`}</Link>
+                <Link className={style.names} href={`/customer-stories/${customerSlug}`}>{`${story.names}`}</Link>
             )}
             {showInformation && (
-                <div className={style.estate}>
+                <Link className={style.estate} href={`/properties/${propertySlug}`}>
                     {story.property.floorplan.name}
-                </div>
+                </Link>
             )}
             <WistiaPlayer
                 ref={player}
