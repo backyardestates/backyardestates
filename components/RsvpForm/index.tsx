@@ -308,6 +308,9 @@ export function RSVPForm({ dates, params, address }: PageProps) {
             case 'other':
                 hearAboutNumber = 94
                 break
+            case 'street-signs':
+                hearAboutNumber = 95
+                break
             default:
                 hearAboutNumber = 56
         }
@@ -613,12 +616,13 @@ export function RSVPForm({ dates, params, address }: PageProps) {
                                 placeholder="Select an option"
                                 aria-label="How did you hear about us"
                                 options={[
+                                    { value: "street-signs", label: "Street Signs" },
                                     { value: "mailer", label: "Mailer" },
-                                    { value: "facebook", label: "Facebook" },
                                     { value: "instagram", label: "Instagram" },
+                                    { value: "facebook", label: "Facebook" },
+                                    { value: "google-search", label: "Google Search" },
                                     { value: "tiktok", label: "TikTok" },
                                     { value: "youtube", label: "Youtube" },
-                                    { value: "google-search", label: "Google Search" },
                                     { value: "friend-referral", label: "Friend/Family Referral" },
                                     { value: "other", label: "Other" },
                                 ]}
