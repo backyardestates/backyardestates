@@ -91,6 +91,7 @@ export function RSVPForm({ dates, params, address }: PageProps) {
         email: "",
         phone: "",
         hearAbout: "",
+        eventAddress: address,
     })
 
     const router = useRouter()
@@ -337,6 +338,7 @@ export function RSVPForm({ dates, params, address }: PageProps) {
             'd51817980c84eec68d862509ea6cc9fd58d2c2c9': hearAboutNumber,
             '020e272ca1b410845d818c04c69e56d37827ca4e': token,
             '5b828e59d1a7df6f5ffefac982cac34de1440b49': slug,
+            'b345a5cf22c309c28c8f501474324374f6372a77': address,
             pipeline_id: 7,
             stage_id: lead.stage_id
         }
@@ -391,6 +393,7 @@ export function RSVPForm({ dates, params, address }: PageProps) {
             fd.append("date", selectedDate ?? "");
             fd.append("time", selectedDate ? (selectedTimes[selectedDate] ?? "") : "");
             fd.append("ticketCount", ticketCount.toString());
+            fd.append("eventAddress", formData.eventAddress);
 
             createPerson(fd);
         }
