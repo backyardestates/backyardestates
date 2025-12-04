@@ -147,6 +147,9 @@ export default function CustomerStories({ stories }) {
                     <div
                         className={`keen-slider__slide ${index === current ? style.video : style.slide}`}
                         key={index}
+                        onClick={() => {
+                            instanceRef.current?.moveToIdx(index)
+                        }}
                     >
                         <VideoPlayerCarousel
                             story={story}
