@@ -12,9 +12,11 @@ export default function CustomerStory({ story }) {
             <div className={style.columnLeft}>
                 <PortableText value={story.body} />
             </div>
-            <div className={style.columnRight}>
-                <Carousel content={story.images} />
-            </div>
+            {story.images?.length > 0 && (
+                <div className={style.columnRight}>
+                    <Carousel content={story.images} />
+                </div>
+            )}
         </div>
     )
 }

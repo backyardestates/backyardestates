@@ -15,7 +15,7 @@ import style from './page.module.css'
 const STORY_QUERY = defineQuery(`*[
     _type == "story" &&
     slug.current == $slug
-  ][0]{names, purpose, wistiaId, body, images, property->{thumbnail, floorplan->{name,bed,bath,sqft,price,relatedProperties[]->{bed,bath,sqft,thumbnail,slug}}}}`)
+  ][0]{names, purpose, wistiaId, body, images, property->{thumbnail, floorplan->{name,bed,bath,sqft,price,relatedProperties[]->{name,bed,bath,sqft,thumbnail,slug}}}}`)
 
 const PROPERTY_QUERY = defineQuery(`*[
     _type == "story" &&
@@ -42,7 +42,7 @@ export async function generateMetadata({
 
     // Get the property thumbnail or use a default image
     const imagePath =
-        story.property.thumbnail?.url || '/images/backyard-estates-OG.png'
+        story.property?.thumbnail?.url || '/images/backyard-estates-OG.png'
 
     // Generate Cloudinary URLs for OG and Twitter images
     const ogImage = `${cloudinaryBase}/w_1200,h_630,c_fill/${imagePath}`
@@ -95,7 +95,6 @@ export default async function Story({
     if (!story) {
         notFound()
     }
-
     return (
         <>
             <Nav />
@@ -103,14 +102,21 @@ export default async function Story({
                 <div className={style.content}>
                     <h1>{story.names}</h1>
                     <p className={style.intro}>{story.purpose}</p>
-                    <h2>{story.property.floorplan.name}</h2>
-                    <PropertyInfoHack property={property.property} />
+                    {story.property && (
+                        <h2>{story.property.floorplan.name}</h2>
+                    )}
+                    {story.property && (
+                        <PropertyInfoHack property={property.property} />
+                    )}
                     <VideoPlayer wistiaID={story.wistiaId} />
                 </div>
                 <CustomerStory story={story} />
-                <RelatedProperties
-                    properties={story.property.floorplan.relatedProperties}
-                />
+                {story.property && (
+                    <RelatedProperties
+                        properties={story.property.floorplan.relatedProperties}
+                    />
+                )}
+
                 <Catchall />
             </main>
             <Footer />

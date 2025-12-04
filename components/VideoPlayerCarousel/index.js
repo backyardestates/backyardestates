@@ -46,8 +46,7 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
         }
     }
     const customerSlug = story.names.toLowerCase().replace(/\s+/g, '-');
-    const propertySlug = story.property.slug.toLowerCase().replace(/\s+/g, '-');
-    console.log(story)
+    const propertySlug = story.property ? story.property.slug.toLowerCase().replace(/\s+/g, '-') : '';
     return (
         <div className={style.base}>
             {!isActive && <div className={style.blocker}></div>}
@@ -56,7 +55,7 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
             )}
             {showInformation && (
                 <Link className={style.estate} href={`/properties/${propertySlug}`}>
-                    {story.property.floorplan.name}
+                    {story.property?.floorplan.name || ""}
                 </Link>
             )}
             <WistiaPlayer
@@ -70,20 +69,20 @@ export default function VideoPlayerCarousel({ story, wistiaId, isActive }) {
                 onPause={handlePause}
                 onLoadedMediaData={handleLoadedMediaData}
             />
-            {showInformation && (
+            {showInformation && story?.property && (
                 <ul className={style.infoBase}>
                     <li>
-                        {story.property.bed === 'Studio'
-                            ? `${story.property.bed}`
+                        {story.property.bed === "Studio"
+                            ? "Studio"
                             : `${story.property.bed} Bed`}
                     </li>
-                    <li>
-                        <Divider size="short" />
-                    </li>
+
+                    <li><Divider size="short" /></li>
+
                     <li>{`${story.property.bath} Bath`}</li>
-                    <li>
-                        <Divider size="short" />
-                    </li>
+
+                    <li><Divider size="short" /></li>
+
                     <li>{`${story.property.sqft} sq. ft.`}</li>
                 </ul>
             )}
