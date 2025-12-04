@@ -18,6 +18,42 @@ import style from './CustomerStories.module.css'
 export default function CustomerStories({ stories }) {
     const [current, setCurrent] = useState(0)
     const [loaded, setLoaded] = useState(false)
+    const wheelControls = (slider) => {
+        let gestureActive = false
+        let gestureTimeout
+
+        function wheelHandler(e) {
+            clearTimeout(gestureTimeout)
+            const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
+            if (!isHorizontal) return // ignore vertical scroll
+
+            e.preventDefault()
+
+            // This is the FIRST event of a gesture → move once
+            if (!gestureActive) {
+                gestureActive = true
+
+                if (e.deltaX > 0) {
+                    slider.next()
+                } else {
+                    slider.prev()
+                }
+            }
+
+            // Reset gesture IF we stop getting wheel events (end of swipe)
+            gestureTimeout = setTimeout(() => {
+                gestureActive = false // Next event counts as a new swipe
+            }, 70) // sweet spot for trackpads
+        }
+
+        slider.on("created", () => {
+            slider.container.addEventListener("wheel", wheelHandler, { passive: false })
+        })
+
+        slider.on("destroyed", () => {
+            slider.container.removeEventListener("wheel", wheelHandler)
+        })
+    }
 
     const [sliderRef, instanceRef] = useKeenSlider(
         {
@@ -64,6 +100,7 @@ export default function CustomerStories({ stories }) {
             },
         },
         [
+            wheelControls,
             (slider) => {
                 let timeout
                 let mouseOver = false
@@ -98,6 +135,8 @@ export default function CustomerStories({ stories }) {
             },
         ]
     )
+
+
 
     const phrases = [
         'bring parents closer',
