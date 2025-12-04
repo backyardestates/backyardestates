@@ -59,6 +59,9 @@ export default function CustomerStories({ stories }) {
             slideChanged(s) {
                 setCurrent(s.track.details.rel)
             },
+            updated() {
+                setLoaded(true)
+            },
         },
         [
             (slider) => {
@@ -149,7 +152,7 @@ export default function CustomerStories({ stories }) {
                             story={story}
                             wistiaId={story.wistiaId}
                             isActive={index === current ? true : false}
-                            // setPlaying={setPlaying}
+                        // setPlaying={setPlaying}
                         />
                     </div>
                 ))}
