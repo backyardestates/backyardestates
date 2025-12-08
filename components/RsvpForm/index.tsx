@@ -96,12 +96,42 @@ export function RSVPForm({ dates, params, address }: PageProps) {
 
     const router = useRouter()
 
-    // Example event configurations - you can modify these based on your actual events
+    // Utility: generate 30-minute intervals between start and end times
+    const generateTimeRange = (start: string, end: string): string[] => {
+        const times: string[] = [];
+        let current = new Date(`1970-01-01T${start}`);
+        const endTime = new Date(`1970-01-01T${end}`);
+
+        while (current <= endTime) {
+            times.push(
+                current.toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit"
+                })
+            );
+            current = new Date(current.getTime() + 30 * 60000); // +30 minutes
+        }
+
+        return times;
+    };
+
+    // This is where we adjust based on slug
+    const getTimeSlotsBySlug = (slug, fallbackTimes) => {
+        if (slug === "plumas") {
+            return generateTimeRange("09:00", "14:00");
+        }
+        if (slug === "ashbury") {
+            return generateTimeRange("10:00", "17:00");
+        }
+        return fallbackTimes; // your existing times
+    };
+
+    // Example event configurations using the helper:
     const eventConfigs = {
         fridaySaturday: [
             {
                 date: dates[0].date,
-                times: [
+                times: getTimeSlotsBySlug(slug, [
                     "10:00 AM",
                     "10:30 AM",
                     "11:00 AM",
@@ -116,11 +146,11 @@ export function RSVPForm({ dates, params, address }: PageProps) {
                     "3:30 PM",
                     "4:00 PM",
                     "4:30 PM",
-                ],
+                ]),
             },
             {
                 date: dates[1]?.date,
-                times: [
+                times: getTimeSlotsBySlug(slug, [
                     "9:00 AM",
                     "9:30 AM",
                     "10:00 AM",
@@ -131,13 +161,13 @@ export function RSVPForm({ dates, params, address }: PageProps) {
                     "12:30 PM",
                     "1:00 PM",
                     "1:30 PM",
-                ],
+                ]),
             },
         ],
         saturdayOnly: [
             {
                 date: dates[0].date,
-                times: [
+                times: getTimeSlotsBySlug(slug, [
                     "9:00 AM",
                     "9:30 AM",
                     "10:00 AM",
@@ -153,11 +183,11 @@ export function RSVPForm({ dates, params, address }: PageProps) {
                     "3:00 PM",
                     "3:30 PM",
                     "4:00 PM",
-
-                ],
+                ]),
             },
         ],
-    }
+    };
+
 
 
 
