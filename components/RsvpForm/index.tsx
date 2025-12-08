@@ -72,8 +72,14 @@ export function Badge({ children }: BadgeProps) {
 }
 
 interface PageProps {
-    params: { slug: string };
-    dates: { date: string }[];
+    params: {
+        slug: string
+    };
+    dates: {
+        date: string;
+        startTime: string; // "HH:MM:SS"
+        endTime: string;   // "HH:MM:SS"
+    }[];
     address: string;
 }
 
@@ -96,99 +102,54 @@ export function RSVPForm({ dates, params, address }: PageProps) {
 
     const router = useRouter()
 
+    console.log(dates)
+
     // Utility: generate 30-minute intervals between start and end times
-    const generateTimeRange = (start: string, end: string): string[] => {
+    // Last slot will be 30 minutes before the end time
+    const generateTimeRange = (start: string, end: string) => {
         const times: string[] = [];
         let current = new Date(`1970-01-01T${start}`);
         const endTime = new Date(`1970-01-01T${end}`);
 
-        while (current <= endTime) {
+        // Stop BEFORE reaching endTime
+        while (current.getTime() + 30 * 60 * 1000 <= endTime.getTime()) {
             times.push(
                 current.toLocaleTimeString("en-US", {
                     hour: "numeric",
-                    minute: "2-digit"
+                    minute: "2-digit",
                 })
             );
-            current = new Date(current.getTime() + 30 * 60000); // +30 minutes
+
+            current = new Date(current.getTime() + 30 * 60 * 1000);
         }
 
         return times;
     };
 
-    // This is where we adjust based on slug
-    const getTimeSlotsBySlug = (slug, fallbackTimes) => {
-        if (slug === "plumas") {
-            return generateTimeRange("09:00", "14:00");
-        }
-        if (slug === "ashbury") {
-            return generateTimeRange("10:00", "17:00");
-        }
-        return fallbackTimes; // your existing times
-    };
 
-    // Example event configurations using the helper:
+    // Utility: convert "HH:MM:SS" → "HH:MM"
+    const normalizeTime = (t) => t.slice(0, 5);
+
+    // Build dynamic event configs from dates
     const eventConfigs = {
-        fridaySaturday: [
-            {
-                date: dates[0].date,
-                times: getTimeSlotsBySlug(slug, [
-                    "10:00 AM",
-                    "10:30 AM",
-                    "11:00 AM",
-                    "11:30 AM",
-                    "12:00 PM",
-                    "12:30 PM",
-                    "1:00 PM",
-                    "1:30 PM",
-                    "2:00 PM",
-                    "2:30 PM",
-                    "3:00 PM",
-                    "3:30 PM",
-                    "4:00 PM",
-                    "4:30 PM",
-                ]),
-            },
-            {
-                date: dates[1]?.date,
-                times: getTimeSlotsBySlug(slug, [
-                    "9:00 AM",
-                    "9:30 AM",
-                    "10:00 AM",
-                    "10:30 AM",
-                    "11:00 AM",
-                    "11:30 AM",
-                    "12:00 PM",
-                    "12:30 PM",
-                    "1:00 PM",
-                    "1:30 PM",
-                ]),
-            },
-        ],
+        fridaySaturday: dates.map((d) => ({
+            date: d.date,
+            times: generateTimeRange(
+                normalizeTime(d.startTime),
+                normalizeTime(d.endTime)
+            ),
+        })),
+
         saturdayOnly: [
             {
                 date: dates[0].date,
-                times: getTimeSlotsBySlug(slug, [
-                    "9:00 AM",
-                    "9:30 AM",
-                    "10:00 AM",
-                    "10:30 AM",
-                    "11:00 AM",
-                    "11:30 AM",
-                    "12:00 PM",
-                    "12:30 PM",
-                    "1:00 PM",
-                    "1:30 PM",
-                    "2:00 PM",
-                    "2:30 PM",
-                    "3:00 PM",
-                    "3:30 PM",
-                    "4:00 PM",
-                ]),
+                times: generateTimeRange(
+                    normalizeTime(dates[0].startTime),
+                    normalizeTime(dates[0].endTime)
+                ),
             },
         ],
     };
-
-
 
 
 
