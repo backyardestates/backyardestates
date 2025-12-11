@@ -5,44 +5,37 @@ interface PropertyTimeline {
     planning: number;
     permitting: number;
     construction: number;
-
 }
 
 export default function PropertyTimeline({ planning, permitting, construction }: PropertyTimeline) {
+    const items = [
+        { icon: PencilLine, label: "Planning", value: planning },
+        { icon: FileCheck2, label: "Permitting", value: permitting },
+        { icon: BrickWall, label: "Construction", value: construction },
+    ];
 
-    // Calculate build duration from timeline if available
     return (
-        <div className={styles.section}>
-            <div className={styles.container}>
-                <div className={styles.grid}>
-                    {/* Sqft */}
-                    <div className={styles.feature}>
-                        <div className={styles.iconWrapper}>
-                            <PencilLine color="#b99764" className={styles.icon} />
-                        </div>
-                        <h3 className={styles.title}>{planning} Weeks</h3>
-                        <p className={styles.text}>Planning</p>
-                    </div>
+        <section className={styles.section}>
+            <div className={styles.inner}>
+                <h2 className={styles.label}>Project Timeline Overview</h2>
 
-                    {/* Beds / Baths */}
-                    <div className={styles.feature}>
-                        <div className={styles.iconWrapper}>
-                            <FileCheck2 color="#b99764" className={styles.icon} />
-                        </div>
-                        <h3 className={styles.title}>{permitting} Weeks</h3>
-                        <p className={styles.text}>Permitting</p>
-                    </div>
+                <div className={styles.timelineGrid}>
+                    {items.map((item, i) => {
+                        const Icon = item.icon;
+                        return (
+                            <div key={i} className={`${styles.item} fadeInUp`} style={{ animationDelay: `${i * 0.15}s` }}>
+                                <Icon className={styles.icon} />
 
-                    {/* Build Duration */}
-                    <div className={styles.feature}>
-                        <div className={styles.iconWrapper}>
-                            <BrickWall color="#b99764" className={styles.icon} />
-                        </div>
-                        <h3 className={styles.title}>{construction} Weeks</h3>
-                        <p className={styles.text}>Construction</p>
-                    </div>
+                                <p className={styles.value}>{item.value} weeks</p>
+                                <span className={styles.caption}>{item.label}</span>
+
+                                {/* Add Apple-style vertical divider except after last item */}
+                                {i < items.length - 1 && <div className={styles.divider} />}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

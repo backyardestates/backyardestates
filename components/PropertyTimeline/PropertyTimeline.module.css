@@ -1,116 +1,148 @@
+/* =============================== */
+/* Section — clean luxury base     */
+/* =============================== */
+
 .section {
-    margin: 0;
-    background-color: var(--color-brand-beige-subtle);
     width: 100%;
-    padding: 2.5rem 0;
-    border-bottom: 0.75rem solid var(--color-brand-beige);
+    padding: 5rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.container {
+.inner {
     max-width: 72rem;
     margin: 0 auto;
-}
-
-.grid {
-    display: flex;
-    justify-content: space-evenly;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-}
-
-
-.feature {
     text-align: center;
+}
+
+/* Subtle neutral label */
+.label {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+    margin-bottom: 3.5rem;
+    font-weight: 500;
+    font-family: var(--font-serif);
+}
+
+
+/* =============================== */
+/* Luxury tech grid                */
+/* =============================== */
+
+.timelineGrid {
+    display: flex;
+    justify-content: center;
+    gap: clamp(3rem, 5vw, 6rem);
+    flex-wrap: nowrap;
+    position: relative;
+}
+
+
+/* =============================== */
+/* Item — premium vertical stack   */
+/* =============================== */
+
+.item {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: max-content;
-    max-width: 120px;
+    gap: 0.65rem;
+    padding: 0 2rem;
+    min-width: 160px;
 }
 
-.iconWrapper {
-    width: 5rem;
-    height: 5rem;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    box-shadow: var(--drop-shadow-on-beige);
+/* Apple-style thin divider */
+.divider {
+    position: absolute;
+    right: -1.5rem;
+    top: 10%;
+    height: 80%;
+    width: 1px;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.12) 40%,
+            rgba(0, 0, 0, 0.12) 60%,
+            rgba(0, 0, 0, 0) 100%);
+    pointer-events: none;
 }
 
+/* Icon — luxury subtle */
 .icon {
-    width: 2rem;
-    height: 2rem;
-}
-
-.title {
-    font-size: 1rem;
-    font-weight: bold;
+    width: clamp(1rem, 3vw, 6rem);
+    height: auto;
+    stroke-width: 1.3;
     color: var(--color-brand-dark-blue);
-    font-family: var(--font-sans);
+    opacity: 0.85;
+}
+
+/* Number value — hero text */
+.value {
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
+    font-weight: 700;
+    color: var(--color-brand-beige);
     margin: 0;
+    letter-spacing: -0.01em;
+    font-family: var(--font-serif);
 }
 
-.text {
-    color: var(--color-neutral-500);
-    font-family: var(--font-sans);
-    font-size: small;
+/* Caption */
+.caption {
+    font-size: clamp(0.75rem, 2vw, 1.2rem);
+    color: rgba(0, 0, 0, 0.55);
     font-weight: 400;
+    font-family: var(--font-sans);
 }
 
 
-@media (min-width: 1024px) {
+/* ======================================== */
+/* Fade-in + slide-up luxury animation       */
+/* ======================================== */
 
-    .section {
-        padding: 2rem 0;
+.fadeInUp {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeInUp 0.7s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
     }
 
-    .grid {
-        display: flex;
-        justify-content: space-between;
+    60% {
+        opacity: 1;
+        transform: translateY(4px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =============================== */
+/* Responsive Considerations        */
+/* =============================== */
+
+@media (max-width: 768px) {
+    .timelineGrid {
         flex-wrap: wrap;
-        width: auto;
-        margin: 0 1rem
+        gap: 3rem;
     }
 
-
-    .feature {
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: max-content;
-        max-width: 160px;
-    }
-
-    .iconWrapper {
-        width: 6rem;
-        height: 6rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
+    .divider {
+        display: none;
     }
 
     .icon {
-        width: 2rem;
-        height: 2rem;
+        width: clamp(1.5rem, 3vw, 6rem);
+        height: auto;
+        stroke-width: 1.3;
+        color: var(--color-brand-dark-blue);
+        opacity: 0.85;
     }
-
-    .title {
-        font-size: 1.3rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-
-    .text {
-        font-size: 1rem;
-        font-weight: 400;
-    }
-
 }

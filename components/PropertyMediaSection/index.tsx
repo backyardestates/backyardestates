@@ -6,6 +6,7 @@ import { Images, Bed, Bath, Ruler, Home } from "lucide-react";
 import Image from "next/image";
 import { WistiaPlayer } from "@wistia/wistia-player-react";
 import GalleryModal from "../GalleryModal";
+import { SanityDocument } from "next-sanity";
 
 //
 // ──────────────────────────────────────────────
@@ -17,20 +18,12 @@ type GalleryItem =
     | { type: "image"; url: string; alt?: string };
 
 interface PropertyMediaSectionProps {
-    property: {
-        walkthroughVideo?: string | null;
-        testimonial?: { wistiaId: string; portrait?: { url: string } } | null;
-        slug: string;
-        photos?: Array<{ url: string; alt?: string }>;
-        bed?: number;
-        bath?: number;
-        sqft?: number;
-        aduType?: string;
-    };
+    property: SanityDocument;   // loosen the type
 }
 
+
 export default function PropertyMediaSection({ property }: PropertyMediaSectionProps) {
-    const { walkthroughVideo, testimonial, slug, photos = [] } = property;
+    const { walkthroughVideo, testimonial, photos = [] } = property;
 
     const [showGalleryModal, setShowGalleryModal] = useState(false);
     const [galleryIndex, setGalleryIndex] = useState(0);
@@ -181,7 +174,7 @@ export default function PropertyMediaSection({ property }: PropertyMediaSectionP
                     <div className={styles.propertyHeader}>
                         <div className={styles.titleBlock}>
                             <div className={styles.locationWrapper}>
-                                <p className={styles.cityState}>{slug}</p>
+                                <p className={styles.cityState}>{property.slug}</p>
                             </div>
                             <h1 className={styles.aduTitle}>ADU</h1>
                         </div>

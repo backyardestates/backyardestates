@@ -2,29 +2,13 @@ import { type SanityDocument } from 'next-sanity'
 import { client } from '@/sanity/client'
 const options = { next: { revalidate: 30 } }
 import PropertyMediaSection from '@/components/PropertyMediaSection'
-import styles from "./page.module.css"
-import { Play, Images } from "lucide-react"
-
-
-import { notFound } from 'next/navigation'
-
-import Catchall from '@/components/Catchall'
-import CustomerStory from '@/components/CustomerStory'
-import PropertyHero from '@/components/PropertyHero'
-import FloorplanInformation from '@/components/FloorplanInformation'
 import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
-import RelatedProperties from '@/components/RelatedProperties'
-import StandaloneLink from '@/components/StandaloneLink'
-
-import style from './page.module.css'
-
-import { USDollar } from '@/utils/currency'
-import Image from 'next/image'
-import VideoPlayer from '@/components/VideoPlayer'
-import { useState } from 'react'
 import PropertyTimeline from '@/components/PropertyTimeline'
 import calculateWeeks from '@/utils/calculateWeeks'
+import TestimonialDisplay from '@/components/TestimonialDisplay'
+import ScrollingBanner from '@/components/ScrollingBanner'
+import ConstructionTimeline from '@/components/ConstructionTimeline'
 
 // const PROPERTY_QUERY = `
 //     *[_type == "property" && slug.current == $slug][0]{
@@ -205,9 +189,7 @@ const PROPERTY_QUERY = `*[_type == "property" && slug.current == $slug][0]{
 }
 `
 
-export default async function Property({ params,
-    setShowGalleryModal,
-    galleryImages }) {
+export default async function Property({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
 
     const property = await client.fetch<SanityDocument>(
@@ -248,7 +230,7 @@ export default async function Property({ params,
 
         // Media
         walkthroughVideo,
-        testimonial = {},
+        testimonial,
         photos = [],
 
         // Planning & Permitting timelines
@@ -267,21 +249,26 @@ export default async function Property({ params,
 
         publishedAt,
     } = property;
-    console.log(property)
-
     // -----------------------------
     // TIMELINE CALCULATIONS
     // -----------------------------
     const planningWeeks = calculateWeeks(planningTimeline.start, planningTimeline.end);
     const permittingWeeks = calculateWeeks(permittingTimeline.start, permittingTimeline.end);
     const constructionWeeks = constructionTimeline.length;
-
+    console.log(constructionTimeline)
     return (
         <>
             <Nav />
             <main >
                 <PropertyMediaSection property={property} />
+
+                {testimonial && (
+                    <TestimonialDisplay testimonial={testimonial} />
+                )}
+                <ScrollingBanner />
                 <PropertyTimeline planning={planningWeeks} permitting={permittingWeeks} construction={constructionWeeks} />
+                <ConstructionTimeline timeline={constructionTimeline} />
+
             </main>
             <Footer />
         </>

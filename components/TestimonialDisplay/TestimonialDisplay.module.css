@@ -1,0 +1,196 @@
+/* ============================= */
+/* BASE GRID LAYOUT              */
+/* ============================= */
+.wrapper {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 2rem;
+    padding: 2rem;
+    align-items: flex-start;
+    margin: 1rem 0;
+}
+
+/* ============================= */
+/* LEFT COLUMN — PORTRAIT & NAME */
+/* ============================= */
+.leftColumn {
+    text-align: center;
+}
+
+.portraitWrapper {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.portrait {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.name {
+    margin-top: 1rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: var(--font-serif);
+    letter-spacing: -0.4px;
+    color: var(--color-brand-dark-blue);
+}
+
+.role {
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    margin-top: 0.3rem;
+    color: var(--color-brand-beige);
+    font-weight: 300;
+    font-family: var(--font-sans);
+}
+
+/* ============================= */
+/* RIGHT COLUMN                  */
+/* ============================= */
+.rightColumn {
+    position: relative;
+}
+
+/* MOBILE portrait — hidden desktop */
+.mobilePortrait {
+    display: none;
+}
+
+/* DESKTOP portrait — hidden mobile */
+.desktopPortrait {
+    display: block;
+}
+
+/* BODY TEXT */
+.bodyContainer {
+    overflow: hidden;
+    transition: max-height 0.45s ease;
+    position: relative;
+}
+
+.bodyInner {
+    column-count: 2;
+    column-gap: 3rem;
+    font-size: 1rem;
+    line-height: 1.65;
+    font-family: var(--font-sans);
+    font-weight: 300;
+    color: #222;
+}
+
+.paragraph {
+    break-inside: avoid;
+    margin-bottom: 1.2rem;
+}
+
+.blockquote {
+    break-inside: avoid;
+    padding-left: 1rem;
+    border-left: 3px solid rgba(0, 0, 0, 0.12);
+    font-style: italic;
+    font-size: 1.1rem;
+    margin: 1.2rem 0;
+    color: var(--color-brand-beige);
+    font-family: var(--font-serif);
+    font-weight: 500;
+}
+
+/* Fade overlay */
+.fadeOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, white);
+}
+
+/* Expand Button */
+.expandButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #1da4ba;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.expandButton:hover {
+    opacity: 0.7;
+}
+
+/* ============================= */
+/* TABLET                        */
+/* ============================= */
+@media (max-width: 1023px) {
+    .wrapper {
+        grid-template-columns: 120px 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .portraitWrapper {
+        width: 110px;
+        height: 110px;
+    }
+
+    .bodyInner {
+        column-count: 1;
+    }
+}
+
+/* MOBILE portrait container that floats inside text */
+.mobilePortraitContainer {
+    display: none;
+}
+
+/* Only mobile */
+@media (max-width: 600px) {
+    .wrapper {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .leftColumn {
+        display: none;
+    }
+
+    .mobilePortraitContainer {
+        display: block;
+        float: right;
+
+        margin: 1rem;
+
+        width: 140px;
+        height: fit-content;
+        /* width includes portrait + text */
+        /* shape-outside: circle(70px at 60px 60px);
+        clip-path: circle(70px at 60px 60px); */
+        text-align: center;
+    }
+
+    .mobilePortraitContainer .portraitWrapper {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 0.5rem;
+    }
+
+    .mobilePortraitContainer .name {
+        font-size: 1rem;
+        margin-top: 0.2rem;
+        margin-bottom: 0;
+    }
+
+    .mobilePortraitContainer .role {
+        font-size: 0.75rem;
+        margin-top: 0;
+        letter-spacing: 1px;
+    }
+}
