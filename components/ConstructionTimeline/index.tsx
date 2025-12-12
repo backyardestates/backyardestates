@@ -2,7 +2,12 @@
 
 import styles from "./ConstructionTimeline.module.css";
 import Image from "next/image";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import GalleryModal from "../GalleryModal";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface TimelineItem {
     milestone: string;
@@ -17,107 +22,147 @@ interface Props {
 }
 
 export default function ConstructionTimeline({ timeline }: Props) {
-    const scrollRef = useRef<HTMLDivElement>(null);
-    let isDown = false;
-    let startX = 0;
-    let scrollLeft = 0;
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    const trackRef = useRef<HTMLDivElement>(null);
+    const progressRef = useRef<HTMLDivElement>(null);
 
+    const [activeWeek, setActiveWeek] = useState(1);
+
+    // GALLERY ITEMS — Used by the modal
+    const galleryItems = timeline.map((item) => ({
+        type: "image" as const,
+        url: item.weekImage.secure_url,
+        alt: item.milestone,
+    }));
+    const [showGalleryModal, setShowGalleryModal] = useState(false);
+    const [galleryIndex, setGalleryIndex] = useState(0);
+    // -------------------------------------------------------------------
+    // PROGRESS BAR — BASED ON HORIZONTAL SCROLL POSITION
+    // -------------------------------------------------------------------
     useEffect(() => {
-        const slider = scrollRef.current;
-        if (!slider) return;
+        const wrapper = wrapperRef.current;
+        const progressEl = progressRef.current;
 
-        // --- DRAG SCROLLING ---
-        const mouseDown = (e: MouseEvent) => {
-            isDown = true;
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-            slider.classList.add(styles.activeDragging);
+        if (!wrapper || !progressEl) return;
+
+        let frameId: number;
+        let currentProgress = 0;
+        const lerpFactor = 0.12;
+
+        const updateProgress = () => {
+            const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+            const raw =
+                maxScrollLeft > 0 ? wrapper.scrollLeft / maxScrollLeft : 0;
+
+            currentProgress += (raw - currentProgress) * lerpFactor;
+
+            progressEl.style.transform = `scaleX(${currentProgress})`;
+
+            frameId = requestAnimationFrame(updateProgress);
         };
 
-        const mouseLeave = () => {
-            isDown = false;
-            slider.classList.remove(styles.activeDragging);
-        };
+        frameId = requestAnimationFrame(updateProgress);
 
-        const mouseUp = () => {
-            isDown = false;
-            slider.classList.remove(styles.activeDragging);
-        };
-
-        const mouseMove = (e: MouseEvent) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 1.2;
-            slider.scrollLeft = scrollLeft - walk;
-        };
-
-        slider.addEventListener("mousedown", mouseDown);
-        slider.addEventListener("mouseleave", mouseLeave);
-        slider.addEventListener("mouseup", mouseUp);
-        slider.addEventListener("mousemove", mouseMove);
-
-        // --- WHEEL SCROLL (horizontal) ---
-        const onWheel = (e: WheelEvent) => {
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-                slider.scrollLeft += e.deltaY * 1.1;
-            }
-        };
-
-        slider.addEventListener("wheel", onWheel);
-
-        return () => {
-            slider.removeEventListener("mousedown", mouseDown);
-            slider.removeEventListener("mouseleave", mouseLeave);
-            slider.removeEventListener("mouseup", mouseUp);
-            slider.removeEventListener("mousemove", mouseMove);
-            slider.removeEventListener("wheel", onWheel);
-        };
+        return () => cancelAnimationFrame(frameId);
     }, []);
 
-    if (!timeline || timeline.length === 0) return null;
+    // -------------------------------------------------------------------
+    // INTERSECTION OBSERVER — fade + activate week
+    // -------------------------------------------------------------------
+    useEffect(() => {
+        const items = Array.from(
+            document.querySelectorAll<HTMLElement>(`.${styles.timelineItem}`)
+        );
+        if (!items.length) return;
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add(styles.revealed);
+
+                        const week = Number(
+                            (entry.target as HTMLElement).dataset.week
+                        );
+                        if (!isNaN(week)) setActiveWeek(week);
+                    }
+                });
+            },
+            { threshold: 0.35 }
+        );
+
+        items.forEach(item => observer.observe(item));
+        return () => observer.disconnect();
+    }, []);
+
+    // -----------------------------------------------------
+    // Smooth Snap-to-Week Navigation
+    // -----------------------------------------------------
+    const handleJump = (week: number) => {
+        const el = document.getElementById(`week-${week}`);
+        if (!el) return;
+
+        el.scrollIntoView({ behavior: "smooth", inline: "center" });
+    };
+
+    if (!timeline.length) return null;
 
     return (
         <section className={styles.section}>
             <div className={styles.inner}>
-                <div className={styles.timelineWrapper} ref={scrollRef}>
-                    {timeline.map((item, index) => {
-                        const even = item.week % 2 === 0;
 
-                        return (
+                {/* Progress Bar */}
+                <div className={styles.progressBarContainer}>
+                    <div ref={progressRef} className={styles.progressBar} />
+                </div>
+
+                {/* Horizontal Scroll Container */}
+                <div className={styles.timelineWrapperOuter} ref={wrapperRef}>
+                    <div className={styles.timelineWrapper} ref={trackRef}>
+                        {timeline.map(item => (
                             <div
                                 key={item.week}
-                                className={`${styles.timelineItem} fadeInUp`}
-                                style={{ animationDelay: `${index * 0.12}s` }}
+                                id={`week-${item.week}`}
+                                data-week={item.week}
+                                className={`${styles.timelineItem} ${styles.slideRight}`}
                             >
-                                {/* Floating luxury badge */}
-                                <div
-                                    className={`${styles.weekBadge} ${even ? styles.badgeBottom : styles.badgeTop
-                                        }`}
-                                >
+                                {/* Badge */}
+                                <div className={`${styles.weekBadge} ${styles.badgeTop}`}>
                                     <div className={styles.badgeWeek}>Week {item.week}</div>
                                     <div className={styles.badgeTitle}>{item.milestone}</div>
                                 </div>
 
+                                {/* Card */}
                                 <div className={styles.card}>
-                                    {/* Image */}
-                                    {item.weekImage?.secure_url && (
-                                        <div className={styles.cardMedia}>
-                                            <Image
-                                                src={item.weekImage.secure_url}
-                                                alt={item.milestone}
-                                                width={600}
-                                                height={450}
-                                                className={styles.image}
-                                            />
-                                        </div>
-                                    )}
+                                    <div className={styles.cardMedia}>
+                                        <Image
+                                            src={item.weekImage.secure_url}
+                                            alt={item.milestone}
+                                            width={600}
+                                            height={450}
+                                            className={styles.image}
+                                            onClick={() => {
+                                                const index = timeline.findIndex(i => i.week === item.week);
+                                                setGalleryIndex(index);
+                                                setShowGalleryModal(true);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        );
-                    })}
+                        ))}
+                    </div>
                 </div>
+
             </div>
+            {showGalleryModal && (
+                <GalleryModal
+                    items={galleryItems}
+                    index={galleryIndex}
+                    setIndex={setGalleryIndex}
+                    onClose={() => setShowGalleryModal(false)}
+                />
+            )}
         </section>
     );
 }

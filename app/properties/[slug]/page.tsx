@@ -9,6 +9,8 @@ import calculateWeeks from '@/utils/calculateWeeks'
 import TestimonialDisplay from '@/components/TestimonialDisplay'
 import ScrollingBanner from '@/components/ScrollingBanner'
 import ConstructionTimeline from '@/components/ConstructionTimeline'
+import OpenHouseFloorplans from '@/components/OpenHouseFloorplans'
+import { custom } from '@cloudinary/url-gen/qualifiers/region'
 
 // const PROPERTY_QUERY = `
 //     *[_type == "property" && slug.current == $slug][0]{
@@ -255,7 +257,11 @@ export default async function Property({ params }: { params: Promise<{ slug: str
     const planningWeeks = calculateWeeks(planningTimeline.start, planningTimeline.end);
     const permittingWeeks = calculateWeeks(permittingTimeline.start, permittingTimeline.end);
     const constructionWeeks = constructionTimeline.length;
-    console.log(constructionTimeline)
+    console.log(floorplan)
+    console.log(customFloorplanPicture)
+    console.log(sqft)
+    console.log(bed)
+    console.log(bath)
     return (
         <>
             <Nav />
@@ -268,7 +274,7 @@ export default async function Property({ params }: { params: Promise<{ slug: str
                 <ScrollingBanner />
                 <PropertyTimeline planning={planningWeeks} permitting={permittingWeeks} construction={constructionWeeks} />
                 <ConstructionTimeline timeline={constructionTimeline} />
-
+                <OpenHouseFloorplans floorplan={floorplan} customFloorplanPicture={customFloorplanPicture.url} sqft={sqft} bed={bed} bath={bath} />
             </main>
             <Footer />
         </>

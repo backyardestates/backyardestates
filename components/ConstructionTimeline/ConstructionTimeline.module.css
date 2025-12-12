@@ -27,19 +27,7 @@
 /* Horizontal Timeline             */
 /* =============================== */
 
-.timelineWrapper {
-    display: flex;
-    gap: clamp(1rem, 2vw, 3rem);
-    overflow-x: auto;
-    padding-bottom: 2rem;
-    scroll-behavior: smooth;
-    cursor: grab;
-    padding-left: 4rem;
-}
 
-.timelineWrapper::-webkit-scrollbar {
-    display: none;
-}
 
 /* Dragging state */
 .activeDragging {
@@ -71,25 +59,42 @@
     position: absolute;
     left: -15px;
     z-index: 3;
-    background: rgba(250, 247, 238, 0.6);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+
+    /* ✨ Gold Glass Gradient */
+    background: linear-gradient(135deg,
+            rgba(250, 240, 220, 0.82) 0%,
+            rgba(243, 226, 194, 0.92) 40%,
+            rgba(255, 228, 196, 0.38) 100%);
+
+    /* ✨ Frosted Glass Blur */
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+
     padding: 0.75rem 1.1rem;
     border-radius: 0.75rem;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+
+    /* ✨ Premium Gold Edges */
+    border: 1px solid rgba(255, 215, 160, 0.35);
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.15),
+        inset 0 0 1px rgba(255, 255, 255, 0.35),
+        inset 0 0 8px rgba(255, 215, 160, 0.15);
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    justify-content: center;
+
     max-width: 8rem;
+    height: 7rem;
+    min-height: fit-content;
+
+    /* ✨ Soft gold glow for tech feel */
+    transition: transform 0.25s ease, box-shadow 0.3s ease;
 }
 
 .badgeTop {
     top: 15px;
-}
-
-.badgeBottom {
-    bottom: 15px;
 }
 
 .badgeWeek {
@@ -100,7 +105,7 @@
 }
 
 .badgeTitle {
-    font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+    font-size: clamp(0.75rem, 2vw, 0.9rem);
     color: rgba(0, 0, 0, 0.55);
     margin-top: 2px;
     font-family: var(--font-sans);
@@ -121,16 +126,18 @@
     gap: 0.75rem;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     width: fit-content;
+    max-width: 300px;
 }
 
 .card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
 }
 
 .cardMedia {
     width: 100%;
-    aspect-ratio: 9 / 16;
+    aspect-ratio: 9 / 12;
     border-radius: 1rem;
     overflow: hidden;
     max-height: 25vw;
@@ -153,31 +160,6 @@
     text-align: left;
     padding-left: 1rem;
 }
-
-
-/* Button */
-.button {
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.75rem;
-
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    justify-content: center;
-
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    color: rgba(0, 0, 0, 0.55);
-
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    transition: 0.25s ease;
-}
-
-.button:hover {
-    background: white;
-    color: var(--color-brand-dark-blue);
-}
-
 
 /* =============================== */
 /* Fade-In Luxury Animation        */
@@ -204,4 +186,119 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* =============================== */
+/* OUTER: SCROLL CONTAINER         */
+/* =============================== */
+.timelineWrapperOuter {
+    width: 100%;
+    overflow-x: auto;
+    /* ← horizontal scroll here */
+    overflow-y: visible;
+    padding-bottom: 2rem;
+    scroll-behavior: smooth;
+}
+
+.timelineWrapperOuter::-webkit-scrollbar {
+    display: none;
+}
+
+/* =============================== */
+/* INNER: PARALLAX TRACK           */
+/* =============================== */
+.timelineWrapper {
+    display: flex;
+    gap: clamp(1rem, 2vw, 3rem);
+    padding-right: 2rem;
+    min-width: max-content;
+    /* ← so it expands to fit all cards */
+    transition: transform 0.2s ease-out;
+    will-change: transform;
+    padding-left: 2rem;
+}
+
+/* =============================== */
+/* INTERSECTION OBSERVER FADE/SLIDE */
+/* =============================== */
+
+.timelineItem {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* When revealed */
+.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.slideRight {
+    transform: translateX(40px) translateY(30px);
+}
+
+.revealed.slideLeft {
+    transform: translateX(0);
+}
+
+.revealed.slideRight {
+    transform: translateX(0);
+}
+
+
+/* =============================== */
+/* PROGRESS BAR                    */
+/* =============================== */
+
+.progressBarContainer {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    margin-bottom: 2rem;
+}
+
+.progressBar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #b99764, #e5c288);
+    transform-origin: left center;
+    transform: scaleX(0);
+    /* start empty */
+    transition: transform 0s;
+    /* no easing; driven by JS */
+}
+
+/* =============================== */
+/* SNAP NAVIGATION                 */
+/* =============================== */
+
+.navWrapper {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.navDot {
+    background: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 0.85rem;
+}
+
+.navDot:hover {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.activeDot {
+    background: #b99764;
+    border-color: #b99764;
+    color: white;
+    font-weight: 600;
 }
