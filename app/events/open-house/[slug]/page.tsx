@@ -89,8 +89,8 @@ export default async function ADUOpenHouse({
                     RSVP Now
                 </Button>
             </div>
-            <FloorPlanToggle floorplan={openHouse.data.projectMedia.floorplans[0].url} customFloorplanPicture={openHouse.data.projectMedia.floorplans[1].url} sqft={sqft} />
-            <ConstructionTimeline timeline={openHouse.data.timeline} />
+            {/* <FloorPlanToggle floorplan={openHouse.data.projectMedia.floorplans[0].url} customFloorplanPicture={openHouse.data.projectMedia.floorplans[1].url} sqft={sqft} /> */}
+            {/* <ConstructionTimeline timeline={openHouse.data.timeline} /> */}
             <IncludedItems sections={openHouse.data.includedItems} />
 
             <RsvpSection slug={slug} />

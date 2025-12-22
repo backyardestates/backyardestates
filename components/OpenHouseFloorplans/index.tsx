@@ -19,7 +19,7 @@ function removeBackground(url: string) {
     return url.replace("/upload/", "/upload/e_background_removal/");
 }
 
-export default function FloorPlanExperience({
+export default function OpenHouseFloorplans({
     floorplan,
     customFloorplanPicture,
     sqft,
