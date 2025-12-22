@@ -1,7 +1,7 @@
 import { type SanityDocument } from 'next-sanity'
 import { client } from '@/sanity/client'
 import { PROPERTIES_QUERY } from '@/sanity/queries'
-export const LEGACY_PROPERTIES_QUERY = `
+const LEGACY_PROPERTIES_QUERY = `
   *[
     _type == "property" &&
     defined(thumbnail)
@@ -19,7 +19,6 @@ export const LEGACY_PROPERTIES_QUERY = `
     slug
   }
 `
-
 
 const options = { next: { revalidate: 30 } }
 
@@ -56,14 +55,11 @@ export default async function Floorplan() {
         options
     )
 
-    console.log({ newProperties })
-
     const normalizedProperties = [
         ...newProperties.map(normalizeNewProperty),
         ...legacyProperties.map(normalizeLegacyProperty),
     ].sort((a, b) => Number(b.featured) - Number(a.featured))
 
-    console.log({ normalizedProperties })
     return (
         <>
             <Masthead

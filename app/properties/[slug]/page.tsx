@@ -33,7 +33,6 @@ export default async function Property({ params }: { params: Promise<{ slug: str
     { slug },
     options
   )
-  console.log(property)
 
   if (!property.photos) {
     return <LegacyPropertiesPage params={slug} />
