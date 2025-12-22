@@ -33,8 +33,8 @@ interface PropertyTimeline {
 
 export default function PropertyTimeline({ planning, permitting, construction }: PropertyTimeline) {
     const items = [
-        { icon: PencilLine, label: "Planning", value: planning },
-        { icon: FileCheck2, label: "Permitting", value: permitting },
+        { icon: PencilLine, label: "Plans", value: planning },
+        { icon: FileCheck2, label: "Permits", value: permitting },
         { icon: BrickWall, label: "Construction", value: construction },
     ];
     const sectionRef = useRef<HTMLDivElement>(null);
