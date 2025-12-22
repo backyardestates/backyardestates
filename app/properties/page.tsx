@@ -71,15 +71,6 @@ export default async function Floorplan() {
                 <div className={style.content}>
                     <PropertiesGrid properties={normalizedProperties} />
                 </div>
-                <AttentionCTA
-                    eyebrow="Get Started"
-                    title="Start your ADU journey today"
-                    description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
-                    primaryLabel="Talk to an ADU Specialist"
-                    primaryHref="/talk-to-an-adu-specialist"
-                    secondaryText="Or call (425) 494-4705"
-                    secondaryHref="tel:+4254944705"
-                />
             </main>
             <Footer />
         </>
