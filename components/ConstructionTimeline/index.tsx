@@ -90,7 +90,7 @@ export default function ConstructionTimeline({ timeline }: Props) {
                     }
                 });
             },
-            { threshold: 0.35 }
+            { threshold: 0.05 }
         );
 
         items.forEach(item => observer.observe(item));
