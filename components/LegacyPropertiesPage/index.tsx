@@ -13,20 +13,26 @@ import Nav from '@/components/Nav'
 import RelatedProperties from '@/components/RelatedProperties'
 import StandaloneLink from '@/components/StandaloneLink'
 
-import style from './page.module.css'
+import style from './LegacyPropertiesPage.module.css'
 
 import { USDollar } from '@/utils/currency'
 import AttentionCTA from '@/components/AttentionCTA'
+import { RELATED_PROPERTIES_QUERY } from '@/sanity/queries'
 
 const PROPERTY_QUERY = `
     *[_type == "property" && slug.current == $slug][0]{
     _id,name,location,body,images,bed,bath,sqft,price,download,videoID,floorplan->{name,drawing,floorPlanPDF,download,relatedProperties[]->{name,thumbnail,slug,name,bed,bath,sqft,floorplan->{name,bed,bath,sqft,slug}}}}`
 
-export default async function Property({ params }) {
-    const { slug } = await params
-
+export default async function LegacyPropertiesPage({ params }) {
+    const slug = params
     const property = await client.fetch<SanityDocument>(
         PROPERTY_QUERY,
+        { slug },
+        options
+    )
+
+    const relatedProperties = await client.fetch<SanityDocument[]>(
+        RELATED_PROPERTIES_QUERY,
         { slug },
         options
     )
@@ -40,7 +46,7 @@ export default async function Property({ params }) {
     return (
         <>
             <Nav />
-            <main className="centered generous">
+            <main className={style.base}>
                 <div className={style.content}>
                     <h1>{property.floorplan.name}</h1>
 
@@ -63,31 +69,11 @@ export default async function Property({ params }) {
                                 {USDollar.format(price!)}
                             </p>
                         )}
-                        {/* <div className={style.linkGroup}>
-                            {property.floorPlanPDF !== null && (
-                                <StandaloneLink
-                                    icon="download"
-                                    href={
-                                        property.floorplan.download.secure_url
-                                    }
-                                >
-                                    Download floor plan
-                                </StandaloneLink>
-                            )}
-
-                            <StandaloneLink href="/standard-inclusions">
-                                View inclusions
-                            </StandaloneLink>
-                        </div> */}
                     </div>
                     <PropertyHero property={property} />
                 </div>
                 <CustomerStory story={property} />
-                {property.floorplan.relatedProperties.length !== 0 && (
-                    <RelatedProperties
-                        properties={property.floorplan.relatedProperties}
-                    />
-                )}
+
                 <AttentionCTA
                     eyebrow="Inspired by this ADU?"
                     title="Designed specifically for your property"
@@ -96,6 +82,9 @@ export default async function Property({ params }) {
                     primaryHref="/talk-to-an-adu-specialist"
                     secondaryText="Learn about our approach"
                     secondaryHref="/about-us/our-process"
+                />
+                <RelatedProperties
+                    properties={relatedProperties}
                 />
             </main>
             <Footer />

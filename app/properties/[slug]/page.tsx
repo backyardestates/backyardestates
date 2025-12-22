@@ -17,6 +17,7 @@ import SoftCTA from '@/components/SoftCTA'
 import AttentionCTA from '@/components/AttentionCTA'
 import RelatedProperties from '@/components/RelatedProperties'
 import { PROPERTY_QUERY, RELATED_PROPERTIES_QUERY } from '@/sanity/queries'
+import LegacyPropertiesPage from '@/components/LegacyPropertiesPage'
 
 export default async function Property({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -32,41 +33,46 @@ export default async function Property({ params }: { params: Promise<{ slug: str
     { slug },
     options
   )
+  console.log(property)
+
+  if (!property.photos) {
+    return <LegacyPropertiesPage params={slug} />
+  }
 
   const {
-    _id,
-    name,
-    completed,
-    featured,
+    // _id,
+    // name,
+    // completed,
+    // featured,
 
-    // Address
-    address: {
-      street,
-      unit,
-      city,
-      state,
-      zip,
-    } = {},
+    // // Address
+    // address: {
+    //   street,
+    //   unit,
+    //   city,
+    //   state,
+    //   zip,
+    // } = {},
 
-    aduType,
+    // aduType,
 
     // Floorplan
     floorplan,
-    customFloorplan,
+    // customFloorplan,
     customFloorplanPicture,
     sqft,
     bed,
     bath,
 
     // Open House
-    openHouse,
-    openHouseDates = [],
-    openHouseFlyers = [],
+    // openHouse,
+    // openHouseDates = [],
+    // openHouseFlyers = [],
 
     // Media
-    walkthroughVideo,
+    // walkthroughVideo,
     testimonial,
-    photos = [],
+    // photos = [],
 
     // Planning & Permitting timelines
     planningTimeline = {},
@@ -76,14 +82,16 @@ export default async function Property({ params }: { params: Promise<{ slug: str
     constructionTimeline = [],
 
     // Extra site work / FAQs
-    extraSiteWork = [],
-    extraFaqs = [],
+    // extraSiteWork = [],
+    // extraFaqs = [],
 
     // Customer selections
     selections = [],
 
-    publishedAt,
+    // publishedAt,
   } = property;
+
+
   // -----------------------------
   // TIMELINE CALCULATIONS
   // -----------------------------
@@ -91,7 +99,9 @@ export default async function Property({ params }: { params: Promise<{ slug: str
   const permittingWeeks = calculateWeeks(permittingTimeline.start, permittingTimeline.end);
   const constructionWeeks = constructionTimeline.length;
   const groupedSelections = groupSelections(selections);
-  return (
+
+
+  return property ? (
     <>
       <Nav />
       <main >
@@ -131,5 +141,8 @@ export default async function Property({ params }: { params: Promise<{ slug: str
       </main>
       <Footer />
     </>
+  ) : (
+    <LegacyPropertiesPage params={slug} />
+
   )
 }

@@ -314,3 +314,29 @@ export const PROPERTY_QUERY = `*[_type == "property" && slug.current == $slug][0
   publishedAt
 }
 `
+
+export const PROPERTIES_QUERY = `
+  *[
+    _type == "property" &&
+    defined(photos) &&
+    count(photos) > 0
+  ]
+  | order(coalesce(publishedAt, _createdAt) desc) {
+    name,
+    "slug": slug.current,
+    completed,
+    featured,
+    aduType,
+    sqft,
+    bed,
+    bath,
+    photos,
+    floorplan->{
+      name,
+      bed,
+      bath,
+      sqft,
+      "slug": slug.current
+    }
+  }
+`

@@ -1,11 +1,30 @@
 import { type SanityDocument } from 'next-sanity'
 import { client } from '@/sanity/client'
-const PROPERTIES_QUERY = `*[_type == "property"] | order(featured asc, publishedAt asc) {_id, bed, bath, sqft, price, name, body, publishedAt, thumbnail, slug}`
+import { PROPERTIES_QUERY } from '@/sanity/queries'
+export const LEGACY_PROPERTIES_QUERY = `
+  *[
+    _type == "property" &&
+    defined(thumbnail)
+  ]
+  | order(featured asc, publishedAt asc) {
+    _id,
+    bed,
+    bath,
+    sqft,
+    price,
+    name,
+    body,
+    publishedAt,
+    thumbnail,
+    slug
+  }
+`
+
+
 const options = { next: { revalidate: 30 } }
 
 import type { Metadata } from 'next'
 
-import Catchall from '@/components/AttentionCTA'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
@@ -19,14 +38,32 @@ export const metadata: Metadata = {
     description:
         'Browse completed ADU properties to discover the right Accessory Dwelling Unit (ADU) for your family',
 }
+import {
+    normalizeLegacyProperty,
+    normalizeNewProperty,
+} from '@/lib/normalizeProperty'
 
 export default async function Floorplan() {
-    const properties = await client.fetch<SanityDocument[]>(
+    const newProperties = await client.fetch(
         PROPERTIES_QUERY,
         {},
         options
     )
 
+    const legacyProperties = await client.fetch(
+        LEGACY_PROPERTIES_QUERY,
+        {},
+        options
+    )
+
+    console.log({ newProperties })
+
+    const normalizedProperties = [
+        ...newProperties.map(normalizeNewProperty),
+        ...legacyProperties.map(normalizeLegacyProperty),
+    ].sort((a, b) => Number(b.featured) - Number(a.featured))
+
+    console.log({ normalizedProperties })
     return (
         <>
             <Masthead
@@ -36,7 +73,7 @@ export default async function Floorplan() {
             <Nav />
             <main className={style.base}>
                 <div className={style.content}>
-                    <PropertiesGrid properties={properties} />
+                    <PropertiesGrid properties={normalizedProperties} />
                 </div>
                 <AttentionCTA
                     eyebrow="Get Started"
