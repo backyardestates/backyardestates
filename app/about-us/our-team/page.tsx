@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 
 import Bio from '@/components/Bio'
-import Catchall from '@/components/Catchall'
+import Catchall from '@/components/AttentionCTA'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
+import AttentionCTA from '@/components/AttentionCTA'
 // import OpenGraph from '@/components/OpenGraph'
 
 export const metadata: Metadata = {
@@ -142,7 +143,15 @@ export default function OurTeam() {
                     comfort, and lasting value through thoughtful design and
                     construction.
                 </Bio>
-                <Catchall />
+                <AttentionCTA
+                    eyebrow="Get Started"
+                    title="Start your ADU journey today"
+                    description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
+                    primaryLabel="Talk to an ADU Specialist"
+                    primaryHref="/talk-to-an-adu-specialist"
+                    secondaryText="Or call (425) 494-4705"
+                    secondaryHref="tel:+4254944705"
+                />
             </main>
             <Footer />
         </>

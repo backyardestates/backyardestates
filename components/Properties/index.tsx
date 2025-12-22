@@ -5,7 +5,8 @@ import Property from '../Property'
 import StandaloneLink from '../StandaloneLink'
 import style from './Properties.module.css'
 
-const PROPERTIES_QUERY = `*[_type == "property"]|order(featured asc, publishedAt asc){_id, slug, thumbnail, sqft, bed, bath, floorplan->{slug,name,price},publishedAt}`
+import { PROPERTIES_QUERY } from '@/sanity/queries'
+import PropertyCard from '../PropertyCard'
 const options = { next: { revalidate: 30 } }
 
 export default async function Properties() {
@@ -14,12 +15,12 @@ export default async function Properties() {
         {},
         options
     )
-
+    console.log({ properties })
     return (
         <div className={style.base}>
             <div className={style.properties}>
                 {properties.map((property, index) => (
-                    <Property key={index} property={property} />
+                    <PropertyCard key={index} content={property} />
                 ))}
             </div>
             <div className={style.centered}>

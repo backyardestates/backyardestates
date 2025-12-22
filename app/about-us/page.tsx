@@ -6,7 +6,7 @@ import {
     faTriangleExclamation,
 } from '@fortawesome/pro-light-svg-icons'
 
-import Catchall from '@/components/Catchall'
+import Catchall from '@/components/AttentionCTA'
 import Chunk from '@/components/Chunk'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
@@ -14,6 +14,7 @@ import Nav from '@/components/Nav'
 // import OpenGraph from '@/components/OpenGraph'
 
 import style from './page.module.css'
+import AttentionCTA from '@/components/AttentionCTA'
 
 export const metadata: Metadata = {
     title: 'About us - Backyard Estates',
@@ -232,7 +233,15 @@ export default function AboutUs() {
                         </div>
                     </div>
                 </div>
-                <Catchall />
+                <AttentionCTA
+                    eyebrow="Get Started"
+                    title="Start your ADU journey today"
+                    description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
+                    primaryLabel="Talk to an ADU Specialist"
+                    primaryHref="/talk-to-an-adu-specialist"
+                    secondaryText="Or call (425) 494-4705"
+                    secondaryHref="tel:+4254944705"
+                />
             </main>
 
             <Footer />

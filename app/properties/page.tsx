@@ -1,30 +1,64 @@
 import { type SanityDocument } from 'next-sanity'
 import { client } from '@/sanity/client'
-const PROPERTIES_QUERY = `*[_type == "property"] | order(featured asc, publishedAt asc) {_id, bed, bath, sqft, price, name, body, publishedAt, thumbnail, slug}`
+import { PROPERTIES_QUERY } from '@/sanity/queries'
+const LEGACY_PROPERTIES_QUERY = `
+  *[
+    _type == "property" &&
+    defined(thumbnail)
+  ]
+  | order(featured asc, publishedAt asc) {
+    _id,
+    bed,
+    bath,
+    sqft,
+    price,
+    name,
+    body,
+    publishedAt,
+    thumbnail,
+    slug
+  }
+`
+
 const options = { next: { revalidate: 30 } }
 
 import type { Metadata } from 'next'
 
-import Catchall from '@/components/Catchall'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
 import PropertiesGrid from '@/components/PropertiesGrid'
 
 import style from './page.module.css'
+import AttentionCTA from '@/components/AttentionCTA'
 
 export const metadata: Metadata = {
     title: 'Completed ADU properties - Backyard Estates',
     description:
         'Browse completed ADU properties to discover the right Accessory Dwelling Unit (ADU) for your family',
 }
+import {
+    normalizeLegacyProperty,
+    normalizeNewProperty,
+} from '@/lib/normalizeProperty'
 
 export default async function Floorplan() {
-    const properties = await client.fetch<SanityDocument[]>(
+    const newProperties = await client.fetch(
         PROPERTIES_QUERY,
         {},
         options
     )
+
+    const legacyProperties = await client.fetch(
+        LEGACY_PROPERTIES_QUERY,
+        {},
+        options
+    )
+
+    const normalizedProperties = [
+        ...newProperties.map(normalizeNewProperty),
+        ...legacyProperties.map(normalizeLegacyProperty),
+    ].sort((a, b) => Number(b.featured) - Number(a.featured))
 
     return (
         <>
@@ -35,9 +69,17 @@ export default async function Floorplan() {
             <Nav />
             <main className={style.base}>
                 <div className={style.content}>
-                    <PropertiesGrid properties={properties} />
+                    <PropertiesGrid properties={normalizedProperties} />
                 </div>
-                <Catchall />
+                <AttentionCTA
+                    eyebrow="Get Started"
+                    title="Start your ADU journey today"
+                    description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
+                    primaryLabel="Talk to an ADU Specialist"
+                    primaryHref="/talk-to-an-adu-specialist"
+                    secondaryText="Or call (425) 494-4705"
+                    secondaryHref="tel:+4254944705"
+                />
             </main>
             <Footer />
         </>

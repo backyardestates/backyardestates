@@ -1,270 +1,336 @@
-.headerSection {
-    text-align: center;
-    margin-bottom: 0;
+/* =============================== */
+/* Section Styling                 */
+/* =============================== */
+
+.section {
     width: 100%;
-    height: 100%;
-    padding: 4rem;
-    background-color: var(--color-brand-beige-subtle);
-    border-top: 6px solid var(--color-brand-beige);
+    padding: 0 1.5rem;
 }
 
-.sectionTitle {
-    font-size: 2.5rem;
-    font-weight: 700;
+.inner {
+    max-width: 208rem;
+    text-align: center;
+}
+
+.label {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
     margin-bottom: 0.5rem;
     font-family: var(--font-serif);
 }
 
-.sectionSubtitle {
-    font-size: 1.125rem;
-    font-family: var(--font-sans);
-    color: var(--color-neutral-500);
+
+/* =============================== */
+/* Horizontal Timeline             */
+/* =============================== */
+
+
+
+/* Dragging state */
+.activeDragging {
+    cursor: grabbing;
 }
 
-.stageRow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    width: 100%;
+
+/* =============================== */
+/* Each Timeline Item              */
+/* =============================== */
+
+.timelineItem {
     position: relative;
-}
+    width: fit-content;
 
-/* Reverse row for even weeks */
-.stageRow.even {
-    flex-direction: row-reverse;
-}
-
-.card {
-    /* background: linear-gradient(90deg, rgba(131, 58, 180, 0.2) 0%, rgba(253, 29, 29, 0.2) 50%, rgba(252, 176, 69, 0.2) 100%); */
-    background: linear-gradient(90deg, rgba(185, 151, 100, 0.21) 31%, rgba(250, 247, 238, 1) 100%);
-    border-radius: 1rem;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-    overflow: hidden;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
-    text-align: center;
-    width: 350px;
-    z-index: 1;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+
+/* =============================== */
+/* Floating Week Badge (Luxury)    */
+/* =============================== */
+
+.weekBadge {
+    position: absolute;
+    left: -15px;
+    z-index: 3;
+
+    /* ✨ Gold Glass Gradient */
+    background: linear-gradient(135deg,
+            rgba(250, 240, 220, 0.82) 0%,
+            rgba(243, 226, 194, 0.92) 40%,
+            rgba(255, 228, 196, 0.38) 100%);
+
+    /* ✨ Frosted Glass Blur */
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+
+    padding: 0.75rem 1.1rem;
+    border-radius: 0.75rem;
+
+    /* ✨ Premium Gold Edges */
+    border: 1px solid rgba(255, 215, 160, 0.35);
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.15),
+        inset 0 0 1px rgba(255, 255, 255, 0.35),
+        inset 0 0 8px rgba(255, 215, 160, 0.15);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    max-width: 8rem;
+    height: 7rem;
+    min-height: fit-content;
+
+    /* ✨ Soft gold glow for tech feel */
+    transition: transform 0.25s ease, box-shadow 0.3s ease;
+}
+
+.badgeTop {
+    top: 15px;
+}
+
+.badgeWeek {
+    font-family: var(--font-serif);
+    color: var(--color-brand-dark-blue);
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    font-weight: 700;
+}
+
+.badgeTitle {
+    font-size: clamp(0.75rem, 2vw, 0.9rem);
+    color: rgba(0, 0, 0, 0.55);
+    margin-top: 2px;
+    font-family: var(--font-sans);
+}
+
+
+/* =============================== */
+/* Card Styling                    */
+/* =============================== */
+
+.card {
+    background: var(--color-brand-beige-subtle);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    width: fit-content;
+    max-width: 300px;
 }
 
 .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
 }
 
 .cardMedia {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 100%;
-    aspect-ratio: 5 / 6;
+    aspect-ratio: 9 / 12;
     border-radius: 1rem;
     overflow: hidden;
+    max-height: 25vw;
+    max-width: 20vw;
+    min-width: 250px;
+    min-height: 300px;
 }
 
-.cardMedia .image {
+.image {
+    width: 100%;
     height: 100%;
-    width: auto;
-    border-radius: 1rem;
+    object-fit: cover;
 }
 
-.weekBadge {
-    position: absolute;
-    top: 0.75rem;
-    /* top-3 */
-    right: 0.75rem;
-    /* right-3 */
-    width: 2rem;
-    /* w-8 */
-    height: 2rem;
-    /* h-8 */
-    background-color: var(--primary, #0070f3);
-    color: #fff;
-    border-radius: 9999px;
+/* Description */
+.description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.55);
+    text-align: left;
+    padding-left: 1rem;
+}
+
+/* =============================== */
+/* Fade-In Luxury Animation        */
+/* =============================== */
+
+.fadeInUp {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.7s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translateY(6px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =============================== */
+/* OUTER: SCROLL CONTAINER         */
+/* =============================== */
+.timelineWrapperOuter {
+    width: 100%;
+    overflow-x: auto;
+    /* ← horizontal scroll here */
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    height: fit-content;
+}
+
+.timelineWrapperOuter::-webkit-scrollbar {
+    display: none;
+}
+
+/* =============================== */
+/* INNER: PARALLAX TRACK           */
+/* =============================== */
+.timelineWrapper {
+    display: flex;
+    gap: clamp(1rem, 2vw, 3rem);
+    padding-right: 2rem;
+    min-width: max-content;
+    /* ← so it expands to fit all cards */
+    transition: transform 0.2s ease-out;
+    will-change: transform;
+    padding-left: 2rem;
+}
+
+/* =============================== */
+/* INTERSECTION OBSERVER FADE/SLIDE */
+/* =============================== */
+
+.timelineItem {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* When revealed */
+.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.slideRight {
+    transform: translateX(40px) translateY(30px);
+}
+
+.revealed.slideLeft {
+    transform: translateX(0);
+}
+
+.revealed.slideRight {
+    transform: translateX(0);
+}
+
+
+/* =============================== */
+/* PROGRESS BAR                    */
+/* =============================== */
+
+.progressBarContainer {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    margin-bottom: 2rem;
+}
+
+.progressBar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #b99764, #e5c288);
+    transform-origin: left center;
+    transform: scaleX(0);
+    /* start empty */
+    transition: transform 0s;
+    /* no easing; driven by JS */
+}
+
+/* =============================== */
+/* SNAP NAVIGATION                 */
+/* =============================== */
+
+.navWrapper {
     display: flex;
     justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 0.875rem;
-    /* text-sm */
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
 }
 
-.weekTitle {
-    font-size: 1.5rem;
-    font-weight: 700;
-    font-family: var(--font-sans);
-    color: var(--color-brand-dark-blue);
-    margin: 0;
+.navDot {
+    background: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 0.85rem;
 }
 
-.weekDescription {
-    font-size: 1rem;
-    color: var(--color-neutral-500);
-    font-family: var(--font-sans);
-    line-height: 1.6;
-    margin: 0;
-    padding-left: 20px;
-    text-align: left;
+.navDot:hover {
+    background: rgba(0, 0, 0, 0.15);
 }
 
-.textContent {
-    max-width: 300px;
-    padding: 0 1rem;
+.activeDot {
+    background: #b99764;
+    border-color: #b99764;
+    color: white;
+    font-weight: 600;
+}
+
+.ctaSection {
+    text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    max-width: 300px;
-    text-align: left;
-    gap: 0.5rem;
-}
-
-.button {
-    width: 50%;
-    padding: 0.5rem 0;
-    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
+    gap: 1.5rem;
+}
+
+.processCTA {
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.55);
+    max-width: 720px;
+}
+
+.inlineLink {
+    margin-left: 0.35rem;
     font-family: var(--font-sans);
     font-weight: 500;
-    text-decoration: none;
-    border: none;
-    border-radius: 1rem;
-    color: var(--color-neutral-500);
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    /* Subtle shadow for glass effect */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    /* Smooth animations */
-    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-}
-
-.button:hover {
-    background: rgba(255, 255, 255, 0.7);
-    color: var(--color-brand-dark-blue);
+    color: var(--color-blue);
     cursor: pointer;
-    transform: translateY(-2px);
-    /* hover lift */
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+    font-size: 1.2rem;
 }
 
-.button:active {
-    transform: translateY(0);
-    /* click "press" */
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-}
-
-.button:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.4);
-    /* focus ring in brand color */
-}
-
-.timelineContainer {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.weekRow {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 3rem 0;
-    z-index: 1;
-    gap: 1rem;
-}
-
-.cardContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Responsive tweaks */
-@media (max-width: 768px) {
-    .headerSection {
-        padding: 2rem 1rem;
-    }
-
-    .sectionTitle {
-        font-size: 2rem;
-    }
-
-    .sectionSubtitle {
-        font-size: 1rem;
-    }
-
-    .stageRow {
-        flex-direction: column-reverse !important;
-        gap: 1.5rem;
-        text-align: center;
-        margin: 1rem 0;
-    }
-
-    .card {
-        width: 100%;
-        max-width: 70%;
-    }
-
-    .textContent {
-        max-width: 100%;
-        text-align: center;
-        align-items: center;
-        padding: 0;
-        margin: 0 1rem;
-    }
-
-    .weekTitle {
-        font-size: 1.25rem;
-    }
-
-    .weekDescription {
-        font-size: 0.95rem;
-    }
-
-    .button {
-        width: 100%;
-        max-width: 300px;
-    }
-}
-
-@media (max-width: 480px) {
-    .sectionTitle {
-        font-size: 2rem;
-    }
-
-    .sectionSubtitle {
-        font-size: 0.9rem;
-    }
-
-    .weekTitle {
-        font-size: 1.125rem;
-    }
-
-    .weekDescription {
-        font-size: 0.875rem;
-
-    }
-
-    .weekRow {
-        margin: 0;
-    }
-
-    .card {
-        max-width: 90%;
-    }
-
-    .button {
-        width: 50%;
-        font-weight: 500;
-        border-radius: 1rem;
-    }
+.inlineLink:hover {
+    opacity: 0.85;
+    transform: translateX(2px);
 }

@@ -6,8 +6,13 @@ import ButtonTags from '../ButtonTags'
 import PropertyCard from '../PropertyCard'
 
 import style from './PropertiesGrid.module.css'
+import { NormalizedProperty } from '@/lib/normalizedProperty'
 
-export default function PropertiesGrid({ properties }) {
+interface Props {
+    properties: NormalizedProperty[]
+}
+
+export default function PropertiesGrid({ properties }: Props) {
     const [selected, setSelected] = useState(99)
     const bedroomCounts = [
         { id: 0, title: 'Studio' },
@@ -16,7 +21,7 @@ export default function PropertiesGrid({ properties }) {
         { id: 3, title: '3 bedrooms' },
     ]
 
-    let filteredProperties = []
+    let filteredProperties: NormalizedProperty[] = []
 
     if (selected !== 99) {
         filteredProperties = properties.filter(

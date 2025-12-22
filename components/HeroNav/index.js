@@ -52,11 +52,11 @@ export default function HeroNav() {
                                                 ADU floorplans
                                             </Link>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <Link href="/properties">
                                                 Completed ADUs
                                             </Link>
-                                        </li>
+                                        </li> */}
                                         <li>
                                             <Link href="/standard-inclusions">
                                                 Standard inclusions

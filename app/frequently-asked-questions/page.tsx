@@ -4,17 +4,18 @@ import { client } from '@/sanity/client'
 
 import type { Metadata } from 'next'
 
-import Catchall from '@/components/Catchall'
+import Catchall from '@/components/AttentionCTA'
 import Faq from '@/components/Faq'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
 
 import style from './page.module.css'
+import AttentionCTA from '@/components/AttentionCTA'
 
 export const metadata: Metadata = {
-    title: 'FAQs - Backyard Estates',
-    description: '',
+  title: 'FAQs - Backyard Estates',
+  description: '',
 }
 
 const FAQS_QUERY = `*[_type == "faq"]|order(publishedAt asc){_id, title, body, publishedAt}`
@@ -22,61 +23,69 @@ const FAQS_QUERY = `*[_type == "faq"]|order(publishedAt asc){_id, title, body, p
 const options = { next: { revalidate: 30 } }
 
 export default async function FrequentlyAskedQuestions() {
-    const faqs = await client.fetch<SanityDocument[]>(FAQS_QUERY, {}, options)
+  const faqs = await client.fetch<SanityDocument[]>(FAQS_QUERY, {}, options)
 
-    // Generate FAQ schema
-    const faqSchema = {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: faqs.map((faq) => ({
-            '@type': 'Question',
-            name: faq.title,
-            acceptedAnswer: {
-                '@type': 'Answer',
-                text: Array.isArray(faq.body)
-                    ? faq.body
-                          .map((block) =>
-                              block.children.map((child) => child.text).join('')
-                          )
-                          .join('\n')
-                    : '',
-            },
-        })),
-    }
-    return (
-        <>
-            <Nav />
-            <Masthead title="Frequently asked questions" explanation="" />
-            <main className="centered">
-                <div className={style.content}>
-                    <div className={style.faqs}>
-                        {faqs.map((faq, index) => (
-                            <Faq key={index} question={faq.title}>
-                                {Array.isArray(faq.body) && (
-                                    <PortableText value={faq.body} />
-                                )}
-                                <p className={style.date}>
-                                    Updated:
-                                    {new Date(
-                                        faq.publishedAt
-                                    ).toLocaleDateString()}
-                                </p>
-                            </Faq>
-                        ))}
-                    </div>
-                </div>
+  // Generate FAQ schema
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.title,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: Array.isArray(faq.body)
+          ? faq.body
+            .map((block) =>
+              block.children.map((child) => child.text).join('')
+            )
+            .join('\n')
+          : '',
+      },
+    })),
+  }
+  return (
+    <>
+      <Nav />
+      <Masthead title="Frequently asked questions" explanation="" />
+      <main className="centered">
+        <div className={style.content}>
+          <div className={style.faqs}>
+            {faqs.map((faq, index) => (
+              <Faq key={index} question={faq.title}>
+                {Array.isArray(faq.body) && (
+                  <PortableText value={faq.body} />
+                )}
+                <p className={style.date}>
+                  Updated:
+                  {new Date(
+                    faq.publishedAt
+                  ).toLocaleDateString()}
+                </p>
+              </Faq>
+            ))}
+          </div>
+        </div>
 
-                <Catchall />
-            </main>
-            <Footer />
+        <AttentionCTA
+          eyebrow="Get Started"
+          title="Start your ADU journey today"
+          description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
+          primaryLabel="Talk to an ADU Specialist"
+          primaryHref="/talk-to-an-adu-specialist"
+          secondaryText="Or call (425) 494-4705"
+          secondaryHref="tel:+4254944705"
+        />
+      </main>
+      <Footer />
 
-            {/* Add FAQ schema as JSON-LD */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-            />
-        </>
-    )
+      {/* Add FAQ schema as JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+    </>
+  )
 }
 
 /*

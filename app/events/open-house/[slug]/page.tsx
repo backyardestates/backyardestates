@@ -9,7 +9,7 @@ import Footer from "@/components/Footer";
 import Button from "@/components/Button";
 import Image from "next/image";
 import styles from "./page.module.css";
-import { Home } from "lucide-react";
+import { Bath, Home } from "lucide-react";
 import { notFound } from 'next/navigation';
 import FloorPlanToggle from '@/components/OpenHouseFloorplans';
 import IncludedItems from '@/components/OpenHouseInclusions';
@@ -89,8 +89,8 @@ export default async function ADUOpenHouse({
                     RSVP Now
                 </Button>
             </div>
-            <FloorPlanToggle standardFloorPlanUrl={openHouse.data.projectMedia.floorplans[0].url} customFloorPlanUrl={openHouse.data.projectMedia.floorplans[1].url} sqft={sqft} />
-            <ConstructionTimeline timeline={openHouse.data.timeline} />
+            {/* <FloorPlanToggle floorplan={openHouse.data.projectMedia.floorplans[0].url} customFloorplanPicture={openHouse.data.projectMedia.floorplans[1].url} sqft={sqft} /> */}
+            {/* <ConstructionTimeline timeline={openHouse.data.timeline} /> */}
             <IncludedItems sections={openHouse.data.includedItems} />
 
             <RsvpSection slug={slug} />

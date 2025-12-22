@@ -1,122 +1,304 @@
-.floorplansContainer {
-    max-width: 900px;
-    margin: 0 auto 5rem;
-}
-
-.buttonGroup {
+.experienceContainer {
+    width: 100%;
+    margin: 6rem auto;
     display: flex;
-    justify-content: center;
-    width: fit-content;
-    margin: 0 auto;
-    padding: 0;
-    /* width: 16rem; */
-    top: -1.5rem;
-    /* left: 50%; */
-    border: 2px solid var(--color-brand-beige);
-    border-radius: 3rem;
-}
-
-.buttonGroupButton {
-    display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    border: none;
-    /* padding: 1rem; */
-    /* width: 8rem; */
-    text-decoration: none;
+}
+
+/* -------------------------- */
+/* HERO BLUEPRINT SECTION     */
+/* -------------------------- */
+
+.blueprintHero {
+    text-align: center;
+    margin-bottom: 2rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heroTitle {
+    font-size: clamp(1.8rem, 3vw, 3rem);
+    font-family: var(--font-serif);
+    color: var(--color-brand-dark-blue);
+    margin-bottom: 1rem;
+}
+
+.heroText {
+    max-width: 46rem;
+    margin: 0 0 1rem;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.45);
     font-family: var(--font-sans);
-    font-size: 0.8rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-    letter-spacing: 0.02em;
+    width: 100%;
 }
 
-.buttonGroupButtonLeft {
-    composes: buttonGroupButton;
-    padding: 1rem;
-    color: var(--color-brand-beige);
-    background-color: var(--color-white);
-    border-top-left-radius: 1.5rem;
-    border-bottom-left-radius: 1.5rem;
+.heroImageWrapper {
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
 }
 
-.buttonGroupButtonLeft:hover {
-    background-color: var(--color-brand-beige-subtle);
+.blueprintImage {
+    width: 100%;
+    height: auto;
+    mix-blend-mode: multiply;
+    opacity: 0;
+    animation: fadeInBlueprint 1.8s ease forwards;
+}
+
+@keyframes fadeInBlueprint {
+    from {
+        opacity: 0;
+        filter: blur(14px);
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+    }
+}
+
+/* Animated blueprint overlay */
+.blueprintOverlay {
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(to bottom,
+            rgba(200, 200, 200, 0.16),
+            rgba(200, 200, 200, 0.16) 1px,
+            transparent 1px,
+            transparent 14px);
+    opacity: 0;
+    animation: blueprintLines 2.4s ease forwards 0.4s;
+}
+
+@keyframes blueprintLines {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 0.6;
+    }
+}
+
+/* -------------------------- */
+/* SPLIT PANEL SECTION        */
+/* -------------------------- */
+.panelHeader {
+    text-align: center;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-family: var(--font-serif);
+    color: var(--color-brand-dark-blue);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.splitPanel {
+    margin: 0 auto;
+    max-width: 1100px;
+    text-align: center;
+}
+
+.panelLabel {
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    color: rgba(0, 0, 0, 0.45);
+    text-transform: uppercase;
+    font-family: var(--font-serif);
+}
+
+.segmentedControl {
+    display: inline-flex;
+    margin-top: 1.2rem;
+    background: var(--color-brand-beige-subtle);
+    padding: 0.3rem;
+    border-radius: 2rem;
+}
+
+.segmentButton {
+    padding: 0.6rem 1.6rem;
+    border: none;
+    background: transparent;
+    border-radius: 1.6rem;
     cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-sans);
+    color: rgba(0, 0, 0, 0.55);
 }
 
-.buttonGroupButtonRight {
-    composes: buttonGroupButton;
-    padding: 1rem;
-    color: var(--color-brand-beige);
-    background-color: var(--color-white);
-    border-top-right-radius: 1.5rem;
-    border-bottom-right-radius: 1.5rem;
+.segmentButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
-.buttonGroupButtonRight:hover {
-    background-color: var(--color-brand-beige-subtle);
-    cursor: pointer;
+.segmentActive {
+    background: var(--color-brand-beige);
+    color: white;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
 }
 
-.buttonGroupButtonLeft_selected {
-    composes: buttonGroupButtonLeft;
-    color: var(--color-white);
-    background-color: var(--color-brand-beige);
+.sparkIcon {
+    width: 16px;
+    opacity: 0.8;
 }
 
-.buttonGroupButtonLeft_selected:hover {
-    background-color: var(--color-brand-beige-hover);
-    cursor: pointer;
+/* ---------------------- */
+/* IMAGE CARD             */
+/* ---------------------- */
+
+.imageCard {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    border-radius: 2rem;
 }
 
-.buttonGroupButtonRight_selected {
-    composes: buttonGroupButtonRight;
-    color: var(--color-white);
-    background-color: var(--color-brand-beige);
-}
-
-.buttonGroupButtonRight_selected:hover {
-    color: var(--color-brand-beige-hover);
-    cursor: pointer;
-}
-
-.floorplanImageWrapper {
-    width: fit-content;
-    border-radius: 1rem;
-    overflow: hidden;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    background-color: #fdfdfd;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin: 2rem;
-}
-
-.floorplanImageWrapper:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-}
 
 .floorplanImage {
     width: 100%;
+    max-width: 900px;
     height: auto;
-    display: block;
-    border-radius: 1rem;
-    transition: opacity 0.3s ease;
-    max-width: 600px;
+    max-height: 400px;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    transition: opacity 0.25s ease;
 }
 
-@media (min-width: 624px) {
-    .floorplanImageWrapper {
-        margin: 2rem auto;
+.fadeImage {
+    animation: fadeSwap 0.4s ease;
+}
+
+@keyframes fadeSwap {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.985);
     }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* -------------------------- */
+/* SPECS BAR                  */
+/* -------------------------- */
+
+.specsBar {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 3rem;
+}
+
+.specItem {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1rem;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+/* -------------------------- */
+/* STORY CARDS (VERTICAL)     */
+/* -------------------------- */
+
+.storySection {
+    display: flex;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    padding: 0 1rem;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    flex-wrap: wrap;
+}
+
+.storyCard {
+    background: white;
+    padding: 2rem;
+    border-radius: 1.6rem;
+    text-align: center;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+    animation: riseIn 1.2s ease;
+    max-width: 500px;
+    min-width: 240px;
 
 }
 
-@media (min-width: 1024px) {
-    .buttonGroupButton {
-        font-size: 1rem;
+@keyframes riseIn {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
     }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.storyIcon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+    color: var(--color-brand-beige);
+}
+
+.storyCard h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--color-brand-dark-blue);
+    font-family: var(--font-serif);
+}
+
+.storyCard p {
+    color: rgba(0, 0, 0, 0.55);
+    line-height: 1.55;
+    font-family: var(--font-sans);
+}
+
+
+.ctaSection {
+    margin-top: 4rem;
+    text-align: center;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.experienceCTA {
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.55);
+    max-width: 720px;
+}
+
+.inlineLink {
+    margin-left: 0.35rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    color: var(--color-blue);
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+.inlineLink:hover {
+    opacity: 0.85;
+    transform: translateX(2px);
 }

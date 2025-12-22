@@ -100,3 +100,243 @@ export const ALL_OPEN_HOUSES_QUERY = `
   }
 }
 `;
+
+export const SELECTIONS_QUERY = `
+*[_type == "selection"]{
+  _id,
+  title,
+  description,
+  brand,
+  isStandard,
+  upgradePrice,
+  finishColor,
+  finishType,
+  rooms,
+  images[]{
+    secure_url
+  },
+  category->{
+    title,
+    slug { current }
+  },
+  type->{
+    title,
+    slug { current }
+  }
+} | order(category->title asc, type->title asc, title asc)
+`
+export const RELATED_PROPERTIES_QUERY = `
+*[
+  _type == "property" &&
+  slug.current != $slug
+]
+| order(coalesce(publishedAt, _createdAt) desc)[0...6] {
+  _id,
+  name,
+  "slug": slug.current,
+  completed,
+  featured,
+  aduType,
+  sqft,
+  bed,
+  bath,
+  photos,
+  floorplan->{
+    name,
+    bed,
+    bath,
+    sqft,
+    "slug": slug.current
+  }
+}
+`
+
+
+
+export const PROPERTY_QUERY = `*[_type == "property" && slug.current == $slug][0]{
+  _id,
+  name,
+  "slug": slug.current,
+  completed,
+  featured,
+
+  // ---------------------
+  // ADDRESS
+  // ---------------------
+  address {
+    street,
+    unit,
+    city,
+    state,
+    zip
+  },
+
+  // ---------------------
+  // ADU TYPE
+  // ---------------------
+  aduType,
+
+  // ---------------------
+  // FLOORPLAN
+  // ---------------------
+  floorplan->{
+    name,
+    bed,
+    bath,
+    sqft,
+    length,
+    width,
+    price,
+    "slug": slug.current,
+    drawing,
+    download,
+    images,
+    relatedProperties[]->{
+      _id,
+      name,
+      "slug": slug.current,
+      bed,
+      bath,
+      sqft,
+      floorplan->{
+        name,
+        bed,
+        bath,
+        sqft,
+        "slug": slug.current
+      }
+    }
+  },
+
+  customFloorplan,
+  customFloorplanPicture,
+  sqft,
+  bed,
+  bath,
+
+  // ---------------------
+  // OPEN HOUSE
+  // ---------------------
+  openHouse,
+  openHouseDates[]{
+    day,
+    startTime,
+    endTime
+  },
+  openHouseFlyers,
+
+  // ---------------------
+  // MEDIA
+  // ---------------------
+  walkthroughVideo,
+  photos,
+  hasTestimonial,
+  testimonial->{
+    _id,
+    names,
+    quote,
+    wistiaId,
+    slug,
+    portrait,
+    body,
+    images
+ },
+
+  // ---------------------
+  // PLANNING & PERMITTING TIMELINES
+  // ---------------------
+  planningTimeline {
+    start,
+    end
+  },
+
+  permittingTimeline {
+    start,
+    end
+  },
+
+  // ---------------------
+  // CONSTRUCTION TIMELINE
+  // ---------------------
+  constructionTimeline[]{
+    week,
+    milestone,
+    weekImage
+  },
+
+  // ---------------------
+  // EXTRA SITE WORK
+  // ---------------------
+  extraSiteWork,
+
+  // ---------------------
+  // EXTRA FAQ REFERENCES
+  // ---------------------
+  extraFaqs[]->{
+    _id,
+    title,
+    body
+  },
+
+  // =====================================================
+  // INCLUDED SELECTIONS (NEW SYSTEM)
+  // =====================================================
+  "selections": includedSelections[]{
+    types[]{
+      selections[]->{
+        _id,
+        title,
+        description,
+        brand,
+        isStandard,
+        upgradePrice,
+        finishColor,
+        finishType,
+        rooms,
+        images[]{ secure_url },
+
+        "category": {
+          "title": ^.^.category->title,
+          "slug": { "current": ^.^.category->slug.current }
+        },
+
+        "type": {
+          "title": ^.type->title,
+          "slug": { "current": ^.type->slug.current }
+        }
+      }
+    }
+  }[].types[].selections[],
+
+  // ---------------------
+  // PUBLISH DATE
+  // ---------------------
+  publishedAt
+}
+`
+
+export const PROPERTIES_QUERY = `
+  *[
+    _type == "property" &&
+    defined(photos) &&
+    count(photos) > 0
+  ]
+  | order(coalesce(publishedAt, _createdAt) desc) {
+    name,
+    "slug": slug.current,
+    completed,
+    featured,
+    aduType,
+    sqft,
+    bed,
+    bath,
+    photos,
+    floorplan->{
+      name,
+      bed,
+      bath,
+      sqft,
+      "slug": slug.current
+    }
+  }
+`
