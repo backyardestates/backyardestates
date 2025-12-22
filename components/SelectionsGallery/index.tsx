@@ -34,7 +34,7 @@ export default function SelectionsGallery({
     const [activeCategory, setActiveCategory] = useState(categories[0][0]);
 
     const activeData = data[activeCategory];
-
+    console.log("Active Data:", activeData);
 
     return (
         <section className={styles.wrapper}>
@@ -60,8 +60,6 @@ export default function SelectionsGallery({
 
                         <div className={styles.grid}>
                             {type.items.map((item) => {
-                                const image =
-                                    item.images?.[0]?.secure_url || "/placeholder.svg";
                                 const shouldContain =
                                     type.title === "Appliances" || type.title === "Cabinets" || type.title === "Kitchen Sinks" || type.title === "Faucets" || type.title === "Lighting Fixtures" || type.title === "Interior Finishes";
                                 return (
@@ -81,13 +79,15 @@ export default function SelectionsGallery({
                                             className={`${styles.imageWrapper} ${shouldContain ? styles.contain : styles.cover
                                                 } ${type.title === "Cabinets" ? styles.cabinetImage : ""}`}
                                         >
-                                            <Image
-                                                src={image}
-                                                alt={item.title}
-                                                className={styles.image}
-                                                width={300}
-                                                height={300}
-                                            />
+                                            {item.images?.[0]?.secure_url && (
+                                                <Image
+                                                    src={item.images[0].secure_url}
+                                                    alt={item.title}
+                                                    className={styles.image}
+                                                    width={300}
+                                                    height={300}
+                                                />
+                                            )}
                                         </div>
 
                                         {/* BODY */}
@@ -108,11 +108,11 @@ export default function SelectionsGallery({
                                             )} */}
 
                                             {/* UPGRADE PRICE */}
-                                            {!item.isStandard && item.upgradePrice && (
+                                            {/* {!item.isStandard && item.upgradePrice && (
                                                 <span className={styles.upgradePrice}>
                                                     +${item.upgradePrice}
                                                 </span>
-                                            )}
+                                            )} */}
                                         </div>
                                     </div>
                                 );
