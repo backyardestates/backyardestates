@@ -27,11 +27,12 @@ import Nav from '@/components/Nav'
 
 import style from '../../blog.module.css'
 import Breadcrumbs from '@/components/Breadcrumbs'
-import Catchall from '@/components/Catchall'
+import Catchall from '@/components/AttentionCTA'
 import BlogCategory from '@/components/BlogCategory'
 import BlogTag from '@/components/BlogTag'
 import BlogAuthor from '@/components/BlogAuthor'
 import BlogImage from '@/components/BlogImage'
+import AttentionCTA from '@/components/AttentionCTA'
 
 const POST_QUERY = defineQuery(`*[
 	_type == "post" &&
@@ -81,7 +82,15 @@ export default async function Post({
                         ))}
                     </div>
                 </div>
-                <Catchall />
+                <AttentionCTA
+                    eyebrow="Get Started"
+                    title="Start your ADU journey today"
+                    description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
+                    primaryLabel="Talk to an ADU Specialist"
+                    primaryHref="/talk-to-an-adu-specialist"
+                    secondaryText="Or call (425) 494-4705"
+                    secondaryHref="tel:+4254944705"
+                />
             </main>
             <Footer />
         </>

@@ -1,29 +1,40 @@
-import PropertyCard from '../PropertyCard'
-import SectionTitle from '../SectionTitle'
-import StandaloneLink from '../StandaloneLink'
-
-import style from './RelatedProperties.module.css'
+import PropertyCard from "../PropertyCard"
+import StandaloneLink from "../StandaloneLink"
+import styles from "./RelatedProperties.module.css"
 
 export default function RelatedProperties({ properties }) {
-    // const relatedProperties = await getProperties(properties)
-
-    //console.log(properties)
+    if (!properties?.length) return null
 
     return (
-        <div className={style.base}>
-            <SectionTitle
-                title="Explore properties we&rsquo;ve built"
-                explanation=""
-            />
-            <div className={style.properties}>
-                {properties.map((property, index) => (
-                    // <p key={index}>{property.name}</p>
-                    <PropertyCard key={index} content={property} />
+        <section className={styles.section}>
+            {/* Header */}
+            <div className={styles.header}>
+                <h2 className={styles.title}>
+                    Projects with a similar approach
+                </h2>
+                <p className={styles.subtitle}>
+                    A selection of ADUs shaped by thoughtful planning, refined details,
+                    and spaces designed to live well.
+                </p>
+            </div>
+
+            {/* Cards */}
+            <div className={styles.scroller}>
+                {properties.map((property) => (
+                    <PropertyCard
+                        key={property._id}
+                        content={property}
+                        variant="compact"
+                    />
                 ))}
             </div>
-            <div className={style.centered}>
-                <StandaloneLink href="/properties">View all</StandaloneLink>
-            </div>
-        </div>
+
+            {/* Footer CTA */}
+            {/* <div className={styles.footer}>
+                <StandaloneLink href="/properties">
+                    View all properties
+                </StandaloneLink>
+            </div> */}
+        </section>
     )
 }

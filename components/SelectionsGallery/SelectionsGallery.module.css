@@ -1,0 +1,260 @@
+/* -------------------------------- */
+/* WRAPPER                          */
+/* -------------------------------- */
+.wrapper {
+    padding-inline: clamp(2rem, 4vw, 4rem);
+    padding-top: 0;
+    padding-bottom: 0;
+    width: 100%;
+}
+
+/* -------------------------------- */
+/* CATEGORY TABS                    */
+/* -------------------------------- */
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: sticky;
+    top: 10rem;
+    z-index: 10;
+}
+
+.tab {
+    font-family: var(--font-sans);
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: var(--color-brand-dark-blue);
+    transition: all 0.2s ease;
+}
+
+.tab:hover {
+    background: var(--color-brand-beige-subtle);
+    color: var(--color-brand-dark-blue);
+}
+
+.activeTab {
+    background: var(--color-brand-beige);
+    color: white;
+}
+
+.types {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    /* default catalog rhythm */
+}
+
+/* -------------------------------- */
+/* TYPE BLOCK                       */
+/* -------------------------------- */
+.typeBlock {
+    margin-bottom: 3rem;
+}
+
+.typeTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-brand-dark-blue);
+}
+
+/* -------------------------------- */
+/* GRID                             */
+/* -------------------------------- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: clamp(0.75rem, 1.5vw, 1.5rem);
+}
+
+/* -------------------------------- */
+/* CARD                             */
+/* -------------------------------- */
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.14);
+}
+
+/* -------------------------------- */
+/* BADGES                           */
+/* -------------------------------- */
+.badge {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-family: var(--font-sans);
+    z-index: 2;
+}
+
+.standardBadge {
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+}
+
+.upgradeBadge {
+    background: var(--color-brand-beige);
+    color: var(--color-brand-beige-subtle);
+}
+
+/* -------------------------------- */
+/* IMAGE                            */
+/* -------------------------------- */
+/* Base container */
+.imageWrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    aspect-ratio: 1 / 1;
+}
+
+/* Default: MATERIALS (countertops, flooring) */
+.cover .image {
+    object-fit: cover;
+}
+
+/* Products: APPLIANCES, FIXTURES */
+.contain .image {
+    object-fit: contain;
+}
+
+.cabinetImage {
+    aspect-ratio: unset;
+    border-radius: 0;
+    min-height: 150px;
+}
+
+/* Shared */
+.image {
+    width: 100%;
+    height: 100%;
+}
+
+/* -------------------------------- */
+/* CARD BODY                        */
+/* -------------------------------- */
+.cardBody {
+    padding: 0.75rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.itemTitle {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.3;
+    color: var(--color-brand-dark-blue);
+}
+
+/* -------------------------------- */
+/* FINISH COLOR                     */
+/* -------------------------------- */
+.finishRow {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.colorChip {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* Auto-map finish colors */
+.colorChip[data-color="matte-black"] {
+    background: #111;
+}
+
+.colorChip[data-color="satin-nickel"] {
+    background: #cfcfcf;
+}
+
+.colorChip[data-color="brushed-gold"] {
+    background: #c9a24d;
+}
+
+.colorChip[data-color="satin-brass"] {
+    background: #b49a5a;
+}
+
+.finishLabel {
+    font-size: 0.75rem;
+    font-family: var(--font-sans);
+    color: rgba(0, 0, 0, 0.55);
+}
+
+/* -------------------------------- */
+/* UPGRADE PRICE                    */
+/* -------------------------------- */
+.upgradePrice {
+    font-size: 0.75rem;
+    font-family: var(--font-sans);
+    color: var(--color-brand-beige);
+}
+
+/* ================================= */
+/* PROPERTY VARIANT (DENSE MODE)     */
+/* ================================= */
+
+.property {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.property .typeBlock {
+    height: 100%;
+    margin-bottom: 1rem;
+}
+
+.property .typeTitle {
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    margin-bottom: 0.75rem;
+}
+
+.property .grid {
+    grid: unset;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.property .typeBlock .card {
+    height: 250px;
+    width: 200px;
+}
+
+@media screen and (max-width: 768px) {
+    .property .typeBlock .card {
+        height: 250px;
+        width: 160px;
+    }
+}

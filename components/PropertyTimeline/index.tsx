@@ -5,6 +5,26 @@ import { useRef, useState, useEffect } from "react";
 import styles from "./PropertyTimeline.module.css";
 import { PencilLine, FileCheck2, BrickWall } from "lucide-react";
 
+interface TimelineItemProps {
+    icon: React.ElementType
+    label: string
+    value: number
+    visible: boolean
+    delay: number
+}
+
+function TimelineItem({ icon: Icon, label, value, visible, delay }: TimelineItemProps) {
+    const animatedValue = useCountUp(value, visible, delay)
+
+    return (
+        <div className={`${styles.item} fadeInUp`} style={{ animationDelay: `${delay / 1000}s` }}>
+            <Icon className={styles.icon} />
+            <p className={styles.value}>{animatedValue} weeks</p>
+            <span className={styles.caption}>{label}</span>
+        </div>
+    )
+}
+
 interface PropertyTimeline {
     planning: number;
     permitting: number;
@@ -42,24 +62,18 @@ export default function PropertyTimeline({ planning, permitting, construction }:
                 <h2 className={styles.label}>Project Timeline Overview</h2>
 
                 <div className={styles.timelineGrid}>
-                    {items.map((item, i) => {
-                        const Icon = item.icon;
-
-                        const animatedValue = useCountUp(item.value, visible, 800 + i * 180);
-
-                        return (
-                            <div key={i} className={`${styles.item} fadeInUp`} style={{ animationDelay: `${i * 0.15}s` }}>
-                                <Icon className={styles.icon} />
-                                <p className={styles.value}>{animatedValue} weeks</p>
-                                <span className={styles.caption}>{item.label}</span>
-
-                                {i < items.length - 1 && <div className={styles.divider} />}
-                            </div>
-                        );
-                    })}
+                    {items.map((item, i) => (
+                        <TimelineItem
+                            key={item.label}
+                            icon={item.icon}
+                            label={item.label}
+                            value={item.value}
+                            visible={visible}
+                            delay={800 + i * 180}
+                        />
+                    ))}
                 </div>
             </div>
         </section>
-
-    );
+    )
 }

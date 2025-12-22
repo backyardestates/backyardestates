@@ -4,7 +4,7 @@ const options = { next: { revalidate: 30 } }
 
 import { notFound } from 'next/navigation'
 
-import Catchall from '@/components/Catchall'
+import Catchall from '@/components/AttentionCTA'
 import CustomerStory from '@/components/CustomerStory'
 import FloorplanHero from '@/components/FloorplanHero'
 import FloorplanInformation from '@/components/FloorplanInformation'
@@ -16,6 +16,7 @@ import StandaloneLink from '@/components/StandaloneLink'
 import style from './page.module.css'
 
 import { USDollar } from '@/utils/currency'
+import AttentionCTA from '@/components/AttentionCTA'
 
 const FLOORPLAN_QUERY = `
     *[_type == "floorplan" && slug.current == $slug][0]{
@@ -83,7 +84,15 @@ export default async function Floorplan({ params }) {
                         properties={floorplan.relatedProperties}
                     />
                 )}
-                <Catchall />
+                <AttentionCTA
+                    eyebrow="Get Started"
+                    title="Start your ADU journey today"
+                    description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
+                    primaryLabel="Talk to an ADU Specialist"
+                    primaryHref="/talk-to-an-adu-specialist"
+                    secondaryText="Or call (425) 494-4705"
+                    secondaryHref="tel:+4254944705"
+                />
             </main>
             <Footer />
         </>

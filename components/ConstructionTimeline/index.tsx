@@ -6,6 +6,8 @@ import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GalleryModal from "../GalleryModal";
+import Link from "next/link";
+import SoftCTA from "../SoftCTA";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -155,6 +157,12 @@ export default function ConstructionTimeline({ timeline }: Props) {
                 </div>
 
             </div>
+            <SoftCTA
+                text="Big projects feel easier when you know what&rsquo;s ahead."
+                linkText="Explore our ADU process"
+                href="/about-us/our-process"
+                align="center"
+            />
             {showGalleryModal && (
                 <GalleryModal
                     items={galleryItems}

@@ -1,115 +1,87 @@
-.base {
+/* ================================ */
+/* SECTION                          */
+/* ================================ */
+
+.section {
+    padding: clamp(3rem, 6vw, 6rem) 0;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    margin: 0;
-    padding: 0;
-    grid-column: span 12;
+    gap: 2.5rem;
 }
 
-.properties {
-    display: grid;
-    /* align-items: center; */
-    /* justify-content: center; */
-    column-gap: 1.5rem;
-    row-gap: 1.5rem;
-    grid-template-columzns: repeat(4, 1fr);
-    margin: 0;
-    padding: 1.5rem;
-    overflow-x: scroll;
-    /* border: 3px solid magenta; */
+/* ================================ */
+/* HEADER                           */
+/* ================================ */
+
+.header {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 0 1.25rem;
 }
 
-.properties > * {
-    min-width: 75vw;
+.title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+    margin-bottom: 0.75rem;
 }
 
-.properties::-webkit-scrollbar {
+.subtitle {
+    font-family: var(--font-sans);
+    font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+/* ================================ */
+/* SCROLLER / GRID                  */
+/* ================================ */
+
+.scroller {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    justify-content: center;
+    align-items: center;
+}
+
+.scroller::-webkit-scrollbar {
     display: none;
 }
 
-.base h2 {
-    margin: 0 0 1rem 0;
-    padding: 0 1.5rem;
-    color: var(--brand-dark-blue, #36484b);
-    leading-trim: both;
-    text-edge: cap;
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 1.7em;
+.scroller>* {
+    scroll-snap-align: start;
+    min-width: 80vw;
 }
 
-.base p {
-    margin: 0 auto 1rem auto;
-    padding: 0 1.5rem;
-    color: var(--color-neutral-500, #787878);
-    text-align: center;
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1.5em;
-    max-width: 35rem;
-    text-align: center;
+/* ================================ */
+/* FOOTER                           */
+/* ================================ */
+
+.footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
 }
 
-.centered {
-    margin: 0 auto;
-}
+/* ================================ */
+/* DESKTOP                          */
+/* ================================ */
 
-/* fixed */
-@media only screen and (min-width: 1440px) {
-    .base {
-        display: flex;
-        flex-direction: column;
+@media (min-width: 1024px) {
+    .scroller {
         gap: 2rem;
-        margin: 0;
-        padding: 0;
-        grid-column: span 12;
-    }
-
-    .properties {
-        display: flex;
-        justify-content: center;
-        column-gap: 1.5rem;
-        row-gap: 1.5rem;
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-    .properties > * {
-        min-width: 0;
-    }
-
-    .root h2 {
-        margin: 0 0 1rem 0;
-        padding: 0;
-        color: var(--brand-dark-blue, #36484b);
-        leading-trim: both;
-        text-edge: cap;
-        font-family: var(--font-serif);
-        font-size: 1.5rem;
-        font-style: normal;
-        font-weight: 600;
-        line-height: 1.7em;
-    }
-
-    .root p {
-        margin: 0 auto 3rem auto;
-        padding: 0;
-        color: var(--color-neutral-500, #787878);
-        text-align: center;
-        font-family: var(--font-sans);
-        font-size: 1rem;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 1.5em;
-        max-width: 35rem;
-        text-align: center;
-    }
-
-    .centered {
+        max-width: 800px;
         margin: 0 auto;
+        padding: 0;
+        overflow: visible;
+    }
+
+    .scroller>* {
+        min-width: unset;
     }
 }

@@ -10,273 +10,126 @@ import TestimonialDisplay from '@/components/TestimonialDisplay'
 import ScrollingBanner from '@/components/ScrollingBanner'
 import ConstructionTimeline from '@/components/ConstructionTimeline'
 import OpenHouseFloorplans from '@/components/OpenHouseFloorplans'
-import { custom } from '@cloudinary/url-gen/qualifiers/region'
-
-// const PROPERTY_QUERY = `
-//     *[_type == "property" && slug.current == $slug][0]{
-//     _id,name,location,body,images,bed,bath,sqft,price,download,videoID,floorplan->{name,drawing,floorPlanPDF,download,relatedProperties[]->{name,thumbnail,slug,name,bed,bath,sqft,floorplan->{name,bed,bath,sqft,slug}}}}`
-
-const PROPERTY_QUERY = `*[_type == "property" && slug.current == $slug][0]{
-  _id,
-  name,
-  "slug": slug.current,
-  completed,
-  featured,
-
-  // ---------------------
-  // ADDRESS
-  // ---------------------
-  address {
-    street,
-    unit,
-    city,
-    state,
-    zip
-  },
-
-  // ---------------------
-  // ADU TYPE
-  // ---------------------
-  aduType,
-
-  // ---------------------
-  // FLOORPLAN
-  // ---------------------
-  floorplan->{
-    name,
-    bed,
-    bath,
-    sqft,
-    length,
-    width,
-    price,
-    "slug": slug.current,
-    drawing,
-    download,
-    images,
-    relatedProperties[]->{
-      _id,
-      name,
-      "slug": slug.current,
-      bed,
-      bath,
-      sqft,
-      floorplan->{
-        name,
-        bed,
-        bath,
-        sqft,
-        "slug": slug.current
-      }
-    }
-  },
-
-  customFloorplan,
-  customFloorplanPicture,
-  sqft,
-  bed,
-  bath,
-
-  // ---------------------
-  // OPEN HOUSE
-  // ---------------------
-  openHouse,
-  openHouseDates[]{
-    day,
-    startTime,
-    endTime
-  },
-  openHouseFlyers,
-
-  // ---------------------
-  // MEDIA
-  // ---------------------
-  walkthroughVideo,
-  photos,
-  hasTestimonial,
-  testimonial->{
-    _id,
-    names,
-    quote,
-    wistiaId,
-    slug,
-    portrait,
-    body,
-    images
- },
-
-  // ---------------------
-  // PLANNING & PERMITTING TIMELINES
-  // ---------------------
-  planningTimeline {
-    start,
-    end
-  },
-
-  permittingTimeline {
-    start,
-    end
-  },
-
-  // ---------------------
-  // CONSTRUCTION TIMELINE
-  // ---------------------
-  constructionTimeline[]{
-    week,
-    milestone,
-    weekImage
-  },
-
-  // ---------------------
-  // EXTRA SITE WORK
-  // ---------------------
-  extraSiteWork,
-
-  // ---------------------
-  // EXTRA FAQ REFERENCES
-  // ---------------------
-  extraFaqs[]->{
-    _id,
-    title,
-    body
-  },
-
-  // ---------------------
-  // CUSTOMER SELECTIONS (OPTIONAL)
-  // ---------------------
-  customerSelections{
-    kitchen->{
-      layout,
-      countertops,
-      backsplash,
-      cabinetStyle,
-      hardware,
-      appliances,
-      photos
-    },
-    bathroom->{
-      vanity,
-      countertop,
-      fixtures,
-      tile,
-      mirrors,
-      lighting,
-      photos
-    },
-    flooring->{
-      type,
-      color,
-      areas,
-      photos
-    },
-    cabinets->{
-      style,
-      material,
-      color,
-      hardware,
-      photos
-    },
-    appliances->{
-      brand,
-      model,
-      type,
-      photos
-    }
-  },
-
-  // ---------------------
-  // PUBLISH DATE
-  // ---------------------
-  publishedAt
-}
-`
+import SelectionsGallery from '@/components/SelectionsGallery'
+import { groupSelections } from '@/lib/groupSelections'
+import styles from './page.module.css'
+import SoftCTA from '@/components/SoftCTA'
+import AttentionCTA from '@/components/AttentionCTA'
+import RelatedProperties from '@/components/RelatedProperties'
+import { PROPERTY_QUERY, RELATED_PROPERTIES_QUERY } from '@/sanity/queries'
 
 export default async function Property({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params
+  const { slug } = await params
 
-    const property = await client.fetch<SanityDocument>(
-        PROPERTY_QUERY,
-        { slug },
-        options
-    )
+  const property = await client.fetch<SanityDocument>(
+    PROPERTY_QUERY,
+    { slug },
+    options
+  )
 
-    const {
-        _id,
-        name,
-        completed,
-        featured,
+  const relatedProperties = await client.fetch<SanityDocument[]>(
+    RELATED_PROPERTIES_QUERY,
+    { slug },
+    options
+  )
 
-        // Address
-        address: {
-            street,
-            unit,
-            city,
-            state,
-            zip,
-        } = {},
+  const {
+    _id,
+    name,
+    completed,
+    featured,
 
-        aduType,
+    // Address
+    address: {
+      street,
+      unit,
+      city,
+      state,
+      zip,
+    } = {},
 
-        // Floorplan
-        floorplan,
-        customFloorplan,
-        customFloorplanPicture,
-        sqft,
-        bed,
-        bath,
+    aduType,
 
-        // Open House
-        openHouse,
-        openHouseDates = [],
-        openHouseFlyers = [],
+    // Floorplan
+    floorplan,
+    customFloorplan,
+    customFloorplanPicture,
+    sqft,
+    bed,
+    bath,
 
-        // Media
-        walkthroughVideo,
-        testimonial,
-        photos = [],
+    // Open House
+    openHouse,
+    openHouseDates = [],
+    openHouseFlyers = [],
 
-        // Planning & Permitting timelines
-        planningTimeline = {},
-        permittingTimeline = {},
+    // Media
+    walkthroughVideo,
+    testimonial,
+    photos = [],
 
-        // Construction timeline
-        constructionTimeline = [],
+    // Planning & Permitting timelines
+    planningTimeline = {},
+    permittingTimeline = {},
 
-        // Extra site work / FAQs
-        extraSiteWork = [],
-        extraFaqs = [],
+    // Construction timeline
+    constructionTimeline = [],
 
-        // Customer selections
-        customerSelections = {},
+    // Extra site work / FAQs
+    extraSiteWork = [],
+    extraFaqs = [],
 
-        publishedAt,
-    } = property;
-    // -----------------------------
-    // TIMELINE CALCULATIONS
-    // -----------------------------
-    const planningWeeks = calculateWeeks(planningTimeline.start, planningTimeline.end);
-    const permittingWeeks = calculateWeeks(permittingTimeline.start, permittingTimeline.end);
-    const constructionWeeks = constructionTimeline.length;
-    console.log(floorplan)
-    console.log(customFloorplanPicture)
-    console.log(sqft)
-    console.log(bed)
-    console.log(bath)
-    return (
-        <>
-            <Nav />
-            <main >
-                <PropertyMediaSection property={property} />
+    // Customer selections
+    selections = [],
 
-                {testimonial && (
-                    <TestimonialDisplay testimonial={testimonial} />
-                )}
-                <ScrollingBanner />
-                <PropertyTimeline planning={planningWeeks} permitting={permittingWeeks} construction={constructionWeeks} />
-                <ConstructionTimeline timeline={constructionTimeline} />
-                <OpenHouseFloorplans floorplan={floorplan} customFloorplanPicture={customFloorplanPicture.url} sqft={sqft} bed={bed} bath={bath} />
-            </main>
-            <Footer />
-        </>
-    )
+    publishedAt,
+  } = property;
+  // -----------------------------
+  // TIMELINE CALCULATIONS
+  // -----------------------------
+  const planningWeeks = calculateWeeks(planningTimeline.start, planningTimeline.end);
+  const permittingWeeks = calculateWeeks(permittingTimeline.start, permittingTimeline.end);
+  const constructionWeeks = constructionTimeline.length;
+  const groupedSelections = groupSelections(selections);
+  return (
+    <>
+      <Nav />
+      <main >
+        <PropertyMediaSection property={property} />
+
+        {testimonial && (
+          <TestimonialDisplay testimonial={testimonial} />
+        )}
+        <ScrollingBanner />
+        <PropertyTimeline planning={planningWeeks} permitting={permittingWeeks} construction={constructionWeeks} />
+        {constructionTimeline && (
+          <ConstructionTimeline timeline={constructionTimeline} />
+        )}
+        <OpenHouseFloorplans floorplan={floorplan} customFloorplanPicture={customFloorplanPicture.url} sqft={sqft} bed={bed} bath={bath} />
+        <AttentionCTA
+          eyebrow="Inspired by this ADU?"
+          title="Designed specifically for your property"
+          description="With years of experience building ADUs across Southern California, we begin by carefully reviewing your property, local requirements, and long-term goals. From there, we outline realistic options so you can move forward with clarity and confidence."
+          primaryLabel="See what your property allows"
+          primaryHref="/talk-to-an-adu-specialist"
+          secondaryText="Learn about our approach"
+          secondaryHref="/about-us/our-process"
+        />
+        {selections && (
+          <div className={styles.selectionsSection}>
+            <h2 className={styles.selectionsTitle}>Designed With Purpose, Finished With Care</h2>
+            <p className={styles.selectionsText}>Every finish and fixture is selected with intention</p>
+            <SelectionsGallery data={groupedSelections} variant='property' />
+            <SoftCTA
+              text="Good design reveals itself in the details."
+              linkText="See what&rsquo;s included"
+              href="/selections"
+            />
+          </div>
+        )}
+        <RelatedProperties properties={relatedProperties}></RelatedProperties>
+      </main>
+      <Footer />
+    </>
+  )
 }

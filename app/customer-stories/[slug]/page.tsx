@@ -2,7 +2,7 @@ import { sanityFetch } from '@/sanity/live'
 import { defineQuery } from 'next-sanity'
 import { notFound } from 'next/navigation'
 
-import Catchall from '@/components/Catchall'
+import Catchall from '@/components/AttentionCTA'
 import CustomerStory from '@/components/CustomerStory'
 import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
@@ -11,6 +11,7 @@ import VideoPlayer from '@/components/VideoPlayer'
 import RelatedProperties from '@/components/RelatedProperties'
 
 import style from './page.module.css'
+import AttentionCTA from '@/components/AttentionCTA'
 
 const STORY_QUERY = defineQuery(`*[
     _type == "story" &&
@@ -117,7 +118,15 @@ export default async function Story({
                     />
                 )}
 
-                <Catchall />
+                <AttentionCTA
+                    eyebrow="Get Started"
+                    title="Start your ADU journey today"
+                    description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
+                    primaryLabel="Talk to an ADU Specialist"
+                    primaryHref="/talk-to-an-adu-specialist"
+                    secondaryText="Or call (425) 494-4705"
+                    secondaryHref="tel:+4254944705"
+                />
             </main>
             <Footer />
         </>

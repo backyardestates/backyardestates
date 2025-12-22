@@ -30,11 +30,11 @@ export default function Nav() {
                                                 ADU floorplans
                                             </Link>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <Link href="/properties">
                                                 Completed ADUs
                                             </Link>
-                                        </li>
+                                        </li> */}
                                         <li>
                                             <Link href="/standard-inclusions">
                                                 Standard inclusions

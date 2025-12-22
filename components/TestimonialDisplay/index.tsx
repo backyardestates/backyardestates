@@ -40,25 +40,27 @@ interface TestimonialProps {
    COMPONENT
 ----------------------------- */
 export default function TestimonialDisplay({ testimonial }: TestimonialProps) {
-    if (!testimonial) return null;
-
-    const { names, portrait, body } = testimonial;
-
-    const [expanded, setExpanded] = useState(false);
-    const contentRef = useRef<HTMLDivElement>(null);
-    const [maxHeight, setMaxHeight] = useState("260px");
+    // ✅ Hooks FIRST — always run
+    const [expanded, setExpanded] = useState(false)
+    const contentRef = useRef<HTMLDivElement>(null)
+    const [maxHeight, setMaxHeight] = useState("260px")
 
     useEffect(() => {
-        if (contentRef.current) {
-            setMaxHeight(
-                expanded ? `${contentRef.current.scrollHeight}px` : "260px"
-            );
-        }
-    }, [expanded]);
+        if (!contentRef.current) return
+
+        setMaxHeight(
+            expanded ? `${contentRef.current.scrollHeight}px` : "260px"
+        )
+    }, [expanded])
+
+    // ✅ Conditional return AFTER hooks
+    if (!testimonial) return null
+
+    const { names, portrait, body } = testimonial
 
     return (
         <section className={styles.wrapper}>
-            {/* LEFT COLUMN — desktop/tablet */}
+            {/* LEFT COLUMN */}
             <div className={styles.leftColumn}>
                 <div className={`${styles.portraitWrapper} ${styles.desktopPortrait}`}>
                     <Image
@@ -74,13 +76,11 @@ export default function TestimonialDisplay({ testimonial }: TestimonialProps) {
                 <p className={styles.role}>HOMEOWNER</p>
             </div>
 
-            {/* RIGHT COLUMN — includes mobile portrait */}
+            {/* RIGHT COLUMN */}
             <div className={styles.rightColumn}>
-                {/* TEXT BODY */}
                 <div className={styles.bodyContainer} style={{ maxHeight }}>
                     <div ref={contentRef} className={styles.bodyInner}>
-
-                        {/* MOBILE portrait flowing inside text */}
+                        {/* Mobile portrait */}
                         <div className={styles.mobilePortraitContainer}>
                             <div className={styles.portraitWrapper}>
                                 <Image
@@ -96,7 +96,6 @@ export default function TestimonialDisplay({ testimonial }: TestimonialProps) {
                             <p className={styles.role}>HOMEOWNER</p>
                         </div>
 
-                        {/* Mobile portrait ends — text begins */}
                         {body.map((block) => {
                             const html = block.children
                                 .map((child) =>
@@ -104,7 +103,7 @@ export default function TestimonialDisplay({ testimonial }: TestimonialProps) {
                                         ? `<strong>${child.text}</strong>`
                                         : child.text
                                 )
-                                .join("");
+                                .join("")
 
                             return block.style === "blockquote" ? (
                                 <blockquote
@@ -118,15 +117,13 @@ export default function TestimonialDisplay({ testimonial }: TestimonialProps) {
                                     className={styles.paragraph}
                                     dangerouslySetInnerHTML={{ __html: html }}
                                 />
-                            );
+                            )
                         })}
                     </div>
 
                     {!expanded && <div className={styles.fadeOverlay} />}
                 </div>
 
-
-                {/* Expand / Collapse */}
                 <button
                     className={styles.expandButton}
                     onClick={() => setExpanded((prev) => !prev)}
@@ -135,5 +132,5 @@ export default function TestimonialDisplay({ testimonial }: TestimonialProps) {
                 </button>
             </div>
         </section>
-    );
+    )
 }
