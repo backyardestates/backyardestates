@@ -226,10 +226,10 @@ export function RSVPForm({ dates, params, address }: PageProps) {
 
             if (day === 4) {
                 // Friday
-                stage_id = 76; // replace with your Friday stage_id
+                stage_id = 76;
             } else if (day === 5) {
                 // Saturday
-                stage_id = 77; // replace with your Saturday stage_id
+                stage_id = 77;
             }
         }
 

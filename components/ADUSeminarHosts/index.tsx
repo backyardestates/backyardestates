@@ -7,7 +7,7 @@ const seminarHosts = [
         id: 1,
         name: "Tom Gibson",
         role: "Director of Construction",
-        photo: "/portraits/tom-gibson.png", // replace with real path
+        photo: "/portraits/tom-gibson.png",
         description:
             "Tom Gibson has 50+ years of hands-on experience in construction, from electrical work to leading multi-family and senior housing projects. Founder of Tom W. Gibson, Inc., Tom brings unmatched expertise to Backyard Estates, overseeing projects with precision and ensuring the highest quality builds.",
     },
@@ -15,7 +15,7 @@ const seminarHosts = [
         id: 2,
         name: "Adam Stewart",
         role: "President & Founder",
-        photo: "/portraits/adam-stewart.png", // replace with real path
+        photo: "/portraits/adam-stewart.png",
         description:
             "With a BS in Finance and a Master’s in Business Entrepreneurship, Adam combines business insight with hands-on project-management expertise. As President of Backyard Estates, he ensures every project runs smoothly, on time, and on budget, combining a passion for design with practical expertise.",
     },

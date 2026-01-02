@@ -15,10 +15,6 @@ interface FloorPlanProps {
     bath?: number;
 }
 
-function removeBackground(url: string) {
-    return url.replace("/upload/", "/upload/e_background_removal/");
-}
-
 export default function OpenHouseFloorplans({
     floorplan,
     customFloorplanPicture,
@@ -27,9 +23,9 @@ export default function OpenHouseFloorplans({
     bath = 1,
 }: FloorPlanProps) {
     const [showCustom, setShowCustom] = useState(false);
-    const standardUrl = removeBackground(floorplan?.drawing?.secure_url);
+    const standardUrl = floorplan?.drawing?.secure_url;
     const customUrl = customFloorplanPicture
-        ? removeBackground(customFloorplanPicture)
+        ? customFloorplanPicture
         : null;
     const displayUrl = showCustom && customUrl ? customUrl : standardUrl;
     return (
