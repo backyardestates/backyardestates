@@ -55,8 +55,13 @@ export default async function Floorplan() {
         options
     )
 
+    // 🧹 Filter NEW properties to only completed ones
+    const completedNewProperties = newProperties.filter(
+        (p: any) => p.completed === true
+    )
+
     const normalizedProperties = [
-        ...newProperties.map(normalizeNewProperty),
+        ...completedNewProperties.map(normalizeNewProperty),
         ...legacyProperties.map(normalizeLegacyProperty),
     ].sort((a, b) => Number(b.featured) - Number(a.featured))
 
