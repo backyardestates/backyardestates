@@ -31,7 +31,7 @@ export default function AboutUs() {
                 title="About us"
                 explanation="Our mission is to enable homeowners to make your ADU dreams a reality!"
             />
-            <main className="centered">
+            <main className={style.main}>
                 <div className={style.content}>
                     <Chunk
                         image="/render.jpg"

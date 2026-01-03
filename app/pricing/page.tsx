@@ -54,7 +54,7 @@ export default async function Pricing() {
                 title="Pricing"
                 explanation="They say money doesn't grow on trees, but it can certainly grow in your backyard. Invest in an Accessory Dwelling Unit (ADU) and watch your estate grow."
             />
-            <main className="centered">
+            <main className={style.main}>
                 <div className={style.content}>
                     <h2>All-Inclusive pricing comparison</h2>
                     <table>

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-
+import styles from './page.module.css'
 import Bio from '@/components/Bio'
 import Catchall from '@/components/AttentionCTA'
 import Footer from '@/components/Footer'
@@ -22,7 +22,7 @@ export default function OurTeam() {
                 title="Our team"
                 explanation="Meet the people who make your ADU possible."
             />
-            <main className="centered">
+            <main className={styles.main}>
                 <Bio
                     portrait="adam-stewart.png"
                     name="Adam Stewart"

@@ -39,7 +39,7 @@ export default function OurProcess() {
                 title="Our process"
                 explanation="We manage the entire project, from custom design to permitting, all the way to construction and installation."
             />
-            <main className="centered">
+            <main className={style.main}>
                 <div className={style.timeline}>
                     <Phase
                         number={1}

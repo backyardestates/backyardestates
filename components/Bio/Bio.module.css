@@ -3,10 +3,14 @@
     /* gap: 2rem; */
     padding: 0 1.5rem;
     grid-column: span 12;
+    width: 100%;
+    max-width: 60vw;
+    min-width: 400px;
 }
 
 .image {
-    max-width: 50%;
+    width: 80%;
+    max-width: 300px;
     height: auto;
     border-radius: var(--radius);
     margin-bottom: 2rem;
@@ -14,8 +18,7 @@
     /* border: 5px solid red; */
 }
 
-.content {
-}
+.content {}
 
 .display2 {
     margin: 0 0 1rem 0;
@@ -35,7 +38,8 @@
     font-size: 1rem;
     font-style: normal;
     font-weight: 500;
-    line-height: 1.5rem; /* 150% */
+    line-height: 1.5rem;
+    /* 150% */
     font-variant: all-small-caps;
     letter-spacing: 0.1rem;
 }
@@ -85,7 +89,8 @@
         font-size: 1rem;
         font-style: normal;
         font-weight: 500;
-        line-height: 1.5rem; /* 150% */
+        line-height: 1.5rem;
+        /* 150% */
         font-variant: all-small-caps;
         letter-spacing: 0.1rem;
     }

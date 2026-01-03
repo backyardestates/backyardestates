@@ -112,11 +112,7 @@ export default async function Story({
                     <VideoPlayer wistiaID={story.wistiaId} />
                 </div>
                 <CustomerStory story={story} />
-                {story.property && (
-                    <RelatedProperties
-                        properties={story.property.floorplan.relatedProperties}
-                    />
-                )}
+
 
                 <AttentionCTA
                     eyebrow="Get Started"
@@ -127,6 +123,7 @@ export default async function Story({
                     secondaryText="Or call (425) 494-4705"
                     secondaryHref="tel:+4254944705"
                 />
+
             </main>
             <Footer />
         </>

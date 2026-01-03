@@ -1,13 +1,15 @@
 .base {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     column-gap: 2rem;
     row-gap: 6rem;
-    grid-template-columns: repeat(12, 1fr);
     margin: 0;
-    padding: 2rem 0;
+    padding: 8rem 0;
     z-index: 1;
     width: 100%;
     overflow: hidden;
+    justify-content: center;
+    align-items: center;
 }
 
 /* fixed */
@@ -75,7 +77,8 @@
     font-size: 1rem;
     font-style: normal;
     font-weight: 500;
-    line-height: 1.5rem; /* 150% */
+    line-height: 1.5rem;
+    /* 150% */
     font-variant: all-small-caps;
     letter-spacing: 0.1rem;
 }
@@ -149,7 +152,8 @@
         font-size: 1rem;
         font-style: normal;
         font-weight: 500;
-        line-height: 1.5rem; /* 150% */
+        line-height: 1.5rem;
+        /* 150% */
         font-variant: all-small-caps;
         letter-spacing: 0.1rem;
     }

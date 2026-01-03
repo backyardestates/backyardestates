@@ -40,7 +40,7 @@ export default async function Floorplan({ params }) {
     return (
         <>
             <Nav />
-            <main className="centered generous">
+            <main className={style.main}>
                 <div className={style.content}>
                     <h1>{floorplan.name}</h1>
                     <FloorplanInformation
@@ -77,13 +77,8 @@ export default async function Floorplan({ params }) {
                         </div>
                     </div>
                     <FloorplanHero floorplan={floorplan} />
+                    <CustomerStory story={floorplan} />
                 </div>
-                <CustomerStory story={floorplan} />
-                {floorplan.relatedProperties.length !== 0 && (
-                    <RelatedProperties
-                        properties={floorplan.relatedProperties}
-                    />
-                )}
                 <AttentionCTA
                     eyebrow="Get Started"
                     title="Start your ADU journey today"
