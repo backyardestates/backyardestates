@@ -97,8 +97,10 @@ export default async function Property({ params }: { params: Promise<{ slug: str
   const planningWeeks = calculateWeeks(planningTimeline.start, planningTimeline.end);
   const permittingWeeks = calculateWeeks(permittingTimeline.start, permittingTimeline.end);
   const constructionWeeks = constructionTimeline.length;
-  const groupedSelections = groupSelections(selections);
-
+  let groupedSelections;
+  if (selections) {
+    groupedSelections = groupSelections(selections);
+  }
 
   return property ? (
     <>
@@ -111,7 +113,7 @@ export default async function Property({ params }: { params: Promise<{ slug: str
         )}
         <ScrollingBanner />
         <PropertyTimeline planning={planningWeeks} permitting={permittingWeeks} construction={constructionWeeks} />
-        {constructionTimeline && (
+        {constructionTimeline && constructionTimeline[0].weekImage && (
           <ConstructionTimeline timeline={constructionTimeline} />
         )}
         <OpenHouseFloorplans floorplan={floorplan} customFloorplanPicture={customFloorplanPicture.url} sqft={sqft} bed={bed} bath={bath} />
