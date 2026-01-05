@@ -116,7 +116,7 @@ export default async function Property({ params }: { params: Promise<{ slug: str
         {constructionTimeline && constructionTimeline[0].weekImage && (
           <ConstructionTimeline timeline={constructionTimeline} />
         )}
-        <OpenHouseFloorplans floorplan={floorplan} customFloorplanPicture={customFloorplanPicture.url} sqft={sqft} bed={bed} bath={bath} />
+        <OpenHouseFloorplans floorplan={floorplan} customFloorplanPicture={customFloorplanPicture?.url} sqft={sqft} bed={bed} bath={bath} />
         <AttentionCTA
           eyebrow="Inspired by this ADU?"
           title="Designed specifically for your property"

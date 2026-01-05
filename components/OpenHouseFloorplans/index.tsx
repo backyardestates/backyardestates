@@ -53,7 +53,7 @@ export default function OpenHouseFloorplans({
                         </button>
                         <button
                             className={`${styles.segmentButton} ${showCustom ? styles.segmentActive : ""
-                                }`}
+                                } ${!customUrl ? styles.segmentHidden : ""}`}
                             onClick={() => setShowCustom(true)}
                             disabled={!customUrl}
                         >
