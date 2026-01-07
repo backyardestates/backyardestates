@@ -11,7 +11,7 @@ import {
 export default function Banner({ events = [], backgroundColor = "#b99764" }) {
     const aduSeminar = {
         _id: "adu-seminar-2025-10-08",
-        dates: [{ date: "2025-10-08" }],
+        openHouseDates: [{ day: "2025-10-08" }],
         location: "2335 W Foothill Blvd #18, Upland CA 91786",
         projectMedia: {
             professionalPhotos: [
@@ -29,16 +29,16 @@ export default function Banner({ events = [], backgroundColor = "#b99764" }) {
     const today = startOfDay(new Date());
 
     // only add seminar if it’s in the future
-    const includeSeminar = aduSeminar.dates.some((d) =>
-        isAfter(parseISO(d.date), today)
+    const includeSeminar = aduSeminar.openHouseDates.some((d) =>
+        isAfter(parseISO(d.day), today)
     );
     const allEvents = [...events, ...(includeSeminar ? [aduSeminar] : [])];
 
     // flatten all event date objects into a single list with eventDate
     const eventEntries = allEvents.flatMap((event) =>
-        event.dates.map((d) => ({
+        event.openHouseDates.map((d) => ({
             ...event,
-            eventDate: startOfDay(parseISO(d.date)),
+            eventDate: startOfDay(parseISO(d.day)),
         }))
     );
 

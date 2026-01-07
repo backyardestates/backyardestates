@@ -160,6 +160,7 @@ export default function PropertyMediaSection({ property }: PropertyMediaSectionP
                                 className={styles.galleryImage}
                                 width={640}
                                 height={360}
+                                sizes="80vw"
                                 onClick={() => {
                                     setGalleryIndex(displayOrder[0]);
                                     setShowGalleryModal(true);
@@ -218,6 +219,7 @@ export default function PropertyMediaSection({ property }: PropertyMediaSectionP
                                     className={styles.galleryImage}
                                     width={640}
                                     height={360}
+                                    sizes="80vw"
                                 />
 
                                 {/* PLAY BUTTON */}
@@ -239,6 +241,7 @@ export default function PropertyMediaSection({ property }: PropertyMediaSectionP
                                 className={styles.galleryImage}
                                 width={640}
                                 height={360}
+                                sizes="80vw"
                                 onClick={() => {
                                     setGalleryIndex(displayOrder[1]);
                                     setShowGalleryModal(true);
@@ -258,6 +261,7 @@ export default function PropertyMediaSection({ property }: PropertyMediaSectionP
                                 className={styles.galleryImage}
                                 width={640}
                                 height={360}
+                                sizes="80vw"
                                 onClick={() => {
                                     setGalleryIndex(displayOrder[i + 2]);
                                     setShowGalleryModal(true);
@@ -282,6 +286,7 @@ export default function PropertyMediaSection({ property }: PropertyMediaSectionP
                             className={styles.mediaImage}
                             width={640}
                             height={360}
+                            sizes="80vw"
                         />
                         <div className={styles.viewAllOverlay}>
                             <Images className={styles.viewAllIcon} />

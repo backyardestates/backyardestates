@@ -1,5 +1,5 @@
 import { sanityFetch } from '@/sanity/live'
-import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
+import { OPEN_HOUSE_QUERY } from "@/sanity/queries";
 import EventDetails from "@/components/EventDetails";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -15,7 +15,7 @@ import ADUSeminarHosts from '@/components/ADUSeminarHosts';
 
 export default async function ADUOpenHouse() {
     const openHouse = await sanityFetch({
-        query: OPEN_HOUSES_QUERY,
+        query: OPEN_HOUSE_QUERY,
         params: { slug: "phillips" },
     });
 
@@ -24,12 +24,17 @@ export default async function ADUOpenHouse() {
     }
 
     const dates = [{
-        date: "2025-10-08",
+        day: "2025-10-08",
         startTime: "18:00:00",
         endTime: "19:30:00"
     }]
 
-    const location = "2335 W Foothill Blvd #18, Upland CA 91786"
+    const address = {
+        street: "2335 W Foothill Blvd #18",
+        city: "Upland",
+        state: "CA",
+        zip: "91786"
+    }
 
     return (
         <div className={styles.container}>
@@ -62,7 +67,7 @@ export default async function ADUOpenHouse() {
                             </Button>
                         </div>
 
-                        <EventDetails dates={dates} location={location} eventType='adu-seminar' />
+                        <EventDetails dates={dates} address={address} eventType='adu-seminar' />
 
                     </div>
 

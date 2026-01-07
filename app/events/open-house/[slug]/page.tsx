@@ -1,5 +1,5 @@
 import { sanityFetch } from '@/sanity/live'
-import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
+import { OPEN_HOUSE_QUERY } from "@/sanity/queries";
 import EventDetails from "@/components/EventDetails";
 import OpenHouseFeaturesSection from "@/components/OpenHouseFeatures";
 import ConstructionTimeline from "@/components/ConstructionTimeline";
@@ -7,14 +7,20 @@ import RsvpSection from "@/components/RsvpSection";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Button from "@/components/Button";
-import Image from "next/image";
 import styles from "./page.module.css";
-import { Bath, Home } from "lucide-react";
+import { Home } from "lucide-react";
 import { notFound } from 'next/navigation';
 import FloorPlanToggle from '@/components/OpenHouseFloorplans';
 import IncludedItems from '@/components/OpenHouseInclusions';
 import { seedIncludedItems } from '@/sanity/seed';
-
+import PropertyTimeline from '@/components/PropertyTimeline';
+import ScrollingBanner from '@/components/ScrollingBanner';
+import calculateWeeks from '@/utils/calculateWeeks';
+import GalleryModal from '@/components/GalleryModal';
+import { OpenHouseGallery } from '@/components/OpenHouseGallery';
+import SelectionsGallery from '@/components/SelectionsGallery';
+import SoftCTA from '@/components/SoftCTA';
+import { groupSelections } from '@/lib/groupSelections';
 
 export default async function ADUOpenHouse({
     params,
@@ -22,7 +28,7 @@ export default async function ADUOpenHouse({
     params: Promise<{ slug: string }>
 }) {
     const openHouse = await sanityFetch({
-        query: OPEN_HOUSES_QUERY,
+        query: OPEN_HOUSE_QUERY,
         params: await params,
     });
 
@@ -32,9 +38,30 @@ export default async function ADUOpenHouse({
         notFound()
     }
 
-    const sqft = openHouse.data.propertyDetails.sqft === 750 && openHouse.data.propertyDetails.baths === 2 ? "750+" : openHouse.data.propertyDetails.sqft
+    const sqft = openHouse.data.sqft === 750 && openHouse.data.baths === 2 ? "750+" : openHouse.data.sqft
 
-    const buildDuration = openHouse.data.timeline?.length ? `Built in ${openHouse.data.timeline.length} Weeks` : "TBD";
+    const buildDuration = openHouse.data.constructionTimeline?.length ? `Built in ${openHouse.data.constructionTimeline.length} Weeks` : "TBD";
+
+    const propertyDetails = {
+        estate: openHouse.data.floorplan.name,
+        beds: openHouse.data.bed,
+        baths: openHouse.data.bath,
+        aduType: openHouse.data.aduType
+    };
+
+    const planningWeeks = calculateWeeks(openHouse.data.planningTimeline.start, openHouse.data.planningTimeline.end);
+    const permittingWeeks = calculateWeeks(openHouse.data.permittingTimeline.start, openHouse.data.permittingTimeline.end);
+    const constructionWeeks = openHouse.data.constructionTimeline.length;
+    const galleryItems = openHouse.data.photos.map((item) => ({
+        type: "image" as const,
+        url: item.url,
+        alt: item.alt,
+    }));
+
+    let groupedSelections;
+    if (openHouse.data.selections) {
+        groupedSelections = groupSelections(openHouse.data.selections);
+    }
     return (
         <div className={styles.container}>
             <Nav />
@@ -65,34 +92,41 @@ export default async function ADUOpenHouse({
                             </Button>
                         </div>
 
-                        <EventDetails dates={openHouse.data.dates} location={openHouse.data.location} eventType='open-house' />
+                        <EventDetails dates={openHouse.data.openHouseDates} address={openHouse.data.address} eventType='open-house' />
 
                     </div>
 
                     {/* Right Side */}
-                    <div className={styles.featureImageContainer}>
-                        <Image
-                            src={openHouse.data.projectMedia.professionalPhotos[0].url}
-                            alt={openHouse.data.title}
-                            width={500}
-                            height={600}
-                            className={styles.featureImage}
-                            quality={100}
-                        />
-                    </div>
+                    <OpenHouseGallery images={galleryItems} flyer={openHouse.data} />
                 </div>
             </div>
 
-            <OpenHouseFeaturesSection propertyDetails={openHouse.data.propertyDetails} timeline={buildDuration} />
+            <OpenHouseFeaturesSection propertyDetails={propertyDetails} />
             <div className={styles.floatingButton}>
                 <Button theme="blue" href={`/events/open-house/${slug}/rsvp`} isPrimary>
                     RSVP Now
                 </Button>
             </div>
-            {/* <FloorPlanToggle floorplan={openHouse.data.projectMedia.floorplans[0].url} customFloorplanPicture={openHouse.data.projectMedia.floorplans[1].url} sqft={sqft} /> */}
-            {/* <ConstructionTimeline timeline={openHouse.data.timeline} /> */}
-            <IncludedItems sections={openHouse.data.includedItems} />
+            <ScrollingBanner />
+            <PropertyTimeline planning={planningWeeks} permitting={permittingWeeks} construction={constructionWeeks} />
+            {openHouse.data.constructionTimeline && openHouse.data.constructionTimeline[0].weekImage && (
+                <ConstructionTimeline timeline={openHouse.data.constructionTimeline} />
+            )}
 
+            <FloorPlanToggle floorplan={openHouse.data.floorplan} customFloorplanPicture={openHouse.data.customFloorplanPicture?.url} sqft={sqft} bed={openHouse.data.bed} bath={openHouse.data.bath} />
+            {/* <IncludedItems sections={openHouse.data.includedItems} /> */}
+
+            {openHouse.data.selections && (
+                <div className={styles.selectionsSection}>
+                    <h2 className={styles.selectionsTitle}>Designed With Purpose, Finished With Care</h2>
+                    <p className={styles.selectionsText}>Every finish and fixture is selected with intention</p>
+                    <SelectionsGallery data={groupedSelections} variant='property' />
+                    <SoftCTA
+                        linkText="See what&rsquo;s included"
+                        href="/selections"
+                    />
+                </div>
+            )}
             <RsvpSection slug={slug} />
             <Footer />
         </div>

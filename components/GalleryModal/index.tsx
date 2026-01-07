@@ -71,7 +71,7 @@ export default function GalleryModal({
                             alt={items[index].alt || ""}
                             fill
                             className={styles.modalImage}
-                            sizes="80vw"
+                            sizes="100vw"
                         />
                     ) : (
                         <WistiaPlayer

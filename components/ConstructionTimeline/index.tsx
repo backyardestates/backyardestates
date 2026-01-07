@@ -142,6 +142,7 @@ export default function ConstructionTimeline({ timeline }: Props) {
                                             alt={item.milestone}
                                             width={600}
                                             height={450}
+                                            sizes="80vw"
                                             className={styles.image}
                                             onClick={() => {
                                                 const index = timeline.findIndex(i => i.week === item.week);

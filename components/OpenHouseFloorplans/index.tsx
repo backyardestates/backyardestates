@@ -133,7 +133,6 @@ export default function OpenHouseFloorplans({
                 </div>
             </div>
             <SoftCTA
-                text="Confidence begins with knowing what&rsquo;s possible."
                 linkText="See what your property qualifies for"
                 href="/talk-to-an-adu-specialist"
             />

@@ -132,7 +132,6 @@ export default async function Property({ params }: { params: Promise<{ slug: str
             <p className={styles.selectionsText}>Every finish and fixture is selected with intention</p>
             <SelectionsGallery data={groupedSelections} variant='property' />
             <SoftCTA
-              text="Good design reveals itself in the details."
               linkText="See what&rsquo;s included"
               href="/selections"
             />

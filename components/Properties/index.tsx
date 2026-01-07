@@ -15,7 +15,6 @@ export default async function Properties() {
         {},
         options
     )
-    console.log({ properties })
     return (
         <div className={style.base}>
             <div className={style.properties}>

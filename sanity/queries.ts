@@ -36,70 +36,216 @@ categories->{slug},
   tags
 }`
 
-export const OPEN_HOUSES_QUERY = `
-*[_type == "openHouse" && slug.current == $slug][0]{
+export const OPEN_HOUSE_QUERY = `
+*[
+  _type == "property" &&
+  defined(openHouseDates) &&
+  count(openHouseDates) > 0
+  && slug.current == $slug
+][0] {
   _id,
-  title,
+  name,
   "slug": slug.current,
-  dates,
-  location,
-  propertyDetails {
+  completed,
+  featured,
+
+  // ---------------------
+  // ADDRESS
+  // ---------------------
+  address {
+    street,
+    unit,
+    city,
+    state,
+    zip
+  },
+
+  // ---------------------
+  // ADU TYPE
+  // ---------------------
+  aduType,
+
+  // ---------------------
+  // FLOORPLAN
+  // ---------------------
+  floorplan->{
+    name,
+    bed,
+    bath,
     sqft,
-    beds,
-    baths
-  },
-  timeline[]{
-    week,
-    milestoneTitle,
-    description,
-    "imageUrl": image.url,
-    "imagePublicId": image.public_id,
-    socialLink
-  },
-  projectMedia {
-    professionalPhotos[] {
-      "url": url,
-      "publicId": public_id
-    },
-    flyers[] {
-      "url": url,
-      "publicId": public_id
-    },
-    floorplans[] {
-      "url": url,
-      "publicId": public_id
+    length,
+    width,
+    price,
+    "slug": slug.current,
+    drawing,
+    download,
+    images,
+    relatedProperties[]->{
+      _id,
+      name,
+      "slug": slug.current,
+      bed,
+      bath,
+      sqft,
+      floorplan->{
+        name,
+        bed,
+        bath,
+        sqft,
+        "slug": slug.current
+      }
     }
   },
-  includedItems[] {
-    title,
-    description,
-    items
+
+  customFloorplan,
+  customFloorplanPicture,
+  sqft,
+  bed,
+  bath,
+
+  // ---------------------
+  // OPEN HOUSE
+  // ---------------------
+  openHouse,
+  openHouseDates[]{
+    day,
+    startTime,
+    endTime
   },
-  createdAt
+  openHouseFlyers,
+
+  // ---------------------
+  // MEDIA
+  // ---------------------
+  walkthroughVideo,
+  photos,
+  hasTestimonial,
+  testimonial->{
+    _id,
+    names,
+    quote,
+    wistiaId,
+    slug,
+    portrait,
+    body,
+    images
+ },
+
+  // ---------------------
+  // PLANNING & PERMITTING TIMELINES
+  // ---------------------
+  planningTimeline {
+    start,
+    end
+  },
+
+  permittingTimeline {
+    start,
+    end
+  },
+
+  // ---------------------
+  // CONSTRUCTION TIMELINE
+  // ---------------------
+  constructionTimeline[]{
+    week,
+    milestone,
+    weekImage
+  },
+
+  // ---------------------
+  // EXTRA SITE WORK
+  // ---------------------
+  extraSiteWork,
+
+  // ---------------------
+  // EXTRA FAQ REFERENCES
+  // ---------------------
+  extraFaqs[]->{
+    _id,
+    title,
+    body
+  },
+
+  // =====================================================
+  // INCLUDED SELECTIONS (NEW SYSTEM)
+  // =====================================================
+  "selections": includedSelections[]{
+    types[]{
+      selections[]->{
+        _id,
+        title,
+        description,
+        brand,
+        isStandard,
+        upgradePrice,
+        finishColor,
+        finishType,
+        rooms,
+        images[]{ secure_url },
+
+        "category": {
+          "title": ^.^.category->title,
+          "slug": { "current": ^.^.category->slug.current }
+        },
+
+        "type": {
+          "title": ^.type->title,
+          "slug": { "current": ^.type->slug.current }
+        }
+      }
+    }
+  }[].types[].selections[],
+
+  // ---------------------
+  // PUBLISH DATE
+  // ---------------------
+  publishedAt
 }
 `
 
 // queries.ts
 export const ALL_OPEN_HOUSES_QUERY = `
-*[_type == "openHouse"] | order(dates[0] desc){
+*[
+  _type == "property" &&
+  defined(openHouseDates) &&
+  count(openHouseDates) > 0
+]
+| order(openHouseDates[0] desc) {
   _id,
-  title,
+  name,
   "slug": slug.current,
-  dates,
-  location,
-  propertyDetails {
-    sqft,
-    beds,
-    baths
+  openHouse,
+  openHouseDates[]{
+    day,
+    startTime,
+    endTime
   },
-  projectMedia {
-    professionalPhotos[] {
-      "url": url,
-      "publicId": public_id
-    },
+  openHouseFlyers,
+  address {
+    street,
+    unit,
+    city,
+    state,
+    zip
+  },
+  sqft,
+  bed,
+  bath,
+  floorplan->{
+    name,
+    bed,
+    bath,
+    sqft,
+    "slug": slug.current
+  },
+  photos[] {
+    "url": url,
+    "publicId": public_id
   }
 }
 `;
+
 
 export const SELECTIONS_QUERY = `
 *[_type == "selection"]{

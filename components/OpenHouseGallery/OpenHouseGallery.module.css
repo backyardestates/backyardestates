@@ -1,0 +1,22 @@
+.featureImageContainer {
+    aspect-ratio: 4 / 5;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 1rem;
+    margin-block: 2rem;
+}
+
+.featureImage {
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+}
