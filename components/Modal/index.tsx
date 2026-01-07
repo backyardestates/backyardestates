@@ -20,20 +20,26 @@ type EventEntry = {
     startTime?: string | null
     endTime?: string | null
     _id?: string
-    dates: {
-        date: string
+    openHouseDates: {
+        day: string
         startTime?: string
         endTime?: string
         start?: string
         finish?: string
         _key?: string
     }[]
-    location?: string
-    projectMedia?: {
-        professionalPhotos?: { publicId: string; url: string }[]
+    address: {
+        street: string
+        city: string
+        state: string
+        zip: string
     }
+    photos: {
+        publicId: string
+        url: string
+    }[]
     slug?: string
-    title?: string
+    name?: string
 }
 
 export default function Modal({ events = [] }: { events?: any[] }) {
@@ -46,22 +52,26 @@ export default function Modal({ events = [] }: { events?: any[] }) {
 
         const aduSeminar = {
             _id: 'adu-seminar-2025-10-08',
-            dates: [{ date: '2025-10-08' }],
-            location: '2335 W Foothill Blvd #18, Upland CA 91786',
-            projectMedia: {
-                professionalPhotos: [
-                    {
-                        publicId: 'Seminar/Foothill/adu-seminar',
-                        url: '/images/ADUSeminar.png',
-                    },
-                ],
+            openHouseDates: [{ day: '2025-10-08' }],
+            address: {
+                street: '2335 W Foothill Blvd #18',
+                city: 'Upland',
+                state: 'CA',
+                zip: '91786',
             },
+            photos: [
+                {
+                    publicId: 'Seminar/Foothill/adu-seminar',
+                    url: '/images/ADUSeminar.png',
+                },
+            ],
             slug: 'adu-seminar',
             title: 'ADU Seminar',
         }
 
-        const includeSeminar = aduSeminar.dates.some((d) => {
-            const [year, month, day] = d.date.split('-').map(Number)
+
+        const includeSeminar = aduSeminar.openHouseDates.some((d) => {
+            const [year, month, day] = d.day.split('-').map(Number)
             const eventDate = new Date(year, month - 1, day)
             return isAfter(eventDate, today)
         })
@@ -69,8 +79,8 @@ export default function Modal({ events = [] }: { events?: any[] }) {
         const allEvents = [...events, ...(includeSeminar ? [aduSeminar] : [])]
 
         const eventEntries = allEvents.flatMap((event) =>
-            event.dates.map((d) => {
-                const [year, month, day] = d.date.split('-').map(Number)
+            event.openHouseDates.map((d) => {
+                const [year, month, day] = d.day.split('-').map(Number)
                 const localDate = new Date(year, month - 1, day) // ✅ use local date (no timezone shift)
 
                 return {
@@ -143,7 +153,7 @@ export default function Modal({ events = [] }: { events?: any[] }) {
         : `/events/open-house/${soonestEvent.slug}`
 
     const photo =
-        soonestEvent.projectMedia?.professionalPhotos?.[0]?.url ||
+        soonestEvent.photos?.[0]?.url ||
         '/images/fpo/fpo.png'
 
     return (
@@ -158,20 +168,20 @@ export default function Modal({ events = [] }: { events?: any[] }) {
                         layout="responsive"
                         width={16}
                         height={9}
-                        alt={soonestEvent.title || ''}
+                        alt={soonestEvent.name || ''}
                         className={style.image}
                     />
                 </div>
 
                 <div className={style.content}>
                     <p className={style.location}>{titleText}</p>
-                    <p className={style.smallCaps}>{soonestEvent.location}</p>
+                    <p className={style.smallCaps}>{`${soonestEvent.address?.city}, ${soonestEvent.address?.state}`}</p>
                     <ul className={style.dates}>
-                        {soonestEvent.dates.map((d) => (
-                            <li key={d._key || d.date} className={style.dateItem}>
+                        {soonestEvent.openHouseDates.map((d) => (
+                            <li key={d._key || d.day} className={style.dateItem}>
                                 <CalendarIcon />
                                 <span className={style.dateText}>
-                                    {formatDate(d.date)}
+                                    {formatDate(d.day)}
                                 </span>
                             </li>
                         ))}
