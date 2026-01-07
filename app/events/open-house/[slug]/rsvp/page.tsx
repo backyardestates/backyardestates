@@ -47,8 +47,6 @@ export default async function Home({
     // const fields = await getDealFields(7)
     const address = openHouse.data.address
 
-    console.log(openHouse.data)
-
     return (
         <main className={styles.main}>
             <TopBar></TopBar>

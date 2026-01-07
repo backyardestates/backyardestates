@@ -41,7 +41,6 @@ export default async function ADUOpenHouse({
     const sqft = openHouse.data.sqft === 750 && openHouse.data.baths === 2 ? "750+" : openHouse.data.sqft
 
     const buildDuration = openHouse.data.constructionTimeline?.length ? `Built in ${openHouse.data.constructionTimeline.length} Weeks` : "TBD";
-    console.log(openHouse.data)
 
     const propertyDetails = {
         estate: openHouse.data.floorplan.name,

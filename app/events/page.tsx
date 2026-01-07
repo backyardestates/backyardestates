@@ -19,8 +19,6 @@ function splitEventsByDate(events: any[]) {
     const past: any[] = [];
     events.forEach((event) => {
         // Use the first date object's `date` field
-        console.log(event.openHouseDates)
-
         const eventDateStr = event.openHouseDates?.[0].day;
         if (!eventDateStr) return;
 

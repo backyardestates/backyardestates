@@ -20,7 +20,6 @@ export default function EventDetails({ dates, address, eventType }: EventDetails
         date.setHours(hours, minutes);
         return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
     };
-    console.log(dates)
 
     return (
         <div className={styles.detailsContainer}>
