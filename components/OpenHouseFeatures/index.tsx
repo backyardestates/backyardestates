@@ -1,21 +1,20 @@
 import styles from "./OpenHouseFeatures.module.css";
-import { Home, Users, Calendar } from "lucide-react";
+import { Home, Users, Calendar, House, HousePlus, HousePlusIcon, LucideHousePlus, Construction, ConstructionIcon, DoorOpen, SendToBack, Grid2X2Check } from "lucide-react";
 
 interface PropertyDetails {
-    sqft: number;
+    estate: string;
     beds: number;
     baths: number;
-
+    aduType: string;
 }
 
 
 interface OpenHouseFeaturesSectionProps {
     propertyDetails: PropertyDetails;
-    timeline: string;
 }
 
-export default function OpenHouseFeaturesSection({ propertyDetails, timeline }: OpenHouseFeaturesSectionProps) {
-    const { sqft, beds, baths } = propertyDetails;
+export default function OpenHouseFeaturesSection({ propertyDetails }: OpenHouseFeaturesSectionProps) {
+    const { estate, beds, baths, aduType } = propertyDetails;
 
     // Calculate build duration from timeline if available
 
@@ -28,7 +27,7 @@ export default function OpenHouseFeaturesSection({ propertyDetails, timeline }: 
                         <div className={styles.iconWrapper}>
                             <Home color="#b99764" className={styles.icon} />
                         </div>
-                        <h3 className={styles.title}>Estate {sqft}{sqft === 750 && baths === 2 ? "+" : ""}</h3>
+                        <h3 className={styles.title}>{estate}</h3>
                         <p className={styles.text}>Thoughtfully designed space</p>
                     </div>
 
@@ -44,10 +43,19 @@ export default function OpenHouseFeaturesSection({ propertyDetails, timeline }: 
                     {/* Build Duration */}
                     <div className={styles.feature}>
                         <div className={styles.iconWrapper}>
-                            <Calendar color="#b99764" className={styles.icon} />
+                            {aduType === "detached" ? (
+                                <SendToBack color="#b99764" className={styles.icon} />
+                            ) : (
+                                <Grid2X2Check color="#b99764" className={styles.icon} />
+
+                            )}
                         </div>
-                        <h3 className={styles.title}>{timeline}</h3>
-                        <p className={styles.text}>High quality construction</p>
+                        <h3 className={styles.title}>{aduType}</h3>
+                        <p className={styles.text}>
+                            {aduType === "detached"
+                                ? "Full privacy with flexible living"
+                                : "A seamless extension of your home"}
+                        </p>
                     </div>
                 </div>
             </div>

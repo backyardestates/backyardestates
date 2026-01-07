@@ -68,6 +68,7 @@ export default function TestimonialDisplay({ testimonial }: TestimonialProps) {
                         alt={names}
                         width={200}
                         height={200}
+                        sizes="80vw"
                         className={styles.portrait}
                     />
                 </div>

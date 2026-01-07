@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useRef } from "react"
+import React from "react"
 
 import { useState } from "react"
 import styles from "./RSVPForm.module.css"
@@ -9,7 +9,6 @@ import formatDate from "@/utils/dates"
 import { isValidUSPhone } from "@/utils/isValidUSPhone"
 import { Select } from "../Select"
 import { useRouter } from "next/navigation"
-import { generateRsvpToken } from "@/utils/generateRSVPToken"
 function cn(...classes: (string | undefined | null | boolean)[]): string {
     return classes.filter(Boolean).join(" ")
 }
@@ -76,11 +75,16 @@ interface PageProps {
         slug: string
     };
     dates: {
-        date: string;
+        day: string;
         startTime: string; // "HH:MM:SS"
         endTime: string;   // "HH:MM:SS"
     }[];
-    address: string;
+    address: {
+        street: string;
+        city: string;
+        state: string;
+        zip: string;
+    };
 }
 
 
@@ -97,12 +101,10 @@ export function RSVPForm({ dates, params, address }: PageProps) {
         email: "",
         phone: "",
         hearAbout: "",
-        eventAddress: address,
+        eventAddress: `${address.street}, ${address.city}, ${address.state} ${address.zip}`,
     })
 
     const router = useRouter()
-
-    console.log(dates)
 
     // Utility: generate 30-minute intervals between start and end times
     // Last slot will be 30 minutes before the end time
@@ -133,7 +135,7 @@ export function RSVPForm({ dates, params, address }: PageProps) {
     // Build dynamic event configs from dates
     const eventConfigs = {
         fridaySaturday: dates.map((d) => ({
-            date: d.date,
+            day: d.day,
             times: generateTimeRange(
                 normalizeTime(d.startTime),
                 normalizeTime(d.endTime)
@@ -142,7 +144,7 @@ export function RSVPForm({ dates, params, address }: PageProps) {
 
         saturdayOnly: [
             {
-                date: dates[0].date,
+                day: dates[0].day,
                 times: generateTimeRange(
                     normalizeTime(dates[0].startTime),
                     normalizeTime(dates[0].endTime)
@@ -329,7 +331,7 @@ export function RSVPForm({ dates, params, address }: PageProps) {
             'd51817980c84eec68d862509ea6cc9fd58d2c2c9': hearAboutNumber,
             '020e272ca1b410845d818c04c69e56d37827ca4e': token,
             '5b828e59d1a7df6f5ffefac982cac34de1440b49': slug,
-            'b345a5cf22c309c28c8f501474324374f6372a77': address,
+            'b345a5cf22c309c28c8f501474324374f6372a77': `${address.street}, ${address.city}, ${address.state} ${address.zip}`,
             pipeline_id: 7,
             stage_id: lead.stage_id
         }
@@ -417,7 +419,7 @@ export function RSVPForm({ dates, params, address }: PageProps) {
                     <CalendarDays />
                     Reserve Your Spot
                 </CardTitle>
-                <p className={styles.address}>{address}</p>
+                <p className={styles.address}>{`${address.street}, ${address.city}, ${address.state} ${address.zip}`}</p>
             </CardHeader>
 
             <CardContent>
@@ -434,13 +436,13 @@ export function RSVPForm({ dates, params, address }: PageProps) {
                         <div className={styles.gridGap3} role="group" aria-label="Event dates">
                             {eventDates.map((eventDate) => (
                                 <button
-                                    key={eventDate.date}
+                                    key={eventDate.day}
                                     type="button"
-                                    onClick={() => handleDateToggle(eventDate.date)}
-                                    className={`${styles.dateButton} ${selectedDate === eventDate.date ? styles.dateButtonSelected : ""}`}
-                                    aria-pressed={selectedDate === eventDate.date}
+                                    onClick={() => handleDateToggle(eventDate.day)}
+                                    className={`${styles.dateButton} ${selectedDate === eventDate.day ? styles.dateButtonSelected : ""}`}
+                                    aria-pressed={selectedDate === eventDate.day}
                                 >
-                                    <div>{formatDate(eventDate.date)}</div>
+                                    <div>{formatDate(eventDate.day)}</div>
                                 </button>
                             ))}
                         </div>
@@ -461,7 +463,7 @@ export function RSVPForm({ dates, params, address }: PageProps) {
                         {selectedDate && (
                             <div className={`${styles.timeSlotsWrapper} ${styles.timeSlotsVisible}`} role="group" aria-label="Time slots">
                                 {(() => {
-                                    const eventDate = eventDates.find((d) => d.date === selectedDate)
+                                    const eventDate = eventDates.find((d) => d.day === selectedDate)
                                     if (!eventDate) return null
 
                                     return (

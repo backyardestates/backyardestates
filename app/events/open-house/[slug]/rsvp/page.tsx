@@ -2,7 +2,7 @@ import { RSVPForm } from "@/components/RsvpForm"
 import styles from "./page.module.css"
 import { TopBar } from "@/components/goBackButton"
 import { sanityFetch } from "@/sanity/live";
-import { OPEN_HOUSES_QUERY } from "@/sanity/queries";
+import { OPEN_HOUSE_QUERY } from "@/sanity/queries";
 import router from "next/navigation";
 import Footer from "@/components/Footer";
 import LegalPrint from "@/components/LegalPrint";
@@ -14,7 +14,7 @@ export default async function Home({
     params: Promise<{ slug: string }>
 }) {
     const openHouse = await sanityFetch({
-        query: OPEN_HOUSES_QUERY,
+        query: OPEN_HOUSE_QUERY,
         params: await params,
     });
 
@@ -45,7 +45,9 @@ export default async function Home({
     // }
 
     // const fields = await getDealFields(7)
-    const address = openHouse.data.location
+    const address = openHouse.data.address
+
+    console.log(openHouse.data)
 
     return (
         <main className={styles.main}>
@@ -64,7 +66,7 @@ export default async function Home({
                         </Link>
                     </div>
 
-                    <RSVPForm dates={openHouse.data.dates} params={slug} address={address} />
+                    <RSVPForm dates={openHouse.data.openHouseDates} params={slug} address={address} />
                     <LegalPrint />
                 </div>
             </div>

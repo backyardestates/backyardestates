@@ -2,12 +2,17 @@ import styles from "./EventDetails.module.css";
 import { Calendar, MapPin } from "lucide-react";
 
 interface EventDetailsProps {
-    dates: { date: string; startTime?: string; endTime?: string }[];
-    location: string;
+    dates: { day: string; startTime?: string; endTime?: string }[];
+    address: {
+        street: string;
+        city: string;
+        state: string;
+        zip: string;
+    };
     eventType: "open-house" | "adu-seminar";
 }
 
-export default function EventDetails({ dates, location, eventType }: EventDetailsProps) {
+export default function EventDetails({ dates, address, eventType }: EventDetailsProps) {
 
     const formatTime = (timeString: string) => {
         const [hours, minutes] = timeString.split(":").map(Number);
@@ -15,23 +20,23 @@ export default function EventDetails({ dates, location, eventType }: EventDetail
         date.setHours(hours, minutes);
         return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
     };
+    console.log(dates)
 
     return (
         <div className={styles.detailsContainer}>
             {/* Dates */}
             <div className={styles.details}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-                    {dates.map(({ date, startTime, endTime }) => {
-                        const [year, month, day] = date.split("-").map(Number);
-                        const d = new Date(year, month - 1, day); // month is 0-indexed
+                    {dates.map(({ day, startTime, endTime }) => {
+                        const [year, month, dayNum] = day.split("-").map(Number);
+                        const d = new Date(year, month - 1, dayNum); // month is 0-indexed
                         const weekday = d.toLocaleDateString("en-US", { weekday: "short" });
                         const monthName = d.toLocaleDateString("en-US", { month: "long" });
-                        const dayNum = d.getDate();
                         const yearNum = d.getFullYear();
 
                         if (eventType === "open-house" && startTime && endTime) {
                             return (
-                                <div className={styles.details} key={date}>
+                                <div className={styles.details} key={day}>
                                     <Calendar className={styles.icon} />
                                     <span >
                                         {`${weekday}, ${monthName} ${dayNum}, ${yearNum} from ${formatTime(startTime)} to ${formatTime(endTime)}`}
@@ -43,7 +48,7 @@ export default function EventDetails({ dates, location, eventType }: EventDetail
 
                         if (eventType === "adu-seminar" && startTime) {
                             return (
-                                <div className={styles.details} key={date}>
+                                <div className={styles.details} key={day}>
                                     <Calendar className={styles.icon} />
                                     <span >
                                         {`${weekday}, ${monthName} ${dayNum}, ${yearNum} at ${formatTime(startTime)}`}
@@ -55,7 +60,7 @@ export default function EventDetails({ dates, location, eventType }: EventDetail
 
                         // fallback
                         return (
-                            <span key={date}>
+                            <span key={day}>
                                 {`${weekday}, ${monthName} ${dayNum}, ${yearNum}`}
                             </span>
                         );
@@ -66,7 +71,7 @@ export default function EventDetails({ dates, location, eventType }: EventDetail
             {/* Location */}
             <div className={styles.details}>
                 <MapPin className={styles.icon} />
-                <span>{location}</span>
+                <span>{address.street}, {address.city}, {address.state} {address.zip}</span>
             </div>
         </div>
     );
