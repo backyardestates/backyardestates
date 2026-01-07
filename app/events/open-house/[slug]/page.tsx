@@ -21,6 +21,7 @@ import { OpenHouseGallery } from '@/components/OpenHouseGallery';
 import SelectionsGallery from '@/components/SelectionsGallery';
 import SoftCTA from '@/components/SoftCTA';
 import { groupSelections } from '@/lib/groupSelections';
+import AttentionCTA from '@/components/AttentionCTA';
 
 export default async function ADUOpenHouse({
     params,
@@ -115,7 +116,15 @@ export default async function ADUOpenHouse({
 
             <FloorPlanToggle floorplan={openHouse.data.floorplan} customFloorplanPicture={openHouse.data.customFloorplanPicture?.url} sqft={sqft} bed={openHouse.data.bed} bath={openHouse.data.bath} />
             {/* <IncludedItems sections={openHouse.data.includedItems} /> */}
-
+            <AttentionCTA
+                eyebrow="Loved this ADU?"
+                title="Let&rsquo;s explore what your property can support"
+                description="Our experts review your lot, zoning, and goals to create a clear plan — before you spend a dollar on design."
+                primaryLabel="Start Your Property Review"
+                primaryHref="/talk-to-an-adu-specialist"
+                secondaryText="See how the process works"
+                secondaryHref="/about-us/our-process"
+            />
             {openHouse.data.selections && (
                 <div className={styles.selectionsSection}>
                     <h2 className={styles.selectionsTitle}>Designed With Purpose, Finished With Care</h2>
