@@ -33,7 +33,7 @@
 
 .eventsGrid {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1500px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -47,20 +47,19 @@
     /* grows, shrinks, with a minimum width */
     width: 400px;
     background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     border-radius: 1.5rem;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     text-align: center;
-    padding: 1.5rem;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     max-height: 1000px;
     flex: 1 1 300px;
     justify-content: space-between;
     text-decoration: none;
+    min-width: 300px;
 }
 
 .eventCard:hover {
@@ -72,49 +71,87 @@
 .featureImage {
     width: 100%;
     height: auto;
-    border-radius: 1rem;
     margin-bottom: 1rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     object-fit: cover;
-    aspect-ratio: 4/5;
+    aspect-ratio: 5/3;
 }
 
 .textContent {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    align-items: center;
+    padding: 0 0.5rem;
 }
 
-.weekTitle {
+.eventTitle {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-brand-beige);
     font-family: var(--font-serif);
+    grid-column: span 2;
 }
 
-.weekDescription {
+.location {
     font-size: 0.8rem;
     color: var(--color-neutral-500);
     font-family: var(--font-sans);
     line-height: 1.5;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 0.2rem;
+    text-wrap: nowrap;
+}
+
+.dates {
+    font-size: 0.8rem;
+    color: var(--color-neutral-500);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    text-wrap: nowrap;
+}
+
+.details {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0 0 1rem;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
+    margin: 0 1.5rem 2rem 1.5rem;
 }
 
 .button {
-    margin-top: 1rem;
-    padding: 0.75rem 1.25rem;
-    border-radius: 9999px;
-    font-weight: 600;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    height: 3rem;
+    margin: 0;
+    padding: 0rem 1.25rem;
+    border-radius: 3rem;
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    border: none;
+    transition:
+        background-color 300ms ease,
+        border-color 300ms ease,
+        transform 300ms ease;
     background: var(--color-blue);
     color: white;
-    text-decoration: none;
-    transition: transform 0.2s ease, background 0.3s ease;
-    font-family: var(--font-sans);
+    cursor: pointer;
 }
 
 .button:hover {
@@ -127,7 +164,6 @@
 
     .eventCard {
         width: 100%;
-        padding: 2rem;
         max-width: 400px;
     }
 }
@@ -144,6 +180,11 @@
     }
 
     .eventCard {
-        padding: 2.25rem;
+        min-width: 400px;
     }
+
+    .textContent {
+        padding: 0 1.5rem;
+    }
+
 }

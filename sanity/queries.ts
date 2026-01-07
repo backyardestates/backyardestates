@@ -81,25 +81,41 @@ export const OPEN_HOUSES_QUERY = `
 
 // queries.ts
 export const ALL_OPEN_HOUSES_QUERY = `
-*[_type == "openHouse"] | order(dates[0] desc){
+*[
+  _type == "property" &&
+  defined(openHouseDates) &&
+  count(openHouseDates) > 0
+]
+| order(openHouseDates[0] desc) {
   _id,
-  title,
+  name,
   "slug": slug.current,
-  dates,
-  location,
+  openHouse,
+  openHouseDates[]{
+    day,
+    startTime,
+    endTime
+  },
+  openHouseFlyers,
+  address {
+    street,
+    unit,
+    city,
+    state,
+    zip
+  },
   propertyDetails {
     sqft,
     beds,
     baths
   },
-  projectMedia {
-    professionalPhotos[] {
-      "url": url,
-      "publicId": public_id
-    },
+  photos[] {
+    "url": url,
+    "publicId": public_id
   }
 }
 `;
+
 
 export const SELECTIONS_QUERY = `
 *[_type == "selection"]{
