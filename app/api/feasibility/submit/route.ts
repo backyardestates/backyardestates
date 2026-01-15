@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { writeClient } from "@/sanity/writeClient";
 import { client } from "@/sanity/client";
 import { generateFeasibilityPdfBytes } from "@/lib/feasibility/generatePdf";
+import { Readable } from "stream";
 
 const FLOORPLAN_BY_ID = `
 *[_type=="floorplan" && _id==$id][0]{
@@ -40,6 +41,17 @@ async function createPipedriveNote(personId: number, content: string) {
     const json = await res.json();
     if (!res.ok) throw new Error(json?.error || "Pipedrive note create failed");
     return json?.data;
+}
+
+async function streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+    const readable = stream instanceof Readable ? stream : Readable.from(stream as any);
+    const chunks: Buffer[] = [];
+
+    for await (const chunk of readable) {
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+
+    return Buffer.concat(chunks);
 }
 
 export async function POST(req: Request) {
@@ -100,13 +112,12 @@ export async function POST(req: Request) {
             rawState: JSON.stringify(payload),
         });
 
-        // Generate PDF bytes
-        const pdfBytes = await generateFeasibilityPdfBytes(data);
+        const pdfStream = await generateFeasibilityPdfBytes(data);
+        const pdfBuffer = await streamToBuffer(pdfStream);
 
-        // Upload PDF to Sanity asset store
         const pdfAsset = await writeClient.assets.upload(
             "file",
-            pdfBytes,
+            pdfBuffer,
             { filename: `ADU-Feasibility-${created._id}.pdf`, contentType: "application/pdf" }
         );
 
