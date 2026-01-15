@@ -486,3 +486,24 @@ export const PROPERTIES_QUERY = `
     }
   }
 `
+
+export const FLOORPLANS_MATCH_QUERY = `
+*[
+  _type == "floorplan" &&
+  isClickable == true &&
+  defined(price) &&
+  defined(sqft) &&
+  bed >= $bedMin && bed <= $bedMax &&
+  bath >= $bathMin && bath <= $bathMax
+] | order(orderID asc) {
+  _id,
+  name,
+  bed,
+  bath,
+  sqft,
+  price,
+  "slug": slug.current,
+  drawing,
+  images
+}
+`;
