@@ -144,7 +144,7 @@ export default function Step7Review() {
                 }}
             >
                 <p style={{ fontWeight: 800, color: "var(--color-brand-dark-blue)", marginBottom: ".5rem" }}>
-                    Property risk snapshot
+                    Potential Site-Specific Work
                 </p>
 
                 {riskFlags?.length ? (
@@ -168,7 +168,7 @@ export default function Step7Review() {
                     </div>
                 ) : (
                     <p style={{ color: "var(--color-neutral-600)" }}>
-                        No risk areas selected yet — that’s okay. The Formal Property Analysis identifies them precisely.
+                        No potential site-specific work identified yet — that’s okay. The Formal Property Analysis identifies them precisely.
                     </p>
                 )}
 

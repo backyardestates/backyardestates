@@ -1,5 +1,5 @@
-import FeasibilityWizard from "./wizard/FeasibilityWizard";
+import FeasibilityDashboard from "./dashboard/FeasibilityDashboard";
 
 export default function Page() {
-    return <FeasibilityWizard />;
+    return <FeasibilityDashboard />;
 }

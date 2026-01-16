@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { client } from "@/sanity/client";
 import { FLOORPLANS_MATCH_QUERY } from "@/sanity/queries";
 import { useFeasibilityStore } from "@/lib/feasibility/store";
+import styles from "./page.module.css";
 
 type Floorplan = {
     _id: string;
@@ -12,6 +13,9 @@ type Floorplan = {
     bath: number;
     sqft: number;
     price: number;
+    drawing: {
+        url: string;
+    };
 };
 
 export default function Step6Floorplan() {
@@ -20,8 +24,14 @@ export default function Step6Floorplan() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let cancelled = false;
+
         (async () => {
-            if (bed == null || bath == null) return;
+            if (bed == null || bath == null) {
+                setLoading(false);
+                return;
+            }
+
             setLoading(true);
 
             const bedMin = Math.max(0, bed - 1);
@@ -29,45 +39,91 @@ export default function Step6Floorplan() {
             const bathMin = Math.max(0, bath - 1);
             const bathMax = bath + 1;
 
-            const data = await client.fetch(FLOORPLANS_MATCH_QUERY, { bedMin, bedMax, bathMin, bathMax });
-            setItems(data || []);
-            setLoading(false);
+            try {
+                const data = await client.fetch(FLOORPLANS_MATCH_QUERY, {
+                    bedMin,
+                    bedMax,
+                    bathMin,
+                    bathMax,
+                });
+
+                data.pop();
+
+                if (!cancelled) setItems(data || []);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
         })();
+
+        return () => {
+            cancelled = true;
+        };
     }, [bed, bath]);
 
-    if (bed == null || bath == null) return <p>Please choose beds/baths first.</p>;
-    if (loading) return <p>Loading floorplans…</p>;
+    if (bed == null || bath == null) {
+        return (
+            <div className={styles.step}>
+                <div className={styles.card}>
+                    <p className={styles.helperText}>
+                        Please choose <b>bedrooms</b> and <b>bathrooms</b> first so we can recommend floorplans that match.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (loading) {
+        return (
+            <div className={styles.step}>
+                <div className={styles.card}>
+                    <p className={styles.helperText}>Loading floorplans…</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div>
-            <p style={{ color: "var(--color-neutral-600)", marginBottom: "1rem" }}>
+        <div className={styles.step}>
+            <p className={styles.helperText}>
                 Based on your preferences, here are floorplans that match (or are very close).
             </p>
 
-            <div style={{ display: "grid", gap: ".75rem" }}>
-                {items.map((fp) => {
-                    const active = selectedFloorplanId === fp._id;
-                    return (
-                        <button
-                            key={fp._id}
-                            className="multistep button"
-                            onClick={() => set("selectedFloorplanId", fp._id)}
-                            style={{
-                                height: "auto",
-                                textAlign: "left",
-                                padding: "1rem 1.25rem",
-                                background: active ? "var(--color-brand-beige)" : "var(--color-neutral-0)",
-                                color: active ? "white" : "var(--color-brand-dark-blue)",
-                                border: active ? "none" : "2px solid var(--color-neutral-100)",
-                            }}
-                        >
-                            <div style={{ fontWeight: 800 }}>{fp.name}</div>
-                            <div style={{ opacity: 0.9 }}>
-                                {fp.bed} bed • {fp.bath} bath • {fp.sqft} sqft • ${fp.price.toLocaleString()}
-                            </div>
-                        </button>
-                    );
-                })}
+            {/* Using the existing floorplanGrid spacing for a nice vertical list */}
+            <div className={styles.floorplanGrid}>
+                {items.length === 0 ? (
+                    <div className={styles.card}>
+                        <p className={styles.helperText}>
+                            No close matches found for <b>{bed} bed</b> / <b>{bath} bath</b>.
+                            Try adjusting by 1 bedroom or bathroom.
+                        </p>
+                    </div>
+                ) : (
+                    items.map((fp) => {
+                        const active = selectedFloorplanId === fp._id;
+                        return (
+                            <button
+                                key={fp._id}
+                                type="button"
+                                onClick={() => set("selectedFloorplanId", fp._id)}
+                                className={`${styles.stepCardButton} ${active ? styles.stepCardButtonActive : ""}`}
+                            >
+                                <div className={styles.stepCardImage}>
+                                    <img src={fp.drawing?.url} alt={fp.name} className={styles.floorplanImage} />
+                                </div>
+                                <div className={styles.stepCardTitleRow}>
+                                    <div className={styles.stepCardName}>{fp.name}</div>
+                                    <span className={`${styles.pill} ${active ? styles.pillActive : ""}`}>
+                                        {active ? "Selected" : "Select"}
+                                    </span>
+                                </div>
+
+                                <div className={styles.stepCardMeta}>
+                                    {fp.bed} bed • {fp.bath} bath • {fp.sqft} sqft • ${fp.price.toLocaleString()}
+                                </div>
+                            </button>
+                        );
+                    })
+                )}
             </div>
         </div>
     );

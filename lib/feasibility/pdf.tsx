@@ -17,7 +17,7 @@ export function FeasibilityPdf({ data }: { data: any }) {
                 </View>
 
                 <View style={{ marginBottom: 12 }}>
-                    <Text style={{ fontSize: 12 }}>
+                    <Text style={{ fontSize: 50 }}>
                         <Text style={{ fontWeight: 700 }}>Name:</Text> {data.contact?.name || "—"}
                     </Text>
                     <Text style={{ fontSize: 12 }}>

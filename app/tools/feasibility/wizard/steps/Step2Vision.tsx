@@ -1,14 +1,16 @@
 "use client";
 
 import { useFeasibilityStore } from "@/lib/feasibility/store";
+import styles from "./page.module.css";
 
 export default function Step2Vision() {
     const { aduType, bed, bath, intendedUse, set } = useFeasibilityStore();
 
     return (
-        <div>
-            <label className="multistep">ADU Type</label>
-            <div className="multistep buttons">
+        <div className={styles.step}>
+            <label className={styles.label}>ADU Type</label>
+
+            <div className={styles.buttonGroup}>
                 {[
                     { v: "attached", label: "Attached ADU" },
                     { v: "detached", label: "Detached ADU" },
@@ -16,54 +18,56 @@ export default function Step2Vision() {
                 ].map((o) => (
                     <button
                         key={o.v}
-                        className="multistep button"
+                        className={`${styles.optionButton} ${aduType === o.v ? styles.optionButtonActive : ""
+                            }`}
                         onClick={() => set("aduType", o.v as any)}
-                        style={{
-                            background: aduType === o.v ? "var(--color-brand-beige)" : "var(--color-brand-dark-blue)",
-                        }}
                     >
                         {o.label}
                     </button>
                 ))}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1rem" }}>
+            <div className={styles.inputGrid}>
                 <div>
-                    <label className="multistep">Bedrooms</label>
+                    <label className={styles.label}>Bedrooms</label>
                     <input
-                        className="multistep"
+                        className={styles.input}
                         type="text"
                         value={bed ?? ""}
-                        onChange={(e) => set("bed", e.target.value ? Number(e.target.value) : null)}
+                        onChange={(e) =>
+                            set("bed", e.target.value ? Number(e.target.value) : null)
+                        }
                     />
                 </div>
+
                 <div>
-                    <label className="multistep">Bathrooms</label>
+                    <label className={styles.label}>Bathrooms</label>
                     <input
-                        className="multistep"
+                        className={styles.input}
                         type="text"
                         value={bath ?? ""}
-                        onChange={(e) => set("bath", e.target.value ? Number(e.target.value) : null)}
+                        onChange={(e) =>
+                            set("bath", e.target.value ? Number(e.target.value) : null)
+                        }
                     />
                 </div>
             </div>
 
-            <label className="multistep" style={{ marginTop: "1rem" }}>
+            <label className={`${styles.label} ${styles.labelWithSpacing}`}>
                 Intended Use
             </label>
-            <div className="multistep buttons">
+
+            <div className={styles.buttonGroup}>
                 {[
                     { v: "family", label: "Family" },
                     { v: "investment", label: "Investment (rental)" },
-                    { v: "both", label: "Both" },
+                    { v: "other", label: "Other" },
                 ].map((o) => (
                     <button
                         key={o.v}
-                        className="multistep button"
+                        className={`${styles.optionButton} ${intendedUse === o.v ? styles.optionButtonActive : ""
+                            }`}
                         onClick={() => set("intendedUse", o.v as any)}
-                        style={{
-                            background: intendedUse === o.v ? "var(--color-brand-beige)" : "var(--color-brand-dark-blue)",
-                        }}
                     >
                         {o.label}
                     </button>

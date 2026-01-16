@@ -3,20 +3,16 @@
 import { useMemo, useState } from "react";
 import { useFeasibilityStore } from "@/lib/feasibility/store";
 
-import Step1Address from "./steps/Step1Address";
 import Step2Vision from "./steps/Step2Vision";
 import Step3RealityGap from "./steps/Step3RealityGap";
-import Step4Comparison from "./steps/Step4Comparison";
 import Step5Finance from "./steps/Step5Finance";
 import Step6Floorplan from "./steps/Step6Floorplan";
 import Step7Review from "./steps/Step7Review";
 import Step8Submit from "./steps/Step8Submit";
 
 const steps = [
-    { title: "Start with your property", Component: Step1Address },
     { title: "Build your vision", Component: Step2Vision },
     { title: "What we still don’t know (yet)", Component: Step3RealityGap },
-    { title: "Fake quote vs real quote", Component: Step4Comparison },
     { title: "Financing snapshot", Component: Step5Finance },
     { title: "Recommended floorplans", Component: Step6Floorplan },
     { title: "Your summary", Component: Step7Review },
