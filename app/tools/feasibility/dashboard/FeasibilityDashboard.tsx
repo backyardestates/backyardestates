@@ -2,15 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { useFeasibilityStore } from "@/lib/feasibility/store";
-
-import Step2Vision from "../wizard/steps/Step2Vision";
-import Step3RealityGap from "../wizard/steps/Step3RealityGap";
-import Step5Finance from "../wizard/steps/Step5Finance";
-import Step6Floorplan from "../wizard/steps/Step6Floorplan";
-import Step7Review from "../wizard/steps/Step7Review";
-import Step8Submit from "../wizard/steps/Step8Submit";
 import style from "./page.module.css"
 import { House, Circle, Check } from "lucide-react"
+import Vision from "./steps/Vision/Vision";
+import SiteSpecificWork from "./steps/SiteSpecificWork/SiteSpecificWork";
+import Finance from "./steps/Finance/Finance";
+import Floorplans from "./steps/Floorplans/Floorplans";
+import Review from "./steps/Review/Review";
+import GeneratePDF from "./steps/GeneratePDF/GeneratePDF";
+
 
 type StepKey =
     | "vision"
@@ -27,32 +27,32 @@ const stepMap: Record<
     vision: {
         title: "Vision",
         Icon: House,
-        Component: Step2Vision,
+        Component: Vision,
     },
     floorplans: {
         title: "Floorplans",
         Icon: House,
-        Component: Step6Floorplan,
+        Component: Floorplans,
     },
     reality: {
         title: "Site-Specific Work",
         Icon: House,
-        Component: Step3RealityGap,
+        Component: SiteSpecificWork,
     },
     finance: {
         title: "Finance",
         Icon: House,
-        Component: Step5Finance,
+        Component: Finance,
     },
     review: {
         title: "Review",
         Icon: House,
-        Component: Step7Review,
+        Component: Review,
     },
     submit: {
         title: "Generate PDF",
         Icon: House,
-        Component: Step8Submit,
+        Component: GeneratePDF,
     },
 };
 

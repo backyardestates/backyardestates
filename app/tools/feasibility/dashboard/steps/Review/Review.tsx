@@ -29,7 +29,7 @@ function formatMoney(n?: number) {
     return `$${Math.round(n).toLocaleString()}`;
 }
 
-export default function Step7Review() {
+export default function Review() {
     const {
         name,
         phone,

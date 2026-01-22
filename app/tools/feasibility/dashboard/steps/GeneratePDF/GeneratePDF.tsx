@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useFeasibilityStore } from "@/lib/feasibility/store";
 
-export default function Step8Submit() {
+export default function GeneratePDF() {
     const state = useFeasibilityStore();
     const [loading, setLoading] = useState(false);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);

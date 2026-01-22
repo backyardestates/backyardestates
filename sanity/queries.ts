@@ -493,9 +493,12 @@ export const FLOORPLANS_MATCH_QUERY = `
   isClickable == true &&
   defined(price) &&
   defined(sqft) &&
+  defined(bed) &&
+  defined(bath) &&
+  lower(name) != "custom estate" &&
   bed >= $bedMin && bed <= $bedMax &&
   bath >= $bathMin && bath <= $bathMax
-] | order(orderID asc) {
+]{
   _id,
   name,
   bed,
@@ -503,7 +506,12 @@ export const FLOORPLANS_MATCH_QUERY = `
   sqft,
   price,
   "slug": slug.current,
+
+  // Drawing: always return a usable URL (or null)
   drawing,
-  images
+
+  images,
+  
 }
 `;
+

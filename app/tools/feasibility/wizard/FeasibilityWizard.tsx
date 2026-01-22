@@ -3,12 +3,12 @@
 import { useMemo, useState } from "react";
 import { useFeasibilityStore } from "@/lib/feasibility/store";
 
-import Step2Vision from "./steps/Step2Vision";
-import Step3RealityGap from "./steps/Step3RealityGap";
-import Step5Finance from "./steps/Step5Finance";
-import Step6Floorplan from "./steps/Step6Floorplan";
-import Step7Review from "./steps/Step7Review";
-import Step8Submit from "./steps/Step8Submit";
+import Step2Vision from "../dashboard/steps/Vision/Vision";
+import Step3RealityGap from "../dashboard/steps/SiteSpecificWork/SiteSpecificWork";
+import Step5Finance from "../dashboard/steps/Finance/Finance";
+import Step6Floorplan from "../dashboard/steps/Floorplans/Floorplans";
+import Step7Review from "../dashboard/steps/Review/Review";
+import Step8Submit from "../dashboard/steps/GeneratePDF/GeneratePDF";
 
 const steps = [
     { title: "Build your vision", Component: Step2Vision },

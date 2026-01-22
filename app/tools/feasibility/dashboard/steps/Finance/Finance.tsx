@@ -20,7 +20,7 @@ function monthlyPayment(principal: number, annualRatePct: number, termMonths: nu
     return principal * (r * Math.pow(1 + r, termMonths)) / (Math.pow(1 + r, termMonths) - 1);
 }
 
-export default function Step5Finance() {
+export default function Finance() {
     const {
         selectedFloorplanId,
         outputs,
