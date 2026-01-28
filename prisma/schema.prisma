@@ -1,0 +1,327 @@
+generator client {
+    provider   = "prisma-client-js"
+    engineType = "binary"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+enum Role {
+    CUSTOMER
+    ARCHITECT
+    ADMIN
+}
+
+enum WorkStatus {
+    DRAFT
+    ACTIVE
+    DEPRECATED
+}
+
+enum CalcMethod {
+    LINEAR_FT
+    SQ_FT
+    QUANTITY
+    MANUAL
+    ALLOWANCE
+    UNIT_RATE
+}
+
+enum MarkupType {
+    PERCENT
+    FIXED
+    TIERED
+    NONE
+}
+
+enum ImpactArea {
+    PLANS
+    PERMITTING
+    CONSTRUCTION
+    TIMELINE
+}
+
+enum Severity {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+enum FeasibilityAnswerValue {
+    YES
+    NO
+    UNSURE
+}
+
+enum AnalysisStatus {
+    PENDING
+    IN_PROGRESS
+    COMPLETE
+}
+
+enum ProposalStatus {
+    DRAFT
+    REVIEWED
+    SENT
+    SIGNED
+    ARCHIVED
+}
+
+enum AssessStage {
+    LEAD_STAGE
+    OFFICE_VISIT
+    FORMAL_ANALYSIS
+    PRE_PERMIT
+    PRE_CONSTRUCTION
+}
+
+model User {
+    id   String @id // Supabase auth user id (uuid as string)
+    role Role   @default(CUSTOMER)
+
+    phone String?
+    email String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    feasibilityReports FeasibilityReport[]
+    formalAnalyses     FormalAnalysis[]    @relation("ArchitectAssignments")
+    evidenceFiles      EvidenceFile[]
+}
+
+model Category {
+    id        String @id @default(cuid())
+    name      String @unique
+    sortOrder Int    @default(0)
+
+    workItems WorkItem[]
+}
+
+model WorkItem {
+    id           String     @id @default(cuid())
+    slug         String     @unique
+    title        String
+    overview     String?
+    description  String?
+    whyItMatters String?
+    status       WorkStatus @default(ACTIVE)
+
+    categoryId String
+    category   Category @relation(fields: [categoryId], references: [id])
+
+    // Typical CUSTOMER exposure for the feasibility (ranges shown to clients)
+    typicalMin Int?
+    typicalMax Int?
+
+    // Optional INTERNAL ranges (used later for job cost)
+    internalMin Int?
+    internalMax Int?
+
+    // flags for easy filtering
+    affectsPlans        Boolean @default(false)
+    affectsPermitting   Boolean @default(false)
+    affectsConstruction Boolean @default(false)
+
+    // Human guidance
+    assessmentSummary String?
+    avoidanceSummary  String?
+    confidenceScore   Int?
+
+    pricingModels PricingModel[]
+    impacts       ImpactDetail[]
+
+    triggersFrom TriggerRule[] @relation("TriggersFrom")
+    triggersTo   TriggerRule[] @relation("TriggersTo")
+
+    feasibilityAnswers FeasibilityAnswer[]
+    formalAnswers      FormalAnswer[]
+    evidenceFiles      EvidenceFile[]
+    proposalLineItems  ProposalLineItem[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model PricingModel {
+    id         String   @id @default(cuid())
+    workItemId String
+    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+
+    calcMethod CalcMethod
+    unitLabel  String?
+
+    // Optional: you can fill these later for real proposal math
+    baseInternal Int?
+    baseCustomer Int?
+    internalUnit Int?
+    customerUnit Int?
+
+    markupType  MarkupType @default(NONE)
+    markupValue Float?
+
+    notes     String?
+    isDefault Boolean @default(true)
+}
+
+model ImpactDetail {
+    id         String   @id @default(cuid())
+    workItemId String
+    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+
+    area     ImpactArea
+    severity Severity   @default(MEDIUM)
+    detail   String?
+
+    durationMinDays Int?
+    durationMaxDays Int?
+}
+
+model TriggerRule {
+    id                  String @id @default(cuid())
+    sourceWorkItemId    String
+    triggeredWorkItemId String
+
+    source    WorkItem @relation("TriggersFrom", fields: [sourceWorkItemId], references: [id])
+    triggered WorkItem @relation("TriggersTo", fields: [triggeredWorkItemId], references: [id])
+
+    condition   String?
+    probability Float?
+    notes       String?
+}
+
+model FeasibilityReport {
+    id     String @id @default(cuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+
+    address    String?
+    city       String?
+    aduType    String? // detached/attached/jadus/etc (string for now)
+    timeframe  String?
+    priority   String?
+    motivation String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    answers        FeasibilityAnswer[]
+    formalAnalyses FormalAnalysis[]
+}
+
+model FeasibilityAnswer {
+    id       String            @id @default(cuid())
+    reportId String
+    report   FeasibilityReport @relation(fields: [reportId], references: [id])
+
+    workItemId String
+    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+
+    answer FeasibilityAnswerValue
+
+    // freeze what you displayed at time of report
+    shownMin Int?
+    shownMax Int?
+
+    createdAt DateTime @default(now())
+
+    @@unique([reportId, workItemId])
+}
+
+model FormalAnalysis {
+    id       String            @id @default(cuid())
+    reportId String
+    report   FeasibilityReport @relation(fields: [reportId], references: [id])
+
+    architectId String?
+    architect   User?   @relation("ArchitectAssignments", fields: [architectId], references: [id])
+
+    status      AnalysisStatus @default(PENDING)
+    scheduledAt DateTime?
+    startedAt   DateTime?
+    completedAt DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    answers  FormalAnswer[]
+    files    EvidenceFile[]
+    proposal Proposal?
+}
+
+model FormalAnswer {
+    id               String         @id @default(cuid())
+    formalAnalysisId String
+    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id])
+
+    workItemId String
+    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+
+    // flexible payload (store structured answer details)
+    valueJson Json?
+    notes     String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([formalAnalysisId, workItemId])
+}
+
+model EvidenceFile {
+    id               String         @id @default(cuid())
+    formalAnalysisId String
+    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id])
+
+    workItemId String?
+    workItem   WorkItem? @relation(fields: [workItemId], references: [id])
+
+    storagePath  String // Supabase Storage path
+    fileName     String?
+    fileType     String?
+    uploadedById String?
+    uploadedBy   User?   @relation(fields: [uploadedById], references: [id])
+
+    createdAt DateTime @default(now())
+}
+
+model Proposal {
+    id               String         @id @default(cuid())
+    formalAnalysisId String         @unique
+    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id])
+
+    status ProposalStatus @default(DRAFT)
+
+    customerTotal Int?
+    internalTotal Int?
+    profit        Int?
+
+    notes String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    lineItems ProposalLineItem[]
+}
+
+model ProposalLineItem {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    workItemId String
+    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+
+    quantity   Float?
+    unitLabel  String?
+    unitPrice  Int?
+    totalPrice Int?
+
+    internalCost Int?
+
+    notes String?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId])
+}

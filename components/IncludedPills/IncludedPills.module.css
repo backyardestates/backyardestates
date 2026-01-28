@@ -559,3 +559,91 @@
     outline: 3px solid rgba(59, 130, 246, 0.28);
     outline-offset: 2px;
 }
+
+/* IncludedPills.module.css */
+
+.itemPillSelected {
+    border-color: var(--color-brand-dark-blue);
+    background: var(--color-brand-beige-subtle);
+}
+
+.itemPillRejected {
+    opacity: 0.7;
+    border-style: dashed;
+}
+
+.stateBadge {
+    margin-left: auto;
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-brand-dark-blue);
+    background: var(--color-brand-beige-subtle);
+    color: var(--color-brand-dark-blue);
+}
+
+.stateBadgeMuted {
+    margin-left: auto;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-neutral-200);
+    background: #fff;
+    color: var(--color-neutral-600);
+}
+
+.actionCard {
+    border: 2px solid var(--color-neutral-100);
+    border-radius: var(--radius);
+    background: #fff;
+    padding: 0.9rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+.actionTitle {
+    font-weight: 900;
+    color: var(--color-brand-dark-blue);
+    margin-bottom: 0.6rem;
+}
+
+.actionRow {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.primaryBtn {
+    border: 2px solid var(--color-brand-dark-blue);
+    background: var(--color-brand-dark-blue);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.5rem 0.8rem;
+    font-weight: 800;
+}
+
+.secondaryBtn {
+    border: 2px solid var(--color-brand-dark-blue);
+    background: #fff;
+    color: var(--color-brand-dark-blue);
+    border-radius: 999px;
+    padding: 0.5rem 0.8rem;
+    font-weight: 800;
+}
+
+.ghostBtn {
+    border: 2px solid var(--color-neutral-200);
+    background: #fff;
+    color: var(--color-neutral-600);
+    border-radius: 999px;
+    padding: 0.5rem 0.8rem;
+    font-weight: 800;
+}
+
+.actionMeta {
+    color: var(--color-neutral-600);
+    font-size: 0.95rem;
+}

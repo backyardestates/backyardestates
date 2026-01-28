@@ -1,0 +1,133 @@
+.wrap {
+    display: grid;
+    gap: 1rem;
+}
+
+.header {
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--color-neutral-100);
+    background: #fff;
+}
+
+.title {
+    font-weight: 900;
+    color: var(--color-brand-dark-blue);
+    margin: 0 0 0.25rem 0;
+}
+
+.helper {
+    margin: 0;
+    color: var(--color-neutral-600);
+    line-height: 1.5rem;
+}
+
+.cardShell {
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--color-neutral-100);
+    background: #fff;
+}
+
+.cardGrid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.card {
+    text-align: left;
+    border: 2px solid var(--color-neutral-100);
+    border-radius: var(--radius);
+    padding: 1rem;
+    background: #fff;
+    cursor: pointer;
+}
+
+.cardActive {
+    background: var(--color-brand-beige-subtle);
+    border-color: var(--color-brand-beige-A040);
+}
+
+.cardTop {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.cardTitle {
+    font-weight: 900;
+    color: var(--color-brand-dark-blue);
+}
+
+.cardMeta {
+    color: var(--color-neutral-600);
+    font-size: 0.9rem;
+}
+
+.cardDesc {
+    margin-top: 0.35rem;
+    color: var(--color-neutral-600);
+    line-height: 1.4rem;
+}
+
+.pillRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pill {
+    border: 2px solid var(--color-neutral-100);
+    border-radius: 999px;
+    padding: 0.45rem 0.75rem;
+    background: #fff;
+    cursor: pointer;
+    color: var(--color-brand-dark-blue);
+    font-weight: 700;
+}
+
+.pillActive {
+    background: var(--color-brand-beige-subtle);
+    border-color: var(--color-brand-beige-A040);
+}
+
+.stepper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 2px solid var(--color-neutral-100);
+    border-radius: 999px;
+    padding: 0.5rem;
+    width: fit-content;
+    background: #fff;
+}
+
+.stepperBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 2px solid var(--color-neutral-100);
+    background: #fff;
+    cursor: pointer;
+    font-size: 1.25rem;
+}
+
+.stepperValue {
+    min-width: 60px;
+    text-align: center;
+    font-weight: 900;
+    color: var(--color-brand-dark-blue);
+}
+
+.select,
+.input {
+    width: 100%;
+    height: 3rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--color-neutral-200);
+    padding: 0.5rem 0.75rem;
+    font-family: var(--font-sans);
+    color: var(--color-brand-dark-blue);
+}

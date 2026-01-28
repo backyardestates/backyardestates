@@ -716,6 +716,7 @@ export const OPTIONAL_UPGRADES: IncludedItem[] = [
         modal: {
             overview:
                 "A kitchen island can add storage, seating, and a more open entertaining feel—depending on clearances and layout.",
+            estCost: { min: 3500, max: 9000, display: "$3.5k–$9k" },
             whatsIncluded: [
                 "Island layout design coordination (where feasible)",
                 "Cabinetry + countertop integration",
@@ -740,6 +741,7 @@ export const OPTIONAL_UPGRADES: IncludedItem[] = [
         modal: {
             overview:
                 "10-foot ceilings increase perceived space and bring a premium look—depending on plan design, structure, and local limits.",
+            estCost: { min: 8000, max: 25000, display: "$8k–$25k+" },
             whatsIncluded: [
                 "Design + elevation coordination",
                 "Structural framing adjustments (as required)",
@@ -764,6 +766,7 @@ export const OPTIONAL_UPGRADES: IncludedItem[] = [
         modal: {
             overview:
                 "Upgraded sliding doors can expand the opening, increase natural light, and elevate the design.",
+            estCost: { min: 2500, max: 12000, display: "$2.5k–$12k+" },
             whatsIncluded: [
                 "Door sizing/design coordination",
                 "Structural header coordination if needed",
@@ -786,6 +789,7 @@ export const OPTIONAL_UPGRADES: IncludedItem[] = [
         modal: {
             overview:
                 "A stand-alone tub adds a luxury, spa-like feel—when the bathroom layout and plumbing allow it.",
+            estCost: { min: 2500, max: 9000, display: "$2.5k–$9k" },
             whatsIncluded: [
                 "Layout coordination for clearances and placement",
                 "Plumbing fixture selection + installation scope adjustment",
@@ -810,6 +814,7 @@ export const OPTIONAL_UPGRADES: IncludedItem[] = [
         modal: {
             overview:
                 "Upgrade lighting to create a more custom, high-end feel—better ambiance, better function, and a more modern look.",
+            estCost: { min: 1200, max: 4500, display: "$1.2k–$4.5k" },
             whatsIncluded: [
                 "Additional recessed lighting (layout-dependent)",
                 "Statement fixture allowances (where applicable)",
@@ -828,6 +833,7 @@ export const OPTIONAL_UPGRADES: IncludedItem[] = [
         modal: {
             overview:
                 "A full-height backsplash creates a designer look—especially behind a range or feature wall.",
+            estCost: { min: 1200, max: 5500, display: "$1.2k–$5.5k" },
             whatsIncluded: [
                 "Design coordination + material selection",
                 "Additional tile labor/material scope",

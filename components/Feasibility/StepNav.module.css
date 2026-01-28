@@ -1,0 +1,28 @@
+.nav {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.stepBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 2px solid var(--color-neutral-100);
+    border-radius: 999px;
+    padding: 0.45rem 0.75rem;
+    background: #fff;
+    color: var(--color-brand-dark-blue);
+    cursor: pointer;
+}
+
+.stepBtn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.active {
+    background: var(--color-brand-beige-subtle);
+    border-color: var(--color-brand-beige-A040);
+}

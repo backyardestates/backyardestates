@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./IncludedPills.module.css";
+type ItemSelectionState = "unknown" | "might_apply" | "not_apply" | "selected" | "not_selected";
 
 /* =========================
    Types
@@ -73,6 +74,8 @@ type Props =
         items: ItemPill[];
         /** optional: lock tone for all pills in this instance */
         tone?: Exclude<PillTone, "included"> | PillTone;
+        getState?: (item: ItemPill) => ItemSelectionState;
+        onSetState?: (item: ItemPill, next: ItemSelectionState) => void;
     };
 
 /* =========================
@@ -155,7 +158,13 @@ export default function IncludedPills(props: Props) {
             {props.mode === "category" ? (
                 <CategoryPillRow categories={props.categories} activeId={activeId} onOpen={setActiveId} />
             ) : (
-                <ItemPillRow items={props.items} tone={props.tone} activeId={activeId} onOpen={setActiveId} />
+                <ItemPillRow
+                    items={props.items}
+                    tone={props.tone}
+                    activeId={activeId}
+                    onOpen={setActiveId}
+                    getState={(props as any).getState}
+                />
             )}
 
             {/* =========================
@@ -188,6 +197,8 @@ export default function IncludedPills(props: Props) {
                                 forcedTone={(props as any).tone}
                                 closeBtnRef={closeBtnRef}
                                 onClose={close}
+                                getState={(props as any).getState}
+                                onSetState={(props as any).onSetState}
                             />
                         )}
 
@@ -356,25 +367,37 @@ function ItemPillRow({
     tone,
     activeId,
     onOpen,
+    getState,
 }: {
     items: ItemPill[];
     tone?: PillTone;
     activeId: string | null;
     onOpen: (id: string) => void;
+
+    // ✅ NEW
+    getState?: (item: ItemPill) => ItemSelectionState;
 }) {
-    // Item pills are meant to be scannable; sort alphabetically by default
     const sorted = useMemo(() => [...items].sort((a, b) => a.title.localeCompare(b.title)), [items]);
 
     return (
         <div className={styles.itemRow}>
             {sorted.map((item) => {
                 const t = tone ?? item.tone ?? inferToneFromGroup(item.group);
+                const state = getState?.(item) ?? "unknown";
+
+                const isApplied = state === "might_apply" || state === "selected";
+                const isRejected = state === "not_apply";
 
                 return (
                     <button
                         key={item.id}
                         type="button"
-                        className={`${styles.itemPill} ${styles[`tone_${t}`]}`}
+                        className={[
+                            styles.itemPill,
+                            styles[`tone_${t}`],
+                            isApplied ? styles.itemPillSelected : "",
+                            isRejected ? styles.itemPillRejected : "",
+                        ].join(" ")}
                         onClick={() => onOpen(item.id)}
                         aria-haspopup="dialog"
                         aria-expanded={activeId === item.id}
@@ -384,10 +407,17 @@ function ItemPillRow({
                         <span className={styles.itemIcon} aria-hidden="true">
                             {t === "included" ? "✓" : t === "upgrade" ? "＋" : "!"}
                         </span>
+
                         <span className={styles.itemText}>
                             <span className={styles.itemTitle}>{item.title}</span>
-                            <span className={styles.itemSub}>{t === "upgrade" ? "Optional" : t === "site" ? "Varies by site" : "Included"}</span>
+                            <span className={styles.itemSub}>
+                                {t === "upgrade" ? "Optional" : t === "site" ? "Varies by site" : "Included"}
+                            </span>
                         </span>
+
+                        {/* ✅ NEW visual indicator */}
+                        {isApplied ? <span className={styles.stateBadge}>Added</span> : null}
+                        {isRejected ? <span className={styles.stateBadgeMuted}>Not likely</span> : null}
                     </button>
                 );
             })}
@@ -395,18 +425,28 @@ function ItemPillRow({
     );
 }
 
+
 function ItemModalView({
     active,
     forcedTone,
     closeBtnRef,
-    onClose,
+    onClose,// ✅ NEW
+    getState,
+    onSetState,
 }: {
     active: ItemPill;
     forcedTone?: PillTone;
     closeBtnRef: React.RefObject<HTMLButtonElement | null>;
     onClose: () => void;
+
+    getState?: (item: ItemPill) => ItemSelectionState;
+    onSetState?: (item: ItemPill, next: ItemSelectionState) => void;
 }) {
     const t = forcedTone ?? active.tone ?? inferToneFromGroup(active.group);
+    const state = getState?.(active) ?? (t === "upgrade" ? "not_selected" : "unknown");
+
+    const isUpgrade = t === "upgrade";
+    const isSite = t === "site";
 
     return (
         <>
@@ -436,6 +476,82 @@ function ItemModalView({
             </div>
 
             <div className={styles.modalBody}>
+                {/* ✅ NEW: selection action strip (top of modal body is fine) */}
+                {(isSite || isUpgrade) && onSetState ? (
+                    <section className={styles.actionCard}>
+                        <div className={styles.actionTitle}>
+                            {isSite ? "Does this seem like it might apply to your property?" : "Would you like to include this upgrade?"}
+                        </div>
+
+                        <div className={styles.actionRow}>
+                            {isSite ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        className={styles.primaryBtn}
+                                        onClick={() => onSetState(active, "might_apply")}
+                                    >
+                                        This might apply
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className={styles.secondaryBtn}
+                                        onClick={() => onSetState(active, "not_apply")}
+                                    >
+                                        Might not apply
+                                    </button>
+
+                                    {state !== "unknown" ? (
+                                        <button
+                                            type="button"
+                                            className={styles.ghostBtn}
+                                            onClick={() => onSetState(active, "unknown")}
+                                        >
+                                            Clear
+                                        </button>
+                                    ) : null}
+                                </>
+                            ) : (
+                                <>
+                                    {state === "selected" ? (
+                                        <button
+                                            type="button"
+                                            className={styles.secondaryBtn}
+                                            onClick={() => onSetState(active, "not_selected")}
+                                        >
+                                            Remove upgrade
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className={styles.primaryBtn}
+                                            onClick={() => onSetState(active, "selected")}
+                                        >
+                                            Add upgrade
+                                        </button>
+                                    )}
+                                </>
+                            )}
+                        </div>
+
+                        {/* ✅ little status line */}
+                        <div className={styles.actionMeta}>
+                            Current:{" "}
+                            <strong>
+                                {state === "might_apply"
+                                    ? "Might apply"
+                                    : state === "not_apply"
+                                        ? "Might not apply"
+                                        : state === "selected"
+                                            ? "Added"
+                                            : state === "not_selected"
+                                                ? "Not added"
+                                                : "Not decided"}
+                            </strong>
+                        </div>
+                    </section>
+                ) : null}
                 {/* Hero overview */}
                 <section className={styles.heroCard}>
                     <div className={styles.heroKicker}>Overview</div>

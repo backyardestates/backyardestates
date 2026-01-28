@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { client } from "@/sanity/client";
 import { FLOORPLANS_MATCH_QUERY } from "@/sanity/queries";
-import { useFeasibilityStore } from "@/lib/feasibility/store";
+import { useAnswersStore } from "@/lib/feasibility/stores/answers.store";
 import styles from "./Floorplans.module.css";
 
 type Floorplan = {
@@ -21,11 +21,8 @@ function clamp(n: number, min: number, max: number) {
 }
 
 function fitScore(fp: Floorplan, targetBed: number, targetBath: number) {
-    // weighted distance: bedrooms matter slightly more than bathrooms
     const bedDelta = Math.abs(fp.bed - targetBed);
     const bathDelta = Math.abs(fp.bath - targetBath);
-
-    // lower is better; convert to "score out of 100"
     const distance = bedDelta * 18 + bathDelta * 14;
     const score = clamp(Math.round(100 - distance), 0, 100);
 
@@ -36,43 +33,47 @@ function fitScore(fp: Floorplan, targetBed: number, targetBath: number) {
                 ? "Very close match"
                 : "Close match";
 
-    return { score, label, bedDelta, bathDelta };
+    return { score, label };
 }
 
-export default function Floorplans() {
-    const {
-        bed,
-        bath,
-        timeframe,
-        selectedFloorplanId,
-        set,
-        // optional: from your vision step (if you added them)
-        motivation,
-        priority,
-    } = useFeasibilityStore();
+export default function FloorplansStep() {
+    const answers = useAnswersStore((s) => s.answers);
+    const setAnswer = useAnswersStore((s) => s.setAnswer);
+
+    // ✅ Always have usable numeric values (even if answers are empty)
+    const bedVal =
+        typeof answers.bed === "number" ? answers.bed : 1; // defaultValue: 1
+    const bathVal =
+        typeof answers.bath === "number" ? answers.bath : 1; // defaultValue: 1
+
+    const timeframe = (answers.timeframe as string | undefined) ?? "";
+    const selectedFloorplanId =
+        (answers.selectedFloorplanId as string | undefined) ?? null;
 
     const [items, setItems] = useState<Floorplan[]>([]);
     const [loading, setLoading] = useState(true);
-
-    // Optional “soft” filter UI – keep local, doesn’t need to persist yet
     const [budgetBand, setBudgetBand] = useState<string>("");
 
+    // ✅ Seed defaults once so the store is complete + Next gating works
+    useEffect(() => {
+        if (typeof answers.bed !== "number") setAnswer("bed", 1);
+        if (typeof answers.bath !== "number") setAnswer("bath", 1);
+        // optional: if you want timeframe default
+        // if (!answers.timeframe) setAnswer("timeframe", "flexible");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ✅ Fetch plans whenever bed/bath change (uses safe numeric values)
     useEffect(() => {
         let cancelled = false;
 
         (async () => {
-            if (bed == null || bath == null) {
-                setLoading(false);
-                return;
-            }
-
             setLoading(true);
 
-            // Wider search net -> better results, then we rank in the UI
-            const bedMin = Math.max(0, bed - 2);
-            const bedMax = bed + 2;
-            const bathMin = Math.max(0, bath - 1);
-            const bathMax = bath + 1;
+            const bedMin = Math.max(0, bedVal - 2);
+            const bedMax = bedVal + 2;
+            const bathMin = Math.max(0, bathVal - 1);
+            const bathMax = bathVal + 1;
 
             try {
                 const data = await client.fetch(FLOORPLANS_MATCH_QUERY, {
@@ -91,28 +92,24 @@ export default function Floorplans() {
         return () => {
             cancelled = true;
         };
-    }, [bed, bath]);
+    }, [bedVal, bathVal]);
 
     const ranked = useMemo(() => {
-        if (bed == null || bath == null) return [];
-
         const scored = items.map((fp) => {
-            const { score, label } = fitScore(fp, bed, bath);
+            const { score, label } = fitScore(fp, bedVal, bathVal);
             const valuePerSqft = fp.price && fp.sqft ? fp.price / fp.sqft : null;
-
             return { fp, score, label, valuePerSqft };
         });
 
-        // Optional budget filtering (rough)
         const filtered = scored.filter(({ fp }) => {
             if (!budgetBand) return true;
             if (budgetBand === "under300") return fp.price < 300000;
-            if (budgetBand === "300to400") return fp.price >= 300000 && fp.price <= 400000;
+            if (budgetBand === "300to400")
+                return fp.price >= 300000 && fp.price <= 400000;
             if (budgetBand === "400plus") return fp.price > 400000;
             return true;
         });
 
-        // Sort: higher fit score first, then lower $/sqft (value)
         filtered.sort((a, b) => {
             if (b.score !== a.score) return b.score - a.score;
             if (a.valuePerSqft == null) return 1;
@@ -121,34 +118,22 @@ export default function Floorplans() {
         });
 
         return filtered;
-    }, [items, bed, bath, budgetBand]);
+    }, [items, bedVal, bathVal, budgetBand]);
 
     const selected = useMemo(() => {
         return items.find((x) => x._id === selectedFloorplanId) || null;
     }, [items, selectedFloorplanId]);
 
-    if (bed == null || bath == null) {
-        return (
-            <div className={styles.step}>
-                <div className={styles.card}>
-                    <p className={styles.helperText}>
-                        Please choose <b>bedrooms</b> and <b>bathrooms</b> first so we can recommend floorplans that match.
-                    </p>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <section className={styles.step}>
-            {/* HERO */}
             <div className={styles.heroCard}>
                 <div className={styles.heroEyebrow}>Step 2</div>
                 <h2 className={styles.heroHeadline}>Choose a floorplan</h2>
                 <p className={styles.heroSubhead}>
-                    We’ll show the best matches for your desired layout—and help you pick a plan we can validate for feasibility next.
+                    We’ll show the best matches for your desired layout—and help you pick a
+                    plan we can validate for feasibility next.
                 </p>
-                {/* CONTROLS */}
+
                 <div className={styles.card}>
                     <div className={styles.inputGrid2}>
                         <div>
@@ -157,22 +142,19 @@ export default function Floorplans() {
                                 <button
                                     type="button"
                                     className={styles.stepperBtn}
-                                    onClick={() => set("bed", clamp((bed ?? 0) - 1, 0, 3))}
-                                    aria-label="Decrease bedrooms"
+                                    onClick={() => setAnswer("bed", clamp(bedVal - 1, 0, 3))}
                                 >
                                     −
                                 </button>
-                                <div className={styles.stepperValue}>{bed ?? 0}</div>
+                                <div className={styles.stepperValue}>{bedVal}</div>
                                 <button
                                     type="button"
                                     className={styles.stepperBtn}
-                                    onClick={() => set("bed", clamp((bed ?? 0) + 1, 0, 3))}
-                                    aria-label="Increase bedrooms"
+                                    onClick={() => setAnswer("bed", clamp(bedVal + 1, 0, 3))}
                                 >
                                     +
                                 </button>
                             </div>
-                            <div className={styles.inputHint}>0–3 bedrooms</div>
                         </div>
 
                         <div>
@@ -181,22 +163,23 @@ export default function Floorplans() {
                                 <button
                                     type="button"
                                     className={styles.stepperBtn}
-                                    onClick={() => set("bath", clamp((bath ?? 1) - 0.5, 0.5, 2))}
-                                    aria-label="Decrease bathrooms"
+                                    onClick={() =>
+                                        setAnswer("bath", clamp(Number((bathVal - 0.5).toFixed(2)), 0.5, 2))
+                                    }
                                 >
                                     −
                                 </button>
-                                <div className={styles.stepperValue}>{bath ?? 1}</div>
+                                <div className={styles.stepperValue}>{bathVal}</div>
                                 <button
                                     type="button"
                                     className={styles.stepperBtn}
-                                    onClick={() => set("bath", clamp((bath ?? 1) + 0.5, 0.5, 2))}
-                                    aria-label="Increase bathrooms"
+                                    onClick={() =>
+                                        setAnswer("bath", clamp(Number((bathVal + 0.5).toFixed(2)), 0.5, 2))
+                                    }
                                 >
                                     +
                                 </button>
                             </div>
-                            <div className={styles.inputHint}>0.5–2 bathrooms</div>
                         </div>
                     </div>
 
@@ -219,8 +202,8 @@ export default function Floorplans() {
                             <label className={styles.label}>When do you want it ready?</label>
                             <select
                                 className={styles.select}
-                                value={timeframe ?? ""}
-                                onChange={(e) => set("timeframe", e.target.value)}
+                                value={timeframe}
+                                onChange={(e) => setAnswer("timeframe", e.target.value)}
                             >
                                 <option value="">Select one…</option>
                                 <option value="asap">ASAP</option>
@@ -233,9 +216,6 @@ export default function Floorplans() {
                 </div>
             </div>
 
-
-
-            {/* RESULTS */}
             {loading ? (
                 <div className={styles.card}>
                     <p className={styles.helperText}>Loading floorplans…</p>
@@ -248,8 +228,9 @@ export default function Floorplans() {
             ) : ranked.length === 0 ? (
                 <div className={styles.card}>
                     <p className={styles.helperText}>
-                        No matches found for <b>{bed} bed</b> / <b>{bath} bath</b> under your current filters.
-                        Try adjusting by 1 bedroom or bathroom (or clear the budget filter).
+                        No matches found for <b>{bedVal} bed</b> / <b>{bathVal} bath</b> under
+                        your current filters. Try adjusting by 1 bedroom or bathroom (or
+                        clear the budget filter).
                     </p>
                 </div>
             ) : (
@@ -264,16 +245,14 @@ export default function Floorplans() {
                     </div>
 
                     <div className={styles.floorplanGrid}>
-                        {ranked.map(({ fp, score, label }) => {
+                        {ranked.map(({ fp, label }) => {
                             const active = selectedFloorplanId === fp._id;
-
                             return (
                                 <button
                                     key={fp._id}
                                     type="button"
-                                    onClick={() => set("selectedFloorplanId", fp._id)}
-                                    className={`${styles.stepCardButton} ${active ? styles.stepCardButtonActive : ""
-                                        }`}
+                                    onClick={() => setAnswer("selectedFloorplanId", fp._id)}
+                                    className={`${styles.stepCardButton} ${active ? styles.stepCardButtonActive : ""}`}
                                 >
                                     <div className={styles.stepCardTop}>
                                         <div>
@@ -316,15 +295,6 @@ export default function Floorplans() {
                         })}
                     </div>
 
-                    {selected ? (
-                        <div className={`${styles.card} ${styles.cardBeige}`}>
-                            <div className={styles.calloutTitle}>Next: feasibility checks</div>
-                            <p className={styles.helperText}>
-                                Great—now we’ll validate this plan against common feasibility constraints
-                                like <b>utility upgrades</b>, <b>site access</b>, <b>fire requirements</b>, and <b>setbacks</b>.
-                            </p>
-                        </div>
-                    ) : null}
                 </>
             )}
         </section>

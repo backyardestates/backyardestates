@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { client } from "@/sanity/client";
-import { useFeasibilityStore } from "@/lib/feasibility/store";
+import { useAnswersStore } from "@/lib/feasibility/stores/answers.store";
 
 const FLOORPLAN_PRICE_BY_ID = `
 *[_type=="floorplan" && _id==$id][0]{
@@ -12,7 +12,6 @@ const FLOORPLAN_PRICE_BY_ID = `
 }
 `;
 
-// Standard fixed-rate mortgage payment
 function monthlyPayment(principal: number, annualRatePct: number, termMonths: number) {
     if (!principal || principal <= 0) return 0;
     const r = (annualRatePct / 100) / 12;
@@ -20,22 +19,19 @@ function monthlyPayment(principal: number, annualRatePct: number, termMonths: nu
     return principal * (r * Math.pow(1 + r, termMonths)) / (Math.pow(1 + r, termMonths) - 1);
 }
 
-export default function Finance() {
-    const {
-        selectedFloorplanId,
-        outputs,
-        setOutputs,
-    } = useFeasibilityStore();
+export default function FinanceStep() {
+    const answers = useAnswersStore((s) => s.answers);
+    const setAnswer = useAnswersStore((s) => s.setAnswer);
+
+    const selectedFloorplanId = answers.selectedFloorplanId ?? null;
 
     const [floorplanPrice, setFloorplanPrice] = useState<number | null>(null);
     const [loadingFp, setLoadingFp] = useState(false);
 
-    // Inputs (local UI state)
-    const [downPayment, setDownPayment] = useState<number>(Math.round((outputs.estimatedTotalCost ?? 250000) * 0.2));
-    const [rate, setRate] = useState<number>(outputs.interestRate ?? 7.5);
-    const [termMonths, setTermMonths] = useState<number>(outputs.termMonths ?? 360);
+    const downPayment = Number(answers.downPayment ?? 0);
+    const rate = Number(answers.interestRate ?? 7.5);
+    const termMonths = Number(answers.termMonths ?? 360);
 
-    // Fetch floorplan price if they selected one already
     useEffect(() => {
         (async () => {
             if (!selectedFloorplanId) {
@@ -52,32 +48,26 @@ export default function Finance() {
         })();
     }, [selectedFloorplanId]);
 
-    // Cost model (today): use floorplan price if available, else fallback baseline
-    // You can tweak these multipliers quickly.
     const estimatedTotalCost = useMemo(() => {
-        if (floorplanPrice && floorplanPrice > 0) return floorplanPrice;
-
-        // fallback if no floorplan selected yet
-        // choose a conservative baseline so you don't underquote
-        return outputs.estimatedTotalCost ?? 250000;
-    }, [floorplanPrice, outputs.estimatedTotalCost]);
+        const fromFp = floorplanPrice && floorplanPrice > 0 ? floorplanPrice : null;
+        return fromFp ?? Number(answers.outputs?.estimatedTotalCost ?? 250000);
+    }, [floorplanPrice, answers.outputs?.estimatedTotalCost]);
 
     const principal = Math.max(0, estimatedTotalCost - (downPayment || 0));
-    const payment = useMemo(
-        () => Math.round(monthlyPayment(principal, rate, termMonths)),
-        [principal, rate, termMonths]
-    );
+    const payment = useMemo(() => Math.round(monthlyPayment(principal, rate, termMonths)), [principal, rate, termMonths]);
 
-    // Persist calculated outputs into global store
+    // Persist outputs back into answers store
     useEffect(() => {
-        setOutputs({
+        setAnswer("outputs", {
+            ...(answers.outputs ?? {}),
             estimatedTotalCost,
             monthlyPayment: payment,
             interestRate: rate,
             termMonths,
+            principal,
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [estimatedTotalCost, payment, rate, termMonths]);
+    }, [estimatedTotalCost, payment, rate, termMonths, principal]);
 
     return (
         <div>
@@ -101,8 +91,8 @@ export default function Finance() {
             <input
                 className="multistep"
                 type="text"
-                value={downPayment.toString()}
-                onChange={(e) => setDownPayment(e.target.value ? Number(e.target.value) : 0)}
+                value={String(answers.downPayment ?? "")}
+                onChange={(e) => setAnswer("downPayment", e.target.value)}
             />
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
@@ -111,16 +101,17 @@ export default function Finance() {
                     <input
                         className="multistep"
                         type="text"
-                        value={rate.toString()}
-                        onChange={(e) => setRate(e.target.value ? Number(e.target.value) : 0)}
+                        value={String(answers.interestRate ?? "")}
+                        onChange={(e) => setAnswer("interestRate", e.target.value)}
                     />
                 </div>
+
                 <div>
                     <label className="multistep">Term</label>
                     <select
                         className="multistep"
-                        value={termMonths}
-                        onChange={(e) => setTermMonths(Number(e.target.value))}
+                        value={String(answers.termMonths ?? 360)}
+                        onChange={(e) => setAnswer("termMonths", e.target.value)}
                         style={{
                             width: "100%",
                             height: "3rem",
@@ -131,9 +122,9 @@ export default function Finance() {
                             color: "var(--color-brand-dark-blue)",
                         }}
                     >
-                        <option value={180}>15 years</option>
-                        <option value={240}>20 years</option>
-                        <option value={360}>30 years</option>
+                        <option value="180">15 years</option>
+                        <option value="240">20 years</option>
+                        <option value="360">30 years</option>
                     </select>
                 </div>
             </div>
@@ -149,10 +140,6 @@ export default function Finance() {
                     Loan amount: ${Number(principal).toLocaleString()}
                 </p>
             </div>
-
-            <p style={{ marginTop: "1rem", color: "var(--color-brand-dark-blue)", fontWeight: 700 }}>
-                These numbers become contract-ready after your Formal Property Analysis.
-            </p>
         </div>
     );
 }
