@@ -52,6 +52,10 @@
     -webkit-backdrop-filter: blur(18px) saturate(140%);
 
     padding: 0.65rem;
+    /* ✅ CONTAIN */
+    max-width: 100%;
+    width: 100%;
+    overflow: hidden;
 }
 
 /* Step content wrapper */

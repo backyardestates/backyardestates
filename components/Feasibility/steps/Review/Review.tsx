@@ -188,262 +188,236 @@ export default function ReviewStep() {
                             Quick recap — this confirms we have everything needed to generate your feasibility report.
                         </p>
                     </div>
+                </div>
+                {/* GRID */}
+                <div className={styles.grid}>
+                    {/* CONTACT */}
+                    <section className={styles.card}>
+                        <header className={styles.cardHeader}>
+                            <div className={styles.cardTitle}>Contact + property</div>
+                            <div className={styles.cardHint}>Used to generate the report + send it to you.</div>
+                        </header>
 
-                    <div className={styles.heroRight}>
-                        <div className={styles.statusStack} aria-label="Completion status">
-                            <div className={`${styles.statusPill} ${hasContact ? styles.statusOk : styles.statusWarn}`}>
-                                <span className={styles.statusDot} aria-hidden="true" />
-                                Contact
+                        <dl className={styles.kvGrid}>
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Name</dt>
+                                <dd className={styles.v}>{(answers.name as string) || "—"}</dd>
                             </div>
-                            <div className={`${styles.statusPill} ${hasAddress ? styles.statusOk : styles.statusWarn}`}>
-                                <span className={styles.statusDot} aria-hidden="true" />
-                                Address
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Phone</dt>
+                                <dd className={styles.v}>{(answers.phone as string) || "—"}</dd>
                             </div>
-                            <div className={`${styles.statusPill} ${hasBasics ? styles.statusOk : styles.statusWarn}`}>
-                                <span className={styles.statusDot} aria-hidden="true" />
-                                Basics
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Email</dt>
+                                <dd className={styles.v}>{(answers.email as string) || "—"}</dd>
                             </div>
-                        </div>
-                    </div>
+
+                            <div className={`${styles.kv} ${styles.kvFull}`}>
+                                <dt className={styles.k}>Property address</dt>
+                                <dd className={styles.v}>{(answers.address as string) || "—"}</dd>
+                            </div>
+
+                        </dl>
+                    </section>
+
+                    {/* PROJECT CHOICES */}
+                    <section className={styles.card}>
+                        <header className={styles.cardHeader}>
+                            <div className={styles.cardTitle}>Project choices</div>
+                            <div className={styles.cardHint}>Used to tailor the report and feasibility assumptions.</div>
+                        </header>
+
+                        <dl className={styles.kvGrid}>
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Motivation</dt>
+                                <dd className={styles.v}>{prettyMotivation(answers.motivation as string | undefined)}</dd>
+                            </div>
+
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>ADU type</dt>
+                                <dd className={styles.v}>{prettyAduType(answers.aduType as string | undefined)}</dd>
+                            </div>
+
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Layout</dt>
+                                <dd className={styles.v}>
+                                    {typeof answers.bed === "number" ? answers.bed : "—"} bed /{" "}
+                                    {typeof answers.bath === "number" ? answers.bath : "—"} bath
+                                </dd>
+                            </div>
+
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Timeframe</dt>
+                                <dd className={styles.v}>{prettyTimeframe(answers.timeframe as string | undefined)}</dd>
+                            </div>
+
+                            <div className={`${styles.kv} ${styles.kvFull}`}>
+                                <dt className={styles.k}>Selected floorplan</dt>
+                                <dd className={styles.v}>
+                                    {!selectedFloorplanId ? (
+                                        "—"
+                                    ) : loadingFp ? (
+                                        <span className={styles.inlineLoading}>
+                                            <span className={styles.spinner} aria-hidden="true" />
+                                            Loading floorplan…
+                                        </span>
+                                    ) : floorplan ? (
+                                        <div className={styles.floorplanRow}>
+                                            <div className={styles.floorplanName}>{floorplan.name}</div>
+                                            <div className={styles.floorplanMeta}>
+                                                {floorplan.sqft} sqft • {floorplan.bed} bed / {floorplan.bath} bath
+                                            </div>
+                                            <div className={styles.floorplanPrice}>{formatMoney(floorplan.price)}</div>
+                                        </div>
+                                    ) : (
+                                        "—"
+                                    )}
+                                </dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    {/* OPTIONAL UPGRADES */}
+                    <section className={styles.card}>
+                        <header className={styles.cardHeaderRow}>
+                            <div>
+                                <div className={styles.cardTitle}>Optional upgrades</div>
+                                <div className={styles.cardHint}>Selected enhancements you may want included.</div>
+                            </div>
+                            <div className={styles.countPill}>{optionalUpgrades.length} selected</div>
+                        </header>
+
+                        {optionalUpgrades.length ? (
+                            <div className={styles.pillWrap}>
+                                {optionalUpgrades.map((u) => (
+                                    <span key={u.id} className={styles.pill}>
+                                        {u.title}
+                                    </span>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className={styles.emptyState}>
+                                <div className={styles.emptyTitle}>None selected</div>
+                                <div className={styles.emptySub}>That’s okay — you can always add upgrades later.</div>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* SITE-SPECIFIC */}
+                    <section className={styles.card}>
+                        <header className={styles.cardHeaderRow}>
+                            <div>
+                                <div className={styles.cardTitle}>Potential site-specific work</div>
+                                <div className={styles.cardHint}>Items that may apply depending on your property conditions.</div>
+                            </div>
+                            <div className={styles.countPill}>{siteSpecificList.length} flagged</div>
+                        </header>
+
+                        {siteSpecificList.length ? (
+                            <div className={styles.list}>
+                                {siteSpecificList.map((it) => (
+                                    <div key={it.id} className={styles.listRow}>
+                                        <div className={styles.listLeft}>
+                                            <div className={styles.listTitle}>{it.title}</div>
+                                            <div className={styles.listSub}>
+                                                Marked as <b>{it.status ?? "unknown"}</b>
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.listRight}>
+                                            <span className={styles.badge}>
+                                                {it.status === "might_apply"
+                                                    ? "Might apply"
+                                                    : it.status === "not_apply"
+                                                        ? "Not likely"
+                                                        : "Not decided"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className={styles.emptyState}>
+                                <div className={styles.emptyTitle}>Nothing flagged yet</div>
+                                <div className={styles.emptySub}>
+                                    That’s fine — the Formal Property Analysis confirms what’s real.
+                                </div>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* FINANCE */}
+                    <section className={styles.card}>
+                        <header className={styles.cardHeader}>
+                            <div className={styles.cardTitle}>Financing (inputs)</div>
+                            <div className={styles.cardHint}>Used to tailor the report. Estimates are totally fine.</div>
+                        </header>
+
+                        <dl className={styles.kvGrid}>
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Status</dt>
+                                <dd className={styles.v}>{prettyFinanceStatus(finance.status)}</dd>
+                            </div>
+
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Path</dt>
+                                <dd className={styles.v}>{prettyFinancePath(finance.path)}</dd>
+                            </div>
+
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Down payment</dt>
+                                <dd className={styles.v}>
+                                    {typeof finance.downPayment === "number" ? formatMoney(finance.downPayment) : "—"}
+                                </dd>
+                            </div>
+
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Loan term</dt>
+                                <dd className={styles.v}>
+                                    {finance.termMonths ? `${Math.round(finance.termMonths / 12)} years` : "—"}
+                                </dd>
+                            </div>
+
+                            <div className={styles.kv}>
+                                <dt className={styles.k}>Interest rate</dt>
+                                <dd className={styles.v}>
+                                    {typeof finance.ratePct === "number" ? `${finance.ratePct.toFixed(2)}%` : "—"}
+                                </dd>
+                            </div>
+
+                            <div className={`${styles.kv} ${styles.kv}`}>
+                                <dt className={styles.k}>Value-boost section</dt>
+                                <dd className={styles.v}>
+                                    {finance.wantsValueBoostAnalysis
+                                        ? finance.wantsValueBoostAnalysis === "yes"
+                                            ? "Yes (include it)"
+                                            : "No (skip)"
+                                        : "—"}
+                                </dd>
+                            </div>
+
+                            {finance.wantsValueBoostAnalysis === "yes" ? (
+                                <>
+                                    <div className={styles.kv}>
+                                        <dt className={styles.k}>Home value estimate</dt>
+                                        <dd className={styles.v}>
+                                            {typeof finance.homeValueEstimate === "number" ? formatMoney(finance.homeValueEstimate) : "—"}
+                                        </dd>
+                                    </div>
+
+                                    <div className={styles.kv}>
+                                        <dt className={styles.k}>Mortgage balance</dt>
+                                        <dd className={styles.v}>
+                                            {typeof finance.mortgageBalance === "number" ? formatMoney(finance.mortgageBalance) : "—"}
+                                        </dd>
+                                    </div>
+                                </>
+                            ) : null}
+                        </dl>
+                    </section>
                 </div>
             </div>
-
-            {/* GRID */}
-            <div className={styles.grid}>
-                {/* CONTACT */}
-                <section className={styles.card}>
-                    <header className={styles.cardHeader}>
-                        <div className={styles.cardTitle}>Contact + property</div>
-                        <div className={styles.cardHint}>Used to generate the report + send it to you.</div>
-                    </header>
-
-                    <dl className={styles.kvGrid}>
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Name</dt>
-                            <dd className={styles.v}>{(answers.name as string) || "—"}</dd>
-                        </div>
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Phone</dt>
-                            <dd className={styles.v}>{(answers.phone as string) || "—"}</dd>
-                        </div>
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Email</dt>
-                            <dd className={styles.v}>{(answers.email as string) || "—"}</dd>
-                        </div>
-
-                        <div className={`${styles.kv} ${styles.kvFull}`}>
-                            <dt className={styles.k}>Property address</dt>
-                            <dd className={styles.v}>{(answers.address as string) || "—"}</dd>
-                        </div>
-
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>City</dt>
-                            <dd className={styles.v}>{(answers.city as string) || "—"}</dd>
-                        </div>
-                    </dl>
-                </section>
-
-                {/* PROJECT CHOICES */}
-                <section className={styles.card}>
-                    <header className={styles.cardHeader}>
-                        <div className={styles.cardTitle}>Project choices</div>
-                        <div className={styles.cardHint}>Used to tailor the report and feasibility assumptions.</div>
-                    </header>
-
-                    <dl className={styles.kvGrid}>
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Motivation</dt>
-                            <dd className={styles.v}>{prettyMotivation(answers.motivation as string | undefined)}</dd>
-                        </div>
-
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>ADU type</dt>
-                            <dd className={styles.v}>{prettyAduType(answers.aduType as string | undefined)}</dd>
-                        </div>
-
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Layout</dt>
-                            <dd className={styles.v}>
-                                {typeof answers.bed === "number" ? answers.bed : "—"} bed /{" "}
-                                {typeof answers.bath === "number" ? answers.bath : "—"} bath
-                            </dd>
-                        </div>
-
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Timeframe</dt>
-                            <dd className={styles.v}>{prettyTimeframe(answers.timeframe as string | undefined)}</dd>
-                        </div>
-
-                        <div className={`${styles.kv} ${styles.kvFull}`}>
-                            <dt className={styles.k}>Selected floorplan</dt>
-                            <dd className={styles.v}>
-                                {!selectedFloorplanId ? (
-                                    "—"
-                                ) : loadingFp ? (
-                                    <span className={styles.inlineLoading}>
-                                        <span className={styles.spinner} aria-hidden="true" />
-                                        Loading floorplan…
-                                    </span>
-                                ) : floorplan ? (
-                                    <div className={styles.floorplanRow}>
-                                        <div className={styles.floorplanName}>{floorplan.name}</div>
-                                        <div className={styles.floorplanMeta}>
-                                            {floorplan.sqft} sqft • {floorplan.bed} bed / {floorplan.bath} bath
-                                        </div>
-                                        <div className={styles.floorplanPrice}>{formatMoney(floorplan.price)}</div>
-                                    </div>
-                                ) : (
-                                    "—"
-                                )}
-                            </dd>
-                        </div>
-                    </dl>
-                </section>
-
-                {/* OPTIONAL UPGRADES */}
-                <section className={styles.card}>
-                    <header className={styles.cardHeaderRow}>
-                        <div>
-                            <div className={styles.cardTitle}>Optional upgrades</div>
-                            <div className={styles.cardHint}>Selected enhancements you may want included.</div>
-                        </div>
-                        <div className={styles.countPill}>{optionalUpgrades.length} selected</div>
-                    </header>
-
-                    {optionalUpgrades.length ? (
-                        <div className={styles.pillWrap}>
-                            {optionalUpgrades.map((u) => (
-                                <span key={u.id} className={styles.pill}>
-                                    {u.title}
-                                </span>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className={styles.emptyState}>
-                            <div className={styles.emptyTitle}>None selected</div>
-                            <div className={styles.emptySub}>That’s okay — you can always add upgrades later.</div>
-                        </div>
-                    )}
-                </section>
-
-                {/* SITE-SPECIFIC */}
-                <section className={styles.card}>
-                    <header className={styles.cardHeaderRow}>
-                        <div>
-                            <div className={styles.cardTitle}>Potential site-specific work</div>
-                            <div className={styles.cardHint}>Items that may apply depending on your property conditions.</div>
-                        </div>
-                        <div className={styles.countPill}>{siteSpecificList.length} flagged</div>
-                    </header>
-
-                    {siteSpecificList.length ? (
-                        <div className={styles.list}>
-                            {siteSpecificList.map((it) => (
-                                <div key={it.id} className={styles.listRow}>
-                                    <div className={styles.listLeft}>
-                                        <div className={styles.listTitle}>{it.title}</div>
-                                        <div className={styles.listSub}>
-                                            Marked as <b>{it.status ?? "unknown"}</b>
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.listRight}>
-                                        <span className={styles.badge}>
-                                            {it.status === "might_apply"
-                                                ? "Might apply"
-                                                : it.status === "not_apply"
-                                                    ? "Not likely"
-                                                    : "Not decided"}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className={styles.emptyState}>
-                            <div className={styles.emptyTitle}>Nothing flagged yet</div>
-                            <div className={styles.emptySub}>
-                                That’s fine — the Formal Property Analysis confirms what’s real.
-                            </div>
-                        </div>
-                    )}
-                </section>
-
-                {/* FINANCE */}
-                <section className={styles.card}>
-                    <header className={styles.cardHeader}>
-                        <div className={styles.cardTitle}>Financing (inputs)</div>
-                        <div className={styles.cardHint}>Used to tailor the report. Estimates are totally fine.</div>
-                    </header>
-
-                    <dl className={styles.kvGrid}>
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Status</dt>
-                            <dd className={styles.v}>{prettyFinanceStatus(finance.status)}</dd>
-                        </div>
-
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Path</dt>
-                            <dd className={styles.v}>{prettyFinancePath(finance.path)}</dd>
-                        </div>
-
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Down payment</dt>
-                            <dd className={styles.v}>
-                                {typeof finance.downPayment === "number" ? formatMoney(finance.downPayment) : "—"}
-                            </dd>
-                        </div>
-
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Loan term</dt>
-                            <dd className={styles.v}>
-                                {finance.termMonths ? `${Math.round(finance.termMonths / 12)} years` : "—"}
-                            </dd>
-                        </div>
-
-                        <div className={styles.kv}>
-                            <dt className={styles.k}>Interest rate</dt>
-                            <dd className={styles.v}>
-                                {typeof finance.ratePct === "number" ? `${finance.ratePct.toFixed(2)}%` : "—"}
-                            </dd>
-                        </div>
-
-                        <div className={`${styles.kv} ${styles.kvFull}`}>
-                            <dt className={styles.k}>Value-boost section</dt>
-                            <dd className={styles.v}>
-                                {finance.wantsValueBoostAnalysis
-                                    ? finance.wantsValueBoostAnalysis === "yes"
-                                        ? "Yes (include it)"
-                                        : "No (skip)"
-                                    : "—"}
-                            </dd>
-                        </div>
-
-                        {finance.wantsValueBoostAnalysis === "yes" ? (
-                            <>
-                                <div className={styles.kv}>
-                                    <dt className={styles.k}>Home value estimate</dt>
-                                    <dd className={styles.v}>
-                                        {typeof finance.homeValueEstimate === "number" ? formatMoney(finance.homeValueEstimate) : "—"}
-                                    </dd>
-                                </div>
-
-                                <div className={styles.kv}>
-                                    <dt className={styles.k}>Mortgage balance</dt>
-                                    <dd className={styles.v}>
-                                        {typeof finance.mortgageBalance === "number" ? formatMoney(finance.mortgageBalance) : "—"}
-                                    </dd>
-                                </div>
-                            </>
-                        ) : null}
-                    </dl>
-                </section>
-            </div>
-
-            {/* PDF */}
-            <div className={styles.pdfCard}>
-                <GeneratePDFStep />
-            </div>
+            <GeneratePDFStep />
         </section>
     );
 }

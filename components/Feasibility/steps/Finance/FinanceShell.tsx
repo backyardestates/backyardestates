@@ -29,6 +29,24 @@ export default function FinanceShell({
                 <div className={styles.heroTop}>
                     <div className={styles.heroLeft}>
                         <div className={styles.heroEyebrow}>Step 4</div>
+                        <div className={styles.progressBar}>
+                            {items.map((it, idx) => {
+                                const isActive = idx === active;
+                                return (
+                                    <button
+                                        key={it.num}
+                                        type="button"
+                                        className={`${styles.progressItem} ${isActive ? styles.progressItemActive : ""}`}
+                                        onClick={() => onTab(idx as FinanceTab)}
+                                    >
+                                        <span className={styles.progressTitle}>
+                                            <span className={styles.progressNum}>{it.num}</span>
+                                            {it.title}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
                         <h2 className={styles.heroHeadline}>{title}</h2>
                         {helper ? <p className={styles.heroSubhead}>{helper}</p> : null}
                     </div>
@@ -36,28 +54,10 @@ export default function FinanceShell({
                     <div className={styles.heroRight} />
                 </div>
 
-                <div className={styles.progressBar}>
-                    {items.map((it, idx) => {
-                        const isActive = idx === active;
-                        return (
-                            <button
-                                key={it.num}
-                                type="button"
-                                className={`${styles.progressItem} ${isActive ? styles.progressItemActive : ""}`}
-                                onClick={() => onTab(idx as FinanceTab)}
-                            >
-                                <span className={styles.progressTitle}>
-                                    <span className={styles.progressNum}>{it.num}</span>
-                                    {it.title}
-                                </span>
-                                <span className={styles.progressMeta}>{it.meta}</span>
-                            </button>
-                        );
-                    })}
-                </div>
+                {children}
+
             </div>
 
-            {children}
         </section>
     );
 }

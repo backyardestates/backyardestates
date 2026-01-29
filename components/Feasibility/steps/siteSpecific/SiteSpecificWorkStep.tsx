@@ -30,8 +30,6 @@ export default function SiteSpecificWorkStep({ onJump }: { onJump: (tab: 0 | 1 |
                 {/* ✅ SITE SPECIFIC */}
                 <IncludedPills
                     mode="item"
-                    heading="Potential Site-Specific Work"
-                    subheading="Tap an item to see how we assess it upfront."
                     items={POTENTIAL_SITE_SPECIFIC.map((item) => ({ ...item, group: "site_specific" }))}
                     tone="site"
                     getState={(item) => siteSpecific[item.id]?.status ?? "unknown"}

@@ -19,7 +19,6 @@
     gap: 0.55rem;
 
     flex-wrap: wrap;
-    padding: 0.35rem;
 }
 
 /* Individual step button */
@@ -34,7 +33,6 @@
 
     border: 1px solid var(--hairline);
     background: rgba(255, 255, 255, 0.66);
-    box-shadow: var(--shadowInset);
 
     font-family: var(--font-sans);
     font-size: 0.96rem;
@@ -46,23 +44,21 @@
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
 }
 
 .stepBtn:hover {
     transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.84);
     border-color: var(--hairlineStrong);
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10), var(--shadowInset);
 }
 
 .stepBtn:active {
     transform: translateY(0px);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.10), var(--shadowInset);
 }
 
 .stepBtn:focus-visible {
     outline: none;
-    box-shadow: var(--focusRing), var(--shadowInset);
     border-color: var(--focusOutline);
 }
 
@@ -88,17 +84,14 @@
 /* Active step */
 .active {
     background: linear-gradient(135deg,
-            rgba(250, 240, 220, 0.88),
-            rgba(243, 226, 194, 0.92),
+            rgba(250, 240, 220, 0.743),
+            rgba(243, 226, 194, 0.723),
             rgba(255, 255, 255, 0.55));
 
     border-color: rgba(185, 151, 100, 0.34);
     color: rgba(0, 0, 0, 0.86);
 
-    box-shadow:
-        0 10px 26px rgba(0, 0, 0, 0.10),
-        inset 0 1px 0 rgba(255, 255, 255, 0.66),
-        0 0 0 4px rgba(185, 151, 100, 0.12);
+
 }
 
 .active .iconWrap {
@@ -111,7 +104,6 @@
         justify-content: flex-start;
         overflow-x: auto;
         flex-wrap: nowrap;
-        padding-bottom: 0.5rem;
         -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
     }

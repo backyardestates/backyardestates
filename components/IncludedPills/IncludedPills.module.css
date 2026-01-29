@@ -84,7 +84,36 @@
 /* -----------------------------
    Pill base (category + item)
 ------------------------------ */
-.categoryPill,
+.categoryPill {
+    width: 100%;
+    text-align: left;
+    border: 0;
+    cursor: pointer;
+    user-select: none;
+
+    /* better tap target */
+    min-height: 64px;
+    padding: 0.9rem 0.95rem;
+
+    border-radius: 1.05rem;
+
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.36));
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06), var(--shadowInset);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9rem;
+
+    transition:
+        transform 200ms ease,
+        box-shadow 200ms ease,
+        border-color 200ms ease,
+        background 200ms ease;
+}
+
 .itemPill {
     width: 100%;
     text-align: left;
@@ -144,9 +173,6 @@
 /* -----------------------------
    Tones (subtle accent only)
 ------------------------------ */
-.tone_included {
-    /* keep neutral, “included” feels calm */
-}
 
 .tone_upgrade {
     /* gentle warm lean */
@@ -164,8 +190,16 @@
 .categoryTop {
     display: inline-flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.6rem;
     min-width: 0;
+    width: 100%;
+}
+
+.categoryTitleWrap {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
 }
 
 .categoryDot {
@@ -192,8 +226,10 @@
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    align-items: flex-end;
+    align-items: flex-start;
+    justify-content: flex-start;
     min-width: 0;
+    width: 100%;
 }
 
 .categoryTag {
@@ -214,7 +250,7 @@
     line-height: 1.35;
     color: rgba(0, 0, 0, 0.56);
     max-width: 36ch;
-    text-align: right;
+    text-align: left;
 
     /* prevent layout jumps */
     overflow: hidden;

@@ -28,8 +28,6 @@ export default function OptionalUpgrades({ onJump }: { onJump: (tab: 0 | 1 | 2) 
             <div className={styles.questionGrid}>
                 <IncludedPills
                     mode="item"
-                    heading="Optional Upgrades"
-                    subheading="Tap an upgrade to view details, then add or remove it."
                     items={OPTIONAL_UPGRADES.map((item) => ({ ...item, group: "optional_upgrades" }))}
                     tone="upgrade"
                     getState={(item) => (optionalUpgrades[item.id]?.selected ? "selected" : "not_selected")}

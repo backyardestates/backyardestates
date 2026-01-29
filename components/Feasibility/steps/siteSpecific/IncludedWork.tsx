@@ -23,8 +23,6 @@ export default function IncludedWork({
             <div className={styles.questionGrid}>
                 <IncludedPills
                     mode="category"
-                    heading="What’s Included"
-                    subheading="Tap a category to see the full breakdown."
                     categories={includedCategories}
                 />
             </div>

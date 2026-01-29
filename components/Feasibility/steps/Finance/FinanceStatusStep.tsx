@@ -65,16 +65,11 @@ export default function FinanceStatusStep({
             helper="This helps us tailor the feasibility report language and next steps."
         >
             <div className={styles.questionGrid}>
-                <div className={styles.qCard}>
-                    <h3 className={styles.sectionTitle}>Financing status</h3>
-                    <p className={styles.helperText}>Pick the closest match — you can change this later.</p>
-
-                    <CardSelect
-                        value={finance.status}
-                        options={STATUS_OPTIONS}
-                        onChange={(v) => update({ status: v })}
-                    />
-                </div>
+                <CardSelect
+                    value={finance.status}
+                    options={STATUS_OPTIONS}
+                    onChange={(v) => update({ status: v })}
+                />
             </div>
         </FinanceShell>
     );

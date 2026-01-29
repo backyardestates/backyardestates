@@ -30,38 +30,30 @@ export default function SiteSpecificShell({
                 <div className={styles.heroTop}>
                     <div className={styles.heroLeft}>
                         <div className={styles.heroEyebrow}>Step 3</div>
+                        <div className={styles.progressBar}>
+                            {items.map((it, idx) => {
+                                const isActive = idx === active;
+                                return (
+                                    <button
+                                        key={it.num}
+                                        type="button"
+                                        className={`${styles.progressItem} ${isActive ? styles.progressItemActive : ""}`}
+                                        onClick={() => onTab(idx as SiteSpecificTab)}
+                                    >
+                                        <span className={styles.progressTitle}>
+                                            <span className={styles.progressNum}>{it.num}</span>
+                                            {it.title}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
                         <h2 className={styles.heroHeadline}>{title}</h2>
                         {helper ? <p className={styles.heroSubhead}>{helper}</p> : null}
                     </div>
-
-                    {/* (Optional) you can add right-side cards later if you want */}
-                    <div className={styles.heroRight} />
                 </div>
-
-                {/* PROGRESS TABS */}
-                <div className={styles.progressBar}>
-                    {items.map((it, idx) => {
-                        const isActive = idx === active;
-                        return (
-                            <button
-                                key={it.num}
-                                type="button"
-                                className={`${styles.progressItem} ${isActive ? styles.progressItemActive : ""}`}
-                                onClick={() => onTab(idx as SiteSpecificTab)}
-                            >
-                                <span className={styles.progressTitle}>
-                                    <span className={styles.progressNum}>{it.num}</span>
-                                    {it.title}
-                                </span>
-                                <span className={styles.progressMeta}>{it.meta}</span>
-                            </button>
-                        );
-                    })}
-                </div>
+                {children}
             </div>
-
-            {/* BODY */}
-            {children}
         </section>
     );
 }

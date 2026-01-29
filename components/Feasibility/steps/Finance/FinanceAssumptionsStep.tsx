@@ -83,116 +83,106 @@ export default function FinanceAssumptionsStep({
         <FinanceShell
             active={2}
             onTab={onJump}
-            title="Basic assumptions + property value boost"
+            title="Financial assumptions + property value boost"
             helper="These are rough inputs so we can generate a meaningful report later. No need for perfect numbers."
         >
             <div className={styles.questionGrid}>
-                <div className={styles.qCard}>
-                    <div className={styles.qTop}>
-                        <div className={styles.qIndex}>3</div>
-                        <div className={styles.qMain}>
-                            <div className={styles.qHeader}>
-                                <div className={styles.qTitleBlock}>
-                                    <h3 className={styles.qTitle}>Basic assumptions (estimate is fine)</h3>
-                                    <p className={styles.qDesc}>
-                                        We’ll base the slider range on your selected floorplan cost when available. Current estimate: <b>{money(estimatedTotalCost)}</b>
-                                    </p>
-                                </div>
+                <div className={styles.qTop}>
+                    <div className={styles.qMain}>
+                        <div className={styles.answerBlock}>
+                            <div className={styles.inputGrid1}>
+                                <FinanceSlider
+                                    label="Down payment (estimate)"
+                                    value={Math.min(downPayment, dpMax)}
+                                    min={0}
+                                    max={dpMax}
+                                    step={dpStep}
+                                    format={money}
+                                    onChange={(v) => update({ downPayment: v })}
+                                    hint={finance.path === "cash" ? "If paying cash, this can represent cash you’d allocate (optional)." : "Used later for payment assumptions."}
+                                />
                             </div>
 
-                            <div className={styles.answerBlock}>
-                                <div className={styles.inputGrid1}>
-                                    <FinanceSlider
-                                        label="Down payment (estimate)"
-                                        value={Math.min(downPayment, dpMax)}
-                                        min={0}
-                                        max={dpMax}
-                                        step={dpStep}
-                                        format={money}
-                                        onChange={(v) => update({ downPayment: v })}
-                                        hint={finance.path === "cash" ? "If paying cash, this can represent cash you’d allocate (optional)." : "Used later for payment assumptions."}
-                                    />
-                                </div>
-
-                                <div className={styles.inputGrid1}>
-                                    <FinanceSlider
-                                        label="Loan term"
-                                        value={term}
-                                        min={180}
-                                        max={360}
-                                        step={60}
-                                        format={(n) => `${Math.round(n / 12)} years`}
-                                        onChange={(v) => update({ termMonths: v as 180 | 240 | 360 })}
-                                        hint="Slide to 15 / 20 / 25 / 30 years."
-                                    />
-                                </div>
-
-                                <div className={styles.inputGrid1}>
-                                    <FinanceSlider
-                                        label="Interest rate assumption"
-                                        value={rate}
-                                        min={4}
-                                        max={10}
-                                        step={0.25}
-                                        format={(n) => `${n.toFixed(2)}%`}
-                                        onChange={(v) => update({ ratePct: v })}
-                                        hint="Used later for a snapshot (not a quote)."
-                                    />
-                                </div>
+                            <div className={styles.inputGrid1}>
+                                <FinanceSlider
+                                    label="Loan term"
+                                    value={term}
+                                    min={180}
+                                    max={360}
+                                    step={60}
+                                    format={(n) => `${Math.round(n / 12)} years`}
+                                    onChange={(v) => update({ termMonths: v as 180 | 240 | 360 })}
+                                // hint="Slide to 15 / 20 / 25 / 30 years."
+                                />
                             </div>
+
+                            <div className={styles.inputGrid1}>
+                                <FinanceSlider
+                                    label="Interest rate assumption"
+                                    value={rate}
+                                    min={4}
+                                    max={10}
+                                    step={0.25}
+                                    format={(n) => `${n.toFixed(2)}%`}
+                                    onChange={(v) => update({ ratePct: v })}
+                                // hint="Used later for a snapshot (not a quote)."
+                                />
+                            </div>
+
                         </div>
+                        <div className={styles.detailTitle2}>Property value boost</div>
+                        <h4 className={styles.qTitle}>Do you want a property value increase analysis?</h4>
+                        <p className={styles.qDesc}>
+                            If you say yes, we’ll include a value-boost section in your feasibility report based on the estimated value increase an ADU could bring to your property.
+                        </p>
+
+                        <YesNo
+                            value={finance.wantsValueBoostAnalysis}
+                            onChange={(v) => {
+                                if (v === "no") {
+                                    update({
+                                        wantsValueBoostAnalysis: "no",
+                                        homeValueEstimate: null,
+                                        mortgageBalance: null,
+                                    });
+                                } else {
+                                    update({ wantsValueBoostAnalysis: "yes" });
+                                }
+                            }}
+                            yesLabel="Yes, include it"
+                            noLabel="No, skip it"
+                        />
+
+                        {showValueInputs ? (
+                            <div className={styles.inputGrid2}>
+                                <div>
+                                    <label className={styles.label}>Current home value (estimate)</label>
+                                    <input
+                                        className={styles.input}
+                                        value={finance.homeValueEstimate?.toString() ?? ""}
+                                        placeholder="Example: 750000"
+                                        onChange={(e) => update({ homeValueEstimate: toNumberOrUndefined(e.target.value) ?? null })}
+                                    />
+                                    <div className={styles.inputHint}>Rough estimate is okay.</div>
+                                </div>
+
+                                <div>
+                                    <label className={styles.label}>Current mortgage balance (optional)</label>
+                                    <input
+                                        className={styles.input}
+                                        value={finance.mortgageBalance?.toString() ?? ""}
+                                        placeholder="Optional"
+                                        onChange={(e) => update({ mortgageBalance: toNumberOrUndefined(e.target.value) ?? null })}
+                                    />
+                                    <div className={styles.inputHint}>Optional — helps refine equity context.</div>
+                                </div>
+                            </div>
+                        ) : null}
                     </div>
                 </div>
             </div>
 
-            <div className={styles.detailTitle2}>Property value boost</div>
-            <h4 className={styles.qTitle}>Do you want an estimate of how an ADU could boost your property value?</h4>
-            <p className={styles.qDesc}>
-                If you say yes, we’ll include a value-boost section in your feasibility report. You can skip numbers if you don’t know them.
-            </p>
 
-            <YesNo
-                value={finance.wantsValueBoostAnalysis}
-                onChange={(v) => {
-                    if (v === "no") {
-                        update({
-                            wantsValueBoostAnalysis: "no",
-                            homeValueEstimate: null,
-                            mortgageBalance: null,
-                        });
-                    } else {
-                        update({ wantsValueBoostAnalysis: "yes" });
-                    }
-                }}
-                yesLabel="Yes, include it"
-                noLabel="No, skip it"
-            />
-
-            {showValueInputs ? (
-                <div className={styles.inputGrid2}>
-                    <div>
-                        <label className={styles.label}>Current home value (estimate)</label>
-                        <input
-                            className={styles.input}
-                            value={finance.homeValueEstimate?.toString() ?? ""}
-                            placeholder="Example: 750000"
-                            onChange={(e) => update({ homeValueEstimate: toNumberOrUndefined(e.target.value) ?? null })}
-                        />
-                        <div className={styles.inputHint}>Rough estimate is okay.</div>
-                    </div>
-
-                    <div>
-                        <label className={styles.label}>Current mortgage balance (optional)</label>
-                        <input
-                            className={styles.input}
-                            value={finance.mortgageBalance?.toString() ?? ""}
-                            placeholder="Optional"
-                            onChange={(e) => update({ mortgageBalance: toNumberOrUndefined(e.target.value) ?? null })}
-                        />
-                        <div className={styles.inputHint}>Optional — helps refine equity context.</div>
-                    </div>
-                </div>
-            ) : null}
         </FinanceShell >
     );
 }

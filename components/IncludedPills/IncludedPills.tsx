@@ -241,15 +241,19 @@ function CategoryPillRow({
                     aria-controls="included-modal"
                     title={cat.description}
                 >
-                    <span className={styles.categoryTop}>
-                        <span className={styles.categoryDot} aria-hidden="true" />
-                        <span className={styles.categoryTitle}>{cat.title}</span>
-                    </span>
+                    <div className={styles.categoryTop}>
+                        <div className={styles.categoryTitleWrap}>
+                            <span className={styles.categoryDot} aria-hidden="true" />
+                            <span className={styles.categoryTitle}> {cat.title}</span>
+                        </div>
 
-                    <span className={styles.categoryMeta}>
                         <span className={styles.categoryTag}>{toneLabel[cat.tone]}</span>
+
+                    </div>
+
+                    <div className={styles.categoryMeta}>
                         <span className={styles.categoryDesc}>{cat.description}</span>
-                    </span>
+                    </div>
                 </button>
             ))}
         </div>

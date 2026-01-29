@@ -68,16 +68,11 @@ export default function FinancePathStep({
             helper="This doesn’t lock you in — it just helps us tailor assumptions and wording in your report."
         >
             <div className={styles.questionGrid}>
-                <div className={styles.qCard}>
-                    <h3 className={styles.sectionTitle}>Financing path</h3>
-                    <p className={styles.helperText}>Pick the closest fit — you can change this later.</p>
-
-                    <CardSelect
-                        value={finance.path}
-                        options={PATH_OPTIONS}
-                        onChange={(v) => update({ path: v })}
-                    />
-                </div>
+                <CardSelect
+                    value={finance.path}
+                    options={PATH_OPTIONS}
+                    onChange={(v) => update({ path: v })}
+                />
             </div>
         </FinanceShell>
     );
