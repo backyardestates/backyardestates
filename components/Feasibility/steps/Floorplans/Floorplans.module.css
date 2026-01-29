@@ -1,426 +1,581 @@
-/* Floorplans.module.css */
+/* =========================================
+   Floorplans Step — Apple-grade multi-step
+   ========================================= */
 
 .step {
+    --max: 72rem;
+    --padX: clamp(1rem, 3vw, 1.5rem);
+    --gap: clamp(0.85rem, 1.6vw, 1.25rem);
+
+    --radiusLg: 1.35rem;
+    --radiusMd: 1rem;
+    --radiusSm: 0.85rem;
+
+    --text: rgba(0, 0, 0, 0.88);
+    --muted: rgba(0, 0, 0, 0.58);
+    --muted2: rgba(0, 0, 0, 0.46);
+
+    --hairline: rgba(0, 0, 0, 0.08);
+    --hairlineStrong: rgba(0, 0, 0, 0.12);
+
+    --shadowA: 0 12px 34px rgba(0, 0, 0, 0.08);
+    --shadowB: 0 3px 14px rgba(0, 0, 0, 0.05);
+    --shadowInset: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+    --focusRing: 0 0 0 5px rgba(50, 110, 255, 0.18);
+    --focusOutline: rgba(50, 110, 255, 0.55);
+
+    width: 100%;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 1.25rem var(--padX) 1.75rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--gap);
+    color: var(--text);
 }
 
-.card {
-    padding: 1rem;
-    border: 2px solid var(--color-neutral-100);
-    border-radius: var(--radius);
-    background: #fff;
-}
-
-.cardBeige {
-    background: var(--color-brand-beige-subtle);
-}
-
-.sectionTitle {
-    color: var(--color-brand-dark-blue);
-    font-weight: 900;
-    margin-bottom: 0.25rem;
-}
-
-.helperText {
-    color: var(--color-neutral-600);
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    line-height: 1.5rem;
-}
-
-.label {
-    display: block;
-    margin: 0 0 0.5rem 0;
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--color-brand-dark-blue);
-}
-
-/* ===== Hero ===== */
+/* -----------------------------------------
+   Hero shell (Step header / intro)
+------------------------------------------ */
 .heroCard {
-    padding: 1.25rem;
-    border: 2px solid var(--color-neutral-100);
-    border-radius: var(--radius);
-    background: var(--color-brand-beige-subtle);
-    box-shadow: var(--drop-shadow-on-beige);
+    position: relative;
+    border-radius: var(--radiusLg);
+    padding: clamp(1rem, 2.4vw, 1.5rem);
+    background: var(--color-brand-beige-subtle, rgba(250, 245, 235, 0.72));
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadowA), var(--shadowB), var(--shadowInset);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    overflow: hidden;
 }
 
+.heroCard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background:
+        radial-gradient(1200px 380px at 12% 0%,
+            rgba(255, 255, 255, 0.62),
+            rgba(255, 255, 255, 0) 60%),
+        radial-gradient(900px 320px at 92% 8%,
+            rgba(255, 255, 255, 0.28),
+            rgba(255, 255, 255, 0) 55%);
+    opacity: 0.9;
+}
+
+/* Eyebrow */
 .heroEyebrow {
-    color: var(--color-neutral-600);
-    font-family: var(--font-sans);
-    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
     letter-spacing: 0.06em;
-    font-variant: all-small-caps;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+    font-weight: 650;
+
     margin-bottom: 0.35rem;
 }
 
+/* Hero headline */
 .heroHeadline {
-    color: var(--color-brand-dark-blue);
-    font-family: var(--font-sans);
-    font-weight: 900;
-    font-size: 1.25rem;
-    line-height: 1.4rem;
-    margin-bottom: 0.4rem;
-}
-
-.heroSubhead {
-    color: var(--color-neutral-600);
-    font-family: var(--font-sans);
-    line-height: 1.55rem;
-    margin-bottom: 0.75rem;
-}
-
-.badgeRow {
-    display: flex;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.badge {
-    padding: 0.5rem 0.75rem;
-    border-radius: 999px;
-    background: #fff;
-    border: 2px solid var(--color-neutral-100);
-    color: var(--color-brand-dark-blue);
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 1.8vw, 1.75rem);
+    letter-spacing: -0.02em;
     font-weight: 800;
-    font-size: 0.95rem;
+    color: var(--color-brand-dark-blue, rgba(0, 0, 0, 0.82));
+    margin: 0 0 0.35rem 0;
 }
 
-/* ===== Controls ===== */
-.controlsTop {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    margin-bottom: 0.75rem;
+/* Hero subhead */
+.heroSubhead {
+    font-family: var(--font-sans);
+    font-size: 1.02rem;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0 0 1.1rem 0;
+    max-width: 62ch;
 }
 
-.selectedSummary {
-    min-width: 240px;
-    padding: 0.85rem;
-    border-radius: var(--radius);
-    border: 2px solid var(--color-neutral-100);
-    background: #fff;
-    box-shadow: var(--drop-shadow-on-beige);
+/* -----------------------------------------
+   Shared card surface
+------------------------------------------ */
+.card {
+    position: relative;
+    border-radius: var(--radiusLg);
+    padding: clamp(0.95rem, 2vw, 1.25rem);
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.62),
+            rgba(255, 255, 255, 0.34));
+    border: 1px solid var(--hairline);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06), var(--shadowInset);
 }
 
-.selectedSummaryGhost {
-    min-width: 240px;
-    padding: 0.85rem;
-    border-radius: var(--radius);
-    border: 2px dashed var(--color-neutral-200);
-    background: var(--color-neutral-0);
+/* Titles / helper */
+.sectionTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(1.05rem, 1.25vw, 1.25rem);
+    letter-spacing: -0.01em;
+    font-weight: 780;
+    color: var(--color-brand-dark-blue, rgba(0, 0, 0, 0.82));
+    margin: 0 0 0.25rem 0;
 }
 
-.selectedLabel {
-    color: var(--color-neutral-600);
-    font-weight: 900;
-    margin-bottom: 0.25rem;
-}
-
-.selectedName {
-    color: var(--color-brand-dark-blue);
-    font-weight: 900;
-}
-
-.selectedMeta {
-    color: var(--color-neutral-600);
-    font-weight: 700;
-    margin-top: 0.25rem;
-}
-
-/* ===== Inputs ===== */
-.inputGrid2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 0.75rem;
-}
-
-.select {
-    width: 100%;
-    height: 3rem;
-    border-radius: var(--radius);
-    border: 2px solid var(--color-neutral-200);
-    padding: 0.5rem 0.75rem;
+.helperText {
     font-family: var(--font-sans);
     font-size: 1rem;
-    font-weight: 500;
-    color: var(--color-brand-dark-blue);
-    background: #fff;
-    transition: border-color 120ms ease, box-shadow 120ms ease;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0;
+}
+
+/* -----------------------------------------
+   Input layout
+------------------------------------------ */
+.inputGrid2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.95rem 1rem;
+    margin-top: 0.9rem;
+}
+
+@media (max-width: 860px) {
+    .inputGrid2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.label {
+    display: inline-block;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-serif);
+    font-size: 0.92rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    font-weight: 650;
+}
+
+/* -----------------------------------------
+   Stepper: “system control” vibe
+------------------------------------------ */
+.stepper {
+    height: 48px;
+    border-radius: var(--radiusMd);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.66);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    align-items: center;
+    overflow: hidden;
+
+    transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.stepper:focus-within {
+    border-color: var(--focusOutline);
+    box-shadow: var(--focusRing), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.84);
+}
+
+/* buttons */
+.stepperBtn {
+    height: 100%;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.78);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+
+    display: grid;
+    place-items: center;
+
+    transition: background 160ms ease, transform 160ms ease, opacity 160ms ease;
+}
+
+@media (hover: hover) {
+    .stepperBtn:hover {
+        background: rgba(0, 0, 0, 0.06);
+    }
+}
+
+.stepperBtn:active {
+    transform: scale(0.98);
+}
+
+.stepperBtn:focus {
+    outline: none;
+}
+
+.stepperBtn:focus-visible {
+    box-shadow: inset 0 0 0 2px rgba(50, 110, 255, 0.35);
+}
+
+/* center value */
+.stepperValue {
+    height: 100%;
+    display: grid;
+    place-items: center;
+
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: rgba(0, 0, 0, 0.82);
+
+    border-left: 1px solid rgba(0, 0, 0, 0.07);
+    border-right: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+/* -----------------------------------------
+   Select: premium, consistent with inputs
+------------------------------------------ */
+.select {
+    width: 100%;
+    height: 48px;
+    padding: 0.75rem 2.6rem 0.75rem 0.9rem;
+
+    border-radius: var(--radiusMd);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.66);
+
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: rgba(0, 0, 0, 0.82);
+    letter-spacing: -0.01em;
+
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease,
+        transform 180ms ease;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* chevron */
+    background-image:
+        linear-gradient(45deg, transparent 50%, rgba(0, 0, 0, 0.55) 50%),
+        linear-gradient(135deg, rgba(0, 0, 0, 0.55) 50%, transparent 50%),
+        linear-gradient(to right, rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.10));
+    background-position:
+        calc(100% - 18px) 20px,
+        calc(100% - 12px) 20px,
+        calc(100% - 42px) 50%;
+    background-size: 6px 6px, 6px 6px, 1px 22px;
+    background-repeat: no-repeat;
+}
+
+.select:hover {
+    border-color: rgba(0, 0, 0, 0.18);
+    background-color: rgba(255, 255, 255, 0.78);
 }
 
 .select:focus {
     outline: none;
-    border-color: var(--color-brand-beige);
-    box-shadow: 0 0 0 2px var(--color-brand-beige-A020);
+    border-color: var(--focusOutline);
+    box-shadow: var(--focusRing), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    background-color: rgba(255, 255, 255, 0.86);
+    transform: translateY(-1px);
 }
 
-.stepper {
-    display: grid;
-    grid-template-columns: 44px 1fr 44px;
-    align-items: center;
-    border: 2px solid var(--color-neutral-200);
-    border-radius: 999px;
-    overflow: hidden;
-    height: 3rem;
-    background: #fff;
-}
-
-.stepperBtn {
-    height: 100%;
-    border: none;
-    background: var(--color-neutral-0);
-    cursor: pointer;
-    font-family: var(--font-sans);
-    font-size: 1.35rem;
-    font-weight: 900;
-    color: var(--color-brand-dark-blue);
-    transition: background-color 120ms ease;
-}
-
-.stepperBtn:hover {
-    background: var(--color-neutral-100);
-}
-
-.stepperBtn:active {
-    background: var(--color-neutral-200);
-}
-
-.stepperValue {
-    text-align: center;
-    font-family: var(--font-sans);
-    font-weight: 900;
-    font-size: 1.05rem;
-    color: var(--color-brand-dark-blue);
-}
-
-.inputHint {
-    margin-top: 0.4rem;
-    color: var(--color-neutral-600);
-    font-weight: 700;
-    font-size: 0.9rem;
-}
-
-/* ===== Results ===== */
+/* -----------------------------------------
+   Results header
+------------------------------------------ */
 .resultsHeader {
     display: flex;
-    justify-content: space-between;
     align-items: flex-end;
+    justify-content: space-between;
     gap: 1rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
 }
 
+/* -----------------------------------------
+   Floorplan grid
+------------------------------------------ */
 .floorplanGrid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
 }
 
-/* ===== Floorplan Cards ===== */
+@media (max-width: 1024px) {
+    .floorplanGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .floorplanGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* -----------------------------------------
+   Floorplan card button (the big one)
+------------------------------------------ */
 .stepCardButton {
-    width: 100%;
     text-align: left;
-    height: auto;
-    padding: 1rem;
-    border-radius: var(--radius);
-    border: 2px solid var(--color-neutral-100);
-    background: var(--color-neutral-0);
-    color: var(--color-brand-dark-blue);
+    width: 100%;
+    border: 0;
+    padding: 0;
+    background: transparent;
     cursor: pointer;
-    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease,
-        background-color 120ms ease, color 120ms ease;
+
+    border-radius: var(--radiusLg);
+
+    /* use an inner “surface” to keep clean corners */
+    box-shadow: none;
+    transition: transform 220ms ease;
 }
 
-.stepCardButton:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--drop-shadow-on-beige);
-    border-color: var(--color-neutral-200);
-}
-
-.stepCardButton:active {
-    transform: translateY(0px);
+.stepCardButton:focus {
+    outline: none;
 }
 
 .stepCardButton:focus-visible {
-    outline: 3px solid var(--color-brand-beige-A040);
-    outline-offset: 2px;
+    box-shadow: var(--focusRing);
 }
 
-.stepCardButtonActive {
-    background: var(--color-brand-beige);
-    color: #fff;
-    border-color: var(--color-brand-beige);
-    box-shadow: var(--drop-shadow-on-beige);
+/* Inner surface */
+.stepCardTop,
+.stepCardBody {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.68),
+            rgba(255, 255, 255, 0.36));
+    border: 1px solid rgba(0, 0, 0, 0.10);
 }
 
 .stepCardTop {
+    border-radius: var(--radiusLg) var(--radiusLg) 0 0;
+    padding: 0.95rem 0.95rem 0.85rem;
+
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
-}
+    gap: 0.75rem;
 
-.stepCardName {
-    font-weight: 900;
-    line-height: 1.25rem;
-    color: inherit;
-}
-
-.stepCardMeta {
-    margin-top: 0.25rem;
-    opacity: 0.95;
-    font-weight: 700;
-    color: inherit;
-}
-
-.stepCardRight {
-    display: grid;
-    gap: 0.5rem;
-    justify-items: end;
-}
-
-.pill {
-    padding: 0.25rem 0.65rem;
-    border-radius: 999px;
-    border: 2px solid var(--color-neutral-100);
-    background: var(--color-neutral-0);
-    color: var(--color-brand-dark-blue);
-    font-weight: 900;
-    font-size: 0.9rem;
-    user-select: none;
-}
-
-.pillActive {
-    background: #fff;
-    color: var(--color-brand-dark-blue);
-    border-color: #fff;
-}
-
-.scorePill {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.35rem;
-    padding: 0.3rem 0.65rem;
-    border-radius: 999px;
-    border: 2px solid rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.18);
-}
-
-.scoreNumber {
-    font-weight: 900;
-    font-size: 1rem;
-    color: inherit;
-}
-
-.scoreLabel {
-    font-weight: 900;
-    font-size: 0.85rem;
-    opacity: 0.92;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06), var(--shadowInset);
+    border-bottom: 0;
 }
 
 .stepCardBody {
-    display: grid;
-    gap: 0.75rem;
+    border-radius: 0 0 var(--radiusLg) var(--radiusLg);
+    padding: 0.85rem 0.95rem 0.95rem;
+
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.07), var(--shadowInset);
 }
 
+@media (hover: hover) {
+    .stepCardButton:hover {
+        transform: translateY(-3px);
+    }
+
+    .stepCardButton:hover .stepCardTop,
+    .stepCardButton:hover .stepCardBody {
+        border-color: rgba(0, 0, 0, 0.14);
+    }
+}
+
+/* Selected card = calm confidence */
+.stepCardButtonActive .stepCardTop,
+.stepCardButtonActive .stepCardBody {
+    border-color: rgba(0, 0, 0, 0.18);
+    background: linear-gradient(135deg,
+            rgba(250, 240, 220, 0.82),
+            rgba(255, 255, 255, 0.52));
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.10),
+        0 6px 18px rgba(0, 0, 0, 0.06),
+        var(--shadowInset);
+}
+
+/* Name + meta */
+.stepCardName {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+    font-weight: 820;
+    color: rgba(0, 0, 0, 0.82);
+    margin: 0 0 0.2rem 0;
+}
+
+.stepCardMeta {
+    font-family: var(--font-sans);
+    font-size: 0.98rem;
+    line-height: 1.4;
+    color: rgba(0, 0, 0, 0.58);
+}
+
+/* Right: pill area */
+.stepCardRight {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 86px;
+}
+
+/* Select/Selected pill */
+.pill {
+    border-radius: 999px;
+    padding: 0.42rem 0.7rem;
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+
+    background: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    color: rgba(0, 0, 0, 0.72);
+
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.pillActive {
+    background: linear-gradient(135deg, rgba(185, 151, 100, 0.95), rgba(229, 194, 136, 0.85));
+    border-color: rgba(185, 151, 100, 0.55);
+    color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 0 0 4px rgba(185, 151, 100, 0.14);
+}
+
+/* -----------------------------------------
+   Image section
+------------------------------------------ */
 .imageWrap {
-    border-radius: var(--radius);
+    width: 100%;
+    border-radius: 1rem;
     overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .floorplanImage {
     width: 100%;
     height: auto;
     display: block;
+    object-fit: cover;
+    aspect-ratio: 16 / 11;
+    background: rgba(255, 255, 255, 0.6);
 }
 
+/* Fallback */
 .imageFallback {
-    padding: 2rem 1rem;
-    text-align: center;
-    font-weight: 900;
-    opacity: 0.9;
+    aspect-ratio: 16 / 11;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    font-family: var(--font-sans);
+    color: rgba(0, 0, 0, 0.5);
 }
 
+/* Footer row inside card */
 .stepCardFooter {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-}
-
-.matchTag {
-    padding: 0.35rem 0.65rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.22);
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    font-weight: 900;
-    color: inherit;
-}
-
-.price {
-    font-weight: 900;
-    color: inherit;
-}
-
-/* ===== Skeleton Loading ===== */
-.skeletonRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.75rem;
     margin-top: 0.75rem;
 }
 
-.skeletonCard {
-    height: 120px;
-    border-radius: var(--radius);
-    border: 2px solid var(--color-neutral-100);
-    background: linear-gradient(90deg,
-            var(--color-neutral-0) 0%,
-            var(--color-neutral-100) 45%,
-            var(--color-neutral-0) 90%);
-    background-size: 200% 100%;
-    animation: shimmer 1.1s ease-in-out infinite;
+/* Match tag */
+.matchTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    border-radius: 999px;
+    padding: 0.4rem 0.65rem;
+
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.10);
+
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    font-weight: 650;
+    color: rgba(0, 0, 0, 0.68);
 }
 
-@keyframes shimmer {
-    0% {
-        background-position: 0% 0%;
-    }
+/* Price */
+.price {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+    font-weight: 850;
+    color: rgba(0, 0, 0, 0.80);
+}
 
-    100% {
-        background-position: -200% 0%;
+/* -----------------------------------------
+   Loading skeletons (real shimmer)
+------------------------------------------ */
+.skeletonRow {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 0.85rem;
+}
+
+@media (max-width: 1024px) {
+    .skeletonRow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-/* ===== Callout ===== */
-.calloutTitle {
-    font-weight: 900;
-    color: var(--color-brand-dark-blue);
-    margin-bottom: 0.35rem;
-}
-
-/* ===== Responsive ===== */
-@media only screen and (max-width: 900px) {
-    .floorplanGrid {
-        grid-template-columns: 1fr;
-    }
-
+@media (max-width: 760px) {
     .skeletonRow {
         grid-template-columns: 1fr;
     }
 }
 
-@media only screen and (max-width: 600px) {
-    .inputGrid2 {
-        grid-template-columns: 1fr;
+.skeletonCard {
+    border-radius: var(--radiusLg);
+    height: 320px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background:
+        linear-gradient(90deg,
+            rgba(255, 255, 255, 0.35),
+            rgba(255, 255, 255, 0.72),
+            rgba(255, 255, 255, 0.35));
+    background-size: 240% 100%;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    animation: shimmer 1.25s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 120% 0;
+    }
+
+    100% {
+        background-position: -120% 0;
+    }
+}
+
+/* -----------------------------------------
+   Reduced motion
+------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+
+    .select,
+    .stepper,
+    .stepperBtn,
+    .stepCardButton,
+    .skeletonCard {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .stepCardButton:hover {
+        transform: none;
     }
 }

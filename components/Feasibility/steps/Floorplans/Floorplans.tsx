@@ -251,7 +251,19 @@ export default function FloorplansStep() {
                                 <button
                                     key={fp._id}
                                     type="button"
-                                    onClick={() => setAnswer("selectedFloorplanId", fp._id)}
+                                    onClick={() => {
+                                        setAnswer("selectedFloorplanId", fp._id);
+
+                                        setAnswer("selectedFloorplan", {
+                                            id: fp._id,
+                                            name: fp.name,
+                                            price: fp.price,
+                                            sqft: fp.sqft,
+                                            bed: fp.bed,
+                                            bath: fp.bath,
+                                            drawingUrl: fp.drawing?.url,
+                                        });
+                                    }}
                                     className={`${styles.stepCardButton} ${active ? styles.stepCardButtonActive : ""}`}
                                 >
                                     <div className={styles.stepCardTop}>

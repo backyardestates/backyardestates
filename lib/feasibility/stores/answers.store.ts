@@ -29,10 +29,10 @@ type AnswersState = {
     hydrate: (next: Record<string, any>) => void;
 
     // ✅ new helpers
-    setSiteSpecificStatus: (id: string, status: SiteApplicability, cost?: MoneyRange) => void;
+    setSiteSpecificStatus: (id: string, status: SiteApplicability, cost?: MoneyRange, title?: string) => void;
     clearSiteSpecific: (id: string) => void;
 
-    setUpgradeSelected: (id: string, selected: boolean, cost?: MoneyRange) => void;
+    setUpgradeSelected: (id: string, selected: boolean, cost?: MoneyRange, title?: string) => void;
     toggleUpgrade: (id: string, cost?: MoneyRange) => void;
     clearUpgrade: (id: string) => void;
 
@@ -70,13 +70,13 @@ export const useAnswersStore = create<AnswersState>((set, get) => ({
     // -------------------------
     // ✅ site-specific helpers
     // -------------------------
-    setSiteSpecificStatus: (id, status, cost) =>
+    setSiteSpecificStatus: (id, status, cost, title) =>
         set((s) => ({
             answers: ensureShape({
                 ...s.answers,
                 siteSpecific: {
                     ...s.answers.siteSpecific,
-                    [id]: { status, cost },
+                    [id]: { title, status, cost },
                 },
             }),
         })),
@@ -96,13 +96,13 @@ export const useAnswersStore = create<AnswersState>((set, get) => ({
     // -------------------------
     // ✅ optional upgrade helpers
     // -------------------------
-    setUpgradeSelected: (id, selected, cost) =>
+    setUpgradeSelected: (id, selected, cost, title) =>
         set((s) => ({
             answers: ensureShape({
                 ...s.answers,
                 optionalUpgrades: {
                     ...s.answers.optionalUpgrades,
-                    [id]: { selected, cost },
+                    [id]: { selected, cost, title },
                 },
             }),
         })),

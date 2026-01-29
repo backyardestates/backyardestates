@@ -202,11 +202,7 @@ export default function IncludedPills(props: Props) {
                             />
                         )}
 
-                        <div className={styles.modalFooter}>
-                            <button type="button" className={styles.secondaryBtn} onClick={close}>
-                                Close
-                            </button>
-                        </div>
+
                     </div>
                 </div>
             ) : null}
@@ -476,82 +472,7 @@ function ItemModalView({
             </div>
 
             <div className={styles.modalBody}>
-                {/* ✅ NEW: selection action strip (top of modal body is fine) */}
-                {(isSite || isUpgrade) && onSetState ? (
-                    <section className={styles.actionCard}>
-                        <div className={styles.actionTitle}>
-                            {isSite ? "Does this seem like it might apply to your property?" : "Would you like to include this upgrade?"}
-                        </div>
 
-                        <div className={styles.actionRow}>
-                            {isSite ? (
-                                <>
-                                    <button
-                                        type="button"
-                                        className={styles.primaryBtn}
-                                        onClick={() => onSetState(active, "might_apply")}
-                                    >
-                                        This might apply
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className={styles.secondaryBtn}
-                                        onClick={() => onSetState(active, "not_apply")}
-                                    >
-                                        Might not apply
-                                    </button>
-
-                                    {state !== "unknown" ? (
-                                        <button
-                                            type="button"
-                                            className={styles.ghostBtn}
-                                            onClick={() => onSetState(active, "unknown")}
-                                        >
-                                            Clear
-                                        </button>
-                                    ) : null}
-                                </>
-                            ) : (
-                                <>
-                                    {state === "selected" ? (
-                                        <button
-                                            type="button"
-                                            className={styles.secondaryBtn}
-                                            onClick={() => onSetState(active, "not_selected")}
-                                        >
-                                            Remove upgrade
-                                        </button>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            className={styles.primaryBtn}
-                                            onClick={() => onSetState(active, "selected")}
-                                        >
-                                            Add upgrade
-                                        </button>
-                                    )}
-                                </>
-                            )}
-                        </div>
-
-                        {/* ✅ little status line */}
-                        <div className={styles.actionMeta}>
-                            Current:{" "}
-                            <strong>
-                                {state === "might_apply"
-                                    ? "Might apply"
-                                    : state === "not_apply"
-                                        ? "Might not apply"
-                                        : state === "selected"
-                                            ? "Added"
-                                            : state === "not_selected"
-                                                ? "Not added"
-                                                : "Not decided"}
-                            </strong>
-                        </div>
-                    </section>
-                ) : null}
                 {/* Hero overview */}
                 <section className={styles.heroCard}>
                     <div className={styles.heroKicker}>Overview</div>
@@ -676,6 +597,66 @@ function ItemModalView({
                             ))}
                         </ul>
                     </section>
+                ) : null}
+            </div>
+            <div className={styles.modalFooter}>
+                {/* ✅ NEW: selection action strip (top of modal body is fine) */}
+                {(isSite || isUpgrade) && onSetState ? (
+                    <div className={styles.actionRow}>
+                        {isSite ? (
+                            <>
+                                <button
+                                    type="button"
+                                    className={
+                                        `${state === "might_apply" ? styles.primaryBtn : styles.secondaryBtn}`
+                                    }
+                                    onClick={() => onSetState(active, "might_apply")}
+                                >
+                                    This might apply
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={
+                                        `${state === "not_apply" ? styles.primaryBtn : styles.secondaryBtn}`
+                                    }
+                                    onClick={() => onSetState(active, "not_apply")}
+                                >
+                                    Might not apply
+                                </button>
+
+                                {state !== "unknown" ? (
+                                    <button
+                                        type="button"
+                                        className={styles.ghostBtn}
+                                        onClick={() => onSetState(active, "unknown")}
+                                    >
+                                        Clear
+                                    </button>
+                                ) : null}
+                            </>
+                        ) : (
+                            <>
+                                {state === "selected" ? (
+                                    <button
+                                        type="button"
+                                        className={styles.secondaryBtn}
+                                        onClick={() => onSetState(active, "not_selected")}
+                                    >
+                                        Remove upgrade
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className={styles.primaryBtn}
+                                        onClick={() => onSetState(active, "selected")}
+                                    >
+                                        Add upgrade
+                                    </button>
+                                )}
+                            </>
+                        )}
+                    </div>
                 ) : null}
             </div>
         </>

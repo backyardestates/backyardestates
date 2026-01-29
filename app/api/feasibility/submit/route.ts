@@ -5,6 +5,8 @@ import { writeClient } from "@/sanity/writeClient";
 import { client } from "@/sanity/client";
 import { generateFeasibilityPdfBytes } from "@/lib/feasibility/generatePdf";
 import { Readable } from "stream";
+import { optional } from "zod";
+import { REPORT_ASSETS } from "@/sanity/queries";
 
 const FLOORPLAN_BY_ID = `
 *[_type=="floorplan" && _id==$id][0]{
@@ -67,9 +69,8 @@ export async function POST(req: Request) {
         const aduType = payload?.aduType;
         const bed = payload?.bed;
         const bath = payload?.bath;
-        const intendedUse = payload?.intendedUse;
-
-        if (!name || !phone || !email || !address || !city || !aduType || bed == null || bath == null || !intendedUse) {
+        const motivation = payload?.motivation;
+        if (!name || !phone || !email || !address || !city || !aduType || bed == null || bath == null || !motivation) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
@@ -86,11 +87,14 @@ export async function POST(req: Request) {
             aduType,
             bed,
             bath,
-            intendedUse,
+            motivation,
             selectedFloorplanId: payload?.selectedFloorplanId || null,
             floorplan,
-            riskFlags: payload?.riskFlags ?? [],
             outputs: payload?.outputs ?? {},
+            timeframe: payload?.timeframe ?? {},
+            finance: payload?.finance ?? {},
+            optionalUpgrades: payload?.optionalUpgrades ?? {},
+            siteSpecific: payload?.siteSpecific ?? {},
         };
 
         // Create Sanity doc first (without pdf)
@@ -103,16 +107,21 @@ export async function POST(req: Request) {
             aduType: data.aduType,
             bed: data.bed,
             bath: data.bath,
-            intendedUse: data.intendedUse,
+            motivation: data.motivation,
             selectedFloorplan: data.selectedFloorplanId
                 ? { _type: "reference", _ref: data.selectedFloorplanId }
                 : undefined,
+            timeframe: data.timeframe,
+            finance: data.finance,
+            optionalUpgrades: data.optionalUpgrades,
+            siteSpecific: data.siteSpecific,
             outputs: data.outputs,
-            riskFlags: data.riskFlags,
             rawState: JSON.stringify(payload),
         });
 
-        const pdfStream = await generateFeasibilityPdfBytes(data);
+        const assets = await client.fetch(REPORT_ASSETS);
+
+        const pdfStream = await generateFeasibilityPdfBytes({ ...data, assets });
         const pdfBuffer = await streamToBuffer(pdfStream);
 
         const pdfAsset = await writeClient.assets.upload(
@@ -138,7 +147,7 @@ export async function POST(req: Request) {
             [
                 `Feasibility Engine submission`,
                 `Address: ${address}, ${city}`,
-                `Type: ${aduType} | ${bed} bed / ${bath} bath | Use: ${intendedUse}`,
+                `Type: ${aduType} | ${bed} bed / ${bath} bath | Use: ${motivation}`,
                 `PDF: ${pdfAsset.url}`,
             ].join("<br/>")
         );

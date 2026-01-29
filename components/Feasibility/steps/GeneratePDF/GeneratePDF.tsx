@@ -27,14 +27,21 @@ export default function GeneratePDFStep() {
                     city: answers.city,
 
                     motivation: answers.motivation,
-                    priority: answers.priority,
-                    aduType: answers.aduType,
+                    motivationOther: answers.motivationOther,
 
+                    aduType: answers.aduType,
                     bed: answers.bed,
                     bath: answers.bath,
                     timeframe: answers.timeframe,
+
                     selectedFloorplanId: answers.selectedFloorplanId,
 
+                    // NEW: these matter for the report
+                    optionalUpgrades: answers.optionalUpgrades ?? {},
+                    siteSpecific: answers.siteSpecific ?? {},
+                    finance: answers.finance ?? {},
+
+                    // legacy
                     riskFlags: answers.riskFlags ?? [],
                     outputs: answers.outputs ?? {},
                 }),
@@ -55,25 +62,6 @@ export default function GeneratePDFStep() {
 
     return (
         <div>
-            <p style={{ color: "var(--color-neutral-600)", marginBottom: "1rem" }}>
-                Generate your branded report to bring to the open house. This takes a few seconds.
-            </p>
-
-            <label className="multistep">Name</label>
-            <input className="multistep" value={answers.name ?? ""} onChange={(e) => setAnswer("name", e.target.value)} />
-
-            <label className="multistep">Phone</label>
-            <input className="multistep" value={answers.phone ?? ""} onChange={(e) => setAnswer("phone", e.target.value)} />
-
-            <label className="multistep">Email</label>
-            <input className="multistep" value={answers.email ?? ""} onChange={(e) => setAnswer("email", e.target.value)} />
-
-            <label className="multistep">Property Address</label>
-            <input className="multistep" value={answers.address ?? ""} onChange={(e) => setAnswer("address", e.target.value)} />
-
-            <label className="multistep">City</label>
-            <input className="multistep" value={answers.city ?? ""} onChange={(e) => setAnswer("city", e.target.value)} />
-
             {error ? <p className="multistep error">{error}</p> : null}
 
             <button className="multistep button" onClick={submit} disabled={loading}>

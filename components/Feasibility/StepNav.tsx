@@ -13,7 +13,7 @@ export default function StepNav({
     onStepClick: (step: StepKey) => void;
 }) {
     return (
-        <nav className={styles.nav}>
+        <nav className={styles.nav} aria-label="Steps">
             {steps
                 .slice()
                 .sort((a, b) => a.index - b.index)
@@ -27,9 +27,12 @@ export default function StepNav({
                             type="button"
                             className={`${styles.stepBtn} ${active ? styles.active : ""}`}
                             onClick={() => onStepClick(s.key)}
+                            aria-current={active ? "step" : undefined}
                         >
-                            <Icon />
-                            <span>{s.title}</span>
+                            <span className={styles.iconWrap} aria-hidden="true">
+                                <Icon />
+                            </span>
+                            <span className={styles.stepTitle}>{s.title}</span>
                         </button>
                     );
                 })}

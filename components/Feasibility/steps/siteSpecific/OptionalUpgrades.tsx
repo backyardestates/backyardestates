@@ -37,7 +37,7 @@ export default function OptionalUpgrades({ onJump }: { onJump: (tab: 0 | 1 | 2) 
                         if (next === "not_selected") return clearUpgrade(item.id);
 
                         // next === "selected"
-                        setUpgradeSelected(item.id, true, getUpgradeCost(item));
+                        setUpgradeSelected(item.id, true, getUpgradeCost(item), item.title);
                     }}
                 />
             </div>

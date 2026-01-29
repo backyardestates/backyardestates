@@ -1,33 +1,7 @@
 import * as React from "react";
 
-export const STEP_KEYS = ["vision", "floorplans", "reality", "finance", "review", "submit"] as const;
+export const STEP_KEYS = ["property", "vision", "floorplans", "reality", "finance", "review"] as const;
 export type StepKey = (typeof STEP_KEYS)[number];
-
-export type FlowItem = {
-    id: string;
-    step: StepKey;
-    order: number;
-    required?: boolean;
-};
-
-export type Flow = ReadonlyArray<FlowItem>;
-export type QuestionType =
-    | "cardSelect"
-    | "pillSelect"
-    | "multiPillSelect"
-    | "stepper"
-    | "select"
-    | "text"
-    | "info"
-    | "action";
-
-export type Option = {
-    value: string;
-    label?: string;
-    title?: string;
-    desc?: string;
-    meta?: string;
-};
 
 export type StepDef = {
     key: StepKey;
@@ -36,45 +10,39 @@ export type StepDef = {
     index: number;
 };
 
-// export type QuestionDef = {
-//     id: string; // keep flexible; you can narrow later
-//     step: StepKey;
-//     order: number; // optional, for debugging
-//     title: string;
-//     helper?: string;
+export type FinanceStatus = "secured" | "exploring" | "not_sure";
 
-//     type: QuestionType;
+export type FinancePath =
+    | "cash"
+    | "heloc"
+    | "cash_out_refi"
+    | "construction_loan"
+    | "personal_loan"
+    | "other";
 
-//     required?: boolean;
+export type FinanceData = {
+    status?: FinanceStatus;
+    path?: FinancePath;
 
-//     // options for selects/cards/pills
-//     options?: Option[];
+    // Keep 5,6,7
+    downPayment?: number; // estimate (optional)
+    termMonths?: 180 | 240 | 360;
+    ratePct?: number; // estimate (optional / defaulted)
 
-//     // stepper settings
-//     stepper?: {
-//         min: number;
-//         max: number;
-//         step: number; // can be 0.5
-//         defaultValue?: number;
-//         format?: (n: number) => string;
-//     };
-
-//     // select input default
-//     placeholder?: string;
-
-//     // for action steps
-//     action?: {
-//         label: string;
-//     };
-
-//     // optional: allow the flow to skip/jump based on answers
-//     next?: (answers: Record<string, any>) => { step: StepKey; id: string } | null;
-// };
-
-// export type Flow = QuestionDef[];
+    // Improved step 11
+    wantsValueBoostAnalysis?: "yes" | "no";
+    homeValueEstimate?: number | null; // only if wantsValueBoostAnalysis === "yes"
+    mortgageBalance?: number | null; // optional
+};
 
 export function isComplete(screen: { id: string }, answers: any) {
+    const finance = (answers.finance ?? {}) as FinanceData;
+
     switch (screen.id) {
+
+        case "contact":
+            return !!answers.contact;
+
         case "motivation":
             return !!answers.motivation;
 
@@ -84,10 +52,31 @@ export function isComplete(screen: { id: string }, answers: any) {
         case "floorplansStep":
             return answers.bed != null && answers.bath != null && !!answers.timeframe && !!answers.selectedFloorplanId;
 
-        case "financeStep":
-            return !!answers.downPayment && !!answers.interestRate && !!answers.termMonths;
+        case "financeStatus":
+            return !!answers.finance?.status;
+
+        case "financePath":
+            return !!answers.finance?.path;
+
+        case "financeAssumptions": {
+            const f = answers.finance ?? {};
+            const basicOk = f.downPayment != null && !!f.termMonths && f.ratePct != null;
+            const valueBoostAnswered = f.wantsValueBoostAnalysis === "yes" || f.wantsValueBoostAnalysis === "no";
+            return basicOk && valueBoostAnswered;
+        }
+
 
         default:
             return true;
     }
 }
+
+export type SelectedFloorplan = {
+    id: string;
+    name: string;
+    price: number;
+    sqft: number;
+    bed: number;
+    bath: number;
+    drawingUrl?: string;
+};

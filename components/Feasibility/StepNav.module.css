@@ -1,28 +1,135 @@
+/* =========================================
+   StepNav.module.css
+   Premium, quiet, ultra-readable progress nav
+   ========================================= */
+
 .nav {
+    --radius: 999px;
+    --hairline: rgba(0, 0, 0, 0.10);
+    --hairlineStrong: rgba(0, 0, 0, 0.14);
+
+    --shadowInset: inset 0 1px 0 rgba(255, 255, 255, 0.62);
+
+    --focusRing: 0 0 0 5px rgba(50, 110, 255, 0.18);
+    --focusOutline: rgba(50, 110, 255, 0.55);
+
     display: flex;
-    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+
     flex-wrap: wrap;
-    margin-bottom: 1rem;
+    padding: 0.35rem;
 }
 
+/* Individual step button */
 .stepBtn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    border: 2px solid var(--color-neutral-100);
-    border-radius: 999px;
-    padding: 0.45rem 0.75rem;
-    background: #fff;
-    color: var(--color-brand-dark-blue);
+    gap: 0.55rem;
+
+    height: 40px;
+    padding: 0 0.85rem;
+    border-radius: var(--radius);
+
+    border: 1px solid var(--hairline);
+    background: rgba(255, 255, 255, 0.66);
+    box-shadow: var(--shadowInset);
+
+    font-family: var(--font-sans);
+    font-size: 0.96rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    color: rgba(0, 0, 0, 0.78);
+
+    transition: transform 160ms ease, box-shadow 200ms ease, background 200ms ease, border-color 200ms ease;
     cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
 }
 
-.stepBtn svg {
+.stepBtn:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.84);
+    border-color: var(--hairlineStrong);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10), var(--shadowInset);
+}
+
+.stepBtn:active {
+    transform: translateY(0px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.10), var(--shadowInset);
+}
+
+.stepBtn:focus-visible {
+    outline: none;
+    box-shadow: var(--focusRing), var(--shadowInset);
+    border-color: var(--focusOutline);
+}
+
+.iconWrap {
     width: 18px;
     height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.86;
 }
 
+.iconWrap :global(svg) {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.7;
+}
+
+.stepTitle {
+    line-height: 1;
+}
+
+/* Active step */
 .active {
-    background: var(--color-brand-beige-subtle);
-    border-color: var(--color-brand-beige-A040);
+    background: linear-gradient(135deg,
+            rgba(250, 240, 220, 0.88),
+            rgba(243, 226, 194, 0.92),
+            rgba(255, 255, 255, 0.55));
+
+    border-color: rgba(185, 151, 100, 0.34);
+    color: rgba(0, 0, 0, 0.86);
+
+    box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.66),
+        0 0 0 4px rgba(185, 151, 100, 0.12);
+}
+
+.active .iconWrap {
+    opacity: 0.95;
+}
+
+/* Mobile: tighter and scrollable if needed */
+@media (max-width: 520px) {
+    .nav {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+
+    .nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .stepBtn {
+        height: 38px;
+        padding: 0 0.8rem;
+        font-size: 0.92rem;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .stepBtn {
+        transition: none !important;
+    }
 }

@@ -37,7 +37,7 @@ export default function SiteSpecificWorkStep({ onJump }: { onJump: (tab: 0 | 1 |
                     getState={(item) => siteSpecific[item.id]?.status ?? "unknown"}
                     onSetState={(item, next) => {
                         if (next === "unknown") return clearSiteSpecific(item.id);
-                        setSiteSpecificStatus(item.id, next as any, getSiteCost(item));
+                        setSiteSpecificStatus(item.id, next as any, getSiteCost(item), item.title);
                     }}
                 />
             </div>

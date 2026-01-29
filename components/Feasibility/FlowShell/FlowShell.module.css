@@ -1,0 +1,209 @@
+/* =========================================
+   FlowShell.module.css
+   Premium, calm, Apple-like shell + controls
+   ========================================= */
+
+.shell {
+    --max: 72rem;
+    --padX: clamp(1rem, 3vw, 1.5rem);
+
+    --radiusLg: 1.35rem;
+    --radiusMd: 1.1rem;
+
+    --hairline: rgba(0, 0, 0, 0.08);
+    --hairlineStrong: rgba(0, 0, 0, 0.12);
+
+    --text: rgba(0, 0, 0, 0.88);
+    --muted: rgba(0, 0, 0, 0.58);
+    --muted2: rgba(0, 0, 0, 0.46);
+
+    --shadowA: 0 16px 44px rgba(0, 0, 0, 0.10);
+    --shadowB: 0 6px 18px rgba(0, 0, 0, 0.07);
+    --shadowInset: inset 0 1px 0 rgba(255, 255, 255, 0.60);
+
+    --focusRing: 0 0 0 5px rgba(50, 110, 255, 0.18);
+    --focusOutline: rgba(50, 110, 255, 0.55);
+
+    width: 100%;
+    padding: 1.25rem var(--padX) 2rem;
+    color: var(--text);
+}
+
+.inner {
+    max-width: var(--max);
+    margin: 0 auto;
+
+    display: grid;
+    gap: 1rem;
+}
+
+/* Sticky nav: keeps user oriented */
+.navSticky {
+    position: sticky;
+    top: 0.75rem;
+    z-index: 15;
+
+    border-radius: var(--radiusLg);
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadowB), var(--shadowInset);
+
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+
+    padding: 0.65rem;
+}
+
+/* Step content wrapper */
+.body {
+    display: grid;
+    gap: 1rem;
+}
+
+/* Bottom controls */
+.controls {
+    position: sticky;
+    bottom: 0.75rem;
+    z-index: 12;
+
+    border-radius: var(--radiusLg);
+    background: rgba(255, 255, 255, 0.66);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadowA), var(--shadowInset);
+
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+
+    padding: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.85rem;
+}
+
+.controlsLeft {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.controlsRight {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.controlsHint {
+    display: flex;
+    align-items: center;
+    min-height: 20px;
+}
+
+.hintOk,
+.hintWarn {
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    font-weight: 750;
+    color: var(--muted);
+}
+
+.hintOk {
+    color: rgba(0, 0, 0, 0.62);
+}
+
+.hintWarn {
+    color: rgba(160, 90, 35, 0.92);
+}
+
+/* Buttons */
+.btn {
+    height: 44px;
+    padding: 0 1rem;
+    border-radius: 999px;
+
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+
+    border: 1px solid var(--hairlineStrong);
+    background: rgba(255, 255, 255, 0.72);
+    color: rgba(0, 0, 0, 0.84);
+
+    box-shadow: var(--shadowInset);
+    transition: transform 160ms ease, box-shadow 200ms ease, background 200ms ease, opacity 200ms ease;
+    cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10), var(--shadowInset);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.10), var(--shadowInset);
+}
+
+.btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focusRing), var(--shadowInset);
+    border-color: var(--focusOutline);
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Primary / Secondary flavors */
+.btnPrimary {
+    border-color: rgba(185, 151, 100, 0.30);
+    background: linear-gradient(135deg,
+            rgba(250, 240, 220, 0.88),
+            rgba(243, 226, 194, 0.92),
+            rgba(255, 255, 255, 0.55));
+    color: var(--color-brand-dark-blue, rgba(0, 0, 0, 0.86));
+}
+
+.btnPrimary:hover:not(:disabled) {
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.btnSecondary {
+    background: rgba(255, 255, 255, 0.68);
+}
+
+/* Mobile: less sticky density */
+@media (max-width: 720px) {
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.65rem;
+    }
+
+    .controlsRight {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .controlsHint {
+        justify-content: center;
+    }
+
+    .navSticky {
+        top: 0.5rem;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .btn {
+        transition: none !important;
+    }
+}
