@@ -1,18 +1,44 @@
-export const runtime = "nodejs"
+// app/api/feasibility/submit/route.ts
+export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import { writeClient } from "@/sanity/writeClient";
 import { client } from "@/sanity/client";
 import { generateFeasibilityPdfBytes } from "@/lib/feasibility/generatePdf";
 import { Readable } from "stream";
-import { optional } from "zod";
-import { REPORT_ASSETS } from "@/sanity/queries";
 
 const FLOORPLAN_BY_ID = `
 *[_type=="floorplan" && _id==$id][0]{
-  _id, name, bed, bath, sqft, price
+  _id,
+  name,
+  bed,
+  bath,
+  sqft,
+  price,
+  "drawingUrl": drawing.asset->url,
+  "heroUrl": heroImage.asset->url,
+  "galleryUrls": gallery[].asset->url
 }
 `;
+
+const BRAND_QUERY = `
+*[_type=="siteSettings"][0]{
+  brandName,
+  tagline,
+  "logoUrl": logo.asset->url,
+  "coverUrl": feasibilityCover.asset->url,
+  "processUrls": processGallery[].asset->url,
+  "signatureName": signatureName,
+  "signatureTitle": signatureTitle
+}
+`;
+
+async function streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+    const readable = stream instanceof Readable ? stream : Readable.from(stream as any);
+    const chunks: Buffer[] = [];
+    for await (const chunk of readable) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    return Buffer.concat(chunks);
+}
 
 async function createPipedrivePerson(person: any) {
     const domain = process.env.PIPEDRIVE_DOMAIN;
@@ -22,7 +48,6 @@ async function createPipedrivePerson(person: any) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(person),
-
     });
 
     const json = await res.json();
@@ -45,95 +70,93 @@ async function createPipedriveNote(personId: number, content: string) {
     return json?.data;
 }
 
-async function streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
-    const readable = stream instanceof Readable ? stream : Readable.from(stream as any);
-    const chunks: Buffer[] = [];
-
-    for await (const chunk of readable) {
-        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-    }
-
-    return Buffer.concat(chunks);
-}
-
 export async function POST(req: Request) {
     try {
         const payload = await req.json();
 
-        // Minimal required fields (your list)
         const name = payload?.name?.trim();
         const phone = payload?.phone?.trim();
         const email = payload?.email?.trim();
         const address = payload?.address?.trim();
         const city = payload?.city?.trim();
+
+        const motivation = payload?.motivation;
         const aduType = payload?.aduType;
         const bed = payload?.bed;
         const bath = payload?.bath;
-        const motivation = payload?.motivation;
-        if (!name || !phone || !email || !address || !city || !aduType || bed == null || bath == null || !motivation) {
+
+        if (!name || !phone || !email || !address || !city || !motivation || !aduType || bed == null || bath == null) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-        // Fetch floorplan for nicer PDF + record
-        let floorplan = null;
-        if (payload?.selectedFloorplanId) {
-            floorplan = await client.fetch(FLOORPLAN_BY_ID, { id: payload.selectedFloorplanId });
-        }
+        // Enrich from Sanity
+        const [brand, floorplan] = await Promise.all([
+            client.fetch(BRAND_QUERY),
+            payload?.selectedFloorplanId ? client.fetch(FLOORPLAN_BY_ID, { id: payload.selectedFloorplanId }) : null,
+        ]);
 
-        // Build canonical data object
+        // Canonical report data object (THIS drives the PDF)
         const data = {
+            brand: brand ?? null,
             contact: { name, phone, email },
-            address: { full: address, city },
-            aduType,
-            bed,
-            bath,
-            motivation,
-            selectedFloorplanId: payload?.selectedFloorplanId || null,
-            floorplan,
+            property: { address, city },
+            project: {
+                motivation,
+                aduType,
+                bed,
+                bath,
+                timeframe: payload?.timeframe ?? null,
+            },
+            selections: {
+                selectedFloorplanId: payload?.selectedFloorplanId ?? null,
+                floorplan,
+                optionalUpgrades: payload?.optionalUpgrades ?? payload?.answers?.optionalUpgrades ?? null,
+                siteSpecific: payload?.siteSpecific ?? payload?.answers?.siteSpecific ?? null,
+            },
+            finance: payload?.finance ?? null,
+            // Any computed outputs you already generate (keep as-is)
             outputs: payload?.outputs ?? {},
-            timeframe: payload?.timeframe ?? {},
-            finance: payload?.finance ?? {},
-            optionalUpgrades: payload?.optionalUpgrades ?? {},
-            siteSpecific: payload?.siteSpecific ?? {},
+            // If you still use riskFlags array, keep it too
+            riskFlags: payload?.riskFlags ?? [],
+            raw: payload,
+            generatedAt: new Date().toISOString(),
         };
 
-        // Create Sanity doc first (without pdf)
+        // Create a Sanity doc first (without pdf)
         const created = await writeClient.create({
             _type: "feasibilitySubmission",
-            createdAt: new Date().toISOString(),
+            createdAt: data.generatedAt,
             status: "new",
             contact: data.contact,
-            address: data.address,
-            aduType: data.aduType,
-            bed: data.bed,
-            bath: data.bath,
-            motivation: data.motivation,
-            selectedFloorplan: data.selectedFloorplanId
-                ? { _type: "reference", _ref: data.selectedFloorplanId }
+            address: { full: data.property.address, city: data.property.city },
+            motivation: data.project.motivation,
+            aduType: data.project.aduType,
+            bed: data.project.bed,
+            bath: data.project.bath,
+            timeframe: data.project.timeframe,
+            selectedFloorplan: data.selections.selectedFloorplanId
+                ? { _type: "reference", _ref: data.selections.selectedFloorplanId }
                 : undefined,
-            timeframe: data.timeframe,
             finance: data.finance,
-            optionalUpgrades: data.optionalUpgrades,
-            siteSpecific: data.siteSpecific,
+            optionalUpgrades: data.selections.optionalUpgrades,
+            siteSpecific: data.selections.siteSpecific,
             outputs: data.outputs,
+            riskFlags: data.riskFlags,
             rawState: JSON.stringify(payload),
         });
 
-        const assets = await client.fetch(REPORT_ASSETS);
-
-        const pdfStream = await generateFeasibilityPdfBytes({ ...data, assets });
+        const pdfStream = await generateFeasibilityPdfBytes(data);
         const pdfBuffer = await streamToBuffer(pdfStream);
 
-        const pdfAsset = await writeClient.assets.upload(
-            "file",
-            pdfBuffer,
-            { filename: `ADU-Feasibility-${created._id}.pdf`, contentType: "application/pdf" }
-        );
+        const pdfAsset = await writeClient.assets.upload("file", pdfBuffer, {
+            filename: `Feasibility-Report-${created._id}.pdf`,
+            contentType: "application/pdf",
+        });
 
-        // Patch doc with pdf
-        await writeClient.patch(created._id).set({
-            pdf: { _type: "file", asset: { _type: "reference", _ref: pdfAsset._id } },
-        }).commit();
+        await writeClient
+            .patch(created._id)
+            .set({ pdf: { _type: "file", asset: { _type: "reference", _ref: pdfAsset._id } } })
+            .commit();
 
         // Push to Pipedrive
         const person = await createPipedrivePerson({
@@ -147,19 +170,15 @@ export async function POST(req: Request) {
             [
                 `Feasibility Engine submission`,
                 `Address: ${address}, ${city}`,
-                `Type: ${aduType} | ${bed} bed / ${bath} bath | Use: ${motivation}`,
+                `Motivation: ${motivation}`,
+                `Type: ${aduType} | ${bed} bed / ${bath} bath`,
                 `PDF: ${pdfAsset.url}`,
             ].join("<br/>")
         );
 
-        await writeClient.patch(created._id).set({
-            pipedrive: { personId: person.id, noteId: note.id },
-        }).commit();
+        await writeClient.patch(created._id).set({ pipedrive: { personId: person.id, noteId: note.id } }).commit();
 
-        return NextResponse.json({
-            submissionId: created._id,
-            pdfUrl: pdfAsset.url,
-        });
+        return NextResponse.json({ submissionId: created._id, pdfUrl: pdfAsset.url });
     } catch (err: any) {
         return NextResponse.json({ error: err?.message || "Server error" }, { status: 500 });
     }

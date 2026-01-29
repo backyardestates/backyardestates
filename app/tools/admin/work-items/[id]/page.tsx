@@ -1,9 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { updateWorkItem, deleteWorkItem } from "./actions";
 
-export default async function EditWorkItemPage({ params }: { params: { id: string } }) {
+export default async function EditWorkItemPage({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}) {
+    const { id } = await params;
+
     const wi = await prisma.workItem.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: { category: true, pricingModels: true, impacts: true },
     });
 
