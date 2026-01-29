@@ -1,7 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { Role } from "@prisma/client";
 import { normalizeRole } from "../types/roles";
+import { Role } from "@prisma/client";
 
 export async function requireUserId() {
     const { userId } = await auth();
