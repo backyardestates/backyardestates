@@ -7,6 +7,7 @@ export default async function EditWorkItemPage({
     params: Promise<{ id: string }>;
 }) {
     const { id } = await params;
+    console.log("Editing work item with id:", id);
 
     const wi = await prisma.workItem.findUnique({
         where: { id },
