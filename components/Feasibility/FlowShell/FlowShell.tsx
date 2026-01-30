@@ -152,7 +152,6 @@ export default function FlowShell() {
         if ("phone" in answers) setFeas("phone", answers.phone);
         if ("email" in answers) setFeas("email", answers.email);
         if ("address" in answers) setFeas("address", answers.address);
-        if ("city" in answers) setFeas("city", answers.city);
     }, [answers, setFeas, setOutputs]);
 
     return (

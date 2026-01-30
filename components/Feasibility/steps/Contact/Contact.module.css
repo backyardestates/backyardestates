@@ -129,13 +129,16 @@
 
 /* Label: subtle luxe */
 .label {
-    font-family: var(--font-serif);
     font-size: 0.95rem;
-    letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--muted2);
-    font-weight: 600;
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+    font-weight: 820;
+    color: var(--color-brand-dark-blue);
+    margin: 0 0 0.35rem 0;
 }
+
+
 
 /* ---- Inputs: modern, forgiving, premium ---- */
 .input {

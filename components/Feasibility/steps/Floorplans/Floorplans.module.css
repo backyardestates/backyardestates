@@ -86,9 +86,9 @@
 /* Hero headline */
 .heroHeadline {
     font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 1.8vw, 1.75rem);
+    font-size: clamp(1.35rem, 1.85vw, 1.8rem);
     letter-spacing: -0.02em;
-    font-weight: 800;
+    font-weight: 820;
     color: var(--color-brand-dark-blue, rgba(0, 0, 0, 0.82));
     margin: 0 0 0.35rem 0;
 }
@@ -97,10 +97,10 @@
 .heroSubhead {
     font-family: var(--font-sans);
     font-size: 1.02rem;
-    line-height: 1.6;
+    line-height: 1.65;
     color: var(--muted);
-    margin: 0 0 1.1rem 0;
-    max-width: 62ch;
+    margin: 0;
+    max-width: 78ch;
 }
 
 /* -----------------------------------------

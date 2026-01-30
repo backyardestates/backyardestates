@@ -523,15 +523,57 @@ export const FLOORPLAN_BY_ID = `
 }
 `;
 
-export const REPORT_ASSETS = `
+export const REPORT_ASSETS_QUERY = `
 *[_type=="pdfReportAssets"][0]{
   brand{
-    logo{asset->{url}},
-    coverPhoto{asset->{url}}
+    "logoUrl": logo.asset->url,
+    "coverUrl": coverPhoto.asset->url
   },
   gallery[]{
     title,
-    image{asset->{url}}
+    "imageUrl": image.asset->url
+  }
+}
+`;
+
+export const FEATURED_STORIES_QUERY = `
+*[_type == "story" && featured] | order(publishedAt desc)[0...2]{
+  wistiaId,
+  names,
+  quote,
+  portrait,
+  "slug": slug.current,
+  property->{
+    bed, bath, sqft,
+    floorplan->{ name },
+    "propertySlug": slug.current
+  }
+}
+`;
+
+// Comparable builds (use near-match by bed/bath/sqft if you want; here: latest 6 with photos)
+export const COMPARABLE_PROPERTIES_QUERY = `
+*[
+  _type == "property" &&
+  defined(photos) &&
+  count(photos) > 0
+]
+| order(coalesce(publishedAt, _createdAt) desc)[0...6]{
+  _id,
+  name,
+  "slug": slug.current,
+  aduType,
+  sqft,
+  bed,
+  bath,
+  photos[0]{
+    "url": url,
+    "publicId": public_id
+  },
+  floorplan->{
+    name,
+    bed, bath, sqft,
+    "slug": slug.current
   }
 }
 `;

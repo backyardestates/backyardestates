@@ -4,22 +4,10 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { writeClient } from "@/sanity/writeClient";
 import { client } from "@/sanity/client";
-import { generateFeasibilityPdfBytes } from "@/lib/feasibility/generatePdf";
+import { generateFeasibilityPdfBytes } from "@/lib/feasibility/pdf/generatePdf";
 import { Readable } from "stream";
+import { COMPARABLE_PROPERTIES_QUERY, FEATURED_STORIES_QUERY, FLOORPLAN_BY_ID, REPORT_ASSETS_QUERY } from "@/sanity/queries";
 
-const FLOORPLAN_BY_ID = `
-*[_type=="floorplan" && _id==$id][0]{
-  _id,
-  name,
-  bed,
-  bath,
-  sqft,
-  price,
-  "drawingUrl": drawing.asset->url,
-  "heroUrl": heroImage.asset->url,
-  "galleryUrls": gallery[].asset->url
-}
-`;
 
 const BRAND_QUERY = `
 *[_type=="siteSettings"][0]{
@@ -85,28 +73,27 @@ export async function POST(req: Request) {
         const bed = payload?.bed;
         const bath = payload?.bath;
 
-        if (!name || !phone || !email || !address || !city || !motivation || !aduType || bed == null || bath == null) {
+        if (!name || !phone || !email || !address || !motivation || !aduType || bed == null || bath == null) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
         // Enrich from Sanity
-        const [brand, floorplan] = await Promise.all([
+        const [brand, floorplan, reportAssets, stories, comparables] = await Promise.all([
             client.fetch(BRAND_QUERY),
             payload?.selectedFloorplanId ? client.fetch(FLOORPLAN_BY_ID, { id: payload.selectedFloorplanId }) : null,
+            client.fetch(REPORT_ASSETS_QUERY),
+            client.fetch(FEATURED_STORIES_QUERY),
+            client.fetch(COMPARABLE_PROPERTIES_QUERY),
         ]);
+
+        console.log(brand, floorplan, reportAssets, stories, comparables);
 
         // Canonical report data object (THIS drives the PDF)
         const data = {
             brand: brand ?? null,
             contact: { name, phone, email },
             property: { address, city },
-            project: {
-                motivation,
-                aduType,
-                bed,
-                bath,
-                timeframe: payload?.timeframe ?? null,
-            },
+            project: { motivation, aduType, bed, bath, timeframe: payload?.timeframe ?? null },
             selections: {
                 selectedFloorplanId: payload?.selectedFloorplanId ?? null,
                 floorplan,
@@ -114,10 +101,13 @@ export async function POST(req: Request) {
                 siteSpecific: payload?.siteSpecific ?? payload?.answers?.siteSpecific ?? null,
             },
             finance: payload?.finance ?? null,
-            // Any computed outputs you already generate (keep as-is)
             outputs: payload?.outputs ?? {},
-            // If you still use riskFlags array, keep it too
             riskFlags: payload?.riskFlags ?? [],
+            assets: {
+                reportAssets: reportAssets ?? null,
+                testimonials: stories ?? [],
+                comparables: comparables ?? [],
+            },
             raw: payload,
             generatedAt: new Date().toISOString(),
         };

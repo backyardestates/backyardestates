@@ -1,9 +1,6 @@
 import {
-    SignInButton,
     SignOutButton,
-    SignUpButton,
     SignedIn,
-    SignedOut,
 } from '@clerk/nextjs'
 
 

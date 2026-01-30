@@ -1,5 +1,5 @@
 import { pdf } from "@react-pdf/renderer";
-import { FeasibilityPdf } from "./pdf";
+import { FeasibilityPdf } from "./FeasibilityPdf";
 
 export async function generateFeasibilityPdfBytes(data: any) {
     console.log(data);
