@@ -14,7 +14,6 @@ export default function GeneratePDFStep() {
     const submit = async () => {
         setLoading(true);
         setError(null);
-        console.log(answers)
         try {
             const res = await fetch("/api/feasibility/submit", {
                 method: "POST",

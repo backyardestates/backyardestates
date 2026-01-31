@@ -39,6 +39,7 @@ async function createPipedrivePerson(person: any) {
     });
 
     const json = await res.json();
+    console.log("Pipedrive person create response:", json);
     if (!res.ok) throw new Error(json?.error || "Pipedrive person create failed");
     return json?.data;
 }
@@ -54,6 +55,8 @@ async function createPipedriveNote(personId: number, content: string) {
     });
 
     const json = await res.json();
+    console.log("Pipedrive Note create response:", json);
+
     if (!res.ok) throw new Error(json?.error || "Pipedrive note create failed");
     return json?.data;
 }
@@ -85,8 +88,6 @@ export async function POST(req: Request) {
             client.fetch(FEATURED_STORIES_QUERY),
             client.fetch(COMPARABLE_PROPERTIES_QUERY),
         ]);
-
-        console.log(brand, floorplan, reportAssets, stories, comparables);
 
         // Canonical report data object (THIS drives the PDF)
         const data = {
@@ -134,10 +135,11 @@ export async function POST(req: Request) {
             riskFlags: data.riskFlags,
             rawState: JSON.stringify(payload),
         });
+        console.log("Created feasibility submission:", created._id);
 
         const pdfStream = await generateFeasibilityPdfBytes(data);
         const pdfBuffer = await streamToBuffer(pdfStream);
-
+        console.log("Generated PDF buffer, size:", pdfBuffer.length);
         const pdfAsset = await writeClient.assets.upload("file", pdfBuffer, {
             filename: `Feasibility-Report-${created._id}.pdf`,
             contentType: "application/pdf",
@@ -147,6 +149,8 @@ export async function POST(req: Request) {
             .patch(created._id)
             .set({ pdf: { _type: "file", asset: { _type: "reference", _ref: pdfAsset._id } } })
             .commit();
+
+        console.log("Uploaded PDF asset:", pdfAsset.url);
 
         // Push to Pipedrive
         const person = await createPipedrivePerson({
@@ -165,7 +169,7 @@ export async function POST(req: Request) {
                 `PDF: ${pdfAsset.url}`,
             ].join("<br/>")
         );
-
+        console.log("Pipedrive Note create response:", note);
         await writeClient.patch(created._id).set({ pipedrive: { personId: person.id, noteId: note.id } }).commit();
 
         return NextResponse.json({ submissionId: created._id, pdfUrl: pdfAsset.url });

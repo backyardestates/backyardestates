@@ -15,6 +15,7 @@ import { computeFeasibility } from "./compute";
 import { palette } from "./palette";
 import { formatDate, money, moneyRange, pct } from "./format";
 import { buildValueSections } from "./valueWeBring";
+import { Columns2 } from "lucide-react";
 
 /**
  * ✅ IMPORTANT
@@ -81,7 +82,7 @@ export function FeasibilityPdf({ data }: Props) {
     const addressLine = data.property?.address ?? "";
     const cityLine = data.property?.city ? `, ${data.property.city}` : "";
 
-    const floorplanDrawing = safeSrc(data.selections?.floorplan?.drawingUrl) ?? null;
+    const floorplanDrawing = safeSrc(data.selections?.floorplan?.drawing?.url) ?? null;
 
     const reportDate = formatDate(data.generatedAt);
 
@@ -94,8 +95,6 @@ export function FeasibilityPdf({ data }: Props) {
     const gallery = data.assets?.reportAssets?.gallery ?? [];
     const testimonials = data.assets?.testimonials ?? [];
     const comparables = data.assets?.comparables ?? [];
-
-    console.log(floorplanDrawing, gallery, testimonials, comparables);
 
     return (
         <Document title={`Feasibility Report - ${contact.name}`}>
@@ -114,45 +113,21 @@ export function FeasibilityPdf({ data }: Props) {
 
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.coverTitle}>Feasibility Report</Text>
-                                <Text style={styles.coverSubtitle}>{tagline}</Text>
-                            </View>
-
-                            <View style={styles.coverMeta}>
-                                <Text style={styles.metaLabel}>Prepared for</Text>
-                                <Text style={styles.metaValue}>{contact.name}</Text>
-                                <Text style={styles.metaMuted}>{reportDate}</Text>
                             </View>
                         </View>
                     </View>
 
+
                     <View style={styles.coverHero}>
-                        {coverUrl ? (
-                            <Image src={coverUrl} style={styles.coverImage} />
-                        ) : (
-                            <View style={styles.coverImageFallback}>
-                                <Text style={styles.coverImageFallbackText}>Project Preview</Text>
-                            </View>
-                        )}
+                        <Text style={styles.metaValue}>{contact.name}</Text>
+                        <Text style={styles.overlayEyebrow}>Property</Text>
+                        <Text style={styles.overlayTitle}>
+                            {addressLine}
+                            {cityLine}
+                        </Text>
+                        <Text style={styles.metaMuted}>{reportDate}</Text>
 
-                        <View style={styles.coverOverlayCard}>
-                            <Text style={styles.overlayEyebrow}>Property</Text>
-                            <Text style={styles.overlayTitle}>
-                                {addressLine}
-                                {cityLine}
-                            </Text>
-
-                            <View style={styles.overlayRow}>
-                                <View style={styles.pill}>
-                                    <Text style={styles.pillText}>{c.floorplanName}</Text>
-                                </View>
-                                <View style={styles.pillSoft}>
-                                    <Text style={styles.pillTextSoft}>
-                                        {c.bed} Bed • {c.bath} Bath • {c.sqft} sqft
-                                    </Text>
-                                </View>
-                            </View>
-
-                            <View style={styles.bigNumberRow}>
+                        {/* <View style={styles.bigNumberRow}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.bigLabel}>Estimated Project Range</Text>
                                     <Text style={styles.bigNumber}>
@@ -165,182 +140,155 @@ export function FeasibilityPdf({ data }: Props) {
                                         Preliminary estimates. Formal Property Analysis verifies site triggers and finalizes a proposal.
                                     </Text>
                                 </View>
+                            </View> */}
+                        <Card title="Selected Floorplan">
+                            {floorplanDrawing ? (
+                                <Image src={floorplanDrawing} style={styles.drawing} />
+                            ) : (
+                                <View style={styles.drawingFallback}>
+                                    <Text style={styles.microMuted}>Floorplan drawing not available.</Text>
+                                </View>
+                            )}
+                            <View style={styles.overlayRow}>
+                                <View style={styles.pill}>
+                                    <Text style={styles.pillText}>{c.floorplanName}</Text>
+                                </View>
+                                <View style={styles.pillSoft}>
+                                    <Text style={styles.pillTextSoft}>
+                                        {c.bed} Bed • {c.bath} Bath • {c.sqft} sqft
+                                    </Text>
+                                </View>
                             </View>
-                        </View>
+
+                            <View style={styles.priceBlock}>
+                                <Text style={styles.bigLabel}>Base Build Price</Text>
+                                <Text style={styles.bigNumberSmall}>{money(c.basePrice, { round: "1000" })}</Text>
+                                <Text style={styles.microMuted}>Base build includes standard finishes and typical scope for this plan.</Text>
+                            </View>
+
+                            <Divider />
+
+                            <Text style={styles.label}>Included</Text>
+                            <View style={styles.chipsRow}>
+                                <Chip text="Design + Permits" />
+                                <Chip text="City Fees" />
+                                <Chip text="Construction" />
+                                <Chip text="Project Management" />
+                                <Chip text="Standard finishes package" />
+                                <Chip text="Quality inspections" />
+                            </View>
+
+                            <Text style={styles.microMuted}>
+                                Exact inclusions and exclusions are finalized after the Formal Property Analysis.
+                            </Text>
+                        </Card>
+
                     </View>
 
-                    <View style={styles.footerBar}>
+                    {/* <View style={styles.footerBar}>
                         <Text style={styles.footerText}>
                             Contact: {contact.phone} • {contact.email}
                         </Text>
                         <Text style={styles.footerTextMuted}>This report is a planning tool — not a contract or final bid.</Text>
-                    </View>
+                    </View> */}
                 </View>
             </Page>
 
-            {/* 2) EXECUTIVE SUMMARY */}
+            {/* 2) PROJECT SUMMARY TABLE */}
             <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="Executive Summary" subtitle="A clear snapshot of scope, range, and next steps" />
+                <Header brandName={brandName} logoUrl={logoUrl} title="Project Summary" subtitle="Base build + estimated site work + selected upgrades + available discounts" />
+
+                <Card title="Investment Summary (Preliminary)">
+                    <SummaryTable
+                        rows={[
+                            { label: "Base Build (Selected Plan)", value: money(c.basePrice, { round: "1000" }) },
+                            { label: "Estimated Site Work (Range)", value: moneyRange(c.site.subtotal.min, c.site.subtotal.max, { round: "1000", plus: true }) },
+                            { label: "Selected Upgrades (Range)", value: moneyRange(c.upgrades.subtotal.min, c.upgrades.subtotal.max, { round: "1000" }) },
+                            { label: "Applied Discounts", value: c.discounts.appliedTotal ? `−${money(c.discounts.appliedTotal)}` : "—" },
+                        ]}
+                        totalLabel="Total Estimated Range"
+                        totalValue={moneyRange(c.totals.totalMin, c.totals.totalMax, { round: "1000", plus: true })}
+                    />
+                    <Text style={styles.microMuted}>
+                        This summary is not a final quote. Formal Property Analysis validates triggers and produces a detailed proposal with a verified scope, budget, and schedule.
+                    </Text>
+                </Card>
+
+                {/* <Card title="Project Snapshot">
+                    <KeyValueRow k="ADU Type" v={prettyAduType(data.project.aduType)} />
+                    <KeyValueRow k="Floorplan" v={c.floorplanName} />
+                    <KeyValueRow k="Layout" v={`${c.bed} bed / ${c.bath} bath`} />
+                    <KeyValueRow k="Size" v={`${c.sqft} sqft`} />
+                    <KeyValueRow k="Timeframe" v={prettyTimeframe(data.project.timeframe)} />
+                    <KeyValueRow k="Motivation" v={prettyMotivation(data.project.motivation)} />
+                </Card> */}
 
                 <View style={styles.sectionGrid2}>
-                    <Card title="Project Snapshot">
-                        <KeyValueRow k="ADU Type" v={prettyAduType(data.project.aduType)} />
-                        <KeyValueRow k="Floorplan" v={c.floorplanName} />
-                        <KeyValueRow k="Layout" v={`${c.bed} bed / ${c.bath} bath`} />
-                        <KeyValueRow k="Size" v={`${c.sqft} sqft`} />
-                        <KeyValueRow k="Timeframe" v={prettyTimeframe(data.project.timeframe)} />
-                        <KeyValueRow k="Motivation" v={prettyMotivation(data.project.motivation)} />
-                    </Card>
-
-                    <Card title="Estimated Investment Range">
-                        <KeyValueRow k="Base Build (Plan)" v={money(c.basePrice, { round: "1000" })} />
-                        <KeyValueRow k="Site Work (Est.)" v={moneyRange(c.site.subtotal.min, c.site.subtotal.max, { round: "1000", plus: true })} />
-                        <KeyValueRow k="Upgrades (Selected)" v={moneyRange(c.upgrades.subtotal.min, c.upgrades.subtotal.max, { round: "1000" })} />
-                        <Divider />
-                        <KeyValueRow k="Total Range" strong v={moneyRange(c.totals.totalMin, c.totals.totalMax, { round: "1000", plus: true })} />
-                        <Text style={styles.microMuted}>
-                            Site costs vary based on utility locations, setbacks, access, soils, and city requirements — verified in Formal Property Analysis.
-                        </Text>
-                    </Card>
-                </View>
-
-                <View style={styles.sectionGrid2}>
-                    <Card title="Top Unknowns to Verify (FPA)">
-                        {c.bullets.topUnknowns.map((x, i) => (
-                            <Bullet key={i} text={x} tone="warn" />
-                        ))}
-                        <Text style={styles.microMuted}>
-                            We’ll confirm these with a site walk, utility verification, and plan feasibility review during the Formal Property Analysis.
-                        </Text>
-                    </Card>
-
-                    <Card title="What Happens Next">
-                        {c.bullets.nextSteps.map((x, i) => (
-                            <Bullet key={i} text={x} tone="good" />
-                        ))}
-                        <Text style={styles.microMuted}>
-                            Want a detailed timeline, verified costs, and a proposal you can trust? The Formal Property Analysis is the next step.
-                        </Text>
-                    </Card>
-                </View>
-            </Page>
-
-            {/* 3) FLOORPLAN PAGE */}
-            <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="Floorplan & Base Build" subtitle="Your selected plan, pricing, and next steps" />
-
-                <View style={styles.sectionGrid2}>
-                    <Card title="Selected Floorplan">
-                        <Text style={styles.h2}>{c.floorplanName}</Text>
-                        <Text style={styles.muted}>
-                            {c.bed} Bed • {c.bath} Bath • {c.sqft} sqft
-                        </Text>
-
-                        <View style={styles.priceBlock}>
-                            <Text style={styles.bigLabel}>Base Build Price</Text>
-                            <Text style={styles.bigNumberSmall}>{money(c.basePrice, { round: "1000" })}</Text>
-                            <Text style={styles.microMuted}>Base build includes standard finishes and typical scope for this plan.</Text>
-                        </View>
-
-                        <Divider />
-
-                        <Text style={styles.label}>Included (Highlights)</Text>
-                        <View style={styles.chipsRow}>
-                            <Chip text="Design + Permit coordination" />
-                            <Chip text="Standard finishes package" />
-                            <Chip text="Construction management" />
-                            <Chip text="Quality inspections" />
-                        </View>
-
-                        <Text style={styles.microMuted}>
-                            Exact inclusions and exclusions are finalized after the Formal Property Analysis.
-                        </Text>
-                    </Card>
-
-                    <Card title="Floorplan Drawing">
-                        {floorplanDrawing ? (
-                            <Image src={floorplanDrawing} style={styles.drawing} />
+                    <Card title="Estimated Site Work (Details)">
+                        {c.site.items.length ? (
+                            c.site.items.map((it, i) => (
+                                <View key={i} style={{ marginBottom: 10 }}>
+                                    <View style={styles.rowBetween}>
+                                        <Text style={styles.kvKey}>{it.title}</Text>
+                                        <Text style={styles.kvVal}>
+                                            {it.cost?.display ?? moneyRange(it.costMin, it.costMax, { round: "1000", plus: true })}
+                                        </Text>
+                                    </View>
+                                    <Text style={styles.microMuted}>Status: {prettyStatus(it.status)} • Verified in Formal Property Analysis</Text>
+                                </View>
+                            ))
                         ) : (
-                            <View style={styles.drawingFallback}>
-                                <Text style={styles.microMuted}>Floorplan drawing not available.</Text>
-                            </View>
+                            <Text style={styles.microMuted}>No site items selected.</Text>
+                        )}
+                    </Card>
+
+                    <Card title="Selected Upgrades (Details)">
+                        {c.upgrades.items.length ? (
+                            c.upgrades.items.map((it, i) => (
+                                <View key={i} style={{ marginBottom: 10 }}>
+                                    <View style={styles.rowBetween}>
+                                        <Text style={styles.kvKey}>{it.title}</Text>
+                                        <Text style={styles.kvVal}>
+                                            {it.cost?.display ?? moneyRange(it.costMin, it.costMax, { round: "100" })}
+                                        </Text>
+                                    </View>
+                                    <Text style={styles.microMuted}>Selected</Text>
+                                </View>
+                            ))
+                        ) : (
+                            <Text style={styles.microMuted}>No optional upgrades selected.</Text>
                         )}
                     </Card>
                 </View>
 
-                {/* ✅ We keep this short here; the full timeline is on the Timeline page */}
-                <View style={styles.sectionGrid2}>
-                    <Card title="Fastest Path (Next Steps)">
-                        <StepRow n="1" t="Formal Property Analysis" d="Site verification + refined scope, cost, and schedule." />
-                        <StepRow n="2" t="Proposal + timeline" d="You receive a verified proposal with milestones." />
-                        <StepRow n="3" t="Design & permitting" d="We finalize plans and submit to the city." />
-                        <StepRow n="4" t="Build" d="Construction begins with a managed weekly cadence." />
-                    </Card>
-
-                    <Card title="What’s Included in Base Build">
-                        <Bullet tone="good" text="Architecture + engineering coordination" />
-                        <Bullet tone="good" text="Permit management + submittals" />
-                        <Bullet tone="good" text="Standard finish package (modern + durable)" />
-                        <Bullet tone="good" text="Project management + supervision + haul-off" />
-                        <Divider />
-                        <Text style={styles.microMuted}>
-                            Formal Property Analysis confirms any property-specific triggers that could affect scope and price.
-                        </Text>
-                    </Card>
-                </View>
-            </Page>
-
-            {/* 4) QUALITY / STANDARD FINISHES */}
-            <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="Quality & Standard Finishes" subtitle="What’s included in your base build — designed to feel premium" />
-
-                <Card title="Our Standard Finish Package">
-                    <Text style={styles.muted}>
-                        We standardize a high-quality finish level so your ADU feels modern, durable, and move-in ready — without surprises.
-                    </Text>
-                    <View style={styles.chipsRow}>
-                        <Chip text="Quartz counters" />
-                        <Chip text="Shaker cabinets" />
-                        <Chip text="Luxury vinyl plank" />
-                        <Chip text="Mini-split HVAC" />
-                        <Chip text="Stainless appliances" />
-                        <Chip text="Professional paint + trim" />
+                <Card title="Average Timeline (Estimate)">
+                    <View style={styles.timelineRow}>
+                        {c.timeline.phases.map((p, i) => (
+                            <View key={i} style={styles.timelineBlock}>
+                                <Text style={styles.timelineTitle}>{p.title}</Text>
+                                <Text style={styles.timelineValue}>
+                                    {p.weeksRange.min}–{p.weeksRange.max} weeks
+                                </Text>
+                                {p.notes.map((n, j) => (
+                                    <Text key={j} style={styles.microMuted}>• {n}</Text>
+                                ))}
+                            </View>
+                        ))}
                     </View>
-                </Card>
-
-                <View style={{ height: 10 }} />
-
-                <Card title="Gallery (Examples)">
-                    {/* ✅ FIXED: REPORT_ASSETS.gallery shape is: { title, image{asset->{url}} } */}
-                    {gallery?.length ? (
-                        <View style={styles.galleryGrid}>
-                            {gallery.slice(0, 6).map((g: any, i: number) => {
-                                const src = safeSrc(g?.image);
-                                return (
-                                    <View key={i} style={styles.galleryItem}>
-                                        {src ? (
-                                            <Image src={src} style={styles.galleryImg} />
-                                        ) : (
-                                            <View style={styles.galleryFallback}>
-                                                <Text style={styles.microMuted}>Image unavailable</Text>
-                                            </View>
-                                        )}
-                                        <Text style={styles.galleryCaption}>{g?.title ?? "Standard finish"}</Text>
-                                    </View>
-                                );
-                            })}
-                        </View>
-                    ) : (
-                        <Text style={styles.microMuted}>
-                            No gallery assets were provided. Populate `pdfReportAssets.gallery[]` in Sanity to show examples here.
-                        </Text>
-                    )}
+                    <Divider />
+                    <Text style={styles.kvKey}>Total Estimated Timeline</Text>
+                    <Text style={styles.kvVal}>
+                        {c.timeline.totalMonthsRange.min}–{c.timeline.totalMonthsRange.max} months (average)
+                    </Text>
+                    <Text style={styles.microMuted}>
+                        City review cycles and site triggers can shift schedules. Formal Property Analysis reduces uncertainty and builds a verified plan.
+                    </Text>
                 </Card>
             </Page>
 
-            {/* 5) VALUE WE BRING */}
+            {/* 3) VALUE WE BRING */}
             <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="The Value We Bring" subtitle="This is why our feasibility work reduces risk and protects your budget" />
+                <Header brandName={brandName} logoUrl={logoUrl} title="The Value We Bring" subtitle="This is why our process works" />
 
                 <View style={styles.sectionGrid2}>
                     <Card title="What’s Included (Base Build)">
@@ -348,46 +296,36 @@ export function FeasibilityPdf({ data }: Props) {
                             These are the core deliverables we include — the reason our builds stay organized, code-compliant, and predictable.
                         </Text>
                         <Divider />
-
-                        {value.includedHighlights.map((it, i) => (
-                            <View key={i} style={{ marginBottom: 10 }}>
-                                <Text style={styles.kvValStrong}>{it.title}</Text>
-                                <Text style={styles.microMuted}>{it.description}</Text>
-                                {!!it.modal?.whyItMatters && <Text style={styles.microMuted}>Why it matters: {it.modal.whyItMatters}</Text>}
-                            </View>
-                        ))}
-                    </Card>
-
-                    <Card title="How We Reduce Surprises">
-                        <Bullet tone="good" text="We identify site triggers early — before permits and before construction begins." />
-                        <Bullet tone="good" text="We model cost ranges transparently so you can plan with confidence." />
-                        <Bullet tone="good" text="We guide decisions (layout, access, utilities) to prevent late-stage redesign." />
-                        <Divider />
-                        <Text style={styles.microMuted}>
-                            The Formal Property Analysis is where we verify each risk item and lock the proposal to real conditions.
-                        </Text>
+                        <View style={styles.column}>
+                            {value.includedHighlights.map((it, i) => (
+                                <View key={i}>
+                                    <Text style={styles.kvValStrong}>{it.title}</Text>
+                                    <Text style={styles.microMuted}>{it.description}</Text>
+                                    {!!it.modal?.whyItMatters && <Text style={styles.microMuted}>Why it matters: {it.modal.whyItMatters}</Text>}
+                                </View>
+                            ))}
+                        </View>
                     </Card>
                 </View>
 
-                <View style={styles.sectionGrid2}>
-                    <Card title="Selected Upgrades (What You Chose)">
-                        {value.upgradesSelected.length ? (
-                            value.upgradesSelected.map((x: any, i: number) => (
-                                <View key={i} style={{ marginBottom: 12 }}>
-                                    <View style={styles.rowBetween}>
-                                        <Text style={styles.kvKey}>{x.store.title}</Text>
-                                        <Text style={styles.kvVal}>{x.meta?.modal?.estCost?.display ?? x.store.cost?.display ?? "—"}</Text>
-                                    </View>
-                                    {!!x.meta?.modal?.overview && <Text style={styles.microMuted}>{x.meta.modal.overview}</Text>}
-                                    {!!x.meta?.modal?.whyItMatters && <Text style={styles.microMuted}>Why it matters: {x.meta.modal.whyItMatters}</Text>}
-                                </View>
-                            ))
-                        ) : (
-                            <Text style={styles.microMuted}>No optional upgrades selected.</Text>
-                        )}
-                    </Card>
+                {/* <Card title="How We Reduce Surprises">
+                    <Bullet tone="good" text="We identify site triggers early — before permits and before construction begins." />
+                    <Bullet tone="good" text="We model cost ranges transparently so you can plan with confidence." />
+                    <Bullet tone="good" text="We guide decisions (layout, access, utilities) to prevent late-stage redesign." />
+                    <Divider />
+                    <Text style={styles.microMuted}>
+                        The Formal Property Analysis is where we verify each risk item and lock the proposal to real conditions.
+                    </Text>
+                </Card> */}
+            </Page>
 
-                    <Card title="Flagged Site Items (How We Assess Upfront)">
+            {/* 4) SITE SPECIFIC WORK */}
+            <Page size="LETTER" style={styles.page}>
+                <Header brandName={brandName} logoUrl={logoUrl} title="Potential Site-Specific Work" subtitle="This is why our feasibility work reduces risk and protects your budget" />
+
+                <View style={styles.sectionGrid2}>
+
+                    <Card title="Potential Site Work (How We Assess Upfront)">
                         {value.siteFlagged.length ? (
                             value.siteFlagged.slice(0, 6).map((x: any, i: number) => (
                                 <View key={i} style={{ marginBottom: 12 }}>
@@ -435,127 +373,40 @@ export function FeasibilityPdf({ data }: Props) {
                             The Formal Property Analysis verifies these items using city policy checks, utility confirmations, and site validation.
                         </Text>
                     </Card>
-                </View>
-            </Page>
-
-            {/* 6) PROPERTY OVERVIEW */}
-            <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="Property Overview" subtitle="What we know now — and what we verify in the Formal Property Analysis" />
-
-                <View style={styles.sectionGrid2}>
-                    <Card title="Property Details">
-                        <KeyValueRow k="Address" v={`${addressLine}${cityLine}`} />
-                        <KeyValueRow k="Proposed Layout" v={`${c.bed} bed / ${c.bath} bath`} />
-                        <KeyValueRow k="Proposed Size" v={`${c.sqft} sqft`} />
-                        <Divider />
-                        <Text style={styles.microMuted}>
-                            This overview is based on your inputs. During Formal Property Analysis we validate setbacks, utilities, access, and any city-specific requirements.
-                        </Text>
-                    </Card>
-
-                    <Card title="Site-Specific Triggers (Preliminary)">
-                        {c.site.items.length ? (
-                            c.site.items.slice(0, 6).map((it, i) => (
-                                <View key={i} style={styles.rowBetween}>
-                                    <Text style={styles.kvKey}>{it.title}</Text>
-                                    <PillStatus status={it.status} />
-                                </View>
-                            ))
-                        ) : (
-                            <Text style={styles.microMuted}>No site-specific items were flagged.</Text>
-                        )}
-                        <Divider />
-                        <Text style={styles.microMuted}>
-                            “Might apply” items are the most important to verify — they can impact budget and schedule.
-                        </Text>
-                    </Card>
-                </View>
-
-                <Card title="Standard Permitting & Site Work Overview">
-                    <View style={styles.threeCols}>
-                        <MiniBlock title="Plans" body="Architectural plans, engineering as required, and submittal-ready documents." />
-                        <MiniBlock title="Permits" body="City review cycles and revisions; requirements differ by jurisdiction." />
-                        <MiniBlock title="Construction" body="Scope and schedule depend on site conditions, utilities, and access." />
-                    </View>
-                    <Text style={styles.microMuted}>
-                        The Formal Property Analysis identifies the real constraints: utility locations, easements/setbacks, grading, and specialty requirements.
-                    </Text>
-                </Card>
-            </Page>
-
-            {/* 7) PROJECT SUMMARY TABLE */}
-            <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="Project Summary" subtitle="Base build + estimated site work + selected upgrades + available discounts" />
-
-                <Card title="Investment Summary (Preliminary)">
-                    <SummaryTable
-                        rows={[
-                            { label: "Base Build (Selected Plan)", value: money(c.basePrice, { round: "1000" }) },
-                            { label: "Estimated Site Work (Range)", value: moneyRange(c.site.subtotal.min, c.site.subtotal.max, { round: "1000", plus: true }) },
-                            { label: "Selected Upgrades (Range)", value: moneyRange(c.upgrades.subtotal.min, c.upgrades.subtotal.max, { round: "1000" }) },
-                            { label: "Applied Discounts", value: c.discounts.appliedTotal ? `−${money(c.discounts.appliedTotal)}` : "—" },
-                        ]}
-                        totalLabel="Total Estimated Range"
-                        totalValue={moneyRange(c.totals.totalMin, c.totals.totalMax, { round: "1000", plus: true })}
-                    />
-                    <Text style={styles.microMuted}>
-                        This summary is not a final quote. Formal Property Analysis validates triggers and produces a detailed proposal with a verified scope, budget, and schedule.
-                    </Text>
-                </Card>
-
-                <View style={styles.sectionGrid2}>
-                    <Card title="Estimated Site Work (Details)">
-                        {c.site.items.length ? (
-                            c.site.items.map((it, i) => (
-                                <View key={i} style={{ marginBottom: 10 }}>
-                                    <View style={styles.rowBetween}>
-                                        <Text style={styles.kvKey}>{it.title}</Text>
-                                        <Text style={styles.kvVal}>
-                                            {it.cost?.display ?? moneyRange(it.costMin, it.costMax, { round: "1000", plus: true })}
-                                        </Text>
+                    {value.upgradesSelected.length ? (
+                        <Card title="Selected Upgrades (What You Chose)">
+                            {value.upgradesSelected.length ? (
+                                value.upgradesSelected.map((x: any, i: number) => (
+                                    <View key={i} style={{ marginBottom: 12 }}>
+                                        <View style={styles.rowBetween}>
+                                            <Text style={styles.kvKey}>{x.store.title}</Text>
+                                            <Text style={styles.kvVal}>{x.meta?.modal?.estCost?.display ?? x.store.cost?.display ?? "—"}</Text>
+                                        </View>
+                                        {!!x.meta?.modal?.overview && <Text style={styles.microMuted}>{x.meta.modal.overview}</Text>}
+                                        {!!x.meta?.modal?.whyItMatters && <Text style={styles.microMuted}>Why it matters: {x.meta.modal.whyItMatters}</Text>}
                                     </View>
-                                    <Text style={styles.microMuted}>Status: {prettyStatus(it.status)} • Verified in Formal Property Analysis</Text>
-                                </View>
-                            ))
-                        ) : (
-                            <Text style={styles.microMuted}>No site items selected.</Text>
-                        )}
+                                ))
+                            ) : (
+                                <Text style={styles.microMuted}>No optional upgrades selected.</Text>
+                            )}
+                        </Card>
+                    ) : null}
+                </View>
+                <View style={styles.sectionGrid2}>
+                    <Card title="What Speeds This Up">
+                        <Bullet text="Fast utility verification and clear access routes." tone="good" />
+                        <Bullet text="Quick responses to plan check comments." tone="good" />
+                        <Bullet text="Decisions on finishes and upgrades early." tone="good" />
                     </Card>
-
-                    <Card title="Selected Upgrades (Details)">
-                        {c.upgrades.items.length ? (
-                            c.upgrades.items.map((it, i) => (
-                                <View key={i} style={{ marginBottom: 10 }}>
-                                    <View style={styles.rowBetween}>
-                                        <Text style={styles.kvKey}>{it.title}</Text>
-                                        <Text style={styles.kvVal}>
-                                            {it.cost?.display ?? moneyRange(it.costMin, it.costMax, { round: "100" })}
-                                        </Text>
-                                    </View>
-                                    <Text style={styles.microMuted}>Selected</Text>
-                                </View>
-                            ))
-                        ) : (
-                            <Text style={styles.microMuted}>No optional upgrades selected.</Text>
-                        )}
+                    <Card title="What Typically Delays Projects">
+                        <Bullet text="Unexpected utility upgrades or re-routes." tone="warn" />
+                        <Bullet text="Easements/setbacks requiring plan changes." tone="warn" />
+                        <Bullet text="Multiple city revision cycles or specialty requirements." tone="warn" />
                     </Card>
                 </View>
-
-                <Card title="Discounts We Offer">
-                    {c.discounts.list.map((d, i) => (
-                        <View key={i} style={styles.discountRow}>
-                            <Text style={styles.discountTitle}>{d.title}</Text>
-                            <Text style={styles.discountDetail}>{d.detail}</Text>
-                            {!!d.amountHint && <Text style={styles.discountHint}>{d.amountHint}</Text>}
-                        </View>
-                    ))}
-                    <Text style={styles.microMuted}>
-                        Discounts depend on eligibility and active offers. We’ll review all applicable discounts during your Formal Property Analysis.
-                    </Text>
-                </Card>
             </Page>
 
-            {/* 8) RENTAL ANALYSIS */}
+            {/* 5) RENTAL ANALYSIS */}
             <Page size="LETTER" style={styles.page}>
                 <Header brandName={brandName} logoUrl={logoUrl} title="Rental Analysis" subtitle="Guideline estimates to understand cashflow potential" />
 
@@ -570,7 +421,7 @@ export function FeasibilityPdf({ data }: Props) {
                         <Text style={styles.microMuted}>{c.rent.disclaimer}</Text>
                     </Card>
 
-                    <Card title="Rental Comps (If Provided)">
+                    {/* <Card title="Rental Comps (If Provided)">
                         {c.rent.comps?.length ? (
                             c.rent.comps.slice(0, 6).map((comp: any, i: number) => (
                                 <View key={i} style={styles.compRow}>
@@ -589,12 +440,8 @@ export function FeasibilityPdf({ data }: Props) {
                                 No comps were provided in this submission. If you want us to use verified real-time comps, the Formal Property Analysis includes that research.
                             </Text>
                         )}
-                    </Card>
+                    </Card> */}
                 </View>
-            </Page>
-
-            {/* 9) ROI / CASHFLOW */}
-            <Page size="LETTER" style={styles.page}>
                 <Header brandName={brandName} logoUrl={logoUrl} title="ROI & Cashflow" subtitle="How the numbers can look based on your finance inputs" />
 
                 <View style={styles.sectionGrid2}>
@@ -648,106 +495,49 @@ export function FeasibilityPdf({ data }: Props) {
                         <Text style={styles.microMuted}>{c.equityBoost.disclaimer}</Text>
                     </Card>
                 )}
+
+
             </Page>
 
-            {/* 10) TIMELINE ESTIMATE */}
+            {/* 7) COMPARABLE BUILDS */}
             <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="Timeline Estimate" subtitle="Plans, permits, and build — an average schedule model" />
-
-                <Card title="Average Timeline (Estimate)">
-                    <View style={styles.timelineRow}>
-                        {c.timeline.phases.map((p, i) => (
-                            <View key={i} style={styles.timelineBlock}>
-                                <Text style={styles.timelineTitle}>{p.title}</Text>
-                                <Text style={styles.timelineValue}>
-                                    {p.weeksRange.min}–{p.weeksRange.max} weeks
-                                </Text>
-                                {p.notes.map((n, j) => (
-                                    <Text key={j} style={styles.microMuted}>• {n}</Text>
-                                ))}
-                            </View>
-                        ))}
-                    </View>
-                    <Divider />
-                    <Text style={styles.kvKey}>Total Estimated Timeline</Text>
-                    <Text style={styles.kvVal}>
-                        {c.timeline.totalMonthsRange.min}–{c.timeline.totalMonthsRange.max} months (average)
-                    </Text>
-                    <Text style={styles.microMuted}>
-                        City review cycles and site triggers can shift schedules. Formal Property Analysis reduces uncertainty and builds a verified plan.
-                    </Text>
-                </Card>
-
-                <View style={styles.sectionGrid2}>
-                    <Card title="What Speeds This Up">
-                        <Bullet text="Fast utility verification and clear access routes." tone="good" />
-                        <Bullet text="Quick responses to plan check comments." tone="good" />
-                        <Bullet text="Decisions on finishes and upgrades early." tone="good" />
-                    </Card>
-                    <Card title="What Typically Delays Projects">
-                        <Bullet text="Unexpected utility upgrades or re-routes." tone="warn" />
-                        <Bullet text="Easements/setbacks requiring plan changes." tone="warn" />
-                        <Bullet text="Multiple city revision cycles or specialty requirements." tone="warn" />
-                    </Card>
-                </View>
-            </Page>
-
-            {/* 11) TESTIMONIALS */}
-            <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="Featured Client Stories" subtitle="What homeowners say after working with us" />
+                <Header brandName={brandName} logoUrl={logoUrl} title="What We Deliver" subtitle="Recent projects to help you visualize outcomes" />
 
                 {testimonials.length ? (
                     testimonials.slice(0, 2).map((t: any, i: number) => {
                         const portraitSrc = safeSrc(t?.portrait.url) || safeSrc(t?.portrait);
                         return (
-                            <Card key={i} title={`Client Story ${i + 1}`}>
-                                <View style={styles.testimonialRow}>
-                                    {portraitSrc ? (
-                                        <Image src={portraitSrc} style={styles.portrait} />
-                                    ) : (
-                                        <View style={styles.portraitFallback}>
-                                            <Text style={styles.microMuted}>Portrait</Text>
-                                        </View>
-                                    )}
-
-                                    <View style={{ flex: 1 }}>
-                                        <Text style={styles.h2}>{t.names ?? "Client"}</Text>
-                                        <Text style={styles.muted}>
-                                            {t.property?.floorplan?.name ? `Floorplan: ${t.property.floorplan.name} • ` : ""}
-                                            {t.property?.sqft ? `${t.property.sqft} sqft • ` : ""}
-                                            {t.property?.bed ? `${t.property.bed} bed • ` : ""}
-                                            {t.property?.bath ? `${t.property.bath} bath` : ""}
-                                        </Text>
-
-                                        <Divider />
-
-                                        <Text style={styles.quote}>“{t.quote ?? "Great experience — quality work and strong communication."}”</Text>
-
-                                        {!!t.wistiaId && (
-                                            <Text style={styles.microMuted}>Video available (Wistia ID): {t.wistiaId}</Text>
-                                        )}
+                            <View key={i} style={styles.testimonialRow}>
+                                {portraitSrc ? (
+                                    <Image src={portraitSrc} style={styles.portrait} />
+                                ) : (
+                                    <View style={styles.portraitFallback}>
+                                        <Text style={styles.microMuted}>Portrait</Text>
                                     </View>
+                                )}
+
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.h2}>{t.names ?? "Client"}</Text>
+                                    <Text style={styles.muted}>
+                                        {t.property?.floorplan?.name ? `Floorplan: ${t.property.floorplan.name} • ` : ""}
+                                        {t.property?.sqft ? `${t.property.sqft} sqft • ` : ""}
+                                        {t.property?.bed ? `${t.property.bed} bed • ` : ""}
+                                        {t.property?.bath ? `${t.property.bath} bath` : ""}
+                                    </Text>
+
+                                    <Divider />
+
+                                    <Text style={styles.quote}>“{t.quote ?? "Great experience — quality work and strong communication."}”</Text>
                                 </View>
-                            </Card>
+                            </View>
                         );
                     })
-                ) : (
-                    <Card title="No Featured Stories">
-                        <Text style={styles.microMuted}>
-                            No featured testimonials found. Mark 1–2 stories as `featured` and include `portraitUrl` + `quote` in the query.
-                        </Text>
-                    </Card>
-                )}
-            </Page>
-
-            {/* 12) COMPARABLE BUILDS */}
-            <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="Comparable Builds" subtitle="Recent projects to help you visualize outcomes" />
+                ) : null}
 
                 <Card title="Comparable Projects">
                     {comparables.length ? (
                         <View style={styles.compGrid}>
-                            {comparables.slice(0, 6).map((p: any, i: number) => {
+                            {comparables.slice(0, 4).map((p: any, i: number) => {
                                 // ✅ Best practice: make your query return "photoUrl": photos[0].asset->url
                                 const img =
                                     safeSrc(p?.photos.url) ||
@@ -782,21 +572,11 @@ export function FeasibilityPdf({ data }: Props) {
                                 );
                             })}
                         </View>
-                    ) : (
-                        <Text style={styles.microMuted}>No comparable properties found.</Text>
-                    )}
-                </Card>
-
-                <View style={{ height: 10 }} />
-
-                <Card title="Why this matters">
-                    <Bullet tone="good" text="You can compare layouts, finish level, and space planning across real builds." />
-                    <Bullet tone="good" text="It helps clarify what’s possible on your property and what scope choices look like in reality." />
-                    <Bullet tone="warn" text="Exact costs vary by site triggers — verified during the Formal Property Analysis." />
+                    ) : null}
                 </Card>
             </Page>
 
-            {/* 13) WHAT’S NEXT */}
+            {/* 8) WHAT’S NEXT */}
             <Page size="LETTER" style={styles.page}>
                 <Header brandName={brandName} logoUrl={logoUrl} title="What’s Next" subtitle="The clearest path to a verified proposal and timeline" />
 
@@ -823,7 +603,7 @@ export function FeasibilityPdf({ data }: Props) {
                         <Bullet text="Answers to your highest-impact questions" tone="good" />
                     </Card>
 
-                    <Card title="Your Report Snapshot">
+                    {/* <Card title="Your Report Snapshot">
                         <KeyValueRow k="Selected Plan" v={c.floorplanName} />
                         <KeyValueRow k="Base Build" v={money(c.basePrice, { round: "1000" })} />
                         <KeyValueRow
@@ -836,6 +616,17 @@ export function FeasibilityPdf({ data }: Props) {
                         {c.bullets.topUnknowns.map((x, i) => (
                             <Bullet key={i} text={x} tone="warn" />
                         ))}
+                    </Card> */}
+                </View>
+
+                {/* ✅ We keep this short here; the full timeline is on the Timeline page */}
+                <View style={styles.sectionGrid2}>
+                    <Card title="Fastest Path (Next Steps)">
+                        <StepRow n="1" t="Formal Property Analysis" d="Site verification + refined scope, cost, and schedule." />
+                        <StepRow n="2" t="Proposal + timeline" d="You receive a verified proposal with milestones." />
+                        <StepRow n="3" t="Design & permitting" d="We finalize plans and submit to the city." />
+                        <StepRow n="4" t="Construction" d="Construction begins with a managed weekly cadence." />
+                        <StepRow n="5" t="Move-in" d="You receive the keys to your new home." />
                     </Card>
                 </View>
 
@@ -853,7 +644,67 @@ export function FeasibilityPdf({ data }: Props) {
                         </Text>
                     </View>
                 </Card>
+
             </Page>
+
+            {/* 9) QUALITY & STANDARD FINISHES */}
+            {/* <Page size="LETTER" style={styles.page}>
+                <Header brandName={brandName} logoUrl={logoUrl} title="Quality & Standard Finishes" subtitle="What’s included in your base build — designed to feel premium" />
+
+                <Card title="Our Standard Finish Package">
+                    <Text style={styles.muted}>
+                        We standardize a high-quality finish level so your ADU feels modern, durable, and move-in ready — without surprises.
+                    </Text>
+                    <View style={styles.chipsRow}>
+                        <Chip text="Quartz counters" />
+                        <Chip text="Shaker cabinets" />
+                        <Chip text="Luxury vinyl plank" />
+                        <Chip text="Mini-split HVAC" />
+                        <Chip text="Stainless appliances" />
+                        <Chip text="Professional paint + trim" />
+                    </View>
+                </Card>
+
+                <View style={{ height: 10 }} />
+
+                <Card title="Gallery (Examples)">
+                    {gallery?.length ? (
+                        <View style={styles.galleryGrid}>
+                            {gallery.slice(0, 6).map((g: any, i: number) => {
+                                const src = safeSrc(g?.image);
+                                return (
+                                    <View key={i} style={styles.galleryItem}>
+                                        {src ? (
+                                            <Image src={src} style={styles.galleryImg} />
+                                        ) : (
+                                            <View style={styles.galleryFallback}>
+                                                <Text style={styles.microMuted}>Image unavailable</Text>
+                                            </View>
+                                        )}
+                                        <Text style={styles.galleryCaption}>{g?.title ?? "Standard finish"}</Text>
+                                    </View>
+                                );
+                            })}
+                        </View>
+                    ) : (
+                        <Text style={styles.microMuted}>
+                            No gallery assets were provided. Populate `pdfReportAssets.gallery[]` in Sanity to show examples here.
+                        </Text>
+                    )}
+                </Card>
+                <Card title="Discounts We Offer">
+                    {c.discounts.list.map((d, i) => (
+                        <View key={i} style={styles.discountRow}>
+                            <Text style={styles.discountTitle}>{d.title}</Text>
+                            <Text style={styles.discountDetail}>{d.detail}</Text>
+                            {!!d.amountHint && <Text style={styles.discountHint}>{d.amountHint}</Text>}
+                        </View>
+                    ))}
+                    <Text style={styles.microMuted}>
+                        Discounts depend on eligibility and active offers. We’ll review all applicable discounts during your Formal Property Analysis.
+                    </Text>
+                </Card>
+            </Page> */}
         </Document>
     );
 }
@@ -1279,4 +1130,5 @@ const styles = StyleSheet.create({
     compTitle: { marginTop: 8, fontSize: 10.5, fontWeight: 900, color: palette.ink },
 
     dividerThin: { height: 1, backgroundColor: palette.line, marginTop: 10 },
+    column: { columnCount: 2 }
 });

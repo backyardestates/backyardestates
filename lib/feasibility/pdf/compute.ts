@@ -200,7 +200,7 @@ function timelineModel(aduType: string) {
     return [
         { title: "Plans & Engineering", weeksRange: { min: 6, max: 10 }, notes: ["Architectural plan set", "Engineering as required"] },
         { title: "Permits", weeksRange: { min: 8, max: 16 }, notes: ["City review cycles vary", "Revisions can add time"] },
-        { title: "Construction", weeksRange: { min: 10, max: 16 }, notes: ["Detached builds vary by scope", "Site triggers can extend timeline"] },
+        { title: "Construction", weeksRange: { min: 6, max: 10 }, notes: ["Detached builds vary by scope", "Site triggers can extend timeline"] },
     ];
 }
 

@@ -25,7 +25,7 @@ export type Floorplan = {
     bath: number;
     sqft: number;
     price: number;
-    drawingUrl?: string | null;
+    drawing?: { url?: string; publicId?: string };
 };
 
 export type Brand = {

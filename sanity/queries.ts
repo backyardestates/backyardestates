@@ -519,7 +519,7 @@ export const FLOORPLANS_MATCH_QUERY = `
 export const FLOORPLAN_BY_ID = `
 *[_type=="floorplan" && _id==$id][0]{
   _id, name, bed, bath, sqft, price,
-  drawing{asset->{url}}
+  drawing
 }
 `;
 
