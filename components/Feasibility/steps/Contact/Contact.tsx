@@ -227,109 +227,116 @@ export default function ContactStep() {
 
     return (
         <div className={styles.wrap}>
-            <div className={styles.card}>
-                <div className={styles.grid2}>
-                    <label className={styles.field}>
-                        <span className={styles.label}>Full name</span>
-                        <input
-                            className={styles.input}
-                            value={name}
-                            onChange={(e) => setAnswer("name", e.target.value)}
-                            placeholder="Your name"
-                            autoComplete="name"
-                        />
-                    </label>
+            <div className={styles.heroCard}>
+                <div className={styles.heroEyebrow}>Step 1</div>
+                <h2 className={styles.heroHeadline}>Main Point of Contact</h2>
+                <p className={styles.heroSubhead}>
+                    Enter your contact info and property address so we can generate your report.
+                </p>
+                <div className={styles.card}>
+                    <div className={styles.grid2}>
+                        <label className={styles.field}>
+                            <span className={styles.label}>Full name</span>
+                            <input
+                                className={styles.input}
+                                value={name}
+                                onChange={(e) => setAnswer("name", e.target.value)}
+                                placeholder="Your name"
+                                autoComplete="name"
+                            />
+                        </label>
 
-                    <label className={styles.field}>
-                        <span className={styles.label}>Phone</span>
-                        <input
-                            className={styles.input}
-                            value={phone}
-                            onChange={(e) => setAnswer("phone", formatPhoneUS(e.target.value))}
-                            placeholder="(555) 123-4567"
-                            inputMode="tel"
-                            autoComplete="tel"
-                        />
-                    </label>
+                        <label className={styles.field}>
+                            <span className={styles.label}>Phone</span>
+                            <input
+                                className={styles.input}
+                                value={phone}
+                                onChange={(e) => setAnswer("phone", formatPhoneUS(e.target.value))}
+                                placeholder="(555) 123-4567"
+                                inputMode="tel"
+                                autoComplete="tel"
+                            />
+                        </label>
 
-                    <label className={styles.field} style={{ gridColumn: "1 / -1" }}>
-                        <span className={styles.label}>Email</span>
-                        <input
-                            className={styles.input}
-                            value={email}
-                            onChange={(e) => setAnswer("email", e.target.value)}
-                            placeholder="you@email.com"
-                            inputMode="email"
-                            autoComplete="email"
-                        />
-                    </label>
-                </div>
-
-                {mapsError ? (
-                    <div className={styles.warn}>
-                        Address autocomplete is unavailable: <b>{mapsError}</b>
-                        <div className={styles.warnSub}>You can still type the address manually.</div>
+                        <label className={styles.field} style={{ gridColumn: "1 / -1" }}>
+                            <span className={styles.label}>Email</span>
+                            <input
+                                className={styles.input}
+                                value={email}
+                                onChange={(e) => setAnswer("email", e.target.value)}
+                                placeholder="you@email.com"
+                                inputMode="email"
+                                autoComplete="email"
+                            />
+                        </label>
                     </div>
-                ) : null}
 
-                {/* Address w/ custom autocomplete */}
-                <div ref={rootRef} className={styles.autocompleteRoot}>
-                    <label className={styles.field}>
-                        <span className={styles.label}>Address</span>
+                    {mapsError ? (
+                        <div className={styles.warn}>
+                            Address autocomplete is unavailable: <b>{mapsError}</b>
+                            <div className={styles.warnSub}>You can still type the address manually.</div>
+                        </div>
+                    ) : null}
 
-                        <input
-                            ref={addressInputRef}
-                            className={styles.input}
-                            value={address}
-                            onChange={(e) => {
-                                setAnswer("address", e.target.value);
-                                setOpen(true);
-                            }}
-                            onFocus={() => setOpen(true)}
-                            onKeyDown={onAddressKeyDown}
-                            placeholder={mapsReady ? "Start typing your address…" : "Loading address search…"}
-                            autoComplete="street-address"
-                            aria-autocomplete="list"
-                            aria-expanded={showPanel}
-                            aria-controls="address-suggestions"
-                        />
+                    {/* Address w/ custom autocomplete */}
+                    <div ref={rootRef} className={styles.autocompleteRoot}>
+                        <label className={styles.field}>
+                            <span className={styles.label}>Address</span>
 
-                        {showPanel ? (
-                            <div id="address-suggestions" className={styles.suggestions} role="listbox">
-                                {loadingPredictions ? (
-                                    <div className={styles.suggestionHint}>Searching…</div>
-                                ) : null}
+                            <input
+                                ref={addressInputRef}
+                                className={styles.input}
+                                value={address}
+                                onChange={(e) => {
+                                    setAnswer("address", e.target.value);
+                                    setOpen(true);
+                                }}
+                                onFocus={() => setOpen(true)}
+                                onKeyDown={onAddressKeyDown}
+                                placeholder={mapsReady ? "Start typing your address…" : "Loading address search…"}
+                                autoComplete="street-address"
+                                aria-autocomplete="list"
+                                aria-expanded={showPanel}
+                                aria-controls="address-suggestions"
+                            />
 
-                                {!loadingPredictions && predictions.length === 0 ? (
-                                    <div className={styles.suggestionHint}>No matches yet — keep typing.</div>
-                                ) : null}
+                            {showPanel ? (
+                                <div id="address-suggestions" className={styles.suggestions} role="listbox">
+                                    {loadingPredictions ? (
+                                        <div className={styles.suggestionHint}>Searching…</div>
+                                    ) : null}
 
-                                {predictions.slice(0, MAX_RESULTS).map((p, idx) => {
-                                    const active = idx === activeIndex;
-                                    return (
-                                        <button
-                                            key={p.place_id}
-                                            type="button"
-                                            className={active ? styles.suggestionActive : styles.suggestion}
-                                            role="option"
-                                            aria-selected={active}
-                                            onMouseEnter={() => setActiveIndex(idx)}
-                                            onMouseDown={(e) => {
-                                                // prevent input blur before we handle selection
-                                                e.preventDefault();
-                                            }}
-                                            onClick={() => void selectPrediction(p)}
-                                        >
-                                            <div className={styles.suggestionMain}>{p.structured_formatting?.main_text ?? p.description}</div>
-                                            <div className={styles.suggestionSub}>
-                                                {p.structured_formatting?.secondary_text ?? ""}
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        ) : null}
-                    </label>
+                                    {!loadingPredictions && predictions.length === 0 ? (
+                                        <div className={styles.suggestionHint}>No matches yet — keep typing.</div>
+                                    ) : null}
+
+                                    {predictions.slice(0, MAX_RESULTS).map((p, idx) => {
+                                        const active = idx === activeIndex;
+                                        return (
+                                            <button
+                                                key={p.place_id}
+                                                type="button"
+                                                className={active ? styles.suggestionActive : styles.suggestion}
+                                                role="option"
+                                                aria-selected={active}
+                                                onMouseEnter={() => setActiveIndex(idx)}
+                                                onMouseDown={(e) => {
+                                                    // prevent input blur before we handle selection
+                                                    e.preventDefault();
+                                                }}
+                                                onClick={() => void selectPrediction(p)}
+                                            >
+                                                <div className={styles.suggestionMain}>{p.structured_formatting?.main_text ?? p.description}</div>
+                                                <div className={styles.suggestionSub}>
+                                                    {p.structured_formatting?.secondary_text ?? ""}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            ) : null}
+                        </label>
+                    </div>
                 </div>
             </div>
 

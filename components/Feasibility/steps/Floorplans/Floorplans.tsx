@@ -127,7 +127,7 @@ export default function FloorplansStep() {
     return (
         <section className={styles.step}>
             <div className={styles.heroCard}>
-                <div className={styles.heroEyebrow}>Step 2</div>
+                <div className={styles.heroEyebrow}>Step 3</div>
                 <h2 className={styles.heroHeadline}>Choose a floorplan</h2>
                 <p className={styles.heroSubhead}>
                     We’ll show the best matches for your desired layout—and help you pick a

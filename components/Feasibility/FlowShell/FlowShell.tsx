@@ -9,8 +9,8 @@ import { useNavStore } from "@/lib/feasibility/stores/nav.store";
 import { useFeasibilityStore } from "@/lib/feasibility/store";
 
 import Review from "../steps/Review/Review";
-import Motivation from "../steps/Motivation/Motivation";
-import ADUType from "../steps/ADUType/ADUType";
+import Motivation from "../steps/Vision/Motivation";
+import VisionStep from "../steps/Vision/VisionStep";
 import FloorplansStep from "../steps/Floorplans/Floorplans";
 import SiteSpecificWorkStep from "../steps/siteSpecific/SiteSpecificWorkStep";
 import IncludedWork from "../steps/siteSpecific/IncludedWork";
@@ -22,60 +22,27 @@ import ContactStep from "../steps/Contact/Contact";
 
 import styles from "./FlowShell.module.css";
 
-const MOTIVATION_OPTIONS = [
-    { value: "family", title: "Housing for family", desc: "Support parents, adult kids, or multi-generational living." },
-    { value: "rental", title: "Rental income", desc: "Offset mortgage or build long-term investment value." },
-    { value: "office", title: "Home office / studio", desc: "Dedicated space for work, clients, or creative focus." },
-    { value: "guest", title: "Guest housing", desc: "Comfortable space for visitors without disrupting the main home." },
-    { value: "value", title: "Increase property value", desc: "Add functional square footage and flexibility for the future." },
-    { value: "other", title: "Other", desc: "Tell us what you’re trying to achieve—we’ll map the best path." },
-];
-
-const ADU_TYPE_OPTIONS = [
-    {
-        value: "detachedNew",
-        title: "Detached New Construction",
-        desc: "Stand-alone unit with maximum privacy & layout flexibility.",
-        meta: "Best for: rentals + multi-gen living",
-    },
-    {
-        value: "attachedNew",
-        title: "Attached New Construction",
-        desc: "Connected to the main home—often efficient utilities + footprint.",
-        meta: "Best for: family + cost control",
-    },
-    {
-        value: "garageConversion",
-        title: "Garage Conversion",
-        desc: "Fastest path when the structure works (and zoning supports it).",
-        meta: "Best for: speed + budget",
-    },
-    {
-        value: "jadu",
-        title: "JADU (≤ 500 sq ft)",
-        desc: "Within the primary structure—small footprint, big impact.",
-        meta: "Best for: simple living + family support",
-    },
-];
 
 function StepBody({
     id,
     onRealityJump,
     onFinanceJump,
+    onVisionJump,
 }: {
     id: string;
     onRealityJump: (tab: 0 | 1 | 2) => void;
     onFinanceJump: (tab: 0 | 1 | 2) => void;
+    onVisionJump: (tab: 0 | 1) => void;
 }) {
     switch (id) {
         case "property":
             return <ContactStep />;
 
         case "motivation":
-            return <Motivation options={MOTIVATION_OPTIONS} />;
+            return <Motivation onJump={onVisionJump} />;
 
         case "aduType":
-            return <ADUType options={ADU_TYPE_OPTIONS} />;
+            return <VisionStep onJump={onVisionJump} />;
 
         case "floorplansStep":
             return <FloorplansStep />;
@@ -132,6 +99,11 @@ export default function FlowShell() {
         goToId(FLOW, idByTab[tab]);
     };
 
+    const onVisionJump = (tab: 0 | 1) => {
+        const idByTab = ["motivation", "aduType"] as const;
+        goToId(FLOW, idByTab[tab]);
+    };
+
     useEffect(() => {
         if ("motivation" in answers) setFeas("motivation", answers.motivation);
         if ("aduType" in answers) setFeas("aduType", answers.aduType);
@@ -164,7 +136,7 @@ export default function FlowShell() {
 
                 {/* Step content */}
                 <div className={styles.body}>
-                    <StepBody id={q.id} onRealityJump={onRealityJump} onFinanceJump={onFinanceJump} />
+                    <StepBody id={q.id} onRealityJump={onRealityJump} onFinanceJump={onFinanceJump} onVisionJump={onVisionJump} />
                 </div>
 
                 {/* Bottom controls */}

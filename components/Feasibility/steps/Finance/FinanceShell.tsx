@@ -28,7 +28,7 @@ export default function FinanceShell({
             <div className={styles.heroCard}>
                 <div className={styles.heroTop}>
                     <div className={styles.heroLeft}>
-                        <div className={styles.heroEyebrow}>Step 4</div>
+                        <div className={styles.heroEyebrow}>Step 5</div>
                         <div className={styles.progressBar}>
                             {items.map((it, idx) => {
                                 const isActive = idx === active;

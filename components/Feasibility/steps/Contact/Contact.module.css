@@ -34,7 +34,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--gap);
-    color: var(--text);
+    color: black;
 }
 
 /* ---- Card: frosted, premium, calm ---- */
@@ -90,7 +90,7 @@
     font-size: clamp(1.05rem, 1.25vw, 1.25rem);
     letter-spacing: -0.01em;
     font-weight: 700;
-    color: var(--color-brand-dark-blue, rgba(0, 0, 0, 0.82));
+    color: black;
 
     margin-bottom: 0.75rem;
 }
@@ -134,7 +134,7 @@
     font-family: var(--font-serif);
     letter-spacing: -0.02em;
     font-weight: 820;
-    color: var(--color-brand-dark-blue);
+    color: black;
     margin: 0 0 0.35rem 0;
 }
 
@@ -154,7 +154,7 @@
 
     font-family: var(--font-sans);
     font-size: 1rem;
-    color: var(--text);
+    color: black;
     letter-spacing: -0.01em;
 
     transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease,
@@ -185,7 +185,7 @@
 
 /* Autofill polish */
 .input:-webkit-autofill {
-    -webkit-text-fill-color: var(--text);
+    -webkit-text-fill-color: black;
     transition: background-color 9999s ease-in-out 0s;
     box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.82) inset;
 }
@@ -195,7 +195,7 @@
     font-family: var(--font-sans);
     font-size: 0.95rem;
     line-height: 1.4;
-    color: var(--muted);
+    color: black;
 }
 
 /* ---- Warning banner ---- */
@@ -271,7 +271,7 @@
     font-size: 0.9rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: rgba(0, 0, 0, 0.48);
+    color: black;
     font-weight: 650;
 }
 
@@ -279,7 +279,7 @@
     font-family: var(--font-sans);
     font-size: 1rem;
     font-weight: 650;
-    color: rgba(0, 0, 0, 0.78);
+    color: black;
     letter-spacing: -0.01em;
 }
 
@@ -296,7 +296,7 @@
     font-family: var(--font-sans);
     font-size: 0.98rem;
     line-height: 1.5;
-    color: rgba(0, 0, 0, 0.55);
+    color: black;
 }
 
 /* ---- Reduced motion ---- */
@@ -329,7 +329,7 @@
 /* Suggestions panel */
 .suggestions {
     position: absolute;
-    z-index: 100;
+    z-index: 1000000;
     left: 0;
     right: 0;
     top: calc(100% + 0.5rem);
@@ -376,14 +376,14 @@
     font-family: var(--font-sans);
     font-size: 0.98rem;
     font-weight: 650;
-    color: rgba(0, 0, 0, 0.82);
+    color: black;
     letter-spacing: -0.01em;
 }
 
 .suggestionSub {
     font-family: var(--font-sans);
     font-size: 0.92rem;
-    color: rgba(0, 0, 0, 0.55);
+    color: black;
 }
 
 .suggestionHint {
@@ -391,4 +391,90 @@
     font-family: var(--font-sans);
     font-size: 0.95rem;
     color: rgba(0, 0, 0, 0.55);
+}
+
+/* -----------------------------
+   Hero card (shell)
+------------------------------ */
+.heroCard {
+    position: relative;
+    border-radius: var(--radiusLg);
+    padding: clamp(1rem, 2.4vw, 1.5rem);
+
+    background: var(--color-brand-beige-subtle, rgba(250, 245, 235, 0.72));
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadowA), var(--shadowB), var(--shadowInset);
+
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+
+}
+
+.heroCard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background:
+        radial-gradient(1200px 380px at 12% 0%,
+            rgba(255, 255, 255, 0.62),
+            rgba(255, 255, 255, 0) 60%),
+        radial-gradient(900px 320px at 92% 8%,
+            rgba(255, 255, 255, 0.28),
+            rgba(255, 255, 255, 0) 55%);
+    opacity: 0.92;
+}
+
+.heroTop {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.heroLeft {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.heroRight {
+    flex: 0 0 0;
+    width: 0;
+    height: 0;
+}
+
+.heroEyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: black;
+    font-weight: 650;
+
+    margin-bottom: 0.35rem;
+}
+
+.heroHeadline {
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 1.85vw, 1.85rem);
+    letter-spacing: -0.02em;
+    font-weight: 860;
+    color: black;
+    margin: 0 0 0.35rem 0;
+}
+
+.heroSubhead {
+    font-family: var(--font-sans);
+    font-size: 1.02rem;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+    max-width: 74ch;
 }

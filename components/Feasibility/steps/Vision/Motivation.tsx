@@ -3,32 +3,32 @@
 
 import { useAnswersStore } from "@/lib/feasibility/stores/answers.store";
 import styles from "./Motivation.module.css";
+import VisionShell from "./VisionShell";
 
-interface MotivationProps {
-    options: Array<{
-        value: string,
-        title: string,
-        desc: string,
-    }>,
-}
 
-export default function Motivation({ options }: MotivationProps) {
+const MOTIVATION_OPTIONS = [
+    { value: "family", title: "Housing for family", desc: "Support parents, adult kids, or multi-generational living." },
+    { value: "rental", title: "Rental income", desc: "Offset mortgage or build long-term investment value." },
+    { value: "office", title: "Home office / studio", desc: "Dedicated space for work, clients, or creative focus." },
+    { value: "guest", title: "Guest housing", desc: "Comfortable space for visitors without disrupting the main home." },
+    { value: "value", title: "Increase property value", desc: "Add functional square footage and flexibility for the future." },
+    { value: "other", title: "Other", desc: "Tell us what you’re trying to achieve—we’ll map the best path." },
+];
+export default function Motivation({ onJump }: { onJump: (tab: 0 | 1) => void }) {
     const motivation = useAnswersStore((s) => (s.answers.motivation));
     const motivationOther = useAnswersStore((s) => (s.answers.motivationOther as string | undefined) ?? "");
     const setAnswer = useAnswersStore((s) => s.setAnswer);
 
     return (
-        <section className={styles.step}>
-            {/* MOTIVATION */}
+        <VisionShell
+            active={0}
+            onTab={onJump}
+            title="ADU Motivation"
+            helper="Select your primary motivation for adding an ADU."
+        >
             <div className={styles.card}>
-                <h3 className={styles.sectionTitle}>What’s your primary motivation?</h3>
-                <p className={styles.helperText}>
-                    This helps us prioritize layout, privacy, and the best construction
-                    approach.
-                </p>
-
                 <div className={styles.cardGrid}>
-                    {options.map((m) => {
+                    {MOTIVATION_OPTIONS.map((m) => {
                         const active = motivation === m.value;
                         return (
                             <button
@@ -74,6 +74,7 @@ export default function Motivation({ options }: MotivationProps) {
                 )}
             </div>
 
-        </section>
+        </VisionShell>
+
     );
 }
