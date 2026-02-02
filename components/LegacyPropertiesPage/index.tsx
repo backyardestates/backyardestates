@@ -43,6 +43,10 @@ export default async function LegacyPropertiesPage({ params }) {
         notFound()
     }
 
+    const completedRelatedProperties = relatedProperties.filter(
+        (p: any) => p.completed === true
+    )
+
     return (
         <>
             <Nav />
@@ -84,7 +88,7 @@ export default async function LegacyPropertiesPage({ params }) {
                     secondaryHref="/about-us/our-process"
                 />
                 <RelatedProperties
-                    properties={relatedProperties}
+                    properties={completedRelatedProperties}
                 />
             </main>
             <Footer />

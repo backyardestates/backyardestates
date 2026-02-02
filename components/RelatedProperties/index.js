@@ -20,18 +20,16 @@ export default function RelatedProperties({ properties }) {
 
             {/* Cards */}
             <div className={styles.scroller}>
-                <div className={styles.inner}>
 
-                    {properties.map((property) => (
-                        property.photos && property.photos.length > 0 && (
-                            <PropertyCard
-                                key={property._id}
-                                content={property}
-                                variant="compact"
-                            />
-                        )
-                    ))}
-                </div>
+                {properties.map((property) => (
+                    property.photos && property.photos.length > 0 && (
+                        <PropertyCard
+                            key={property._id}
+                            content={property}
+                            variant="compact"
+                        />
+                    )
+                ))}
 
             </div>
 

@@ -15,10 +15,14 @@ export default async function Properties() {
         {},
         options
     )
+
+    const completedNewProperties = properties.filter(
+        (p: any) => p.completed === true
+    )
     return (
         <div className={style.base}>
             <div className={style.properties}>
-                {properties.map((property, index) => (
+                {completedNewProperties.map((property, index) => (
                     <PropertyCard key={index} content={property} />
                 ))}
             </div>

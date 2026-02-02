@@ -102,6 +102,10 @@ export default async function Property({ params }: { params: Promise<{ slug: str
     groupedSelections = groupSelections(selections);
   }
 
+  const completedRelatedProperties = relatedProperties.filter(
+    (p: any) => p.completed === true
+  )
+
   return property ? (
     <>
       <Nav />
@@ -137,7 +141,7 @@ export default async function Property({ params }: { params: Promise<{ slug: str
             />
           </div>
         )}
-        <RelatedProperties properties={relatedProperties}></RelatedProperties>
+        <RelatedProperties properties={completedRelatedProperties}></RelatedProperties>
       </main>
       <Footer />
     </>
