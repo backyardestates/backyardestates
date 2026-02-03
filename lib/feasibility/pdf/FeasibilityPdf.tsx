@@ -96,6 +96,13 @@ export function FeasibilityPdf({ data }: Props) {
     const testimonials = data.assets?.testimonials ?? [];
     const comparables = data.assets?.comparables ?? [];
 
+    const includedItems = value.includedHighlights ?? [];
+    const useTwoCol = includedItems.length > 6; // tweak threshold
+    const mid = Math.ceil(includedItems.length / 2);
+    const left = useTwoCol ? includedItems.slice(0, mid) : includedItems;
+    const right = useTwoCol ? includedItems.slice(mid) : [];
+
+
     return (
         <Document title={`Feasibility Report - ${contact.name}`}>
             {/* 1) COVER */}
@@ -296,14 +303,46 @@ export function FeasibilityPdf({ data }: Props) {
                             These are the core deliverables we include — the reason our builds stay organized, code-compliant, and predictable.
                         </Text>
                         <Divider />
-                        <View style={styles.column}>
-                            {value.includedHighlights.map((it, i) => (
-                                <View key={i}>
-                                    <Text style={styles.kvValStrong}>{it.title}</Text>
-                                    <Text style={styles.microMuted}>{it.description}</Text>
-                                    {!!it.modal?.whyItMatters && <Text style={styles.microMuted}>Why it matters: {it.modal.whyItMatters}</Text>}
+                        <View>
+                            {useTwoCol ? (
+                                <View style={styles.twoColRow}>
+                                    <View style={styles.twoColLeft}>
+                                        {left.map((it, i) => (
+                                            <View key={`L-${i}`} style={styles.itemBlock} wrap={false}>
+                                                <Text style={styles.kvValStrong}>{it.title}</Text>
+                                                <Text style={styles.microMuted}>{it.description}</Text>
+                                                {!!it.modal?.whyItMatters && (
+                                                    <Text style={styles.microMuted}>Why it matters: {it.modal.whyItMatters}</Text>
+                                                )}
+                                            </View>
+                                        ))}
+                                    </View>
+
+                                    <View style={styles.twoColRight}>
+                                        {right.map((it, i) => (
+                                            <View key={`R-${i}`} style={styles.itemBlock} wrap={false}>
+                                                <Text style={styles.kvValStrong}>{it.title}</Text>
+                                                <Text style={styles.microMuted}>{it.description}</Text>
+                                                {!!it.modal?.whyItMatters && (
+                                                    <Text style={styles.microMuted}>Why it matters: {it.modal.whyItMatters}</Text>
+                                                )}
+                                            </View>
+                                        ))}
+                                    </View>
                                 </View>
-                            ))}
+                            ) : (
+                                <View>
+                                    {includedItems.map((it, i) => (
+                                        <View key={i} style={styles.itemBlock} wrap={false}>
+                                            <Text style={styles.kvValStrong}>{it.title}</Text>
+                                            <Text style={styles.microMuted}>{it.description}</Text>
+                                            {!!it.modal?.whyItMatters && (
+                                                <Text style={styles.microMuted}>Why it matters: {it.modal.whyItMatters}</Text>
+                                            )}
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
                         </View>
                     </Card>
                 </View>
@@ -826,14 +865,14 @@ function StepRow({ n, t, d }: { n: string; t: string; d: string }) {
     );
 }
 
-function MiniBlock({ title, body }: { title: string; body: string }) {
-    return (
-        <View style={styles.miniBlock}>
-            <Text style={styles.miniTitle}>{title}</Text>
-            <Text style={styles.microMuted}>{body}</Text>
-        </View>
-    );
-}
+// function MiniBlock({ title, body }: { title: string; body: string }) {
+//     return (
+//         <View style={styles.Block}>
+//             <Text style={styles.miniTitle}>{title}</Text>
+//             <Text style={styles.microMuted}>{body}</Text>
+//         </View>
+//     );
+// }
 
 function SummaryTable({
     rows,
@@ -913,7 +952,9 @@ function prettyStatus(s: string) {
 
 const styles = StyleSheet.create({
     page: {
-        padding: 36,
+        paddingTop: 34,
+        paddingBottom: 34,
+        paddingHorizontal: 34,
         backgroundColor: palette.bg,
         color: palette.ink,
         fontSize: 11,
@@ -937,8 +978,8 @@ const styles = StyleSheet.create({
     },
     logoFallbackText: { fontSize: 8, color: palette.muted, textAlign: "center" },
 
-    coverTitle: { fontSize: 20, fontWeight: 800, color: palette.ink },
-    coverSubtitle: { fontSize: 10.5, color: palette.muted, marginTop: 2 },
+    coverTitle: { fontSize: 20, fontWeight: 900, color: palette.ink },
+    coverSubtitle: { fontSize: 10, color: palette.muted, marginTop: 2 },
 
     coverMeta: { width: 160, alignItems: "flex-end" },
     metaLabel: { fontSize: 9, color: palette.faint },
@@ -1130,5 +1171,13 @@ const styles = StyleSheet.create({
     compTitle: { marginTop: 8, fontSize: 10.5, fontWeight: 900, color: palette.ink },
 
     dividerThin: { height: 1, backgroundColor: palette.line, marginTop: 10 },
-    column: { columnCount: 2 }
+    column: { columnCount: 2 },
+
+    twoColRow: { flexDirection: "row", flexWrap: "nowrap" },
+    twoColLeft: { width: "48%", marginRight: "4%" },
+    twoColRight: { width: "48%" },
+
+    itemBlock: { marginBottom: 8 },
+    itemTitle: { fontSize: 10, fontWeight: 900, color: palette.ink },
+    itemDesc: { fontSize: 9, color: palette.muted, lineHeight: 1.35, marginTop: 2 },
 });
