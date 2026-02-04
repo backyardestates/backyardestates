@@ -7,6 +7,7 @@ import {
     View,
     Image,
     StyleSheet,
+    Link,
     // Font,
 } from "@react-pdf/renderer";
 
@@ -15,8 +16,7 @@ import { computeFeasibility } from "./compute";
 import { palette } from "./palette";
 import { formatDate, money, moneyRange, pct } from "./format";
 import { buildValueSections } from "./valueWeBring";
-import { Columns2 } from "lucide-react";
-
+import { INCLUDED_BASE } from "@/lib/IncludedScope";
 /**
  * ✅ IMPORTANT
  * This PDF expects you to pass assets into `data.assets`:
@@ -24,6 +24,14 @@ import { Columns2 } from "lucide-react";
  * data.assets.testimonials[]         -> from CUSTOMER_STORIES_QUERY (must include portraitUrl, quote, etc.)
  * data.assets.comparables[]          -> from RELATED_PROPERTIES_QUERY (ideally includes photoUrl)
  */
+const BEFORE_AFTER_DEFAULT = [
+    { left: "Assumptions", right: "Verified facts" },
+    { left: "Budget swings", right: "Locked cost ranges" },
+    { left: "City delays", right: "Clear permit strategy" },
+    { left: "Surprise upgrades", right: "Known site triggers" },
+    { left: "Stress", right: "Confidence and control" },
+];
+
 
 // -----------------------------
 // Robust image source helpers
@@ -34,14 +42,6 @@ function isHttpUrl(v: any) {
 
 /**
  * Returns a plain URL or null.
- * Supports common shapes:
- * - "https://..."
- * - { url: "https://..." }
- * - { asset: { url: "https://..." } }
- * - { image: { asset: { url: "https://..." } } }
- * - { secure_url: "https://..." }  (cloudinary)
- * - { portraitUrl: "https://..." }
- * - { photoUrl: "https://..." }
  */
 function safeSrc(input: any): string | null {
     if (!input) return null;
@@ -68,15 +68,31 @@ function safeSrc(input: any): string | null {
     return null;
 }
 
+function groupByCategory(items: any[]) {
+    const m: Record<string, any[]> = {};
+    items.forEach((it) => {
+        const key = it.category ?? "other";
+        if (!m[key]) m[key] = [];
+        m[key].push(it);
+    });
+    return m;
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+    design: "Design & Planning",
+    permits: "Permits & Coordination",
+    construction: "Construction",
+    project_management: "Project Management",
+    design_finish_features: "Our Included Finishes",
+};
+
 type Props = { data: FeasibilityStoreData };
 
 export function FeasibilityPdf({ data }: Props) {
     const c = computeFeasibility(data);
 
     const brandName = data.brand?.brandName ?? "Backyard Estates";
-    const tagline = data.brand?.tagline ?? "Feasibility & Investment Snapshot";
     const logoUrl = safeSrc(data.brand?.logoUrl) ?? null;
-    const coverUrl = safeSrc(data.brand?.coverUrl) ?? null;
 
     const contact = data.contact;
     const addressLine = data.property?.address ?? "";
@@ -92,7 +108,6 @@ export function FeasibilityPdf({ data }: Props) {
     });
 
     // ✅ Expect these to be populated by your route handler
-    const gallery = data.assets?.reportAssets?.gallery ?? [];
     const testimonials = data.assets?.testimonials ?? [];
     const comparables = data.assets?.comparables ?? [];
 
@@ -101,7 +116,22 @@ export function FeasibilityPdf({ data }: Props) {
     const mid = Math.ceil(includedItems.length / 2);
     const left = useTwoCol ? includedItems.slice(0, mid) : includedItems;
     const right = useTwoCol ? includedItems.slice(mid) : [];
+    const beforeAfter =
+        data.copy?.beforeAfter?.rows?.length
+            ? data.copy.beforeAfter.rows
+            : BEFORE_AFTER_DEFAULT;
 
+    const beforeAfterTitle =
+        data.copy?.beforeAfter?.title ?? "Before / After Reality";
+
+    const includedBaseGrouped = groupByCategory(INCLUDED_BASE);
+
+    const baseBuildCategories = ["design", "permits", "construction", "project_management"];
+
+    const finishes = includedBaseGrouped["design_finish_features"] ?? [];
+
+    const ctaUrl = data?.ctaUrl ?? "https://calendly.com/d/cr86-j2b-gcj/onsite-visit-fpa";
+    const ctaLabel = data?.ctaLabel ?? "Book your Formal Property Analysis";
 
     return (
         <Document title={`Feasibility Report - ${contact.name}`}>
@@ -119,11 +149,14 @@ export function FeasibilityPdf({ data }: Props) {
                             )}
 
                             <View style={{ flex: 1 }}>
-                                <Text style={styles.coverTitle}>Feasibility Report</Text>
+                                <Text style={styles.coverTitle}>Your ADU Feasibility Report</Text>
+                                <Text style={styles.coverSubtitle}>This report shows what&rsquo;s possible — and what still needs to be verified.</Text>
+                                <Text style={styles.microMuted}>
+                                    The Formal Property Analysis is what turns this vision into a real, buildable plan you can move forward with confidently.
+                                </Text>
                             </View>
                         </View>
                     </View>
-
 
                     <View style={styles.coverHero}>
                         <Text style={styles.metaValue}>{contact.name}</Text>
@@ -134,20 +167,33 @@ export function FeasibilityPdf({ data }: Props) {
                         </Text>
                         <Text style={styles.metaMuted}>{reportDate}</Text>
 
-                        {/* <View style={styles.bigNumberRow}>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={styles.bigLabel}>Estimated Project Range</Text>
-                                    <Text style={styles.bigNumber}>
-                                        {moneyRange(c.totals.totalMin, c.totals.totalMax, {
-                                            round: "1000",
-                                            plus: true,
-                                        })}
-                                    </Text>
-                                    <Text style={styles.bigNote}>
-                                        Preliminary estimates. Formal Property Analysis verifies site triggers and finalizes a proposal.
-                                    </Text>
-                                </View>
-                            </View> */}
+                        <Card title="Where You Are in the Process">
+                            <View style={styles.stack}>
+                                <ProcessRow label="Vision & Floorplan" state="done" />
+                                <ProcessRow label="Preliminary Feasibility" state="done" />
+                                <ProcessRow label="Formal Property Analysis" state="current" />
+                                <ProcessRow label="Verified Proposal" state="todo" />
+                                <ProcessRow label="Permits & Build" state="todo" />
+                            </View>
+                            <Divider />
+                            <Text style={styles.microMuted}>
+                                You are not starting from zero. You are one smart step away from certainty.
+                            </Text>
+                        </Card>
+                        <Card title="⚠ Risk Zone — What’s Still Unverified">
+                            <Text style={styles.microMuted}>These numbers reflect ideal conditions only.</Text>
+                            <Text style={styles.microMuted}>
+                                Key items such as utilities, setbacks, drainage, and site constraints have not yet been confirmed for your property.
+                            </Text>
+                            <Text style={styles.microMuted}>
+                                Most homeowners discover $15k–$45k in unexpected site work after this stage.
+                            </Text>
+                            <Divider />
+                            <Text style={styles.microMuted}>
+                                The Formal Property Analysis exists so this doesn’t happen to you.
+                            </Text>
+                        </Card>
+
                         <Card title="Selected Floorplan">
                             {floorplanDrawing ? (
                                 <Image src={floorplanDrawing} style={styles.drawing} />
@@ -166,15 +212,12 @@ export function FeasibilityPdf({ data }: Props) {
                                     </Text>
                                 </View>
                             </View>
-
                             <View style={styles.priceBlock}>
                                 <Text style={styles.bigLabel}>Base Build Price</Text>
                                 <Text style={styles.bigNumberSmall}>{money(c.basePrice, { round: "1000" })}</Text>
                                 <Text style={styles.microMuted}>Base build includes standard finishes and typical scope for this plan.</Text>
                             </View>
-
                             <Divider />
-
                             <Text style={styles.label}>Included</Text>
                             <View style={styles.chipsRow}>
                                 <Chip text="Design + Permits" />
@@ -189,21 +232,26 @@ export function FeasibilityPdf({ data }: Props) {
                                 Exact inclusions and exclusions are finalized after the Formal Property Analysis.
                             </Text>
                         </Card>
-
                     </View>
-
-                    {/* <View style={styles.footerBar}>
-                        <Text style={styles.footerText}>
-                            Contact: {contact.phone} • {contact.email}
-                        </Text>
-                        <Text style={styles.footerTextMuted}>This report is a planning tool — not a contract or final bid.</Text>
-                    </View> */}
                 </View>
             </Page>
 
             {/* 2) PROJECT SUMMARY TABLE */}
             <Page size="LETTER" style={styles.page}>
                 <Header brandName={brandName} logoUrl={logoUrl} title="Project Summary" subtitle="Base build + estimated site work + selected upgrades + available discounts" />
+
+                <Card title="Why You Can Trust This Process">
+                    <Text style={styles.microMuted}>
+                        Backyard Estates has designed and built ADUs across Southern California, navigating 100+ unique city permitting paths.
+                    </Text>
+                    <Text style={styles.microMuted}>
+                        Our process is built from real-world experience—because we’ve seen where projects go wrong and how to prevent it.
+                    </Text>
+                </Card>
+
+                <Card title={beforeAfterTitle}>
+                    <BeforeAfterTable rows={beforeAfter} />
+                </Card>
 
                 <Card title="Investment Summary (Preliminary)">
                     <SummaryTable
@@ -221,54 +269,17 @@ export function FeasibilityPdf({ data }: Props) {
                     </Text>
                 </Card>
 
-                {/* <Card title="Project Snapshot">
-                    <KeyValueRow k="ADU Type" v={prettyAduType(data.project.aduType)} />
-                    <KeyValueRow k="Floorplan" v={c.floorplanName} />
-                    <KeyValueRow k="Layout" v={`${c.bed} bed / ${c.bath} bath`} />
-                    <KeyValueRow k="Size" v={`${c.sqft} sqft`} />
-                    <KeyValueRow k="Timeframe" v={prettyTimeframe(data.project.timeframe)} />
-                    <KeyValueRow k="Motivation" v={prettyMotivation(data.project.motivation)} />
-                </Card> */}
-
-                <View style={styles.sectionGrid2}>
-                    <Card title="Estimated Site Work (Details)">
-                        {c.site.items.length ? (
-                            c.site.items.map((it, i) => (
-                                <View key={i} style={{ marginBottom: 10 }}>
-                                    <View style={styles.rowBetween}>
-                                        <Text style={styles.kvKey}>{it.title}</Text>
-                                        <Text style={styles.kvVal}>
-                                            {it.cost?.display ?? moneyRange(it.costMin, it.costMax, { round: "1000", plus: true })}
-                                        </Text>
-                                    </View>
-                                    <Text style={styles.microMuted}>Status: {prettyStatus(it.status)} • Verified in Formal Property Analysis</Text>
-                                </View>
-                            ))
-                        ) : (
-                            <Text style={styles.microMuted}>No site items selected.</Text>
-                        )}
-                    </Card>
-
-                    <Card title="Selected Upgrades (Details)">
-                        {c.upgrades.items.length ? (
-                            c.upgrades.items.map((it, i) => (
-                                <View key={i} style={{ marginBottom: 10 }}>
-                                    <View style={styles.rowBetween}>
-                                        <Text style={styles.kvKey}>{it.title}</Text>
-                                        <Text style={styles.kvVal}>
-                                            {it.cost?.display ?? moneyRange(it.costMin, it.costMax, { round: "100" })}
-                                        </Text>
-                                    </View>
-                                    <Text style={styles.microMuted}>Selected</Text>
-                                </View>
-                            ))
-                        ) : (
-                            <Text style={styles.microMuted}>No optional upgrades selected.</Text>
-                        )}
-                    </Card>
-                </View>
-
-                <Card title="Average Timeline (Estimate)">
+                <Card title="Your Realistic Timeline (If Verified)">
+                    <Text style={styles.label}>Why many homeowners lose an extra 3–6+ months</Text>
+                    <Text style={styles.microMuted}>• Incomplete site data</Text>
+                    <Text style={styles.microMuted}>• Utility assumptions that change mid-process</Text>
+                    <Text style={styles.microMuted}>• City rejections from missing constraints</Text>
+                    <Divider />
+                    <Text style={styles.label}>How Backyard Estates is different</Text>
+                    <Text style={styles.microMuted}>We verify everything before plans and permits begin.</Text>
+                    <Text style={styles.microMuted}>
+                        What this means for you: You can plan around real dates—not delays, redesigns, or guesswork.
+                    </Text>
                     <View style={styles.timelineRow}>
                         {c.timeline.phases.map((p, i) => (
                             <View key={i} style={styles.timelineBlock}>
@@ -300,62 +311,113 @@ export function FeasibilityPdf({ data }: Props) {
                 <View style={styles.sectionGrid2}>
                     <Card title="What’s Included (Base Build)">
                         <Text style={styles.microMuted}>
-                            These are the core deliverables we include — the reason our builds stay organized, code-compliant, and predictable.
+                            Each step exists to protect your budget and keep your project on track.
                         </Text>
                         <Divider />
-                        <View>
-                            {useTwoCol ? (
-                                <View style={styles.twoColRow}>
-                                    <View style={styles.twoColLeft}>
-                                        {left.map((it, i) => (
-                                            <View key={`L-${i}`} style={styles.itemBlock} wrap={false}>
-                                                <Text style={styles.kvValStrong}>{it.title}</Text>
-                                                <Text style={styles.microMuted}>{it.description}</Text>
-                                                {!!it.modal?.whyItMatters && (
-                                                    <Text style={styles.microMuted}>Why it matters: {it.modal.whyItMatters}</Text>
-                                                )}
-                                            </View>
-                                        ))}
-                                    </View>
 
-                                    <View style={styles.twoColRight}>
-                                        {right.map((it, i) => (
-                                            <View key={`R-${i}`} style={styles.itemBlock} wrap={false}>
-                                                <Text style={styles.kvValStrong}>{it.title}</Text>
-                                                <Text style={styles.microMuted}>{it.description}</Text>
-                                                {!!it.modal?.whyItMatters && (
-                                                    <Text style={styles.microMuted}>Why it matters: {it.modal.whyItMatters}</Text>
-                                                )}
-                                            </View>
+                        {baseBuildCategories.map((catKey) => {
+                            const items = includedBaseGrouped[catKey] ?? [];
+                            if (!items.length) return null;
+
+                            return (
+                                <View key={catKey} style={{ marginBottom: 12 }}>
+                                    <Text style={styles.h2}>{CATEGORY_LABELS[catKey] ?? catKey}</Text>
+                                    <View style={{ marginTop: 6 }}>
+                                        {items.map((it: any, i: number) => (
+                                            <Text key={i} style={styles.microMuted}>• {it.title}</Text>
                                         ))}
                                     </View>
                                 </View>
-                            ) : (
-                                <View>
-                                    {includedItems.map((it, i) => (
-                                        <View key={i} style={styles.itemBlock} wrap={false}>
-                                            <Text style={styles.kvValStrong}>{it.title}</Text>
-                                            <Text style={styles.microMuted}>{it.description}</Text>
-                                            {!!it.modal?.whyItMatters && (
-                                                <Text style={styles.microMuted}>Why it matters: {it.modal.whyItMatters}</Text>
-                                            )}
-                                        </View>
-                                    ))}
-                                </View>
-                            )}
-                        </View>
+                            );
+                        })}
                     </Card>
                 </View>
+            </Page>
 
-                {/* <Card title="How We Reduce Surprises">
-                    <Bullet tone="good" text="We identify site triggers early — before permits and before construction begins." />
-                    <Bullet tone="good" text="We model cost ranges transparently so you can plan with confidence." />
-                    <Bullet tone="good" text="We guide decisions (layout, access, utilities) to prevent late-stage redesign." />
+            <Page size="LETTER" style={styles.page}>
+                <Header brandName={brandName} logoUrl={logoUrl} title="Potential Site-Specific Work" subtitle="This is why our feasibility work reduces risk and protects your budget" />
+                <Card title="Examples of Site Characteristics We Verify">
+                    <Text style={styles.kvValStrong}>Utilities & Infrastructure</Text>
+                    <Text style={styles.microMuted}>• Sewer, water, electrical upgrades</Text>
+                    <Text style={styles.microMuted}>• Longer utility runs</Text>
+                    <Text style={styles.microMuted}>• Water meters, fire sprinklers</Text>
+
+                    <View style={{ height: 10 }} />
+
+                    <Text style={styles.kvValStrong}>Structural & Grading</Text>
+                    <Text style={styles.microMuted}>• Taller foundations, deeper footings</Text>
+                    <Text style={styles.microMuted}>• Retaining walls, drainage, soil reports</Text>
+
+                    <View style={{ height: 10 }} />
+
+                    <Text style={styles.kvValStrong}>Design & Code Conflicts</Text>
+                    <Text style={styles.microMuted}>• Roof types, ceiling heights</Text>
+                    <Text style={styles.microMuted}>• Setbacks, easements, fire code</Text>
+
                     <Divider />
                     <Text style={styles.microMuted}>
-                        The Formal Property Analysis is where we verify each risk item and lock the proposal to real conditions.
+                        What this means for you: You avoid redesigns, stalled permits, and last-minute construction changes.
                     </Text>
-                </Card> */}
+                </Card>
+
+                <View style={styles.sectionGrid2}>
+                    <View style={styles.col}>
+
+                        <Card title="Estimated Site Work (Details)">
+                            {c.site.items.length ? (
+                                c.site.items.map((it, i) => (
+                                    <View key={i} style={{ marginBottom: 10 }}>
+                                        <View style={styles.rowBetween}>
+                                            <Text style={styles.kvKey}>{it.title}</Text>
+                                            <Text style={styles.kvVal}>
+                                                {it.cost?.display ?? moneyRange(it.costMin, it.costMax, { round: "1000", plus: true })}
+                                            </Text>
+                                        </View>
+                                        <Text style={styles.microMuted}>Status: {prettyStatus(it.status)} • Verified in Formal Property Analysis</Text>
+                                    </View>
+                                ))
+                            ) : (
+                                <Text style={styles.microMuted}>No site items selected.</Text>
+                            )}
+                        </Card>
+                    </View>
+
+                    <View style={styles.col}>
+
+                        <Card title="Selected Upgrades (Details)">
+                            {c.upgrades.items.length ? (
+                                c.upgrades.items.map((it, i) => (
+                                    <View key={i} style={{ marginBottom: 10 }}>
+                                        <View style={styles.rowBetween}>
+                                            <Text style={styles.kvKey}>{it.title}</Text>
+                                            <Text style={styles.kvVal}>
+                                                {it.cost?.display ?? moneyRange(it.costMin, it.costMax, { round: "100" })}
+                                            </Text>
+                                        </View>
+                                        <Text style={styles.microMuted}>Selected</Text>
+                                    </View>
+                                ))
+                            ) : (
+                                <Text style={styles.microMuted}>No optional upgrades selected.</Text>
+                            )}
+                        </Card>
+                    </View>
+
+                </View>
+
+                <Card title="Our Included Finishes">
+                    {/* Pull from INCLUDED_BASE where category === "design_finish_features" */}
+                    {finishes.length ? (
+                        <View style={styles.chipsRow}>
+                            {finishes.map((f: any, i: number) => (
+                                <Chip key={i} text={f.title} />
+                            ))}
+                        </View>
+                    ) : (
+                        <Text style={styles.microMuted}>Finish package items not available.</Text>
+                    )}
+                </Card>
+
             </Page>
 
             {/* 4) SITE SPECIFIC WORK */}
@@ -363,85 +425,96 @@ export function FeasibilityPdf({ data }: Props) {
                 <Header brandName={brandName} logoUrl={logoUrl} title="Potential Site-Specific Work" subtitle="This is why our feasibility work reduces risk and protects your budget" />
 
                 <View style={styles.sectionGrid2}>
-
-                    <Card title="Potential Site Work (How We Assess Upfront)">
-                        {value.siteFlagged.length ? (
-                            value.siteFlagged.slice(0, 6).map((x: any, i: number) => (
-                                <View key={i} style={{ marginBottom: 12 }}>
-                                    <View style={styles.rowBetween}>
-                                        <Text style={styles.kvKey}>{x.store.title}</Text>
-                                        <PillStatus status={x.store.status} />
-                                    </View>
-
-                                    <Text style={styles.microMuted}>
-                                        Est. Cost: {x.meta?.modal?.estCost?.display ?? x.store.cost?.display ?? "—"}
-                                    </Text>
-
-                                    {!!x.meta?.modal?.whyItMatters && (
-                                        <Text style={styles.microMuted}>Why it matters: {x.meta.modal.whyItMatters}</Text>
-                                    )}
-
-                                    {!!x.meta?.modal?.howWeAssess?.length && (
-                                        <View style={{ marginTop: 6 }}>
-                                            <Text style={styles.label}>How we assess</Text>
-                                            {x.meta.modal.howWeAssess.slice(0, 3).map((s: string, j: number) => (
-                                                <Text key={j} style={styles.microMuted}>• {s}</Text>
-                                            ))}
-                                        </View>
-                                    )}
-
-                                    {!!x.meta?.modal?.triggers?.length && (
-                                        <View style={{ marginTop: 6 }}>
-                                            <Text style={styles.label}>Common triggers</Text>
-                                            <View style={styles.chipsRow}>
-                                                {x.meta.modal.triggers.slice(0, 4).map((t: any, j: number) => (
-                                                    <Chip key={j} text={t.title} />
-                                                ))}
-                                            </View>
-                                        </View>
-                                    )}
-
-                                    <View style={styles.dividerThin} />
-                                </View>
-                            ))
-                        ) : (
-                            <Text style={styles.microMuted}>No site items flagged.</Text>
-                        )}
-
-                        <Text style={styles.microMuted}>
-                            The Formal Property Analysis verifies these items using city policy checks, utility confirmations, and site validation.
-                        </Text>
-                    </Card>
-                    {value.upgradesSelected.length ? (
-                        <Card title="Selected Upgrades (What You Chose)">
-                            {value.upgradesSelected.length ? (
-                                value.upgradesSelected.map((x: any, i: number) => (
+                    <View style={styles.col}>
+                        <Card title="Potential Site Work (How We Assess Upfront)">
+                            {value.siteFlagged.length ? (
+                                value.siteFlagged.slice(0, 6).map((x: any, i: number) => (
                                     <View key={i} style={{ marginBottom: 12 }}>
                                         <View style={styles.rowBetween}>
                                             <Text style={styles.kvKey}>{x.store.title}</Text>
-                                            <Text style={styles.kvVal}>{x.meta?.modal?.estCost?.display ?? x.store.cost?.display ?? "—"}</Text>
+                                            <PillStatus status={x.store.status} />
                                         </View>
-                                        {!!x.meta?.modal?.overview && <Text style={styles.microMuted}>{x.meta.modal.overview}</Text>}
-                                        {!!x.meta?.modal?.whyItMatters && <Text style={styles.microMuted}>Why it matters: {x.meta.modal.whyItMatters}</Text>}
+
+                                        <Text style={styles.microMuted}>
+                                            Est. Cost: {x.meta?.modal?.estCost?.display ?? x.store.cost?.display ?? "—"}
+                                        </Text>
+
+                                        {!!x.meta?.modal?.whyItMatters && (
+                                            <Text style={styles.microMuted}>Why it matters: {x.meta.modal.whyItMatters}</Text>
+                                        )}
+
+                                        {!!x.meta?.modal?.howWeAssess?.length && (
+                                            <View style={{ marginTop: 6 }}>
+                                                <Text style={styles.label}>How we assess</Text>
+                                                {x.meta.modal.howWeAssess.slice(0, 3).map((s: string, j: number) => (
+                                                    <Text key={j} style={styles.microMuted}>• {s}</Text>
+                                                ))}
+                                            </View>
+                                        )}
+
+                                        {!!x.meta?.modal?.triggers?.length && (
+                                            <View style={{ marginTop: 6 }}>
+                                                <Text style={styles.label}>Common triggers</Text>
+                                                <View style={styles.chipsRow}>
+                                                    {x.meta.modal.triggers.slice(0, 4).map((t: any, j: number) => (
+                                                        <Chip key={j} text={t.title} />
+                                                    ))}
+                                                </View>
+                                            </View>
+                                        )}
+
+                                        <View style={styles.dividerThin} />
                                     </View>
                                 ))
                             ) : (
-                                <Text style={styles.microMuted}>No optional upgrades selected.</Text>
+                                <Text style={styles.microMuted}>No site items flagged.</Text>
                             )}
+
+                            <Text style={styles.microMuted}>
+                                The Formal Property Analysis verifies these items using city policy checks, utility confirmations, and site validation.
+                            </Text>
                         </Card>
+                    </View>
+                    {value.upgradesSelected.length ? (
+                        <View style={styles.col}>
+
+                            <Card title="Selected Upgrades (What You Chose)">
+                                {value.upgradesSelected.length ? (
+                                    value.upgradesSelected.map((x: any, i: number) => (
+                                        <View key={i} style={{ marginBottom: 12 }}>
+                                            <View style={styles.rowBetween}>
+                                                <Text style={styles.kvKey}>{x.store.title}</Text>
+                                                <Text style={styles.kvVal}>{x.meta?.modal?.estCost?.display ?? x.store.cost?.display ?? "—"}</Text>
+                                            </View>
+                                            {!!x.meta?.modal?.overview && <Text style={styles.microMuted}>{x.meta.modal.overview}</Text>}
+                                            {!!x.meta?.modal?.whyItMatters && <Text style={styles.microMuted}>Why it matters: {x.meta.modal.whyItMatters}</Text>}
+                                        </View>
+                                    ))
+                                ) : (
+                                    <Text style={styles.microMuted}>No optional upgrades selected.</Text>
+                                )}
+                            </Card>
+                        </View>
                     ) : null}
                 </View>
                 <View style={styles.sectionGrid2}>
-                    <Card title="What Speeds This Up">
-                        <Bullet text="Fast utility verification and clear access routes." tone="good" />
-                        <Bullet text="Quick responses to plan check comments." tone="good" />
-                        <Bullet text="Decisions on finishes and upgrades early." tone="good" />
-                    </Card>
-                    <Card title="What Typically Delays Projects">
-                        <Bullet text="Unexpected utility upgrades or re-routes." tone="warn" />
-                        <Bullet text="Easements/setbacks requiring plan changes." tone="warn" />
-                        <Bullet text="Multiple city revision cycles or specialty requirements." tone="warn" />
-                    </Card>
+                    <View style={styles.col}>
+
+                        <Card title="What Speeds This Up">
+                            <Bullet text="Fast utility verification and clear access routes." tone="good" />
+                            <Bullet text="Quick responses to plan check comments." tone="good" />
+                            <Bullet text="Decisions on finishes and upgrades early." tone="good" />
+                        </Card>
+                    </View>
+                    <View style={styles.col}>
+
+                        <Card title="What Typically Delays Projects">
+                            <Bullet text="Unexpected utility upgrades or re-routes." tone="warn" />
+                            <Bullet text="Easements/setbacks requiring plan changes." tone="warn" />
+                            <Bullet text="Multiple city revision cycles or specialty requirements." tone="warn" />
+                        </Card>
+                    </View>
+
                 </View>
             </Page>
 
@@ -460,67 +533,47 @@ export function FeasibilityPdf({ data }: Props) {
                         <Text style={styles.microMuted}>{c.rent.disclaimer}</Text>
                     </Card>
 
-                    {/* <Card title="Rental Comps (If Provided)">
-                        {c.rent.comps?.length ? (
-                            c.rent.comps.slice(0, 6).map((comp: any, i: number) => (
-                                <View key={i} style={styles.compRow}>
-                                    <View style={{ flex: 1 }}>
-                                        <Text style={styles.kvKey}>{comp.label ?? `Comparable ${i + 1}`}</Text>
-                                        <Text style={styles.microMuted}>
-                                            {(comp.beds ?? "—")} bd • {(comp.baths ?? "—")} ba • {(comp.sqft ?? "—")} sqft
-                                        </Text>
-                                        {!!comp.notes && <Text style={styles.microMuted}>{comp.notes}</Text>}
-                                    </View>
-                                    <Text style={styles.kvVal}>{money(comp.rentMonthly, { round: "1" })}/mo</Text>
-                                </View>
-                            ))
-                        ) : (
-                            <Text style={styles.microMuted}>
-                                No comps were provided in this submission. If you want us to use verified real-time comps, the Formal Property Analysis includes that research.
-                            </Text>
-                        )}
-                    </Card> */}
                 </View>
                 <Header brandName={brandName} logoUrl={logoUrl} title="ROI & Cashflow" subtitle="How the numbers can look based on your finance inputs" />
 
                 <View style={styles.sectionGrid2}>
-                    <Card title="Payment Estimate">
-                        <KeyValueRow k="Financing Path" v={c.finance.path === "cash" ? "Cash" : "Financed"} />
-                        <KeyValueRow k="Rate" v={`${c.finance.ratePct.toFixed(2)}%`} />
-                        <KeyValueRow k="Term" v={`${c.finance.termMonths} months`} />
-                        <Divider />
-                        <KeyValueRow
-                            k="Estimated Monthly Payment"
-                            v={c.finance.path === "cash" ? "$0/mo" : `${money(Math.round(c.finance.monthlyPayment), { round: "1" })}/mo`}
-                            strong
-                        />
-                        <Text style={styles.microMuted}>
-                            Payment uses the midpoint of your project range (for planning). Formal Property Analysis refines the total and can model multiple financing options.
-                        </Text>
-                    </Card>
+                    <View style={styles.col}>
+                        <Card title="Payment Estimate">
+                            <KeyValueRow k="Financing Path" v={c.finance.path === "cash" ? "Cash" : "Financed"} />
+                            <KeyValueRow k="Rate" v={`${c.finance.ratePct.toFixed(2)}%`} />
+                            <KeyValueRow k="Term" v={`${c.finance.termMonths} months`} />
+                            <Divider />
+                            <KeyValueRow
+                                k="Estimated Monthly Payment"
+                                v={c.finance.path === "cash" ? "$0/mo" : `${money(Math.round(c.finance.monthlyPayment), { round: "1" })}/mo`}
+                                strong
+                            />
+                            <Text style={styles.microMuted}>
+                                Payment uses the midpoint of your project range (for planning). Formal Property Analysis refines the total and can model multiple financing options.
+                            </Text>
+                        </Card>
+                    </View>
+                    <View style={styles.col}>
 
-                    <Card title="Monthly Cashflow (Guideline)">
-                        <KeyValueRow k="Estimated Rent (Min)" v={`${money(c.rent.range.min, { round: "1" })}/mo`} />
-                        <KeyValueRow k="Estimated Rent (Max)" v={`${money(c.rent.range.max, { round: "1" })}/mo`} />
-                        <Divider />
-                        <KeyValueRow
-                            k="Estimated Cashflow (Min)"
-                            v={`${money(Math.round(c.roi.monthlyCashflowMin), { round: "1" })}/mo`}
-                            tone={c.roi.monthlyCashflowMin >= 0 ? "good" : "risk"}
-                            strong
-                        />
-                        <KeyValueRow
-                            k="Estimated Cashflow (Max)"
-                            v={`${money(Math.round(c.roi.monthlyCashflowMax), { round: "1" })}/mo`}
-                            tone={c.roi.monthlyCashflowMax >= 0 ? "good" : "warn"}
-                            strong
-                        />
-                        <Divider />
-                        <KeyValueRow k="Simple Annual ROI Range" v={`${pct(c.roi.simpleRoiMin, 1)}–${pct(c.roi.simpleRoiMax, 1)}`} />
-                        <Text style={styles.microMuted}>
-                            ROI is a simplified planning metric (cashflow ÷ cash out-of-pocket). Real ROI depends on taxes, operating costs, vacancy, and financing structure.
-                        </Text>
-                    </Card>
+                        <Card title="Monthly Cashflow (Guideline)">
+                            <KeyValueRow k="Estimated Rent (Min)" v={`${money(c.rent.range.min, { round: "1" })}/mo`} />
+                            <KeyValueRow k="Estimated Rent (Max)" v={`${money(c.rent.range.max, { round: "1" })}/mo`} />
+                            <Divider />
+                            <KeyValueRow
+                                k="Estimated Cashflow (Min)"
+                                v={`${money(Math.round(c.roi.monthlyCashflowMin), { round: "1" })}/mo`}
+                                tone={c.roi.monthlyCashflowMin >= 0 ? "good" : "risk"}
+                                strong
+                            />
+                            <KeyValueRow
+                                k="Estimated Cashflow (Max)"
+                                v={`${money(Math.round(c.roi.monthlyCashflowMax), { round: "1" })}/mo`}
+                                tone={c.roi.monthlyCashflowMax >= 0 ? "good" : "warn"}
+                                strong
+                            />
+                        </Card>
+                    </View>
+
                 </View>
 
                 {!!c.equityBoost?.enabled && (
@@ -642,23 +695,8 @@ export function FeasibilityPdf({ data }: Props) {
                         <Bullet text="Answers to your highest-impact questions" tone="good" />
                     </Card>
 
-                    {/* <Card title="Your Report Snapshot">
-                        <KeyValueRow k="Selected Plan" v={c.floorplanName} />
-                        <KeyValueRow k="Base Build" v={money(c.basePrice, { round: "1000" })} />
-                        <KeyValueRow
-                            k="Total Range"
-                            v={moneyRange(c.totals.totalMin, c.totals.totalMax, { round: "1000", plus: true })}
-                            strong
-                        />
-                        <Divider />
-                        <Text style={styles.label}>Top items to verify</Text>
-                        {c.bullets.topUnknowns.map((x, i) => (
-                            <Bullet key={i} text={x} tone="warn" />
-                        ))}
-                    </Card> */}
                 </View>
 
-                {/* ✅ We keep this short here; the full timeline is on the Timeline page */}
                 <View style={styles.sectionGrid2}>
                     <Card title="Fastest Path (Next Steps)">
                         <StepRow n="1" t="Formal Property Analysis" d="Site verification + refined scope, cost, and schedule." />
@@ -669,81 +707,22 @@ export function FeasibilityPdf({ data }: Props) {
                     </Card>
                 </View>
 
-                <Card title="Ready to Move Forward?">
-                    <Text style={styles.h2}>Schedule your next step</Text>
-                    <Text style={styles.muted}>
-                        Reply to this report email or book an office visit to confirm feasibility and start the Formal Property Analysis.
+                <Card title="I’m Ready to Build with Clarity">
+                    <Text style={styles.h2}>Book your Formal Property Analysis</Text>
+                    <Text style={styles.microMuted}>
+                        and lock in your verified path forward.
                     </Text>
 
-                    <View style={styles.signature}>
-                        <Text style={styles.signatureName}>{data.brand?.signatureName ?? "Backyard Estates Team"}</Text>
-                        <Text style={styles.signatureTitle}>{data.brand?.signatureTitle ?? "Design • Permits • Build"}</Text>
-                        <Text style={styles.microMuted}>
-                            {contact.phone} • {contact.email}
-                        </Text>
-                    </View>
+                    <Divider />
+
+                    <Link src={ctaUrl} style={styles.ctaLink}>
+                        {ctaLabel}
+                    </Link>
+
+                    <Text style={styles.microMuted}>{ctaUrl}</Text>
                 </Card>
 
             </Page>
-
-            {/* 9) QUALITY & STANDARD FINISHES */}
-            {/* <Page size="LETTER" style={styles.page}>
-                <Header brandName={brandName} logoUrl={logoUrl} title="Quality & Standard Finishes" subtitle="What’s included in your base build — designed to feel premium" />
-
-                <Card title="Our Standard Finish Package">
-                    <Text style={styles.muted}>
-                        We standardize a high-quality finish level so your ADU feels modern, durable, and move-in ready — without surprises.
-                    </Text>
-                    <View style={styles.chipsRow}>
-                        <Chip text="Quartz counters" />
-                        <Chip text="Shaker cabinets" />
-                        <Chip text="Luxury vinyl plank" />
-                        <Chip text="Mini-split HVAC" />
-                        <Chip text="Stainless appliances" />
-                        <Chip text="Professional paint + trim" />
-                    </View>
-                </Card>
-
-                <View style={{ height: 10 }} />
-
-                <Card title="Gallery (Examples)">
-                    {gallery?.length ? (
-                        <View style={styles.galleryGrid}>
-                            {gallery.slice(0, 6).map((g: any, i: number) => {
-                                const src = safeSrc(g?.image);
-                                return (
-                                    <View key={i} style={styles.galleryItem}>
-                                        {src ? (
-                                            <Image src={src} style={styles.galleryImg} />
-                                        ) : (
-                                            <View style={styles.galleryFallback}>
-                                                <Text style={styles.microMuted}>Image unavailable</Text>
-                                            </View>
-                                        )}
-                                        <Text style={styles.galleryCaption}>{g?.title ?? "Standard finish"}</Text>
-                                    </View>
-                                );
-                            })}
-                        </View>
-                    ) : (
-                        <Text style={styles.microMuted}>
-                            No gallery assets were provided. Populate `pdfReportAssets.gallery[]` in Sanity to show examples here.
-                        </Text>
-                    )}
-                </Card>
-                <Card title="Discounts We Offer">
-                    {c.discounts.list.map((d, i) => (
-                        <View key={i} style={styles.discountRow}>
-                            <Text style={styles.discountTitle}>{d.title}</Text>
-                            <Text style={styles.discountDetail}>{d.detail}</Text>
-                            {!!d.amountHint && <Text style={styles.discountHint}>{d.amountHint}</Text>}
-                        </View>
-                    ))}
-                    <Text style={styles.microMuted}>
-                        Discounts depend on eligibility and active offers. We’ll review all applicable discounts during your Formal Property Analysis.
-                    </Text>
-                </Card>
-            </Page> */}
         </Document>
     );
 }
@@ -865,15 +844,6 @@ function StepRow({ n, t, d }: { n: string; t: string; d: string }) {
     );
 }
 
-// function MiniBlock({ title, body }: { title: string; body: string }) {
-//     return (
-//         <View style={styles.Block}>
-//             <Text style={styles.miniTitle}>{title}</Text>
-//             <Text style={styles.microMuted}>{body}</Text>
-//         </View>
-//     );
-// }
-
 function SummaryTable({
     rows,
     totalLabel,
@@ -909,10 +879,6 @@ function StatCard({ label, value }: { label: string; value: string }) {
     );
 }
 
-/* =========================
-   Small formatting helpers
-========================= */
-
 function prettyAduType(t?: string | null) {
     if (!t) return "—";
     const s = t.toLowerCase();
@@ -946,111 +912,166 @@ function prettyStatus(s: string) {
     return "Unknown";
 }
 
-/* =========================
-   Styles
-========================= */
+function ProcessRow({
+    label,
+    state,
+}: {
+    label: string;
+    state: "done" | "current" | "todo";
+}) {
+    const left =
+        state === "done" ? "✓" : state === "current" ? "← You are here" : "";
+    const tone =
+        state === "current" ? styles.kvValStrong : state === "done" ? styles.kvVal : styles.microMuted;
+
+    return (
+        <View style={styles.rowBetween}>
+            <Text style={tone}>{label}</Text>
+            <Text style={tone}>{left}</Text>
+        </View>
+    );
+}
+
+function BeforeAfterTable({ rows }: { rows: { left: string; right: string }[] }) {
+    return (
+        <View>
+            <View style={[styles.rowBetween, { marginBottom: 8 }]}>
+                <Text style={styles.label}>Without FPA</Text>
+                <Text style={styles.label}>With FPA</Text>
+            </View>
+
+            {rows.map((r, i) => (
+                <View key={i} style={styles.rowBetween}>
+                    <Text style={styles.kvKey}>{r.left}</Text>
+                    <Text style={styles.kvValStrong}>{r.right}</Text>
+                </View>
+            ))}
+        </View>
+    );
+}
+
+const PAGE_PAD = 32;
+const R = 16;
 
 const styles = StyleSheet.create({
+    /* =========================
+       Tone helpers
+    ========================= */
+    toneGood: { color: palette.good },
+    toneWarn: { color: palette.warn },
+    toneRisk: { color: palette.risk },
+
+    /* =========================
+       Page
+    ========================= */
     page: {
-        paddingTop: 34,
-        paddingBottom: 34,
-        paddingHorizontal: 34,
+        paddingTop: PAGE_PAD,
+        paddingBottom: PAGE_PAD,
+        paddingHorizontal: PAGE_PAD,
         backgroundColor: palette.bg,
         color: palette.ink,
-        fontSize: 11,
-        // fontFamily: "Inter",
+        fontSize: 10.5,
+        lineHeight: 1.32,
     },
 
-    /* Cover */
+    /* =========================
+       Cover
+    ========================= */
     coverWrap: { flex: 1 },
-    coverTop: { marginBottom: 14 },
-    brandRow: { flexDirection: "row", alignItems: "center", gap: 14 },
-    logo: { width: 46, height: 46, objectFit: "contain" },
+    coverTop: { marginBottom: 12 },
+
+    brandRow: { flexDirection: "row", alignItems: "center" },
+
+    logo: { width: 44, height: 44, objectFit: "contain", marginRight: 12 },
     logoFallback: {
-        width: 46,
-        height: 46,
+        width: 44,
+        height: 44,
         borderRadius: 12,
         backgroundColor: palette.card,
         borderWidth: 1,
         borderColor: palette.line,
         alignItems: "center",
         justifyContent: "center",
+        marginRight: 12,
     },
-    logoFallbackText: { fontSize: 8, color: palette.muted, textAlign: "center" },
+    logoFallbackText: { fontSize: 7.5, color: palette.muted, textAlign: "center" },
 
-    coverTitle: { fontSize: 20, fontWeight: 900, color: palette.ink },
-    coverSubtitle: { fontSize: 10, color: palette.muted, marginTop: 2 },
+    coverTitle: { fontSize: 19, fontWeight: 900, color: palette.ink, lineHeight: 1.08 },
+    coverSubtitle: { fontSize: 10, color: palette.muted, marginTop: 4, lineHeight: 1.25 },
+    microMuted: { color: palette.muted, fontSize: 9, lineHeight: 1.33 },
+    muted: { color: palette.muted, fontSize: 10, lineHeight: 1.33 },
 
-    coverMeta: { width: 160, alignItems: "flex-end" },
-    metaLabel: { fontSize: 9, color: palette.faint },
-    metaValue: { fontSize: 10.5, fontWeight: 700, marginTop: 2 },
-    metaMuted: { fontSize: 9, color: palette.muted, marginTop: 2 },
+    coverHero: { flexDirection: "column" },
 
-    coverHero: { position: "relative", flex: 1 },
-    coverImage: { width: "100%", height: 440, borderRadius: 18, objectFit: "cover" },
-    coverImageFallback: {
+    metaValue: { fontSize: 10.5, fontWeight: 800, marginTop: 8 },
+    metaMuted: { fontSize: 9, color: palette.muted, marginTop: 3 },
+
+    overlayEyebrow: { fontSize: 9, color: palette.faint, marginTop: 8 },
+    overlayTitle: { fontSize: 13, fontWeight: 900, marginTop: 3, lineHeight: 1.18 },
+
+    overlayRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
+
+    pill: {
+        backgroundColor: palette.brand,
+        paddingVertical: 4,
+        paddingHorizontal: 10,
+        borderRadius: 999,
+        marginRight: 6,
+        marginBottom: 6,
+    },
+    pillText: { fontSize: 9.25, color: "#fff", fontWeight: 900 },
+
+    pillSoft: {
+        backgroundColor: "#EEF2FF",
+        paddingVertical: 4,
+        paddingHorizontal: 10,
+        borderRadius: 999,
+        marginRight: 6,
+        marginBottom: 6,
+    },
+    pillTextSoft: { fontSize: 9.25, color: palette.brand, fontWeight: 900 },
+
+    drawing: {
         width: "100%",
-        height: 440,
-        borderRadius: 18,
-        backgroundColor: palette.beige,
+        height: 260,
+        borderRadius: 14,
+        objectFit: "contain",
+        backgroundColor: "#fff",
+        borderWidth: 1,
+        borderColor: palette.line,
+    },
+    drawingFallback: {
+        height: 260,
+        borderRadius: 14,
         borderWidth: 1,
         borderColor: palette.line,
         alignItems: "center",
         justifyContent: "center",
+        backgroundColor: "#fff",
     },
-    coverImageFallbackText: { color: palette.muted, fontSize: 12 },
 
-    coverOverlayCard: {
-        position: "absolute",
-        left: 18,
-        right: 18,
-        bottom: 18,
-        backgroundColor: "rgba(255,255,255,0.92)",
-        borderRadius: 18,
-        padding: 16,
+    priceBlock: {
+        marginTop: 8,
+        backgroundColor: "#F3F6FF",
+        borderRadius: 14,
+        padding: 11,
         borderWidth: 1,
-        borderColor: palette.line,
+        borderColor: "#E1E8FF",
     },
-    overlayEyebrow: { fontSize: 9, color: palette.faint },
-    overlayTitle: { fontSize: 13.5, fontWeight: 800, marginTop: 4 },
-    overlayRow: { flexDirection: "row", gap: 8, marginTop: 8, flexWrap: "wrap" },
-    pill: {
-        backgroundColor: palette.brand,
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 999,
-    },
-    pillText: { fontSize: 9.5, color: "#fff", fontWeight: 700 },
-    pillSoft: {
-        backgroundColor: "#EEF2FF",
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 999,
-    },
-    pillTextSoft: { fontSize: 9.5, color: palette.brand, fontWeight: 700 },
 
-    bigNumberRow: { marginTop: 12 },
-    bigLabel: { fontSize: 9, color: palette.faint },
-    bigNumber: { fontSize: 20, fontWeight: 900, marginTop: 2, color: palette.ink },
-    bigNumberSmall: { fontSize: 16, fontWeight: 900, marginTop: 4, color: palette.ink },
-    bigNote: { fontSize: 9, color: palette.muted, marginTop: 6, lineHeight: 1.35 },
-
-    footerBar: { marginTop: 14, flexDirection: "row", justifyContent: "space-between" },
-    footerText: { fontSize: 9, color: palette.muted },
-    footerTextMuted: { fontSize: 9, color: palette.faint },
-
-    /* Header */
+    /* =========================
+       Header
+    ========================= */
     header: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 12,
-        marginBottom: 14,
+        marginBottom: 12,
     },
-    headerLeft: { width: 44 },
-    headerLogo: { width: 34, height: 34, objectFit: "contain" },
+    headerLeft: { width: 42, marginRight: 10 },
+    headerLogo: { width: 32, height: 32, objectFit: "contain" },
     headerLogoFallback: {
-        width: 34,
-        height: 34,
+        width: 32,
+        height: 32,
         borderRadius: 10,
         backgroundColor: palette.card,
         borderWidth: 1,
@@ -1059,125 +1080,275 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     headerLogoFallbackText: { fontSize: 7, color: palette.muted, textAlign: "center" },
-    headerTitle: { fontSize: 18, fontWeight: 900, color: palette.ink },
-    headerSubtitle: { fontSize: 10, color: palette.muted, marginTop: 2 },
+    headerTitle: { fontSize: 17, fontWeight: 900, color: palette.ink, lineHeight: 1.1 },
+    headerSubtitle: { fontSize: 10, color: palette.muted, marginTop: 3, lineHeight: 1.25 },
 
-    /* Layout */
-    sectionGrid2: { flexDirection: "row", gap: 12, marginBottom: 12 },
-    sectionGrid3: { flexDirection: "row", gap: 10, marginTop: 10 },
+    /* =========================
+       Layout grids
+       (tight + predictable widths)
+    ========================= */
+    sectionGrid2: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        marginTop: 10,
+    },
+    col: { width: "49%" },
 
+    sectionGrid3: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        marginTop: 8,
+    },
+    col3: { width: "32.3%" },
+
+    /* A generic tight stack (use instead of `gap`) */
+    stack: { flexDirection: "column" },
+    stackTightItem: { marginBottom: 6 },
+    stackTighterItem: { marginBottom: 4 },
+
+    /* =========================
+       Cards
+       (tightened padding + consistent rhythm)
+    ========================= */
     card: {
-        flex: 1,
         backgroundColor: palette.card,
-        borderRadius: 18,
+        borderRadius: R,
         borderWidth: 1,
         borderColor: palette.line,
-        padding: 14,
+        padding: 12,
+        marginBottom: 10,
     },
-    cardTitle: { fontSize: 10, color: palette.faint, fontWeight: 700, marginBottom: 10, letterSpacing: 0.3 },
+    cardSoft: {
+        backgroundColor: "#FBFCFF",
+        borderRadius: R,
+        borderWidth: 1,
+        borderColor: palette.line,
+        padding: 12,
+        marginBottom: 10,
+    },
+    cardWarn: {
+        backgroundColor: "#FFF8ED",
+        borderRadius: R,
+        borderWidth: 1,
+        borderColor: "#F2D7A7",
+        padding: 12,
+        marginBottom: 10,
+    },
+
+    cardTitle: {
+        fontSize: 9.5,
+        color: palette.faint,
+        fontWeight: 900,
+        marginBottom: 8,
+        letterSpacing: 0.35,
+        textTransform: "uppercase",
+    },
     cardBody: {},
 
-    h2: { fontSize: 14, fontWeight: 900, marginBottom: 6 },
+    /* =========================
+       Typography
+    ========================= */
+    h2: { fontSize: 13.5, fontWeight: 900, marginBottom: 5, lineHeight: 1.15 },
+    label: { fontSize: 10, fontWeight: 900, color: palette.ink, marginBottom: 5 },
 
-    muted: { color: palette.muted, fontSize: 10, lineHeight: 1.35 },
-    microMuted: { color: palette.muted, fontSize: 9, lineHeight: 1.35, marginTop: 6 },
+    note: { marginTop: 8, fontSize: 9, color: palette.muted, lineHeight: 1.33 },
 
-    divider: { height: 1, backgroundColor: palette.line, marginVertical: 10 },
+    bigLabel: { fontSize: 9, color: palette.faint },
+    bigNumber: { fontSize: 19, fontWeight: 900, marginTop: 3, color: palette.ink, lineHeight: 1.1 },
+    bigNumberSmall: { fontSize: 15.5, fontWeight: 900, marginTop: 3, color: palette.ink, lineHeight: 1.1 },
 
-    kvRow: { flexDirection: "row", justifyContent: "space-between", gap: 12, marginBottom: 6 },
-    kvKey: { fontSize: 10, color: palette.muted },
-    kvVal: { fontSize: 10, color: palette.ink, textAlign: "right" },
-    kvValStrong: { fontWeight: 900 },
+    /* =========================
+       Divider
+    ========================= */
+    divider: { height: 1, backgroundColor: palette.line, marginVertical: 8 },
+    dividerThin: { height: 1, backgroundColor: palette.line, marginTop: 8 },
 
-    toneGood: { color: palette.good },
-    toneWarn: { color: palette.warn },
-    toneRisk: { color: palette.risk },
+    /* =========================
+       KV rows + tables
+    ========================= */
+    kvRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        marginBottom: 5,
+    },
+    kvKey: { fontSize: 10, color: palette.muted, width: "67%" },
+    kvVal: { fontSize: 10, color: palette.ink, textAlign: "right", width: "33%" },
+    kvValStrong: { fontSize: 10, color: palette.ink, textAlign: "right", width: "33%", fontWeight: 900 },
 
-    label: { fontSize: 10, fontWeight: 800, color: palette.ink, marginBottom: 6 },
+    rowBetween: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 6,
+    },
 
-    chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 8 },
-    chip: { borderWidth: 1, borderColor: palette.line, backgroundColor: "#FAFBFF", borderRadius: 999, paddingVertical: 4, paddingHorizontal: 8 },
-    chipText: { fontSize: 9, color: palette.muted },
-
-    drawing: { width: "100%", height: 300, borderRadius: 14, objectFit: "contain", backgroundColor: "#fff" },
-    drawingFallback: { height: 300, borderRadius: 14, borderWidth: 1, borderColor: palette.line, alignItems: "center", justifyContent: "center" },
-
-    priceBlock: { marginTop: 10, backgroundColor: "#F3F6FF", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "#E1E8FF" },
-
-    rowBetween: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 10, marginBottom: 8 },
-
-    statusPill: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 999 },
-    statusText: { fontSize: 9, fontWeight: 800 },
-
-    bulletRow: { flexDirection: "row", gap: 8, alignItems: "flex-start", marginBottom: 6 },
-    bulletDot: { width: 7, height: 7, borderRadius: 999, marginTop: 4 },
-    bulletText: { flex: 1, fontSize: 10, color: palette.ink, lineHeight: 1.35 },
-
-    stepRow: { flexDirection: "row", gap: 10, alignItems: "flex-start", marginBottom: 10 },
-    stepNum: { width: 22, height: 22, borderRadius: 999, backgroundColor: palette.brand, alignItems: "center", justifyContent: "center" },
-    stepNumText: { color: "#fff", fontSize: 10, fontWeight: 900 },
-    stepTitle: { fontSize: 10.5, fontWeight: 900 },
-
-    threeCols: { flexDirection: "row", gap: 10, marginBottom: 10 },
-    miniBlock: { flex: 1, borderWidth: 1, borderColor: palette.line, borderRadius: 14, padding: 10, backgroundColor: "#FBFCFF" },
-    miniTitle: { fontSize: 10, fontWeight: 900, marginBottom: 4 },
-
-    table: { borderWidth: 1, borderColor: palette.line, borderRadius: 14, overflow: "hidden" },
-    tableRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 10, paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: palette.line },
-    tableLeft: { fontSize: 10, color: palette.muted },
-    tableRight: { fontSize: 10, color: palette.ink, fontWeight: 800 },
+    table: {
+        borderWidth: 1,
+        borderColor: palette.line,
+        borderRadius: 14,
+        overflow: "hidden",
+        marginTop: 8,
+    },
+    tableRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingVertical: 8,
+        paddingHorizontal: 11,
+        borderBottomWidth: 1,
+        borderBottomColor: palette.line,
+    },
+    tableLeft: { fontSize: 10, color: palette.muted, width: "72%" },
+    tableRight: { fontSize: 10, color: palette.ink, fontWeight: 900, textAlign: "right", width: "28%" },
     tableDivider: { height: 1, backgroundColor: palette.line },
     tableTotalLeft: { color: palette.ink, fontWeight: 900 },
     tableTotalRight: { color: palette.brand, fontWeight: 900 },
 
-    discountRow: { marginBottom: 10, paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: palette.line },
-    discountTitle: { fontSize: 10.5, fontWeight: 900, color: palette.ink },
-    discountDetail: { fontSize: 9.5, color: palette.muted, marginTop: 3, lineHeight: 1.35 },
-    discountHint: { fontSize: 9, color: palette.faint, marginTop: 3 },
+    /* =========================
+       Chips + bullets + status
+    ========================= */
+    chipsRow: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        marginTop: 6,
+    },
+    chip: {
+        borderWidth: 1,
+        borderColor: palette.line,
+        backgroundColor: "#FAFBFF",
+        borderRadius: 999,
+        paddingVertical: 3.5,
+        paddingHorizontal: 8,
+        marginRight: 6,
+        marginBottom: 6,
+    },
+    chipText: { fontSize: 9, color: palette.muted, lineHeight: 1.1 },
 
-    compRow: { flexDirection: "row", gap: 10, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: palette.line },
+    bulletRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 5 },
+    bulletDot: { width: 7, height: 7, borderRadius: 999, marginTop: 4, marginRight: 8 },
+    bulletText: { flex: 1, fontSize: 10, color: palette.ink, lineHeight: 1.33 },
 
-    statCard: { flex: 1, backgroundColor: "#FBFCFF", borderWidth: 1, borderColor: palette.line, borderRadius: 14, padding: 12 },
-    statLabel: { fontSize: 9, color: palette.faint, fontWeight: 700 },
-    statValue: { marginTop: 6, fontSize: 12.5, fontWeight: 900, color: palette.ink },
+    statusPill: { paddingVertical: 3.5, paddingHorizontal: 10, borderRadius: 999 },
+    statusText: { fontSize: 9, fontWeight: 900 },
 
-    timelineRow: { flexDirection: "row", gap: 10 },
-    timelineBlock: { flex: 1, backgroundColor: "#FBFCFF", borderWidth: 1, borderColor: palette.line, borderRadius: 14, padding: 12 },
-    timelineTitle: { fontSize: 10.5, fontWeight: 900, color: palette.ink },
-    timelineValue: { marginTop: 6, fontSize: 11.5, fontWeight: 900, color: palette.brand },
+    /* =========================
+       Steps
+    ========================= */
+    stepRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 8 },
+    stepNum: {
+        width: 22,
+        height: 22,
+        borderRadius: 999,
+        backgroundColor: palette.brand,
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: 10,
+        marginTop: 1,
+    },
+    stepNumText: { color: "#fff", fontSize: 10, fontWeight: 900 },
+    stepTitle: { fontSize: 10.5, fontWeight: 900, marginBottom: 2 },
 
-    signature: { marginTop: 16, paddingTop: 12, borderTopWidth: 1, borderTopColor: palette.line },
-    signatureName: { fontSize: 11, fontWeight: 900, color: palette.ink },
-    signatureTitle: { fontSize: 9.5, color: palette.muted, marginTop: 2 },
+    /* =========================
+       Testimonials + comps
+    ========================= */
+    testimonialRow: { flexDirection: "row", marginBottom: 10 },
+    portrait: {
+        width: 88,
+        height: 88,
+        borderRadius: 16,
+        objectFit: "cover",
+        borderWidth: 1,
+        borderColor: palette.line,
+        marginRight: 12,
+    },
+    portraitFallback: {
+        width: 88,
+        height: 88,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: palette.line,
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: 12,
+        backgroundColor: "#fff",
+    },
+    quote: { fontSize: 10.75, lineHeight: 1.42, color: palette.ink, fontWeight: 800, marginTop: 6 },
 
-    // ✅ Gallery styles
-    galleryGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-    galleryItem: { width: "48%", marginBottom: 10 },
-    galleryImg: { width: "100%", height: 170, borderRadius: 14, objectFit: "cover", backgroundColor: "#fff", borderWidth: 1, borderColor: palette.line },
-    galleryFallback: { width: "100%", height: 170, borderRadius: 14, borderWidth: 1, borderColor: palette.line, alignItems: "center", justifyContent: "center" },
-    galleryCaption: { marginTop: 6, fontSize: 9, color: palette.muted },
+    compGrid: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        marginTop: 8,
+    },
+    compCard: {
+        width: "49%",
+        backgroundColor: "#FBFCFF",
+        borderWidth: 1,
+        borderColor: palette.line,
+        borderRadius: 14,
+        padding: 10,
+        marginBottom: 10,
+    },
+    compImg: {
+        width: "100%",
+        height: 132,
+        borderRadius: 12,
+        objectFit: "cover",
+        backgroundColor: "#fff",
+        borderWidth: 1,
+        borderColor: palette.line,
+    },
+    compImgFallback: {
+        width: "100%",
+        height: 132,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: palette.line,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#fff",
+    },
+    compTitle: { marginTop: 7, fontSize: 10.5, fontWeight: 900, color: palette.ink },
 
-    // ✅ Testimonials styles
-    testimonialRow: { flexDirection: "row", gap: 12 },
-    portrait: { width: 92, height: 92, borderRadius: 18, objectFit: "cover", borderWidth: 1, borderColor: palette.line },
-    portraitFallback: { width: 92, height: 92, borderRadius: 18, borderWidth: 1, borderColor: palette.line, alignItems: "center", justifyContent: "center" },
-    quote: { fontSize: 11, lineHeight: 1.45, color: palette.ink, fontWeight: 700 },
+    /* =========================
+       Timeline blocks
+    ========================= */
+    timelineRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 8 },
+    timelineBlock: {
+        width: "32.3%",
+        backgroundColor: "#FBFCFF",
+        borderWidth: 1,
+        borderColor: palette.line,
+        borderRadius: 14,
+        padding: 11,
+    },
+    timelineTitle: { fontSize: 10.25, fontWeight: 900, color: palette.ink },
+    timelineValue: { marginTop: 5, fontSize: 11.25, fontWeight: 900, color: palette.brand },
 
-    // ✅ Comparables styles
-    compGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-    compCard: { width: "48%", backgroundColor: "#FBFCFF", borderWidth: 1, borderColor: palette.line, borderRadius: 14, padding: 10 },
-    compImg: { width: "100%", height: 140, borderRadius: 12, objectFit: "cover", backgroundColor: "#fff", borderWidth: 1, borderColor: palette.line },
-    compImgFallback: { width: "100%", height: 140, borderRadius: 12, borderWidth: 1, borderColor: palette.line, alignItems: "center", justifyContent: "center" },
-    compTitle: { marginTop: 8, fontSize: 10.5, fontWeight: 900, color: palette.ink },
+    /* =========================
+       Stat cards
+    ========================= */
+    statCard: {
+        flex: 1,
+        backgroundColor: "#FBFCFF",
+        borderWidth: 1,
+        borderColor: palette.line,
+        borderRadius: 14,
+        padding: 11,
+    },
+    statLabel: { fontSize: 9, color: palette.faint, fontWeight: 900 },
+    statValue: { marginTop: 5, fontSize: 12, fontWeight: 900, color: palette.ink },
 
-    dividerThin: { height: 1, backgroundColor: palette.line, marginTop: 10 },
-    column: { columnCount: 2 },
-
-    twoColRow: { flexDirection: "row", flexWrap: "nowrap" },
-    twoColLeft: { width: "48%", marginRight: "4%" },
-    twoColRight: { width: "48%" },
-
-    itemBlock: { marginBottom: 8 },
-    itemTitle: { fontSize: 10, fontWeight: 900, color: palette.ink },
-    itemDesc: { fontSize: 9, color: palette.muted, lineHeight: 1.35, marginTop: 2 },
+    /* =========================
+       CTA
+    ========================= */
+    ctaLink: {
+        fontSize: 12,
+        textDecoration: "underline",
+        color: palette.brand,
+        fontWeight: 900,
+        marginTop: 6,
+    },
 });

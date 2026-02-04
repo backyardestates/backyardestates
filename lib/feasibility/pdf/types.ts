@@ -67,7 +67,7 @@ export type RentOutput = {
 };
 
 export type FeasibilityStoreData = {
-    brand?: Brand | null;
+
 
     contact: { name: string; phone: string; email: string };
     property: { address: string; city?: string | null };
@@ -104,6 +104,11 @@ export type FeasibilityStoreData = {
         testimonials?: TestimonialStory[];
         comparables?: ComparableProperty[];
     };
+    copy?: PdfCopy; // ✅ optional, does not break existing callers
+
+    brand?: Brand | null;
+    ctaUrl?: string;     // ✅ Calendly link
+    ctaLabel?: string;   // optional
 };
 
 
@@ -138,4 +143,16 @@ export type ComparableProperty = {
     bath?: number;
     photos?: { url?: string; publicId?: string } | null;
     floorplan?: { name?: string; bed?: number; bath?: number; sqft?: number; slug?: string };
+};
+
+export type BeforeAfterRow = {
+    left: string;  // Without FPA
+    right: string; // With FPA
+};
+
+export type PdfCopy = {
+    beforeAfter?: {
+        title?: string; // optional override
+        rows: BeforeAfterRow[];
+    };
 };
