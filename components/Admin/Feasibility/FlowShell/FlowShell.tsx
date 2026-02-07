@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import StepNav from "../StepNav";
+import StepNav from "../../Components/StepNav/StepNav";
 import { FLOW, STEPS } from "@/lib/feasibility/flow";
 import { isComplete } from "@/lib/feasibility/types";
 import { useAnswersStore } from "@/lib/feasibility/stores/answers.store";
