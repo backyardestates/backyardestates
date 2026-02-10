@@ -7,6 +7,12 @@ datasource db {
     provider = "postgresql"
 }
 
+/**
+ * =========================
+ * EXISTING ENUMS (kept)
+ * =========================
+ */
+
 enum Role {
     CUSTOMER
     ARCHITECT
@@ -76,6 +82,105 @@ enum AssessStage {
     PRE_CONSTRUCTION
 }
 
+/**
+ * =========================
+ * NEW ENUMS (recommended)
+ * =========================
+ */
+
+enum ProposalStage {
+    LEAD_STAGE
+    OFFICE_VISIT
+    FORMAL_ANALYSIS
+    PRE_PERMIT
+    PRE_CONSTRUCTION
+}
+
+enum LeadChannel {
+    WEBSITE
+    INSTAGRAM
+    FACEBOOK
+    TIKTOK
+    YOUTUBE
+    GOOGLE
+    OPEN_HOUSE
+    REFERRAL
+    OTHER
+}
+
+enum AduType {
+    ATTACHED
+    DETACHED
+}
+
+enum LineItemKind {
+    SITE_WORK
+    UPGRADE
+    CUSTOM
+}
+
+enum DiscountType {
+    FIXED
+    PERCENT
+    PROMO
+}
+
+enum ProposalEventType {
+    CREATED
+    UPDATED
+    SUBMITTED
+    PDF_GENERATION_STARTED
+    PDF_GENERATED
+    SENT
+    VIEWED
+    SIGNED
+    ARCHIVED
+}
+
+enum WorkItemKind {
+    SITE_WORK
+    UPGRADE
+}
+
+/**
+ * =========================
+ * MULTI-TENANT
+ * =========================
+ */
+
+model Organization {
+    id        String   @id @default(cuid())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    memberships Membership[]
+    proposals   Proposal[]
+}
+
+model Membership {
+    id             String @id @default(cuid())
+    organizationId String
+    userId         String
+
+    organization Organization @relation(fields: [organizationId], references: [id])
+    user         User         @relation(fields: [userId], references: [id])
+
+    role Role @default(ADMIN)
+
+    createdAt DateTime @default(now())
+
+    @@unique([organizationId, userId])
+    @@index([userId])
+    @@index([organizationId])
+}
+
+/**
+ * =========================
+ * CORE USERS
+ * =========================
+ */
+
 model User {
     id   String @id // Supabase auth user id (uuid as string)
     role Role   @default(CUSTOMER)
@@ -89,7 +194,19 @@ model User {
     feasibilityReports FeasibilityReport[]
     formalAnalyses     FormalAnalysis[]    @relation("ArchitectAssignments")
     evidenceFiles      EvidenceFile[]
+
+    proposalsCreated  Proposal[] @relation("ProposalCreatedBy")
+    proposalsAssigned Proposal[] @relation("ProposalAssignedTo")
+
+    memberships    Membership[]
+    proposalEvents ProposalEvent[]
 }
+
+/**
+ * =========================
+ * WORK ITEM CATALOG (SITE WORK + UPGRADES)
+ * =========================
+ */
 
 model Category {
     id        String @id @default(cuid())
@@ -107,6 +224,9 @@ model WorkItem {
     description  String?
     whyItMatters String?
     status       WorkStatus @default(ACTIVE)
+
+    // ✅ NEW: differentiate Site Work vs Upgrade
+    kind WorkItemKind @default(SITE_WORK)
 
     categoryId String
     category   Category @relation(fields: [categoryId], references: [id])
@@ -138,10 +258,15 @@ model WorkItem {
     feasibilityAnswers FeasibilityAnswer[]
     formalAnswers      FormalAnswer[]
     evidenceFiles      EvidenceFile[]
-    proposalLineItems  ProposalLineItem[]
+
+    // catalog usage in proposals
+    proposalLineItems ProposalLineItem[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([kind, status])
+    @@index([categoryId, kind])
 }
 
 model PricingModel {
@@ -190,6 +315,12 @@ model TriggerRule {
     probability Float?
     notes       String?
 }
+
+/**
+ * =========================
+ * FEASIBILITY / FORMAL ANALYSIS (kept)
+ * =========================
+ */
 
 model FeasibilityReport {
     id     String @id @default(cuid())
@@ -285,23 +416,107 @@ model EvidenceFile {
     createdAt DateTime @default(now())
 }
 
+/**
+ * =========================
+ * PROPOSALS (NEW: ANALYTICS + SNAPSHOT)
+ * =========================
+ */
+
 model Proposal {
-    id               String         @id @default(cuid())
-    formalAnalysisId String         @unique
-    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id])
+    id String @id @default(cuid())
+
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id])
+
+    // Optional link to FormalAnalysis
+    formalAnalysisId String?         @unique
+    formalAnalysis   FormalAnalysis? @relation(fields: [formalAnalysisId], references: [id])
 
     status ProposalStatus @default(DRAFT)
 
-    customerTotal Int?
-    internalTotal Int?
-    profit        Int?
+    // Choose ONE: keep AssessStage OR use ProposalStage (keeping both is OK)
+    stage ProposalStage?
+
+    channel LeadChannel?
+
+    createdById String
+    createdBy   User   @relation("ProposalCreatedBy", fields: [createdById], references: [id])
+
+    assignedToId String?
+    assignedTo   User?   @relation("ProposalAssignedTo", fields: [assignedToId], references: [id])
+
+    // Customer snapshot
+    customerName  String
+    customerEmail String?
+    customerPhone String?
+
+    // Address snapshot (queryable)
+    addressLine1 String
+    addressLine2 String?
+    city         String
+    county       String?
+    state        String
+    zip          String
+
+    // Totals
+    totalPrice     Int?
+    totalSiteWork  Int?
+    totalUpgrades  Int?
+    totalDiscounts Int?
+    internalTotal  Int?
+    profit         Int?
+
+    // Snapshot + versioning
+    snapshotVersion Int   @default(1)
+    pricingVersion  Int   @default(1)
+    snapshotJson    Json?
+
+    // PDF lifecycle
+    pdfStatus String?
+    pdfUrl    String?
 
     notes String?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    lineItems ProposalLineItem[]
+    lineItems  ProposalLineItem[]
+    floorplans ProposalFloorplanSelection[]
+    discounts  ProposalDiscount[]
+    outputs    ProposalComputedOutput?
+    events     ProposalEvent[]
+    uploads    ProposalUpload[]
+
+    @@index([organizationId, createdAt])
+    @@index([status, createdAt])
+    @@index([city, zip])
+    @@index([createdById, createdAt])
+    @@index([assignedToId, status])
+    @@index([totalPrice])
+}
+
+model ProposalFloorplanSelection {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    aduType AduType
+
+    // Sanity floorplan document id
+    floorplanRef String
+
+    // Snapshotted fields
+    name      String?
+    sqft      Int?
+    bed       Int?
+    bath      Int?
+    basePrice Int?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId])
+    @@index([floorplanRef, aduType])
+    @@index([sqft])
 }
 
 model ProposalLineItem {
@@ -309,17 +524,115 @@ model ProposalLineItem {
     proposalId String
     proposal   Proposal @relation(fields: [proposalId], references: [id])
 
-    workItemId String
-    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+    kind LineItemKind @default(SITE_WORK)
 
-    quantity   Float?
-    unitLabel  String?
-    unitPrice  Int?
-    totalPrice Int?
+    // optional catalog reference (null for CUSTOM)
+    workItemId String?
+    workItem   WorkItem? @relation(fields: [workItemId], references: [id])
 
+    // snapshot fields (catalog edits should not change old proposals)
+    title     String
+    category  String?
+    unitLabel String?
+    quantity  Float?
+
+    // internal/private
     internalCost Int?
+    markupType   MarkupType @default(NONE)
+    markupValue  Float?
+
+    // customer-facing pricing
+    unitPrice     Int?
+    computedPrice Int?
+    overridePrice Int?
+    finalPrice    Int?
+
+    // applicability mapping
+    appliesTo Json?
 
     notes String?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId])
+    @@index([workItemId, kind])
+    @@index([category])
+}
+
+model ProposalDiscount {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    discountType DiscountType
+
+    // optional Sanity discount doc id
+    discountRef String?
+    name        String?
+
+    amountOff  Int?
+    percentOff Float?
+
+    appliesTo Json?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId])
+    @@index([discountRef])
+}
+
+model ProposalComputedOutput {
+    id         String   @id @default(cuid())
+    proposalId String   @unique
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    rentEstimateMonthly    Int?
+    paymentEstimateMonthly Int?
+    cashflowMonthly        Int?
+
+    roiYear1  Float?
+    roiYear5  Float?
+    roiYear10 Float?
+
+    equityBoostYear1  Int?
+    equityBoostYear5  Int?
+    equityBoostYear10 Int?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([rentEstimateMonthly])
+    @@index([cashflowMonthly])
+}
+
+model ProposalEvent {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    type    ProposalEventType
+    actorId String?
+    actor   User?             @relation(fields: [actorId], references: [id])
+
+    metadata Json?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId, createdAt])
+    @@index([type, createdAt])
+}
+
+model ProposalUpload {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    kind String // e.g. "CAN_I_BUILD_SCREENSHOT"
+    url  String
+
+    publicId String?
+    width    Int?
+    height   Int?
 
     createdAt DateTime @default(now())
 
