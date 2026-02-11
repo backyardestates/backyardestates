@@ -1,283 +1,68 @@
-'use client'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import Link from "next/link"
+import styles from "./page.module.css"
+import { TopBar } from "@/components/goBackButton"
+import Footer from "@/components/Footer"
+import LegalPrint from "@/components/LegalPrint"
+import { ContactOptionCard } from "@/components/Contact/Card/ContactOptionCard"
 
-import { faSpinnerThird } from '@fortawesome/pro-duotone-svg-icons'
-import { faXmark } from '@fortawesome/pro-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+const PHONE_DISPLAY = "(909) 500-0917"
+const PHONE_TEL = "tel:+19095000917"
+const HOURS = "Monday through Friday from 8AM to 5PM"
 
-import Link from 'next/link'
-
-import Logo from '@/components/Logo'
-
-import Checkbox from '@/components/Checkbox'
-import RadioGroup from '@/components/RadioGroup'
-import style from './Form.module.css'
-import LegalPrint from '@/components/LegalPrint'
-
-export default function LeadForm() {
-    const [showError, setShowError] = useState(false)
-
-    const router = useRouter()
-
-    function goBack() {
-        router.back()
-    }
-
-    async function createPerson(e) {
-        e.preventDefault()
-        e.target.fields.disabled = true
-        e.target.btn.firstChild.innerText = 'Submitting...'
-        e.target.btn.lastChild.style.display = 'block'
-
-        const consentEmail = e.target.consentEmail.checked
-        const consentTexts = e.target.consentTextMessages.checked
-
-        // 05/17/25 - To comply with JustCall requirements, I removed '|| !consentTextMessages' to set text messaging to optional
-        // 05/20/25 - Remove consentEmail check to allow form submission without email consent
-        // if (!consentEmail) {
-        //     setShowError(true)
-        //     e.target.fields.disabled = false
-        //     e.target.btn.firstChild.innerText = 'Submit'
-        //     e.target.btn.lastChild.style.display = 'none'
-        //     return
-        // }
-
-        const person = {
-            name: e.target.name.value,
-            email: [{ value: e.target.email.value }],
-            phone: [{ value: e.target.mobile.value }],
-            '733d97610511293c521189a69a776c732bae881c': consentEmail
-                ? 'subscribed'
-                : 'unsubscribed',
-            '3397c6015c59f81b73082a78efb98a6bcc88b258': consentTexts
-                ? 'subscribed'
-                : 'unsubscribed',
-        }
-
-        const names = e.target.name.value.split(' ')
-
-        const lead = {
-            name: e.target.name.value,
-            address: e.target.address.value,
-            firstname: names[0],
-            lastname: names[names.length - 1],
-            email: [{ value: e.target.email.value }],
-            phone: [{ value: e.target.mobile.value }],
-            source: e.target.source.value,
-        }
-        try {
-            const res = await fetch('/api/pipedrive/create-person', {
-                method: 'POST',
-                body: JSON.stringify({ person }),
-                headers: { 'Content-Type': 'application/json' },
-            })
-
-            const personCreated = await res.json()
-
-            if (personCreated.success) {
-                submitLead(personCreated, lead)
-            }
-        } catch (error) {
-            console.log('Error creating person:', error)
-        }
-    }
-
-    async function submitLead(person, lead) {
-        let sourceNumber = 0
-
-        switch (lead.source) {
-            case 'ADU Event':
-                sourceNumber = 58
-                break
-            case 'Open House':
-                sourceNumber = 59
-                break
-            case 'Referral':
-                sourceNumber = 60
-                break
-            case 'Search':
-                sourceNumber = 61
-                break
-            case 'Social Media':
-                sourceNumber = 28
-                break
-            default:
-                sourceNumber = 56
-        }
-
-        const submittedLead = {
-            title: `${lead.firstname} ${lead.lastname}`,
-            person_id: person.data.data.id,
-            // prettier-ignore
-            'fd49bc4881f7bdffdeaa1868171df24bea5925fe': sourceNumber,
-            '47f338d18c478ccd45a1b19afb8629561a7f714e': lead.address,
-            // prettier-ignore
-            'c30b635d9bdcdd388eff5bf6f1358f0dc43286a7': lead.emailConsent,
-            // prettier-ignore
-            'fce207a36d761025490865bae5bd77b19aaf5779': lead.textConsent,
-        }
-        try {
-            const leadRes = await fetch('/api/pipedrive/submit-lead', {
-                method: 'POST',
-                body: JSON.stringify({ submittedLead }),
-                headers: { 'Content-Type': 'application/json' },
-            })
-
-            const leadData = await leadRes.json()
-
-            if (leadData.success) {
-                router.push(`/talk-to-an-adu-specialist/calendly`)
-            }
-        } catch (error) {
-            console.log('Error submitting lead:', error)
-        }
-    }
-
-    async function getDealFields(e) {
-        e.preventDefault()
-
-        const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/dealFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`
-        )
-        const data = await res.json()
-
-    }
-
-    async function getPersonFields(e) {
-        e.preventDefault()
-
-        const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/personFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`
-        )
-        const data = await res.json()
-
-    }
-
-    async function getStageIds(pipeline_id) {
-
-        const res = await fetch(
-            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/stages?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`, {
-            method: 'POST',
-            body: JSON.stringify({ pipeline_id }),
-            headers: { 'Content-Type': 'application/json' },
-        }
-        )
-        const data = await res.json()
-
-    }
-
-
-
-    const sources = [
-        {
-            label: 'ADU Event',
-            value: 'ADU Event',
-        },
-        {
-            label: 'Open House',
-            value: 'Open House',
-        },
-        {
-            label: 'Referral',
-            value: 'Referral',
-        },
-        {
-            label: 'Search',
-            value: 'Search',
-        },
-        {
-            label: 'Social Media',
-            value: 'Social Media',
-        },
-    ]
-
+export default function TalkToSpecialistHub() {
     return (
-        <>
-            <div className={style.topBar}>
-                <Logo />
-                <FontAwesomeIcon
-                    icon={faXmark}
-                    size="xl"
-                    className={style.icon}
-                    onClick={goBack}
-                />
-            </div>
+        <main className={styles.main}>
+            <TopBar />
+            <div className={styles.container}>
+                <div className={styles.maxWidth}>
+                    <header className={styles.header}>
+                        <h1 className={styles.h1}>We’re here to help.</h1>
+                        <p className={styles.p}>
+                            Get in touch with our team of ADU specialists. Choose the option that fits you best.
+                        </p>
+                    </header>
 
-            <main className={style.root}>
-                <div className={style.content}>
-                    <div className={style.centered}>
-                        <h1>Talk to an ADU specialist</h1>
-                        <form onSubmit={createPerson} autoComplete="on">
-                            <fieldset id="fields">
-                                <div className={style.field}>
-                                    <label htmlFor="name">Full name</label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        id="name"
-                                        required
-                                        className={style.textfield}
-                                        data-1p-ignore
-                                    />
-                                </div>
-                                <div className={style.field}>
-                                    <label htmlFor="mobile">Mobile phone</label>
-                                    <input
-                                        type="text"
-                                        name="mobile"
-                                        id="mobile"
-                                        required
-                                        className={style.textfield}
-                                    />
-                                </div>
-                                <div className={style.field}>
-                                    <label htmlFor="email">Email address</label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        id="email"
-                                        required
-                                        className={style.textfield}
-                                        data-1p-ignore
-                                    />
-                                </div>
-                                <div className={style.field}>
-                                    <label htmlFor="address">
-                                        What is your property address?
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="address"
-                                        id="address"
-                                        className={style.textfield}
-                                        data-1p-ignore
-                                    />
-                                </div>
-                                <RadioGroup name="source" options={sources} />
-                                <Checkbox
-                                    name="consentEmail"
-                                    label="I consent to receive marketing emails from Backyard Estates."
-                                />
-                                <Checkbox
-                                    name="consentTextMessages"
-                                    label="I consent to receive automated text messages from Backyard Estates. Reply STOP to opt out."
-                                />
-                            </fieldset>
-                            <button id="btn" className={style.inputButton}>
-                                <span>Submit</span>
-                                <FontAwesomeIcon
-                                    icon={faSpinnerThird}
-                                    size="lg"
-                                    spin
-                                    className={style.spinner}
-                                />
-                            </button>
-                            <LegalPrint />
-                        </form>
+                    <section className={styles.grid}>
+                        <ContactOptionCard
+                            title="Visit an open house"
+                            description="Tour a Backyard Estates ADU, explore layout options, and get guidance from our team."
+                            href="/events"
+                            cta="View events →"
+                        />
+
+                        <ContactOptionCard
+                            title="Schedule a phone call"
+                            description="Book a 15-minute phone call to learn what can work on your property."
+                            href="/talk-to-an-adu-specialist/schedule-call"
+                            cta="Schedule →"
+                        />
+
+                        <ContactOptionCard
+                            title="Schedule a free office consultation"
+                            description="Come in for a walkthrough: we’ll review your goals and give you clear next steps."
+                            href="/talk-to-an-adu-specialist/office-consultation"
+                            cta="Reserve a time →"
+                        />
+
+                        <ContactOptionCard
+                            title="Send us a message"
+                            description="Prefer email? A specialist will get back to you within one business day."
+                            href="/talk-to-an-adu-specialist/message"
+                            cta="Send message →"
+                        />
+
+                        <ContactOptionCard href={PHONE_TEL} title="Give us a call" description={`Call us at ${PHONE_DISPLAY}. Available ${HOURS}.`} cta="Call now →" />
+                    </section>
+
+                    <div className={styles.faq}>
+                        <div className={styles.faqTop}>Read the answers to common questions</div>
+                        <Link className={styles.faqLink} href="/frequently-asked-questions">
+                            Frequently Asked Questions →
+                        </Link>
                     </div>
                 </div>
-            </main>
-        </>
+            </div>
+            <Footer />
+        </main>
     )
 }
