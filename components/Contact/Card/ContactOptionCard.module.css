@@ -11,8 +11,8 @@
     text-decoration: none;
     color: black;
 
-    background: var(--color-brand-beige-subtle, rgba(250, 245, 235, 0.72));
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: var(--color-brand-beige-subtle);
+    border: 1px solid var(--color-brand-beige);
 
     box-shadow:
         0 10px 28px rgba(0, 0, 0, 0.07),
@@ -58,8 +58,14 @@
     border-color: rgba(50, 110, 255, 0.55);
 }
 
+
 /* ---- Title ---- */
 .cardTitle {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.cardTitleText {
     font-family: var(--font-serif);
     font-size: clamp(1.05rem, 1.2vw, 1.2rem);
     font-weight: 800;
@@ -75,6 +81,7 @@
     line-height: 1.55;
     color: rgba(0, 0, 0, 0.72);
     max-width: 60ch;
+    font-weight: 300;
 }
 
 /* ---- CTA ---- */

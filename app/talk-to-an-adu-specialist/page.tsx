@@ -4,6 +4,7 @@ import { TopBar } from "@/components/goBackButton"
 import Footer from "@/components/Footer"
 import LegalPrint from "@/components/LegalPrint"
 import { ContactOptionCard } from "@/components/Contact/Card/ContactOptionCard"
+import { Phone, HouseIcon, User2, MessageCircle } from "lucide-react"
 
 const PHONE_DISPLAY = "(909) 500-0917"
 const PHONE_TEL = "tel:+19095000917"
@@ -23,14 +24,9 @@ export default function TalkToSpecialistHub() {
                     </header>
 
                     <section className={styles.grid}>
-                        <ContactOptionCard
-                            title="Visit an open house"
-                            description="Tour a Backyard Estates ADU, explore layout options, and get guidance from our team."
-                            href="/events"
-                            cta="View events →"
-                        />
 
                         <ContactOptionCard
+                            Logo={Phone}
                             title="Schedule a phone call"
                             description="Book a 15-minute phone call to learn what can work on your property."
                             href="/talk-to-an-adu-specialist/schedule-call"
@@ -38,6 +34,7 @@ export default function TalkToSpecialistHub() {
                         />
 
                         <ContactOptionCard
+                            Logo={User2}
                             title="Schedule a free office consultation"
                             description="Come in for a walkthrough: we’ll review your goals and give you clear next steps."
                             href="/talk-to-an-adu-specialist/office-consultation"
@@ -45,13 +42,23 @@ export default function TalkToSpecialistHub() {
                         />
 
                         <ContactOptionCard
+                            Logo={MessageCircle}
                             title="Send us a message"
                             description="Prefer email? A specialist will get back to you within one business day."
                             href="/talk-to-an-adu-specialist/message"
                             cta="Send message →"
                         />
 
-                        <ContactOptionCard href={PHONE_TEL} title="Give us a call" description={`Call us at ${PHONE_DISPLAY}. Available ${HOURS}.`} cta="Call now →" />
+                        <ContactOptionCard
+                            Logo={HouseIcon}
+                            title="Visit an open house"
+                            description="Tour a Backyard Estates ADU, explore layout options, and get guidance from our team."
+                            href="/events"
+                            cta="View events →"
+                        />
+
+
+                        {/* <ContactOptionCard href={PHONE_TEL} title="Give us a call" description={`Call us at ${PHONE_DISPLAY}. Available ${HOURS}.`} cta="Call now →" /> */}
                     </section>
 
                     <div className={styles.faq}>
