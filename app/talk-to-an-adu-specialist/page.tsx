@@ -58,7 +58,7 @@ export default function TalkToSpecialistHub() {
                         />
 
 
-                        {/* <ContactOptionCard href={PHONE_TEL} title="Give us a call" description={`Call us at ${PHONE_DISPLAY}. Available ${HOURS}.`} cta="Call now →" /> */}
+                        <ContactOptionCard Logo={Phone} href={PHONE_TEL} title="Give us a call" description={`Call us at ${PHONE_DISPLAY}. Available ${HOURS}.`} cta="Call now →" />
                     </section>
 
                     <div className={styles.faq}>
