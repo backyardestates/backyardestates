@@ -44,8 +44,9 @@
 }
 
 .formGrid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
     gap: 12px;
 }
 
@@ -514,4 +515,9 @@
 
 .showMore:active {
     transform: translateY(0px);
+}
+
+.addressField {
+    width: 500px;
+    min-width: 250px;
 }
