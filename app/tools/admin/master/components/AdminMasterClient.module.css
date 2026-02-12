@@ -1,0 +1,517 @@
+/* AdminMasterClient.module.css
+   Clean admin UI: cards + form + grid
+*/
+
+.page {
+    margin: 0 auto;
+    padding: 28px 20px 40px;
+    display: grid;
+    gap: 18px;
+}
+
+.header {
+    display: grid;
+    gap: 6px;
+}
+
+.h1 {
+    font-size: 22px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: #0b0f1a;
+}
+
+.subhead {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: rgba(11, 15, 26, 0.62);
+}
+
+/* ---------- Form Card ---------- */
+
+.form {
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #fff;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow:
+        0 1px 0 rgba(11, 15, 26, 0.04),
+        0 10px 30px rgba(11, 15, 26, 0.06);
+    display: grid;
+    gap: 14px;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 880px) {
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.field {
+    display: grid;
+    gap: 8px;
+}
+
+.label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(11, 15, 26, 0.78);
+}
+
+.input,
+.select {
+    height: 42px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: rgba(255, 255, 255, 0.96);
+    padding: 0 12px;
+    font-size: 14px;
+    color: #0b0f1a;
+    outline: none;
+    transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.input::placeholder {
+    color: rgba(11, 15, 26, 0.38);
+}
+
+.input:focus,
+.select:focus {
+    border-color: rgba(0, 0, 0, 0.26);
+    box-shadow: 0 0 0 4px rgba(11, 15, 26, 0.08);
+    background: #fff;
+}
+
+.select {
+    padding-right: 10px;
+}
+
+.note {
+    margin: 0;
+    font-size: 12px;
+    color: rgba(11, 15, 26, 0.56);
+}
+
+.noteStrong {
+    font-weight: 650;
+    color: rgba(11, 15, 26, 0.78);
+}
+
+/* ---------- Actions ---------- */
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.button {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(11, 15, 26, 0.14);
+    background: #0b0f1a;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.18) inset,
+        0 10px 22px rgba(11, 15, 26, 0.14);
+}
+
+.button:hover {
+    transform: translateY(-1px);
+}
+
+.button:active {
+    transform: translateY(0px);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.14) inset,
+        0 6px 16px rgba(11, 15, 26, 0.12);
+}
+
+.button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset;
+}
+
+.error {
+    font-size: 13px;
+    color: #b42318;
+    background: rgba(180, 35, 24, 0.08);
+    border: 1px solid rgba(180, 35, 24, 0.18);
+    padding: 8px 10px;
+    border-radius: 12px;
+}
+
+/* ---------- Results Grid ---------- */
+
+.results {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 980px) {
+    .results {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Card ---------- */
+
+.card {
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #fff;
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow:
+        0 1px 0 rgba(11, 15, 26, 0.04),
+        0 14px 34px rgba(11, 15, 26, 0.06);
+}
+
+.cardTitle {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: rgba(11, 15, 26, 0.62);
+    margin: 0;
+}
+
+.cardBody {
+    margin-top: 10px;
+}
+
+/* ---------- Row ---------- */
+
+.row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.rowLabel {
+    font-size: 12px;
+    color: rgba(11, 15, 26, 0.56);
+}
+
+.rowValue {
+    font-size: 12px;
+    font-weight: 650;
+    color: rgba(11, 15, 26, 0.88);
+    text-align: right;
+    max-width: 56%;
+    word-break: break-word;
+}
+
+/* ---------- Comparable / Listing blocks ---------- */
+
+.blockList {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.block {
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 16px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.blockTitle {
+    font-size: 13px;
+    font-weight: 650;
+    margin: 0;
+    color: rgba(11, 15, 26, 0.92);
+}
+
+.metaGrid {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+}
+
+.metaItem {
+    font-size: 12px;
+    color: rgba(11, 15, 26, 0.62);
+}
+
+.metaValue {
+    color: rgba(11, 15, 26, 0.88);
+    font-weight: 650;
+}
+
+.empty {
+    font-size: 13px;
+    color: rgba(11, 15, 26, 0.55);
+    padding: 10px 0 2px;
+}
+
+/* ---------- Rentals Panel (compact + expandable) ---------- */
+
+.rentalsPanel {
+    display: grid;
+    gap: 12px;
+}
+
+.rentalsKpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 880px) {
+    .rentalsKpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.kpi {
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 14px;
+    padding: 10px 12px;
+    box-shadow: 0 1px 0 rgba(11, 15, 26, 0.03);
+}
+
+.kpiLabel {
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: rgba(11, 15, 26, 0.50);
+}
+
+.kpiValue {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(11, 15, 26, 0.92);
+}
+
+/* controls row */
+.rentalsControls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 999px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: rgba(11, 15, 26, 0.78);
+    cursor: pointer;
+    user-select: none;
+}
+
+.chipInput {
+    width: 14px;
+    height: 14px;
+    accent-color: #0b0f1a;
+}
+
+.sortWrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.sortLabel {
+    font-size: 12px;
+    color: rgba(11, 15, 26, 0.60);
+}
+
+.sortSelect {
+    height: 34px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    padding: 0 10px;
+    background: rgba(255, 255, 255, 0.96);
+    font-size: 12px;
+    color: rgba(11, 15, 26, 0.88);
+    outline: none;
+}
+
+/* list container */
+.compList {
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* each item uses <details> */
+.compDetails {
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.compDetails:first-child {
+    border-top: none;
+}
+
+.compRow {
+    display: grid;
+    grid-template-columns: 170px 1fr 28px;
+    gap: 12px;
+    padding: 12px 12px;
+    cursor: pointer;
+    list-style: none;
+    align-items: center;
+}
+
+.compRow::-webkit-details-marker {
+    display: none;
+}
+
+.compLeft {
+    display: grid;
+    gap: 2px;
+}
+
+.compPrice {
+    font-size: 14px;
+    font-weight: 800;
+    color: rgba(11, 15, 26, 0.92);
+}
+
+.compSub {
+    font-size: 12px;
+    color: rgba(11, 15, 26, 0.55);
+}
+
+.compMid {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+.compAddr {
+    font-size: 12px;
+    font-weight: 650;
+    color: rgba(11, 15, 26, 0.86);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.compMeta {
+    font-size: 12px;
+    color: rgba(11, 15, 26, 0.55);
+}
+
+.compRight {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.chev {
+    opacity: 0.5;
+    transition: transform 140ms ease, opacity 140ms ease;
+}
+
+.compDetails[open] .chev {
+    transform: rotate(180deg);
+    opacity: 0.75;
+}
+
+.compExpanded {
+    padding: 10px 12px 12px;
+    border-top: 1px dashed rgba(15, 23, 42, 0.14);
+    background: rgba(11, 15, 26, 0.02);
+}
+
+.expGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 880px) {
+    .compRow {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .compRight {
+        display: none;
+    }
+
+    .expGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.expItem {
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 14px;
+    padding: 10px 10px;
+}
+
+.expLabel {
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgba(11, 15, 26, 0.50);
+}
+
+.expVal {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 650;
+    color: rgba(11, 15, 26, 0.86);
+}
+
+/* show more */
+.showMore {
+    height: 38px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: rgba(255, 255, 255, 0.96);
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(11, 15, 26, 0.86);
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+    box-shadow: 0 1px 0 rgba(11, 15, 26, 0.03);
+}
+
+.showMore:hover {
+    transform: translateY(-1px);
+}
+
+.showMore:active {
+    transform: translateY(0px);
+}
