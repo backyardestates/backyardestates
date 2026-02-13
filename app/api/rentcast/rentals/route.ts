@@ -67,6 +67,7 @@ async function fetchBand(args: {
     url.searchParams.set("state", state);
     url.searchParams.set("status", "Active");
     url.searchParams.set("limit", String(limit));
+    url.searchParams.set("propertyType", "Condo|Townhouse|Multi-Family|Single Family");
 
     if (Number.isFinite(minSqft) && Number.isFinite(maxSqft)) {
         url.searchParams.set("squareFootage", sqftRange(minSqft!, maxSqft!));

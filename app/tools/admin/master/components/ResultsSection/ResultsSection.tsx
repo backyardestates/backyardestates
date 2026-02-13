@@ -29,7 +29,7 @@ export function ResultsSection(props: {
 
     return (
         <section className={styles.results}>
-            <div style={{ display: "grid", gap: 14 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <Card styles={styles} title="Deal Inputs">
                     <div className={styles.cardBody}>
                         <Row styles={styles} label="Address" value={(property?.formattedAddress ?? address) || "—"} />
@@ -73,7 +73,7 @@ export function ResultsSection(props: {
                 </Card>
             </div>
 
-            <div style={{ display: "grid", gap: 14 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <Card styles={styles} title="Value Estimate (AVM)">
                     <div className={styles.cardBody}>
                         <Row styles={styles} label="Estimated value" value={money(avm?.price)} />
@@ -131,7 +131,11 @@ export function ResultsSection(props: {
 
             <div>
                 <Card styles={styles} title={`Rentals in ${cityState}`}>
-                    <RentalsPanel styles={styles} rentals={rentals} />
+                    <RentalsPanel
+                        styles={styles}
+                        rentals={rentals}
+                        targetSqft={selectedFloorplan?.sqft}
+                    />
                 </Card>
             </div>
         </section>

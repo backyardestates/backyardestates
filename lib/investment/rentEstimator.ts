@@ -1,5 +1,6 @@
-// lib/investment/rentEstimator.ts
+// lib/investment/rentEstimatorPremium.ts
 import type { RentalListing } from "@/lib/rentcast/types";
+import type { RentcastMarketStats } from "@/hooks/rentcast/useRentcastData";
 
 type RentComp = {
     price?: number;
@@ -9,185 +10,415 @@ type RentComp = {
 };
 
 export type RentEstimateDebug = {
-    targetSqft?: number;
-    bandPct: number;
-    minSqft?: number;
-    maxSqft?: number;
-    preferClosestN: number; // kept for compatibility (no longer used by this method)
-    minComps: number;
+    targetSqft: number;
+    targetBeds?: number;
+    targetBaths?: number;
+
+    estateKey: string;
+    estateOrderIndex: number;
+    estateOrderCount: number;
+    tOrder: number;
+
+    bandLabel: string;
+    minSqft: number;
+    maxSqft: number;
 
     totalListings: number;
-    withValidPrice: number;
     withSqftAndPrice: number;
     inBand: number;
-    used: number;
 
-    method: "median_top_psf" | "median_all_prices" | "insufficient_data";
-    rent?: number;
+    startEstateKey: string;
+    endEstateKey: string;
+    startBandLabel: string;
+    endBandLabel: string;
 
-    usedComps: Array<{
-        idx: number;
-        price: number;
-        sqft?: number;
-        bed?: number;
-        bath?: number;
-        distSqft?: number;
-        weight: number; // kept for compatibility
-        psf?: number; // price per sqft
-    }>;
+    startTopComp?: number;
+    endTopComp?: number;
 
+    ladderTopBeforeDiscount?: number;
+    discountFromTopRate: number;
+
+    finalRent?: number;
+
+    method: "manual_ladder_from_anchors" | "fallback_market" | "insufficient_data";
     notes: string[];
+
+    anchorEvidence: {
+        startBandCount: number;
+        endBandCount: number;
+        startBandMax?: { idx: number; price: number; sqft: number };
+        endBandMax?: { idx: number; price: number; sqft: number };
+    };
+
+    ladderPreview?: Array<{ key: string; rent: number }>;
+
+    marketMedianRpsf?: number;
+    marketMaxRpsf?: number;
+    marketMedianRent?: number;
+    marketMaxRent?: number;
 };
+
+type SimpleComp = { idx: number; price: number; sqft: number };
 
 function isFiniteNumber(n: any): n is number {
     return typeof n === "number" && Number.isFinite(n);
 }
 
-function medianSorted(arr: number[]) {
-    const n = arr.length;
-    if (!n) return undefined;
-    const mid = Math.floor(n / 2);
-    return n % 2 ? arr[mid] : (arr[mid - 1] + arr[mid]) / 2;
+function clamp(n: number, min: number, max: number) {
+    return Math.max(min, Math.min(max, n));
 }
 
-export function estimateRent(
-    rentals: RentComp[] | RentalListing[],
-    targetSqft?: number,
-    opts?: {
-        bandPct?: number; // ± percent sqft band, default 0.15
-        preferClosestN?: number; // kept for compatibility
-        minComps?: number; // minimum comps required for banded approach, default 4
-        sqftFallbackBandPct?: number; // if too few comps, widen band, default 0.30
-        topN?: number; // number of top comps by $/sf to use, default 5
-    }
-): { rent?: number; debug: RentEstimateDebug } {
-    const bandPct = opts?.bandPct ?? 0.15;
-    const preferClosestN = opts?.preferClosestN ?? 12; // not used in this method
-    const minComps = opts?.minComps ?? 4;
-    const sqftFallbackBandPct = opts?.sqftFallbackBandPct ?? 0.30;
-    const topN = opts?.topN ?? 5;
+/**
+ * Your existing floorplan bands (kept)
+ */
+export function floorplanBandForSqft(targetSqft: number) {
+    const bands: Array<{ min: number; max: number; label: string }> = [
+        { min: 300, max: 380, label: "300–380 (350 band)" },
+        { min: 360, max: 440, label: "360–440 (400 band)" },
+        { min: 410, max: 500, label: "410–500 (450 band)" },
+        { min: 460, max: 560, label: "460–560 (500 band)" },
+        { min: 540, max: 680, label: "540–680 (600 band)" },
+        { min: 680, max: 820, label: "680–820 (750 band)" },
+        { min: 740, max: 880, label: "740–880 (800 band)" },
+        { min: 860, max: 1050, label: "860–1050 (950 band)" },
+        { min: 1050, max: 1350, label: "1050–1350 (1200 band)" },
+    ];
 
-    const debug: RentEstimateDebug = {
-        targetSqft,
-        bandPct,
-        preferClosestN,
-        minComps,
-        totalListings: rentals.length,
-        withValidPrice: 0,
-        withSqftAndPrice: 0,
-        inBand: 0,
-        used: 0,
-        method: "insufficient_data",
-        usedComps: [],
-        notes: [],
+    const best =
+        bands
+            .map((b) => ({
+                ...b,
+                center: (b.min + b.max) / 2,
+                dist: Math.abs((b.min + b.max) / 2 - targetSqft),
+            }))
+            .sort((a, b) => a.dist - b.dist)[0] ?? bands[0];
+
+    return { minSqft: best.min, maxSqft: best.max, label: best.label };
+}
+
+function getMarketBaselines(market?: RentcastMarketStats | null, targetBeds?: number) {
+    const rental = market?.rentalData;
+    if (!rental) return {};
+
+    const byBeds = (rental as any).dataByBedrooms ?? [];
+    const match = isFiniteNumber(targetBeds)
+        ? byBeds.find((x: any) => x.bedrooms === targetBeds)
+        : undefined;
+
+    const medianRent = match?.medianRent ?? rental.medianRent;
+    const medianRpsf = match?.medianRentPerSquareFoot ?? rental.medianRentPerSquareFoot;
+
+    const maxRent = match?.maxRent ?? rental.maxRent;
+    const maxRpsf = match?.maxRentPerSquareFoot ?? rental.maxRentPerSquareFoot;
+
+    return {
+        marketMedianRent: isFiniteNumber(medianRent) ? medianRent : undefined,
+        marketMedianRpsf: isFiniteNumber(medianRpsf) ? medianRpsf : undefined,
+        marketMaxRent: isFiniteNumber(maxRent) ? maxRent : undefined,
+        marketMaxRpsf: isFiniteNumber(maxRpsf) ? maxRpsf : undefined,
     };
+}
 
-    // 1) Collect all valid prices (fallback path)
-    const allPrices = rentals
-        .map((r: any) => r.price)
-        .filter((p: any): p is number => isFiniteNumber(p) && p > 0);
+function pickNumber(...vals: any[]): number | undefined {
+    for (const v of vals) {
+        const n = typeof v === "string" ? Number(v) : v;
+        if (typeof n === "number" && Number.isFinite(n)) return n;
+    }
+    return undefined;
+}
 
-    debug.withValidPrice = allPrices.length;
+function getListingPrice(r: any): number | undefined {
+    return pickNumber(r.price, r.rent, r.listPrice, r.monthlyRent, r.rentPrice);
+}
 
-    if (!allPrices.length) {
-        debug.notes.push("No listings with a valid price.");
-        return { rent: undefined, debug };
+function getListingSqft(r: any): number | undefined {
+    return pickNumber(r.squareFootage, r.sqft, r.livingArea, r.buildingArea, r.area);
+}
+
+/**
+ * Anchor picker:
+ * - Start from the closest band to targetSqft
+ * - Walk downwards (for small anchor) or upwards (for large anchor)
+ * - Return the max price comp in the first band that has comps
+ */
+function pickAnchorFromNearestBand(
+    comps: SimpleComp[],
+    targetSqft: number,
+    direction: "down" | "up"
+): { top?: number; bandLabel: string; bandCount: number; maxComp?: SimpleComp } {
+    const bands: Array<{ min: number; max: number; label: string; center: number }> = [
+        { min: 300, max: 380, label: "300–380 (350 band)", center: 340 },
+        { min: 360, max: 440, label: "360–440 (400 band)", center: 400 },
+        { min: 410, max: 500, label: "410–500 (450 band)", center: 455 },
+        { min: 460, max: 560, label: "460–560 (500 band)", center: 510 },
+        { min: 540, max: 680, label: "540–680 (600 band)", center: 610 },
+        { min: 680, max: 820, label: "680–820 (750 band)", center: 750 },
+        { min: 740, max: 880, label: "740–880 (800 band)", center: 810 },
+        { min: 860, max: 1050, label: "860–1050 (950 band)", center: 955 },
+        { min: 1050, max: 1350, label: "1050–1350 (1200 band)", center: 1200 },
+    ];
+
+    const startIdx =
+        bands
+            .map((b, i) => ({ i, d: Math.abs(b.center - targetSqft) }))
+            .sort((a, b) => a.d - b.d)[0]?.i ?? 0;
+
+    // Build a list of indices to check:
+    // 1) check outward in the preferred direction
+    // 2) then check outward in the opposite direction
+    const preferredStep = direction === "down" ? -1 : 1;
+    const oppositeStep = -preferredStep;
+
+    const indicesToCheck: number[] = [];
+
+    // Preferred direction sweep
+    for (let i = startIdx; i >= 0 && i < bands.length; i += preferredStep) {
+        indicesToCheck.push(i);
     }
 
-    // If no target sqft, just median of all prices
-    if (!isFiniteNumber(targetSqft) || targetSqft <= 0) {
-        const sorted = [...allPrices].sort((a, b) => a - b);
-        const rent = medianSorted(sorted);
-        debug.method = "median_all_prices";
-        debug.rent = rent;
-        debug.notes.push("No target sqft; using median of all listing prices.");
-        return { rent, debug };
+    // Opposite direction sweep (starting one step away so we don't duplicate startIdx)
+    for (let i = startIdx + oppositeStep; i >= 0 && i < bands.length; i += oppositeStep) {
+        indicesToCheck.push(i);
     }
 
-    // 2) Build comps with sqft + price
-    const comps = (rentals as any[])
-        .map((r, idx) => ({
-            idx,
-            price: r.price,
-            sqft: r.squareFootage,
-            bed: r.bedrooms,
-            bath: r.bathrooms,
-        }))
-        .filter((c) => isFiniteNumber(c.price) && c.price > 0 && isFiniteNumber(c.sqft) && c.sqft > 0);
-
-    debug.withSqftAndPrice = comps.length;
-
-    const bandFor = (pct: number) => {
-        const minSqft = (targetSqft as number) * (1 - pct);
-        const maxSqft = (targetSqft as number) * (1 + pct);
-        return { minSqft, maxSqft };
-    };
-
-    // 3) Filter within sqft band (widen if needed)
-    let { minSqft, maxSqft } = bandFor(bandPct);
-    debug.minSqft = Math.round(minSqft);
-    debug.maxSqft = Math.round(maxSqft);
-
-    let inBand = comps.filter((c) => (c.sqft as number) >= minSqft && (c.sqft as number) <= maxSqft);
-
-    if (inBand.length < minComps) {
-        const widened = bandFor(sqftFallbackBandPct);
-        const widenedBand = comps.filter((c) => (c.sqft as number) >= widened.minSqft && (c.sqft as number) <= widened.maxSqft);
-
-        if (widenedBand.length >= minComps) {
-            minSqft = widened.minSqft;
-            maxSqft = widened.maxSqft;
-            inBand = widenedBand;
-
-            debug.notes.push(
-                `Too few comps in ±${Math.round(bandPct * 100)}% band; widened to ±${Math.round(sqftFallbackBandPct * 100)}%.`
-            );
-            debug.minSqft = Math.round(minSqft);
-            debug.maxSqft = Math.round(maxSqft);
-        } else {
-            debug.notes.push("Too few sqft-matched comps; falling back to median of all prices.");
-            const sorted = [...allPrices].sort((a, b) => a - b);
-            const rent = medianSorted(sorted);
-            debug.method = "median_all_prices";
-            debug.rent = rent;
-            return { rent, debug };
+    for (const i of indicesToCheck) {
+        const b = bands[i];
+        const inBand = comps.filter((c) => c.sqft >= b.min && c.sqft <= b.max);
+        if (inBand.length) {
+            const maxComp = inBand.reduce((best, cur) => (cur.price > best.price ? cur : best));
+            return { top: maxComp.price, bandLabel: b.label, bandCount: inBand.length, maxComp };
         }
     }
 
-    debug.inBand = inBand.length;
+    // No comps in any band at all
+    const fallbackBand = bands[startIdx];
+    return { top: undefined, bandLabel: fallbackBand.label, bandCount: 0, maxComp: undefined };
+}
+/**
+ * ✅ Manual ladder estimator (two-anchor, estate-order driven)
+ */
+export function estimateRent(
+    rentals: RentComp[] | RentalListing[],
+    input: {
+        targetSqft: number;
+        targetBeds?: number;
+        targetBaths?: number;
 
-    // 4) Rank by highest $/sf inside the sqft band, take top N, then median of their prices.
-    const rankedByPsf = inBand
-        .map((c) => {
-            const sqft = c.sqft as number;
-            const price = c.price as number;
-            const psf = price / Math.max(1, sqft);
-            const distSqft = Math.abs(sqft - (targetSqft as number));
-            return { ...c, psf, distSqft };
+        estatesOrdered: Array<{
+            key: string;
+            sqft: number;
+            beds?: number;
+            baths?: number;
+        }>;
+
+        estateKey: string;
+        market?: RentcastMarketStats | null;
+
+        discountFromTopRate?: number; // default 0.03
+        derivedTopUpliftFromMedian?: number; // default 0.35
+        ladderPreviewCount?: number; // default 0
+    }
+): { rent?: number; debug: RentEstimateDebug } {
+    const discountRate = input.discountFromTopRate ?? 0.03;
+    const discountMultiplier = 1 - discountRate;
+    const derivedTopUpliftFromMedian = input.derivedTopUpliftFromMedian ?? 0.35;
+    const ladderPreviewCount = input.ladderPreviewCount ?? 0;
+
+    const estates = input.estatesOrdered ?? [];
+    const estateCount = estates.length;
+
+    const targetBand = floorplanBandForSqft(input.targetSqft);
+
+    const debug: RentEstimateDebug = {
+        targetSqft: input.targetSqft,
+        targetBeds: input.targetBeds,
+        targetBaths: input.targetBaths,
+
+        estateKey: input.estateKey,
+        estateOrderIndex: 0,
+        estateOrderCount: Math.max(1, estateCount),
+        tOrder: 0,
+
+        bandLabel: targetBand.label,
+        minSqft: targetBand.minSqft,
+        maxSqft: targetBand.maxSqft,
+
+        totalListings: rentals.length,
+        withSqftAndPrice: 0,
+        inBand: 0,
+
+        startEstateKey: estates[0]?.key ?? "start",
+        endEstateKey: estates[estateCount - 1]?.key ?? "end",
+        startBandLabel: "",
+        endBandLabel: "",
+
+        discountFromTopRate: discountRate,
+
+        method: "insufficient_data",
+        notes: [],
+
+        anchorEvidence: {
+            startBandCount: 0,
+            endBandCount: 0,
+        },
+    };
+
+    if (!isFiniteNumber(input.targetSqft) || input.targetSqft <= 0) {
+        debug.notes.push("Missing/invalid targetSqft.");
+        return { rent: undefined, debug };
+    }
+
+    if (estateCount < 2) {
+        debug.notes.push("Need at least 2 estatesOrdered entries to build ladder.");
+        return { rent: undefined, debug };
+    }
+
+    // Estate index (fallback to closest sqft if key mismatch)
+    const rawIdx = estates.findIndex((e) => e.key === input.estateKey);
+    const estateIdx =
+        rawIdx >= 0
+            ? rawIdx
+            : estates
+                .map((e, i) => ({ i, d: Math.abs((e.sqft ?? 0) - input.targetSqft) }))
+                .sort((a, b) => a.d - b.d)[0]?.i ?? 0;
+
+    debug.estateOrderIndex = estateIdx;
+    debug.estateOrderCount = estateCount;
+    debug.tOrder = estateCount <= 1 ? 0 : clamp(estateIdx / (estateCount - 1), 0, 1);
+
+    if (rawIdx < 0) {
+        debug.notes.push(`estateKey "${input.estateKey}" not found; used closest sqft index ${estateIdx}.`);
+    }
+
+    // ✅ Normalize comps robustly (works across rentcast shapes)
+    const comps: SimpleComp[] = (rentals as any[])
+        .map((r, idx) => {
+            const price = getListingPrice(r);
+            const sqft = getListingSqft(r);
+            return { idx, price, sqft };
         })
-        .sort((a, b) => b.psf - a.psf)
-        .slice(0, Math.max(1, topN));
+        .filter((c) => isFiniteNumber(c.price) && (c.price as number) > 0 && isFiniteNumber(c.sqft) && (c.sqft as number) > 0)
+        .map((c) => ({ idx: c.idx, price: c.price as number, sqft: c.sqft as number }));
 
-    debug.used = rankedByPsf.length;
+    debug.withSqftAndPrice = comps.length;
 
-    const pickedPrices = rankedByPsf.map((c) => c.price as number).sort((a, b) => a - b);
-    const rent = medianSorted(pickedPrices);
+    debug.inBand = comps.filter((c) => c.sqft >= targetBand.minSqft && c.sqft <= targetBand.maxSqft).length;
 
-    debug.method = "median_top_psf";
-    debug.rent = rent;
+    debug.notes.push(`Normalized comps: ${comps.length}/${rentals.length} have price+sqft.`);
 
-    debug.notes.push(`Using top ${Math.max(1, topN)} comps by $/sf within sqft band (then median of their rents).`);
+    // Market baselines in-scope ✅
+    const { marketMedianRent, marketMedianRpsf, marketMaxRent, marketMaxRpsf } = getMarketBaselines(
+        input.market,
+        input.targetBeds
+    );
 
-    debug.usedComps = rankedByPsf.map((c) => ({
-        idx: c.idx,
-        price: c.price as number,
-        sqft: c.sqft,
-        bed: c.bed,
-        bath: c.bath,
-        distSqft: c.distSqft,
-        weight: 1,
-        psf: Number(c.psf.toFixed(4)),
-    }));
+    debug.marketMedianRent = marketMedianRent;
+    debug.marketMedianRpsf = marketMedianRpsf;
+    debug.marketMaxRent = marketMaxRent;
+    debug.marketMaxRpsf = marketMaxRpsf;
 
-    return { rent, debug };
+    // Anchor estates
+    const startEstate = estates[0];
+    const endEstate = estates[estateCount - 1];
+
+    // ✅ nearest-available anchor comps (prevents empty 350/1200 bands from killing estimate)
+    const startAnchorPick = pickAnchorFromNearestBand(comps, startEstate.sqft, "down");
+    const endAnchorPick = pickAnchorFromNearestBand(comps, endEstate.sqft, "up");
+
+
+
+    debug.startBandLabel = startAnchorPick.bandLabel;
+    debug.endBandLabel = endAnchorPick.bandLabel;
+
+    debug.anchorEvidence.startBandCount = startAnchorPick.bandCount;
+    debug.anchorEvidence.endBandCount = endAnchorPick.bandCount;
+
+    debug.anchorEvidence.startBandMax = startAnchorPick.maxComp
+        ? { idx: startAnchorPick.maxComp.idx, price: startAnchorPick.maxComp.price, sqft: startAnchorPick.maxComp.sqft }
+        : undefined;
+
+    debug.anchorEvidence.endBandMax = endAnchorPick.maxComp
+        ? { idx: endAnchorPick.maxComp.idx, price: endAnchorPick.maxComp.price, sqft: endAnchorPick.maxComp.sqft }
+        : undefined;
+
+    debug.startTopComp = startAnchorPick.top;
+    debug.endTopComp = endAnchorPick.top;
+
+
+
+    let startAnchor = startAnchorPick.top;
+    let endAnchor = endAnchorPick.top;
+
+    debug.notes.push(
+        `Anchor pick: start=${debug.startTopComp ?? "none"} (${debug.startBandLabel}, n=${debug.anchorEvidence.startBandCount}) ` +
+        `end=${debug.endTopComp ?? "none"} (${debug.endBandLabel}, n=${debug.anchorEvidence.endBandCount}).`
+    );
+
+    // Fallback to market if either anchor missing
+    if (!isFiniteNumber(startAnchor) || !isFiniteNumber(endAnchor)) {
+        debug.notes.push("Missing anchor comp(s); falling back to market stats to synthesize anchors.");
+
+        if (isFiniteNumber(marketMaxRpsf)) {
+            startAnchor = marketMaxRpsf * startEstate.sqft;
+            endAnchor = marketMaxRpsf * endEstate.sqft;
+            debug.method = "fallback_market";
+            debug.notes.push("Used marketMaxRentPerSquareFoot for both anchors.");
+        } else if (isFiniteNumber(marketMedianRpsf)) {
+            const topRpsf = marketMedianRpsf * (1 + derivedTopUpliftFromMedian);
+            startAnchor = topRpsf * startEstate.sqft;
+            endAnchor = topRpsf * endEstate.sqft;
+            debug.method = "fallback_market";
+            debug.notes.push(
+                `Used marketMedianRentPerSquareFoot (+${Math.round(derivedTopUpliftFromMedian * 100)}%) for anchors.`
+            );
+        } else if (isFiniteNumber(marketMaxRent)) {
+            startAnchor = marketMaxRent * 0.75;
+            endAnchor = marketMaxRent;
+            debug.method = "fallback_market";
+            debug.notes.push("Used marketMaxRent as end anchor and 75% of it as start anchor.");
+        }
+    } else {
+        debug.method = "manual_ladder_from_anchors";
+    }
+
+    // Manual ladder by estate ORDER
+    const t = debug.tOrder;
+
+    if (!isFiniteNumber(startAnchor) || !isFiniteNumber(endAnchor)) {
+        debug.notes.push("Unable to calculate rent: missing both anchor values.");
+        return { rent: undefined, debug };
+    }
+
+    const ladderTopBeforeDiscount = startAnchor + t * (endAnchor - startAnchor);
+    debug.ladderTopBeforeDiscount = ladderTopBeforeDiscount;
+
+    const final = ladderTopBeforeDiscount * discountMultiplier;
+    debug.finalRent = final;
+    // Preview ladder
+    if (ladderPreviewCount > 0) {
+        const N = estates.length;
+        const preview: Array<{ key: string; rent: number }> = [];
+        const step = Math.max(1, Math.floor(N / ladderPreviewCount));
+
+        for (let i = 0; i < N; i += step) {
+            const tt = N <= 1 ? 0 : i / (N - 1);
+            const top = startAnchor + tt * (endAnchor - startAnchor);
+            preview.push({ key: estates[i].key, rent: Math.round(top * discountMultiplier) });
+            if (preview.length >= ladderPreviewCount) break;
+        }
+
+        if (preview[preview.length - 1]?.key !== estates[N - 1].key) {
+            preview.push({ key: estates[N - 1].key, rent: Math.round(endAnchor * discountMultiplier) });
+        }
+
+        debug.ladderPreview = preview;
+    }
+
+    debug.notes.push(
+        `Manual ladder: start=${Math.round(startAnchor)} end=${Math.round(endAnchor)} tOrder=${t.toFixed(3)} discount=${(
+            discountRate * 100
+        ).toFixed(1)}%.`
+    );
+
+    return { rent: final, debug };
 }

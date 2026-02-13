@@ -43,6 +43,7 @@ export function InvestmentCompareSummary({
                 // “Equity Boost” = your Year 1 equity boost (avg of income + sqft + premium)
                 // If you truly want only income + sqft (no premium), see note below.
                 const equityBoost = adu.year1EquityBoost;
+                console.log(adu)
 
                 return (
                     <div key={adu.key} className={styles.card}>
@@ -53,6 +54,7 @@ export function InvestmentCompareSummary({
                             {/* <Row styles={styles} label="Estimate at" value={adu.sqft ? `${adu.sqft.toLocaleString()} sf` : "—"} /> */}
 
                             {/* Financed Amount : 100%  -> derived from downPaymentRate */}
+                            <Row styles={styles} label="Cost" value={money(adu.purchasePrice)} />
                             <Row
                                 styles={styles}
                                 label="Financed Amount"

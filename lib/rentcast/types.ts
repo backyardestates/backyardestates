@@ -1,10 +1,15 @@
 // lib/rentcast/types.ts
 
 export type Floorplan = {
+    bathrooms: number | undefined;
+    bedrooms: number | undefined;
     _id: string;
     name: string;
     sqft: number;
     price: number;
+    beds: number;
+    baths: number;
+    key: string;
 };
 
 export type PropertyRecord = {
@@ -63,4 +68,37 @@ export type RentalListing = {
     lastSeenDate?: string;
     daysOnMarket?: number;
     status?: string;
+};
+
+// lib/rentcast/markets.ts
+export type MarketStats = {
+    id?: string;
+    zipCode: string;
+    rentalData?: {
+        lastUpdatedDate?: string;
+
+        averageRent?: number;
+        medianRent?: number;
+        minRent?: number;
+        maxRent?: number;
+
+        averageRentPerSquareFoot?: number;
+        medianRentPerSquareFoot?: number;
+        minRentPerSquareFoot?: number;
+        maxRentPerSquareFoot?: number;
+
+        averageSquareFootage?: number;
+        medianSquareFootage?: number;
+
+        history?: Record<
+            string,
+            {
+                date?: string;
+                averageRentPerSquareFoot?: number | null;
+                medianRentPerSquareFoot?: number | null;
+                averageRent?: number | null;
+                medianRent?: number | null;
+            }
+        >;
+    };
 };

@@ -8,6 +8,7 @@ import { DEFAULTS } from "@/lib/investment/types";
 import { asNumber, clamp, median } from "@/lib/investment/format";
 import { buildRows } from "@/lib/investment/rows";
 import { buildScenarios } from "@/lib/investment/scenario";
+import { useRentcastData } from "../rentcast/useRentcastData";
 
 export function useInvestmentModel(input: {
     property: PropertyRecord | null;
@@ -19,6 +20,7 @@ export function useInvestmentModel(input: {
     defaultsProp?: Partial<Defaults>;
 }) {
     const { property, avm, rentals, owed, selectedFloorplan, allFloorplans, defaultsProp } = input;
+    const { market } = useRentcastData();
 
     const owedNum = useMemo(() => asNumber(owed) ?? 0, [owed]);
 
@@ -77,6 +79,7 @@ export function useInvestmentModel(input: {
                 rentals,
                 selectedAdus,
                 subjectSqft,
+                market,
             }),
         [defaults, housePrice, houseRentEstimate, rentals, selectedAdus, subjectSqft]
     );

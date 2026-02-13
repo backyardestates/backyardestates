@@ -2,12 +2,18 @@
 
 import React, { useMemo, useState } from "react";
 import styles from "./InvestmentModelTable.module.css";
+import { estimateRent } from "@/lib/investment/rentEstimator";
+import { RentcastMarketStats, useRentcastData } from "@/hooks/rentcast/useRentcastData";
+import type { RentEstimateDebug } from "@/lib/investment/rentEstimator";
 
 type Floorplan = {
     _id: string;
+    key: string;
     name: string;
     sqft: number;
     price: number;
+    beds?: number;
+    baths?: number;
 };
 
 type PropertyRecord = {
@@ -196,209 +202,6 @@ type RentComp = {
     bathrooms?: number;
 };
 
-type RentEstimateDebug = {
-    targetSqft?: number;
-    bandPct: number;
-    minSqft?: number;
-    maxSqft?: number;
-    preferClosestN: number; // kept for compatibility (no longer used by this method)
-    minComps: number;
-
-    totalListings: number;
-    withValidPrice: number;
-    withSqftAndPrice: number;
-    inBand: number;
-    used: number;
-
-    method:
-    | "median_top_psf"          // ✅ NEW
-    | "median_all_prices"
-    | "insufficient_data";
-    rent?: number;
-
-    usedComps: Array<{
-        idx: number;
-        price: number;
-        sqft?: number;
-        bed?: number;
-        bath?: number;
-        distSqft?: number;
-        weight: number; // kept for compatibility
-        psf?: number;   // ✅ NEW (price per sqft)
-    }>;
-
-    notes: string[];
-};
-
-function isFiniteNumber(n: any): n is number {
-    return typeof n === "number" && Number.isFinite(n);
-}
-
-function medianSorted(arr: number[]) {
-    const n = arr.length;
-    if (!n) return undefined;
-    const mid = Math.floor(n / 2);
-    return n % 2 ? arr[mid] : (arr[mid - 1] + arr[mid]) / 2;
-}
-
-// Weighted median: value where cumulative weight crosses 50% of total weight.
-// Expects entries sorted by value ASC.
-function weightedMedian(sorted: Array<{ value: number; weight: number }>) {
-    const total = sorted.reduce((s, x) => s + x.weight, 0);
-    if (total <= 0) return undefined;
-    const half = total / 2;
-    let cum = 0;
-    for (const x of sorted) {
-        cum += x.weight;
-        if (cum >= half) return x.value;
-    }
-    return sorted[sorted.length - 1]?.value;
-}
-
-export function estimateRent(
-    rentals: RentComp[],
-    targetSqft?: number,
-    opts?: {
-        bandPct?: number; // ± percent sqft band, default 0.15
-        preferClosestN?: number; // kept for compatibility
-        minComps?: number; // minimum comps required for banded approach, default 4
-        sqftFallbackBandPct?: number; // if too few comps, widen band, default 0.30
-        topN?: number; // ✅ number of top comps by $/sf to use, default 5
-    }
-): { rent?: number; debug: RentEstimateDebug } {
-    const bandPct = opts?.bandPct ?? 0.15;
-    const preferClosestN = opts?.preferClosestN ?? 12; // (not used in this method)
-    const minComps = opts?.minComps ?? 4;
-    const sqftFallbackBandPct = opts?.sqftFallbackBandPct ?? 0.30;
-    const topN = opts?.topN ?? 5;
-
-    const debug: RentEstimateDebug = {
-        targetSqft,
-        bandPct,
-        preferClosestN,
-        minComps,
-        totalListings: rentals.length,
-        withValidPrice: 0,
-        withSqftAndPrice: 0,
-        inBand: 0,
-        used: 0,
-        method: "insufficient_data",
-        usedComps: [],
-        notes: [],
-    };
-
-    // 1) Collect all valid prices (fallback path)
-    const allPrices = rentals
-        .map((r) => r.price)
-        .filter((p): p is number => isFiniteNumber(p) && p > 0);
-
-    debug.withValidPrice = allPrices.length;
-
-    if (!allPrices.length) {
-        debug.notes.push("No listings with a valid price.");
-        return { rent: undefined, debug };
-    }
-
-    // If no target sqft, just median of all prices
-    if (!isFiniteNumber(targetSqft) || targetSqft <= 0) {
-        const sorted = [...allPrices].sort((a, b) => a - b);
-        const rent = medianSorted(sorted);
-        debug.method = "median_all_prices";
-        debug.rent = rent;
-        debug.notes.push("No target sqft; using median of all listing prices.");
-        return { rent, debug };
-    }
-
-    // 2) Build comps with sqft + price
-    const comps = rentals
-        .map((r, idx) => ({
-            idx,
-            price: r.price,
-            sqft: r.squareFootage,
-            bed: r.bedrooms,
-            bath: r.bathrooms,
-        }))
-        .filter((c) => isFiniteNumber(c.price) && c.price > 0 && isFiniteNumber(c.sqft) && c.sqft > 0);
-
-    debug.withSqftAndPrice = comps.length;
-
-    const bandFor = (pct: number) => {
-        const minSqft = targetSqft * (1 - pct);
-        const maxSqft = targetSqft * (1 + pct);
-        return { minSqft, maxSqft };
-    };
-
-    // 3) Filter within sqft band (widen if needed)
-    let { minSqft, maxSqft } = bandFor(bandPct);
-    debug.minSqft = Math.round(minSqft);
-    debug.maxSqft = Math.round(maxSqft);
-
-    let inBand = comps.filter((c) => (c.sqft as number) >= minSqft && (c.sqft as number) <= maxSqft);
-
-    if (inBand.length < minComps) {
-        const widened = bandFor(sqftFallbackBandPct);
-        const widenedBand = comps.filter((c) => (c.sqft as number) >= widened.minSqft && (c.sqft as number) <= widened.maxSqft);
-
-        if (widenedBand.length >= minComps) {
-            minSqft = widened.minSqft;
-            maxSqft = widened.maxSqft;
-            inBand = widenedBand;
-
-            debug.notes.push(
-                `Too few comps in ±${Math.round(bandPct * 100)}% band; widened to ±${Math.round(sqftFallbackBandPct * 100)}%.`
-            );
-            debug.minSqft = Math.round(minSqft);
-            debug.maxSqft = Math.round(maxSqft);
-        } else {
-            debug.notes.push("Too few sqft-matched comps; falling back to median of all prices.");
-            const sorted = [...allPrices].sort((a, b) => a - b);
-            const rent = medianSorted(sorted);
-            debug.method = "median_all_prices";
-            debug.rent = rent;
-            return { rent, debug };
-        }
-    }
-
-    debug.inBand = inBand.length;
-
-    // ✅ 4) NEW METHOD:
-    // Rank by highest $/sf inside the sqft band, take top N, then median of their prices.
-    const rankedByPsf = inBand
-        .map((c) => {
-            const sqft = c.sqft as number;
-            const price = c.price as number;
-            const psf = price / Math.max(1, sqft);
-            const distSqft = Math.abs(sqft - targetSqft);
-            return { ...c, psf, distSqft };
-        })
-        .sort((a, b) => b.psf - a.psf)
-        .slice(0, Math.max(1, topN));
-
-    debug.used = rankedByPsf.length;
-
-    const pickedPrices = rankedByPsf.map((c) => c.price as number).sort((a, b) => a - b);
-    const rent = medianSorted(pickedPrices);
-
-    debug.method = "median_top_psf";
-    debug.rent = rent;
-
-    debug.notes.push(
-        `Using top ${Math.max(1, topN)} comps by $/sf within sqft band (then median of their rents).`
-    );
-
-    debug.usedComps = rankedByPsf.map((c) => ({
-        idx: c.idx,
-        price: c.price as number,
-        sqft: c.sqft,
-        bed: c.bed,
-        bath: c.bath,
-        distSqft: c.distSqft,
-        weight: 1, // not used here, kept for compatibility
-        psf: Number(c.psf.toFixed(4)),
-    }));
-
-    return { rent, debug };
-}
 
 function calcScenarioBase(input: {
     key: string;
@@ -663,30 +466,39 @@ function calcScenarioBase(input: {
         rentMonthly: {
             value: money(input.rentMonthly),
             formula: rentDbg
-                ? `Rent = ${rentDbg.method} (target ${rentDbg.targetSqft ?? "—"} sqft, band ±${Math.round(rentDbg.bandPct * 100)}%, used ${rentDbg.used})`
-                : "Rent = (no estimator debug)",
-            parts: [
-                ["targetSqft", rentDbg?.targetSqft ?? "—", "calc"],
-                ["band", rentDbg ? `±${Math.round(rentDbg.bandPct * 100)}%` : "—", "calc"],
-                ["minSqft", rentDbg?.minSqft ?? "—", "calc"],
-                ["maxSqft", rentDbg?.maxSqft ?? "—", "calc"],
-                ["totalListings", rentDbg?.totalListings ?? "—", "api"],
-                ["validPrice", rentDbg?.withValidPrice ?? "—", "calc"],
-                ["sqft+price", rentDbg?.withSqftAndPrice ?? "—", "calc"],
-                ["inBand", rentDbg?.inBand ?? "—", "calc"],
-                ["used", rentDbg?.used ?? "—", "calc"],
-                ["rentMonthly", money(input.rentMonthly), "calc"],
-                ...(rentDbg?.notes?.length
-                    ? [["notes", rentDbg.notes.join(" • ")] as [string, React.ReactNode]]
-                    : []),
-                // show the first 5 comps used
-                ...(rentDbg?.usedComps?.slice(0, 5).map((c, i) => {
-                    const label = `comp${i + 1}`;
-                    const val = `${money(c.price)} • ${c.sqft ?? "—"}sf • Δ${c.distSqft ?? "—"} • w=${c.weight}`;
-                    return [label, val] as [string, React.ReactNode];
-                }) ?? []),
-            ],
-        }
+                ? `Rent = ladder (${rentDbg.bandLabel}) · t=${rentDbg.tOrder?.toFixed(2)}
+                )}`
+                : (input.kind === "house"
+                    ? "House rent = scaled from rentals median (no premium comp debug)"
+                    : "Rent = (no estimator debug)"
+                ),
+            parts: rentDbg
+                ? [
+                    ["targetSqft", rentDbg.targetSqft, "calc"],
+                    ["band", rentDbg.bandLabel, "calc"],
+                    ["minSqft", rentDbg.minSqft, "calc"],
+                    ["maxSqft", rentDbg.maxSqft, "calc"],
+                    ["totalListings", rentDbg.totalListings, "api"],
+                    ["withSqft+Price", rentDbg.withSqftAndPrice, "calc"],
+                    ["inBand", rentDbg.inBand, "calc"],
+
+
+
+                    ["finalRent", money(rentDbg.finalRent ?? input.rentMonthly), "calc"],
+
+                    ...(rentDbg.notes?.length ? [["notes", rentDbg.notes.join(" • ")] as any] : []),
+
+                ]
+                : [
+                    ["rentMonthly", money(input.rentMonthly), "calc"],
+                    ...(input.kind === "house"
+                        ? [
+                            ["note", "House uses your scaled-median approach; premium comps apply to ADUs only.", "calc"] as any,
+                        ]
+                        : []),
+                ],
+        },
+
     };
 
     return {
@@ -767,6 +579,21 @@ export function InvestmentModelTable({
     defaults?: Partial<Defaults>;
 }) {
     const owedNum = useMemo(() => asNumber(owed) ?? 0, [owed]);
+    const { market } = useRentcastData(); // get market from hook for rent estimation
+
+    const estatesOrdered = [
+        { key: "estate_350", sqft: 350, beds: 0, baths: 1 },
+        { key: "estate_400", sqft: 400, beds: 0, baths: 1 },
+        { key: "estate_450", sqft: 450, beds: 1, baths: 1 },
+        { key: "estate_600", sqft: 600, beds: 1, baths: 1 },
+        { key: "estate_750", sqft: 750, beds: 2, baths: 1 },
+        { key: "estate_750_plus", sqft: 750, beds: 2, baths: 2 }, // <-- separates via premium
+        { key: "estate_800", sqft: 800, beds: 2, baths: 2 },
+        { key: "estate_950", sqft: 950, beds: 3, baths: 2 },
+        { key: "estate_1200", sqft: 1200, beds: 3, baths: 2 },
+    ];
+
+
 
     const subjectSqft = avm?.subjectProperty?.squareFootage ?? property?.squareFootage ?? undefined;
 
@@ -821,24 +648,7 @@ export function InvestmentModelTable({
         return aduCompareIds.map((id) => map.get(id)).filter(Boolean) as Floorplan[];
     }, [aduCompareIds, allFloorplans]);
 
-    const houseRentDbg: RentEstimateDebug = {
-        targetSqft: subjectSqft,
-        bandPct: 0,
-        minComps: 0,
-        preferClosestN: 0,
-        totalListings: rentals.length,
-        withValidPrice: rentals.filter(r => typeof r.price === "number").length,
-        withSqftAndPrice: rentals.filter(r => typeof r.price === "number" && typeof r.squareFootage === "number").length,
-        inBand: 0,
-        used: 0,
-        method: "median_all_prices",
-        rent: houseRentEstimate,
-        usedComps: [],
-        notes: [
-            "House rent is estimated by scaling ADU median rent by sqft ratio (clamped).",
-            `houseRent = aduMedian × clamp(houseSqft/aduSqft, 1.2, 2.2)`,
-        ],
-    };
+
 
     const scenarios = useMemo<Scenario[]>(() => {
         const out: Scenario[] = [];
@@ -873,20 +683,23 @@ export function InvestmentModelTable({
                 basePropertyValue: housePrice ?? 0,
                 basePropertySqft: subjectSqft ?? 0,
 
-                rentEstimateDebug: houseRentDbg,
             })
         );
-
         // ADUs chosen
         for (const fp of selectedAdus) {
-            const rentEst = estimateRent(rentals, fp.sqft, {
-                bandPct: 0.15,
-                preferClosestN: 12,
-                minComps: 4,
-                sqftFallbackBandPct: 0.30,
+            const { rent, debug } = estimateRent(rentals, {
+                targetSqft: fp.sqft,
+                targetBeds: fp.beds,
+                targetBaths: fp.baths,
+                estatesOrdered,
+                estateKey: fp.key,
+                market,
+                ladderPreviewCount: 6,
             });
 
-            const aduRent = rentEst.rent;
+            console.log(fp.key, rent, debug.notes, debug.anchorEvidence, debug.ladderPreview);
+
+            const aduRent = rent;
 
             out.push(
                 calcScenarioBase({
@@ -894,7 +707,7 @@ export function InvestmentModelTable({
                     title: `ADU — ${fp.name} (${fp.sqft} SF)`,
                     kind: "adu",
                     sqft: fp.sqft,
-                    rentMonthly: rentEst.rent,
+                    rentMonthly: aduRent,
                     purchasePrice: fp.price,
                     remodelCost: 0,
 
@@ -914,12 +727,10 @@ export function InvestmentModelTable({
 
                     noiExpenseRatio: defaults.noiExpenseRatio,
 
-                    // ✅ pass base property info for SF + premium approaches
                     basePropertyValue: housePrice ?? 0,
                     basePropertySqft: subjectSqft ?? 0,
 
-                    // ✅ attach rent debug (this is the big win)
-                    rentEstimateDebug: rentEst.debug,
+                    rentEstimateDebug: debug,
                 })
             );
         }
@@ -938,56 +749,6 @@ export function InvestmentModelTable({
 
     const rows = useMemo<RowSpec[]>(
         () => [
-            // { type: "section", label: "Assumptions" },
-
-            // // SF comes from API for house (avm/property), and from input for ADU (floorplan sqft)
-            // {
-            //     type: "row", label: "SF", render: (s) => (s.sqft ? num(s.sqft) : "—"),
-            //     source: (s) => (s.kind === "house" ? "api" : "input")
-            // },
-
-            // // Rent is computed from rentals comps (api), but the number shown is an estimate => calc
-            // {
-            //     type: "row", label: "Rental Rate", field: "rentMonthly", render: (s) => money(s.rentMonthly),
-            //     source: "calc"
-            // },
-
-            // // Cost to Buy:
-            // // - house: AVM / last sale => api
-            // // - adu: floorplan price => input
-            // {
-            //     type: "row", label: "Cost to Buy", field: "purchasePrice", render: (s) => money(s.purchasePrice),
-            //     source: (s) => (s.kind === "house" ? "api" : "input")
-            // },
-
-            // // Remodel:
-            // // - house: defaults knob => input
-            // // - adu: hardcoded 0 (model assumption) => calc (or input if you want it treated like a knob)
-            // {
-            //     type: "row", label: "Remodel Cost?", render: (s) => money(s.remodelCost),
-            //     source: (s) => (s.kind === "house" ? "input" : "calc")
-            // },
-
-            // // These are assumption knobs (inputs)
-            // { type: "row", label: "Down Payment", render: (s) => pct(s.downPaymentRate), source: "input" },
-            // { type: "row", label: "Interest Rate", render: (s) => pct(s.interestRate), source: "input" },
-            // { type: "row", label: "Term length", render: (s) => String(s.termYears), source: "input" },
-            // { type: "row", label: "Effective Tax Rate", render: (s) => pct(s.effectiveTaxRate), source: "input" },
-
-            // // Discount is a knob for ADU; house shows NA
-            // {
-            //     type: "row", label: "Property Tax Discount",
-            //     render: (s) => (s.kind === "house" ? "NA" : pct(s.propertyTaxDiscount)),
-            //     source: (s) => (s.kind === "house" ? "calc" : "input")
-            // },
-
-            // { type: "row", label: "Annual Maintenance", render: (s) => money(s.maintenanceAnnual), source: "input" },
-            // { type: "row", label: "Annual Insurance", render: (s) => money(s.insuranceAnnual), source: "input" },
-
-            // // global knob
-            // { type: "row", label: "NOI Expense Ratio", render: () => pct(defaults.noiExpenseRatio), source: "input" },
-
-            // { type: "spacer" },
 
             { type: "section", label: "Output" },
 
@@ -1017,7 +778,7 @@ export function InvestmentModelTable({
 
             { type: "spacer" },
 
-            { type: "row", label: "Rent", render: (s) => money(s.rentMonthly), source: "calc" },
+            { type: "row", label: "Rent", field: "rentMonthly", render: (s) => money(s.rentMonthly), source: "calc" },
             { type: "row", label: "Cashflow", field: "cashflowMonthly", render: (s) => money(s.cashflowMonthly), source: "calc" },
             { type: "row", label: "Annual", field: "cashflowAnnual", render: (s) => money(s.cashflowAnnual), source: "calc" },
 
@@ -1147,6 +908,7 @@ export function InvestmentModelTable({
                         <div className={styles.warn}>Select at least 1 ADU to compare.</div>
                     ) : null}
                 </div>
+
                 <div className={styles.controlCard}>
                     <div className={styles.controlTitle}>Assumptions</div>
                     <div className={styles.controlSub}>Edit any default and the table updates instantly.</div>
@@ -1229,8 +991,6 @@ export function InvestmentModelTable({
                         </button>
                     </div>
                 </div>
-
-
             </div>
 
             {/* Table */}

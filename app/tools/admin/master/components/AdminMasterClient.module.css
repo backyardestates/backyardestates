@@ -181,6 +181,7 @@
     box-shadow:
         0 1px 0 rgba(11, 15, 26, 0.04),
         0 14px 34px rgba(11, 15, 26, 0.06);
+    height: fit-content;
 }
 
 .cardTitle {

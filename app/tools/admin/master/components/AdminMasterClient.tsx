@@ -13,9 +13,6 @@ import { InvestmentSection } from "../components/Investment/InvestmentSection";
 
 import type { Floorplan } from "@/lib/rentcast/types";
 import { useRentcastData } from "@/hooks/rentcast/useRentcastData";
-import { useInvestmentModel } from "@/hooks/investment/useInvestmentModel";
-import { InvestmentSummary } from "./Investment/InvestmentSummary";
-import { InvestmentCompareSummary } from "./Investment/InvestmentCompareSummary";
 
 export default function AdminMasterClient({ initialFloorplans }: { initialFloorplans: Floorplan[] }) {
     const [address, setAddress] = useState("");
@@ -43,14 +40,6 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
         return city && state ? `${city}, ${state}` : "—";
     }, [avm, property]);
 
-    const model = useInvestmentModel({
-        property,
-        avm,
-        rentals,
-        owed,
-        selectedFloorplan,
-        allFloorplans: floorplans,
-    });
 
     return (
         <div className={styles.page}>
@@ -72,12 +61,6 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                 onSubmit={() => getApiData({ address, selectedFloorplan })}
             />
 
-            <InvestmentSummary
-                styles={styles}
-                house={model.houseScenario}
-                adus={model.aduScenarios}
-            />
-
             <InvestmentSection
                 property={property}
                 avm={avm}
@@ -86,6 +69,8 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                 selectedFloorplan={selectedFloorplan}
                 allFloorplans={floorplans}
             />
+
+
 
             <ResultsSection
                 styles={styles}

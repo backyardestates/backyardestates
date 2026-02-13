@@ -3,6 +3,7 @@ import type { Defaults, Scenario, Debug, Money } from "./types";
 import { money, pct, pmt } from "./format";
 import type { RentalListing, Floorplan } from "@/lib/rentcast/types";
 import { estimateRent } from "./rentEstimator";
+import { RentcastMarketStats, useRentcastData } from "@/hooks/rentcast/useRentcastData";
 
 function calcScenarioBase(input: {
     key: string;
@@ -74,6 +75,7 @@ function calcScenarioBase(input: {
     const g = 1 + input.equityGrowthAnnual;
     const year5EquityBoost = year1EquityBoost * Math.pow(g, 4);
     const year10EquityBoost = year5EquityBoost * Math.pow(g, 9);
+
 
     const rentDbg = input.rentEstimateDebug;
     const debug: Debug = {
@@ -298,6 +300,8 @@ function calcScenarioBase(input: {
     };
 }
 
+
+
 export function buildScenarios(input: {
     defaults: Defaults;
     housePrice?: number;
@@ -305,8 +309,22 @@ export function buildScenarios(input: {
     subjectSqft?: number;
     rentals: RentalListing[];
     selectedAdus: Floorplan[];
+    market: RentcastMarketStats | null;
 }): Scenario[] {
-    const { defaults, housePrice, houseRentEstimate, subjectSqft, rentals, selectedAdus } = input;
+
+    const { defaults, housePrice, houseRentEstimate, subjectSqft, rentals, selectedAdus, market } = input;
+
+    const estatesOrdered = [
+        { key: "estate_350", sqft: 350, beds: 0, baths: 1 },
+        { key: "estate_400", sqft: 400, beds: 0, baths: 1 },
+        { key: "estate_450", sqft: 450, beds: 1, baths: 1 },
+        { key: "estate_600", sqft: 600, beds: 1, baths: 1 },
+        { key: "estate_750", sqft: 750, beds: 2, baths: 1 },
+        { key: "estate_750_plus", sqft: 750, beds: 2, baths: 2 }, // <-- separates via premium
+        { key: "estate_800", sqft: 800, beds: 2, baths: 2 },
+        { key: "estate_950", sqft: 950, beds: 3, baths: 2 },
+        { key: "estate_1200", sqft: 1200, beds: 3, baths: 2 },
+    ];
 
     const out: Scenario[] = [];
 
@@ -346,14 +364,17 @@ export function buildScenarios(input: {
         })
     );
 
+
     // ADUs
     for (const fp of selectedAdus) {
-        const rentEst = estimateRent(rentals as any, fp.sqft, {
-            bandPct: 0.15,
-            preferClosestN: 12,
-            minComps: 4,
-            sqftFallbackBandPct: 0.30,
-            topN: 5,
+        const { rent, debug } = estimateRent(rentals, {
+            targetSqft: fp.sqft,
+            targetBeds: fp.beds,
+            targetBaths: fp.baths,
+            estatesOrdered,
+            estateKey: fp.key,
+            market,
+            ladderPreviewCount: 6,
         });
 
         out.push(
@@ -362,7 +383,7 @@ export function buildScenarios(input: {
                 title: `ADU — ${fp.name} (${fp.sqft} SF)`,
                 kind: "adu",
                 sqft: fp.sqft,
-                rentMonthly: rentEst.rent,
+                rentMonthly: rent,
                 purchasePrice: fp.price,
                 remodelCost: 0,
 
@@ -385,7 +406,7 @@ export function buildScenarios(input: {
                 basePropertyValue: housePrice ?? 0,
                 basePropertySqft: subjectSqft ?? 0,
 
-                rentEstimateDebug: rentEst.debug,
+                rentEstimateDebug: debug,
             })
         );
     }
