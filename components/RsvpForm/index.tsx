@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useRef } from "react"
 
 import { useState } from "react"
 import styles from "./RSVPForm.module.css"
@@ -159,6 +159,22 @@ export function RSVPForm({ dates, params, address }: PageProps) {
 
     // For this example, using Friday+Saturday configuration
     const eventDates = Array.isArray(dates) && dates.length > 1 ? eventConfigs.fridaySaturday : eventConfigs.saturdayOnly
+
+    // ✅ Auto-select the first available date by default (only when the dates list changes)
+    const lastDatesKeyRef = useRef<string>("");
+
+    useEffect(() => {
+        const key = eventDates.map((d) => d.day).join("|");
+        if (!eventDates.length) return;
+
+        // Only reset selection when the available dates set changes (new event / new props)
+        if (key !== lastDatesKeyRef.current) {
+            lastDatesKeyRef.current = key;
+            setSelectedDate(eventDates[0].day);
+            setSelectedTimes({}); // optional: clear times when event changes
+            setErrors((prev) => ({ ...prev, date: "", time: "" })); // optional: clear date/time errors
+        }
+    }, [eventDates]);
 
     const handleDateToggle = (date: string) => {
         setSelectedDate((prev) => {
