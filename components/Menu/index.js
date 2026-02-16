@@ -82,9 +82,9 @@ export default function Menu({ showMenu, toggleMenu }) {
                             Events
                         </Link>
                     </li>
-                    <li>
+                    {/* <li>
                         <Link href="/blog">Blog</Link>
-                    </li>
+                    </li> */}
                 </ul>
                 <div className={style.bottom}>
                     <Button href="/talk-to-an-adu-specialist">

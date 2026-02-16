@@ -3,7 +3,7 @@
     align-self: center;
     justify-content: center;
     align-items: center;
-    gap: 0.625rem;
+    gap: clamp(0.5rem, 1vw, 1rem);
     height: 3rem;
     margin: 0;
     padding: 0rem 1.25rem 0rem 1.5rem;
@@ -15,6 +15,7 @@
     transition:
         background-color 300ms ease,
         border-color 300ms ease;
+    font-size: clamp(0.875rem, 1vw, 1rem);
 }
 
 .primary {

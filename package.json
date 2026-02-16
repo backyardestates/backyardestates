@@ -43,6 +43,7 @@
     "zod": "^3.25.32"
   },
   "devDependencies": {
+    "@types/google.maps": "^3.58.1",
     "@types/node": "^22.15.23",
     "@types/react": "^19.1.6",
     "eslint": "^9.26.0",
