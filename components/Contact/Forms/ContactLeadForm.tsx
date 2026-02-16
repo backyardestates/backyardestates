@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import styles from "./ContactForms.module.css"
 import { isValidUSPhone } from "@/utils/isValidUSPhone"
 import { loadGoogleMaps } from "@/lib/googleMaps/loadGoogleMaps"
-
 type Intent = "INTRO_CALL" | "OFFICE_CONSULT" | "MESSAGE"
 
 type Errors = Partial<
