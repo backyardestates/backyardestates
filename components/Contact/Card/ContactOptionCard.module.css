@@ -11,7 +11,7 @@
     text-decoration: none;
     color: black;
 
-    background: var(--color-brand-beige-subtle);
+    /* background: rgb(245, 245, 245); */
     border: 1px solid var(--color-brand-beige);
 
     box-shadow:
@@ -74,6 +74,10 @@
     color: var(--color-brand-dark-blue);
 }
 
+.cardLogo {
+    color: var(--color-brand-beige);
+}
+
 /* ---- Description ---- */
 .cardDesc {
     font-family: var(--font-sans);
@@ -106,54 +110,7 @@
     gap: 0.55rem;
 }
 
-/* =========================================
-   FAQ Block
-   ========================================= */
 
-.faq {
-    margin-top: clamp(1.25rem, 3vw, 2rem);
-    padding: 1.1rem 1.25rem;
-    border-radius: 1.25rem;
-
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-
-    box-shadow:
-        0 10px 26px rgba(0, 0, 0, 0.05),
-        inset 0 1px 0 rgba(255, 255, 255, 0.65);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-@media (max-width: 760px) {
-    .faq {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
-
-.faqTop {
-    font-family: var(--font-serif);
-    font-size: 1rem;
-    font-weight: 750;
-    letter-spacing: -0.01em;
-    color: black;
-}
-
-.faqLink {
-    font-family: var(--font-sans);
-    font-size: 0.95rem;
-    font-weight: 650;
-    color: #36484b;
-    text-decoration: none;
-}
-
-.faqLink:hover {
-    text-decoration: underline;
-}
 
 /* ---- Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {

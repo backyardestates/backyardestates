@@ -36,7 +36,7 @@ export default function TalkToSpecialistHub() {
                         <ContactOptionCard
                             Logo={User2}
                             title="Schedule a free office consultation"
-                            description="Come in for a walkthrough: we’ll review your goals and give you clear next steps."
+                            description="We’ll review your property on the big screen with our advanced software and give you clear next steps."
                             href="/talk-to-an-adu-specialist/office-consultation"
                             cta="Reserve a time →"
                         />

@@ -65,12 +65,10 @@ export function ContactLeadForm({
     intent,
     submitLabel,
     successRedirectBase,
-    showMessageField = false,
 }: {
     intent: Intent
     submitLabel: string
     successRedirectBase: string
-    showMessageField?: boolean
 }) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
@@ -113,7 +111,7 @@ export function ContactLeadForm({
             return {
                 eyebrow: "Free office consultation",
                 title: "Schedule a free office consultation",
-                desc: "Come in for a walkthrough. We’ll review your goals and give you clear next steps.",
+                desc: "Come in for a consultation. We’ll review your property on the big screen with our advanced software and give you clear next steps.",
                 cardDesc: "Enter your info so we can reserve a time for your visit.",
             }
         }
@@ -334,7 +332,7 @@ export function ContactLeadForm({
         if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) e.email = "Valid email is required"
         if (!form.phone || !isValidUSPhone(form.phone)) e.phone = "Valid US phone is required"
         if (!form.addressInput.trim()) e.address = "Property address is required"
-        if (showMessageField && !form.message.trim()) e.message = "Please tell us how we can help"
+        if (!form.message.trim()) e.message = "Please tell us how we can help"
         return e
     }
 
@@ -375,7 +373,7 @@ export function ContactLeadForm({
                     // lat: form.lat,
                     // lng: form.lng,
 
-                    message: showMessageField ? form.message : "",
+                    message: form.message,
                     source: form.source,
                     consentEmail: "subscribed",
                     consentText: "subscribed",
@@ -563,31 +561,21 @@ export function ContactLeadForm({
                             </div>
                         </div>
 
-                        <div className={styles.sectionTitle}>{showMessageField ? "How can we help?" : "Notes (optional)"}</div>
+                        <div className={styles.sectionTitle}>{"How can we help?"}</div>
 
                         <div className={styles.field}>
-                            {showMessageField ? (
-                                <>
-                                    <textarea
-                                        id="message"
-                                        className={cn(styles.textarea, errors.message && styles.inputError)}
-                                        value={form.message}
-                                        onChange={(e) => update("message", e.target.value)}
-                                        rows={4}
-                                        placeholder="Tell us what you’re trying to accomplish (family, rental, timeline, city, etc.)"
-                                    />
-                                    {errors.message && <span className={styles.error}>{errors.message}</span>}
-                                </>
-                            ) : (
+                            <>
                                 <textarea
-                                    id="messageOptional"
-                                    className={styles.textarea}
+                                    id="message"
+                                    className={cn(styles.textarea, errors.message && styles.inputError)}
                                     value={form.message}
                                     onChange={(e) => update("message", e.target.value)}
                                     rows={4}
-                                    placeholder="Anything we should know before we connect?"
+                                    placeholder="Tell us what you’re trying to accomplish (family, rental, timeline, etc.)"
                                 />
-                            )}
+                                {errors.message && <span className={styles.error}>{errors.message}</span>}
+                            </>
+
                         </div>
 
                         <button className={styles.submit} type="submit" disabled={!isValid || loading}>

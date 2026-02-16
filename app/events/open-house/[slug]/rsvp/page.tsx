@@ -20,31 +20,34 @@ export default async function Home({
 
     const slug = await params;
 
-    // async function getStageIds(pipeline_id) {
+    async function getStageIds(pipeline_id) {
 
-    //     const res = await fetch(
-    //         `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/stages?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}&pipeline_id=${pipeline_id}`, {
-    //         method: 'GET',
-    //     }
-    //     )
-    //     const data = await res.json()
+        const res = await fetch(
+            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/stages?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}&pipeline_id=${pipeline_id}`, {
+            method: 'GET',
+        }
+        )
+        const data = await res.json()
 
-    // }
+    }
 
-    // const stages = await getStageIds(7)
+    const stages = await getStageIds(7)
 
-    // async function getDealFields(pipeline_id) {
+    async function getDealFields() {
 
-    //     const res = await fetch(
-    //         `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/dealFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`, {
-    //         method: 'GET',
-    //     }
-    //     )
-    //     const data = await res.json()
+        const res = await fetch(
+            `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/dealFields?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`, {
+            method: 'GET',
+        }
+        )
+        const data = await res.json()
+        return data
 
-    // }
+    }
 
-    // const fields = await getDealFields(7)
+    const fields = await getDealFields()
+
+    console.log(fields)
     const address = openHouse.data.address
 
     return (

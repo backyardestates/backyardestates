@@ -27,7 +27,7 @@
     width: 100%;
     max-width: var(--max);
     margin: 0 auto;
-    padding: 1.25rem var(--padX) 1.5rem;
+    /* padding: 1.25rem var(--padX) 1.5rem; */
     display: flex;
     flex-direction: column;
     gap: var(--gap);

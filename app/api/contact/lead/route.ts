@@ -35,7 +35,7 @@ const PD_FIELDS = {
 
 
     // Optional: if you have a “message/notes” custom field on deal, put it here:
-    // DEAL_MESSAGE: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    DEAL_MESSAGE: "015bdaea2150906c2ff3bf0040107c1ccb8de987",
 }
 
 function mapIntentToDealMeta(intent: Intent) {
@@ -137,7 +137,7 @@ export async function POST(req: Request) {
         }
 
         // If you have a deal “message” custom field, set it here:
-        // if (PD_FIELDS.DEAL_MESSAGE) dealPayload[PD_FIELDS.DEAL_MESSAGE] = message
+        if (PD_FIELDS.DEAL_MESSAGE) dealPayload[PD_FIELDS.DEAL_MESSAGE] = message
 
         const dealRes = await fetch(buildPipedriveUrl("deals"), {
             method: "POST",
