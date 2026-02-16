@@ -13,9 +13,6 @@ import Logo from '@/components/Logo'
 
 import style from '../../Form.module.css'
 
-// export const metadata: Metadata = {
-//     title: 'Schedule an appoint - Backyard Estates',
-// }
 
 
 export default function Calendly() {

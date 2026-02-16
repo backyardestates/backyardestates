@@ -1,26 +1,35 @@
-'use client'
+"use client";
 
-import { useRouter, useSearchParams } from 'next/navigation'
-import { InlineWidget } from 'react-calendly'
+import React, { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { InlineWidget } from "react-calendly";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faXmark } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/pro-solid-svg-icons";
 
-import Logo from '@/components/Logo'
-import style from "../../Form.module.css" // ✅ change to your actual existing location
+import Logo from "@/components/Logo";
+import style from "../../Form.module.css";
 
 export default function OfficeConsultCalendly() {
-    const router = useRouter()
-    const sp = useSearchParams()
+    return (
+        <Suspense fallback={<div style={{ height: 1000 }} />}>
+            <OfficeConsultCalendlyInner />
+        </Suspense>
+    );
+}
 
-    const name = sp.get('name') ?? undefined
-    const email = sp.get('email') ?? undefined
-    const phone = sp.get('phone') ?? undefined
-    const address = sp.get('address') ?? undefined
-    const notes = sp.get('notes') ?? undefined
+function OfficeConsultCalendlyInner() {
+    const router = useRouter();
+    const sp = useSearchParams();
+
+    const name = sp.get("name") ?? undefined;
+    const email = sp.get("email") ?? undefined;
+    const phone = sp.get("phone") ?? undefined;
+    const address = sp.get("address") ?? undefined;
+    const notes = sp.get("notes") ?? undefined;
 
     function goBack() {
-        router.push('/')
+        router.push("/");
     }
 
     return (
@@ -44,23 +53,26 @@ export default function OfficeConsultCalendly() {
 
                     <InlineWidget
                         url="https://calendly.com/backyard-estates/new-meeting"
-                        styles={{ margin: '0px', height: '1000px' }}
+                        styles={{ margin: "0px", height: "1000px" }}
                         pageSettings={{
-                            backgroundColor: 'ffffff',
+                            backgroundColor: "ffffff",
                             hideEventTypeDetails: true,
                             hideLandingPageDetails: true,
-                            primaryColor: '36484b',
-                            textColor: '5e5e5e',
+                            primaryColor: "36484b",
+                            textColor: "5e5e5e",
                         }}
                         prefill={{
                             name,
                             email,
-                            customAnswers: { a1: `1${phone}`, a2: address ?? '', a3: notes ?? '' },
-                            // smsReminderNumber: phone ? `+1${phone}` : undefined,
+                            customAnswers: {
+                                a1: phone ? `1${phone}` : "",
+                                a2: address ?? "",
+                                a3: notes ?? "",
+                            },
                         }}
                     />
                 </div>
             </main>
         </>
-    )
+    );
 }
