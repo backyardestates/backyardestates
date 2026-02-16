@@ -36,6 +36,8 @@ const PD_FIELDS = {
 
     // Optional: if you have a “message/notes” custom field on deal, put it here:
     DEAL_MESSAGE: "015bdaea2150906c2ff3bf0040107c1ccb8de987",
+
+    DEAL_INTENT: "f43cbdfe98374603ece93e63d31ae2229fbac374"
 }
 
 function mapIntentToDealMeta(intent: Intent) {
@@ -131,6 +133,7 @@ export async function POST(req: Request) {
             person_id: personId,
             [PD_FIELDS.DEAL_SOURCE]: meta.sourceNumber,
             [PD_FIELDS.DEAL_ADDRESS]: addressString,
+            [PD_FIELDS.DEAL_INTENT]: intent,
 
             ...(meta.pipeline_id ? { pipeline_id: meta.pipeline_id } : {}),
             ...(meta.stage_id ? { stage_id: meta.stage_id } : {}),

@@ -377,6 +377,7 @@ export function ContactLeadForm({
                     source: form.source,
                     consentEmail: "subscribed",
                     consentText: "subscribed",
+                    intent
                 },
             }
 

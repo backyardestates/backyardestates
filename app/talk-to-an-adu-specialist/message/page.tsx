@@ -14,7 +14,6 @@ export default function MessagePage() {
                         intent="MESSAGE"
                         submitLabel="Send message"
                         successRedirectBase="/talk-to-an-adu-specialist/message/success"
-                        showMessageField
                     />
                     <LegalPrint />
                 </div>
