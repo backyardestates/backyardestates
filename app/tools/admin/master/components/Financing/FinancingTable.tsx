@@ -33,7 +33,8 @@ type Props = {
     owed: string | number;
     propertyValue?: number;
 
-    floorplans: Floorplan[];
+    // ✅ NEW: already chosen from another component
+    comparedFloorplans: Floorplan[];
     selectedFloorplanId?: string | null;
 
     currentFirstPmtMonthly?: number; // sheet uses 0 right now
@@ -43,7 +44,7 @@ type Props = {
 export function FinancingTable({
     owed,
     propertyValue,
-    floorplans,
+    comparedFloorplans,
     selectedFloorplanId,
     currentFirstPmtMonthly = 0,
     termYears = 30,
@@ -123,38 +124,10 @@ export function FinancingTable({
         };
     }, [knobs, termYears]);
 
-    // ---------------------------
-    // Floorplans to compare
-    // ---------------------------
-    const [maxPlans, setMaxPlans] = useState(3);
-
-    const sortedFloorplans = useMemo(() => {
-        return [...(floorplans ?? [])]
-            .filter((fp) => typeof fp?.price === "number" && (fp.price ?? 0) > 0)
-            .sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
-    }, [floorplans]);
-
-    const comparedFloorplans = useMemo(() => {
-        if (!sortedFloorplans.length) return [];
-
-        const selIdx = selectedFloorplanId
-            ? sortedFloorplans.findIndex((f) => f._id === selectedFloorplanId)
-            : -1;
-
-        if (selIdx < 0) return sortedFloorplans.slice(0, maxPlans);
-
-        const start = Math.max(0, selIdx - 1);
-        const end = Math.min(sortedFloorplans.length, start + maxPlans);
-        return sortedFloorplans.slice(start, end);
-    }, [sortedFloorplans, selectedFloorplanId, maxPlans]);
-
-    // ---------------------------
-    // Evaluate options (re-runs on knob change)
-    // ---------------------------
     const rows = useMemo(() => {
         if (!value || value <= 0) return [];
 
-        return comparedFloorplans.map((fp) => {
+        return (comparedFloorplans ?? []).map((fp) => {
             const options = evaluateFinancingOptions(
                 {
                     owed: owedNum,
@@ -169,7 +142,8 @@ export function FinancingTable({
         });
     }, [comparedFloorplans, owedNum, value, currentFirstPmtMonthly, termYears, policy]);
 
-    const canRender = value > 0 && owedNum >= 0 && comparedFloorplans.length > 0;
+    const canRender = value > 0 && owedNum >= 0 && (comparedFloorplans?.length ?? 0) > 0;
+
 
     return (
         <section className={styles.wrap}>
@@ -191,20 +165,7 @@ export function FinancingTable({
                         <div className={styles.metaLabel}>Value (AVM)</div>
                         <div className={styles.metaValue}>{money(value)}</div>
                     </div>
-                    <div className={styles.metaItem}>
-                        <div className={styles.metaLabel}>Compare</div>
-                        <select
-                            className={styles.select}
-                            value={maxPlans}
-                            onChange={(e) => setMaxPlans(Math.max(1, Math.min(8, Number(e.target.value) || 3)))}
-                        >
-                            {[1, 2, 3, 4, 5, 6].map((n) => (
-                                <option key={n} value={n}>
-                                    {n} plans
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+
                 </div>
             </header>
 

@@ -67,21 +67,10 @@ export function InvestmentCompareSummary({
 
                             {/* Cash out-of-pocket */}
                             <Row styles={styles} label="Cash out-of-pocket" value={money(adu.outOfPocket)} />
-
-                            {/* Equity Boost */}
-                            <Row styles={styles} label="Equity Boost" value={money(equityBoost)} />
-                            <Row styles={styles} label="Year 5" value={money(adu.year5EquityBoost)} />
-                            <Row styles={styles} label="Year 10" value={money(adu.year10EquityBoost)} />
-
-                            {/* (Income and square footage approach) - show both numbers explicitly */}
-                            {/* <Row styles={styles} label="Income approach" value={money(adu.incomeValue)} />
-                            <Row styles={styles} label="Sqft approach" value={money(adu.sqftValue)} /> */}
-
-                            {/* Estimated Rent */}
-                            <Row styles={styles} label="Estimated Rent" value={money(adu.rentMonthly)} />
-
                             {/* Estimated Payment (your monthlyCost includes mtg + tax + insurance + maintenance) */}
                             <Row styles={styles} label="Est. Payment" value={money(adu.monthlyCost)} />
+                            {/* Estimated Rent */}
+                            <Row styles={styles} label="Estimated Rent" value={money(adu.rentMonthly)} />
 
                             {/* (6.5% 30 Yr Term) */}
                             {/* <Row
@@ -97,8 +86,17 @@ export function InvestmentCompareSummary({
                             {/* Monthly Cashflow */}
                             <Row styles={styles} label="Monthly Cashflow" value={money(adu.cashflowMonthly)} />
 
+                            {/* Equity Boost */}
+                            <Row styles={styles} label="Equity Boost" value={money(equityBoost)} />
+                            <Row styles={styles} label="Year 5" value={money(adu.year5EquityBoost)} />
+                            <Row styles={styles} label="Year 10" value={money(adu.year10EquityBoost)} />
+
+                            {/* (Income and square footage approach) - show both numbers explicitly */}
+                            {/* <Row styles={styles} label="Income approach" value={money(adu.incomeValue)} />
+                            <Row styles={styles} label="Sqft approach" value={money(adu.sqftValue)} /> */}
                             {/* Return on investment */}
                             <Row styles={styles} label="Return on investment" value={pct(adu.roi)} />
+
                         </div>
                     </div>
                 );

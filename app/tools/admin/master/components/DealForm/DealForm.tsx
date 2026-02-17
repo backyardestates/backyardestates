@@ -65,12 +65,12 @@ export function DealForm(props: {
                     </div>
 
                     <div className={styles.field}>
-                        <label className={styles.label}>Current First Payment (Monthly)</label>
+                        <label className={styles.label}>Current Monthly Payment</label>
                         <input className={styles.input} value={currentFirstPmtMonthly} onChange={(e) => setCurrentFirstPmtMonthly(e.target.value)} placeholder="$1,000" />
                     </div>
 
                     <div className={styles.field} style={{ gridColumn: "1 / -1" }}>
-                        <label className={styles.label}>Floorplan (sqft only)</label>
+                        <label className={styles.label}>Floorplan</label>
                         <select className={styles.select} value={floorplanId} onChange={(e) => setFloorplanId(e.target.value)}>
                             {floorplans.map((fp) => (
                                 <option key={fp._id} value={fp._id}>
