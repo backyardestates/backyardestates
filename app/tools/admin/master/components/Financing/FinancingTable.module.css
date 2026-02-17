@@ -1,0 +1,392 @@
+.wrap {
+    margin-top: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 18px;
+    padding: 16px;
+    background: #fff;
+}
+
+/* ---------- Header ---------- */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.kicker {
+    font-size: 12px;
+    opacity: 0.65;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.title {
+    margin: 4px 0 2px;
+    font-size: 18px;
+    font-weight: 650;
+}
+
+.sub {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.75;
+    max-width: 720px;
+}
+
+.meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.metaItem {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 10px 12px;
+    min-width: 140px;
+    background: rgba(0, 0, 0, 0.012);
+}
+
+.metaLabel {
+    font-size: 12px;
+    opacity: 0.65;
+}
+
+.metaValue {
+    font-size: 14px;
+    font-weight: 650;
+    margin-top: 2px;
+}
+
+.select {
+    margin-top: 6px;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    padding: 8px 10px;
+    font-size: 13px;
+    background: #fff;
+}
+
+.select:focus {
+    outline: none;
+    box-shadow: 0 0 0 5px rgba(50, 110, 255, 0.16);
+    border-color: rgba(50, 110, 255, 0.55);
+}
+
+.empty {
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 13px;
+    opacity: 0.75;
+}
+
+/* ---------- Table ---------- */
+
+.tableWrap {
+    overflow: auto;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    background: #fff;
+
+    /* smoother scroll on iOS + better trackpad feel */
+    -webkit-overflow-scrolling: touch;
+
+    /* subtle inset so sticky header looks crisp */
+    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    /* lets cells wrap more predictably and prevents “blowouts” */
+    table-layout: fixed;
+
+    /* ensures it doesn’t get too cramped; still scrolls horizontally */
+    min-width: 980px;
+}
+
+/* Sticky header for readability */
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.thLeft,
+.th {
+    text-align: left;
+    font-size: 12px;
+    opacity: 0.78;
+    padding: 12px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.02);
+    backdrop-filter: blur(6px);
+
+    /* prevent header from wrapping into 2-3 lines */
+    white-space: nowrap;
+}
+
+/* Make first column a little wider and optionally sticky */
+.thLeft,
+.tdLeft {
+    width: 220px;
+}
+
+/* Optional: sticky first column helps a ton on wide tables */
+.thLeft {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+}
+
+.tdLeft {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: #fff;
+}
+
+/* Base td style (you referenced styles.td in JSX) */
+.td {
+    vertical-align: top;
+    padding: 12px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 13px;
+}
+
+/* Apply to td only inside YOUR table */
+.table td {
+    vertical-align: top;
+    padding: 12px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.88);
+}
+
+/* Zebra + hover = instant scan-ability */
+.table tbody tr:nth-child(even) td {
+    background: rgba(0, 0, 0, 0.012);
+}
+
+.table tbody tr:hover td {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+/* Selected row still stands out */
+.selectedRow td {
+    background: rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Keep sticky first col consistent with zebra/hover/selected */
+.table tbody tr:nth-child(even) .tdLeft {
+    background: rgba(0, 0, 0, 0.012);
+}
+
+.table tbody tr:hover .tdLeft {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.selectedRow .tdLeft {
+    background: rgba(0, 0, 0, 0.03) !important;
+}
+
+.tdLeft {
+    vertical-align: top;
+    padding: 12px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.fpName {
+    font-weight: 650;
+    font-size: 13px;
+    line-height: 1.15;
+    word-break: break-word;
+}
+
+.fpSub {
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* ---------- Option cell micro UI ---------- */
+
+.optionTd {
+    /* helps keep the little KPI stack readable */
+    min-width: 160px;
+}
+
+.finBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 650;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.finBadgeOk {
+    background: rgba(0, 170, 90, 0.10);
+    border-color: rgba(0, 170, 90, 0.22);
+}
+
+.finBadgeBad {
+    background: rgba(220, 50, 50, 0.10);
+    border-color: rgba(220, 50, 50, 0.22);
+}
+
+.finLine {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+.finKey {
+    opacity: 0.65;
+    white-space: nowrap;
+}
+
+.finVal {
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+/* ---------- Policy editor ---------- */
+
+.policyCard {
+    margin: 14px 0;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.015);
+}
+
+.policyHead {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.policyTitle {
+    font-weight: 650;
+    font-size: 14px;
+}
+
+.policySub {
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.7;
+    max-width: 720px;
+}
+
+.resetBtn {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: white;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.resetBtn:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.resetBtn:focus {
+    outline: none;
+    box-shadow: 0 0 0 5px rgba(50, 110, 255, 0.16);
+    border-color: rgba(50, 110, 255, 0.55);
+}
+
+.policyGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(160px, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 980px) {
+    .header {
+        flex-direction: column;
+    }
+
+    .meta {
+        justify-content: flex-start;
+    }
+
+    .policyGrid {
+        grid-template-columns: repeat(2, minmax(160px, 1fr));
+    }
+
+    /* on narrower screens, don’t sticky the first column (can feel tight) */
+    .thLeft,
+    .tdLeft {
+        position: static;
+    }
+}
+
+@media (max-width: 560px) {
+    .policyGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Knobs */
+
+.knob {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 10px;
+    background: white;
+}
+
+.knobTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.knobLabel {
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+.knobSuffix {
+    font-size: 12px;
+    font-weight: 650;
+    opacity: 0.9;
+}
+
+.knobInput {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    padding: 8px 10px;
+    font-size: 13px;
+    background: #fff;
+}
+
+.knobInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 5px rgba(50, 110, 255, 0.16);
+    border-color: rgba(50, 110, 255, 0.55);
+}

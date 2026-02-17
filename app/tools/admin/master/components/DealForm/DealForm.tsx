@@ -18,6 +18,8 @@ export function DealForm(props: {
     loading: boolean;
     error: string | null;
     onSubmit: () => void;
+    currentFirstPmtMonthly: string;
+    setCurrentFirstPmtMonthly: (v: string) => void;
 }) {
     const {
         styles,
@@ -33,6 +35,8 @@ export function DealForm(props: {
         loading,
         error,
         onSubmit,
+        currentFirstPmtMonthly,
+        setCurrentFirstPmtMonthly,
     } = props;
 
     return (
@@ -58,6 +62,11 @@ export function DealForm(props: {
                     <div className={styles.field}>
                         <label className={styles.label}>How much is owed</label>
                         <input className={styles.input} value={owed} onChange={(e) => setOwed(e.target.value)} placeholder="$250,000" />
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label}>Current First Payment (Monthly)</label>
+                        <input className={styles.input} value={currentFirstPmtMonthly} onChange={(e) => setCurrentFirstPmtMonthly(e.target.value)} placeholder="$1,000" />
                     </div>
 
                     <div className={styles.field} style={{ gridColumn: "1 / -1" }}>

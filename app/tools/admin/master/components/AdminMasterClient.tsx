@@ -14,12 +14,18 @@ import { InvestmentSection } from "../components/Investment/InvestmentSection";
 import type { Floorplan } from "@/lib/rentcast/types";
 import { useRentcastData } from "@/hooks/rentcast/useRentcastData";
 
+import { FinancingTable } from "../components/Financing/FinancingTable";
+
+
 export default function AdminMasterClient({ initialFloorplans }: { initialFloorplans: Floorplan[] }) {
     const [address, setAddress] = useState("");
     const [owed, setOwed] = useState("");
 
     const [floorplans, setFloorplans] = useState<Floorplan[]>(initialFloorplans);
     const [floorplanId, setFloorplanId] = useState<string>(initialFloorplans?.[0]?._id ?? "");
+
+    const [currentFirstPmtMonthly, setCurrentFirstPmtMonthly] = useState("");
+
 
     useEffect(() => {
         setFloorplans(initialFloorplans);
@@ -59,6 +65,8 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                 loading={loading}
                 error={error}
                 onSubmit={() => getApiData({ address, selectedFloorplan })}
+                currentFirstPmtMonthly={currentFirstPmtMonthly}
+                setCurrentFirstPmtMonthly={setCurrentFirstPmtMonthly}
             />
 
             <InvestmentSection
@@ -68,6 +76,21 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                 owed={owed}
                 selectedFloorplan={selectedFloorplan}
                 allFloorplans={floorplans}
+            />
+
+            <FinancingTable
+                owed={owed}
+                propertyValue={
+                    avm?.price ??
+                    avm?.priceRangeHigh ??
+                    avm?.priceRangeLow ??
+                    property?.lastSalePrice ??
+                    0
+                }
+                floorplans={floorplans}
+                selectedFloorplanId={selectedFloorplan?._id ?? null}
+                termYears={30}
+                currentFirstPmtMonthly={Number(currentFirstPmtMonthly) || 0}
             />
 
 
