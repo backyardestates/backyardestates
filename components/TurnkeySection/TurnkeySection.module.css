@@ -4,13 +4,14 @@
 
 .section {
     width: 100%;
+    margin: 0 auto;
 }
 
 .inner {
     max-width: 72rem;
     margin: 0 auto;
     text-align: center;
-    padding: 6rem 0;
+    padding: 6rem 0 0;
 }
 
 /* Subtle neutral label */
@@ -159,7 +160,8 @@
 
 .phaseTitleRow {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 0.75rem;
 }
@@ -175,19 +177,19 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.45rem 0.65rem;
+    padding: 0.45rem 0;
     border-radius: 999px;
-    background: var(--color-brand-beige);
-    color: white;
-    font-weight: 700;
-    font-size: 0.9rem;
-    font-family: var(--font-sans);
+    /* background: var(--color-brand-beige); */
+    color: var(--color-brand-beige);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2vw, 1.25rem);
+    font-family: var(--font-serif);
     white-space: nowrap;
 }
 
 .chipIcon {
-    width: 16px;
-    height: 16px;
+    width: 32px;
+    height: 32px;
     stroke-width: 2;
 }
 
@@ -264,7 +266,7 @@
 @media (max-width: 980px) {
 
     .inner {
-        padding: 4rem 0 2rem;
+        padding: 4rem 0 0;
     }
 
 

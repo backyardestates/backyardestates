@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, Clock } from "lucide-react";
 import styles from "./TurnkeySection.module.css";
+import SoftCTA from "../SoftCTA";
 
 type PhaseKey = "plans" | "permits" | "construction";
 
@@ -55,7 +56,7 @@ const DEFAULT_PHASES: Phase[] = [
     {
         key: "construction",
         title: "Construction",
-        timeline: "5–10 Weeks",
+        timeline: "6–10 Weeks",
         items: [
             "Dedicated PM + Superintendent",
             "Weekly Updates",
@@ -116,7 +117,7 @@ export function TurnkeySection({
                 }
                 return prev + 1;
             });
-        }, 1000);
+        }, 2000);
     };
 
     const inViewRef = useRef(false);
@@ -146,7 +147,7 @@ export function TurnkeySection({
                     startAutoplay();
                 };
             },
-            { threshold: 0.55 }
+            { threshold: 0.75 }
         );
 
         obs.observe(el);
@@ -300,11 +301,11 @@ export function TurnkeySection({
                             >
                                 <div className={styles.phaseTop}>
                                     <div className={styles.phaseTitleRow}>
-                                        <div className={styles.phaseTitle}>{p.title}</div>
                                         <span className={styles.timelineChip}>
                                             <Clock className={styles.chipIcon} aria-hidden="true" />
                                             {p.timeline}
                                         </span>
+                                        <div className={styles.phaseTitle}>{p.title}</div>
                                     </div>
                                 </div>
 
@@ -317,10 +318,12 @@ export function TurnkeySection({
                                     ))}
                                 </ul>
                             </button>
+
                         );
                     })}
                 </div>
             </div>
+            <SoftCTA linkText="See what is included" href="/standard-inclusions" />
         </section>
     );
 }
