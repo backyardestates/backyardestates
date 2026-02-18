@@ -17,6 +17,7 @@ import Modal from '@/components/Modal'
 import RSVPModalWrapper from '@/components/RSVPSucessWrapper'
 import { Suspense } from 'react'
 import Banner from '@/components/Banners/Banner'
+import { TurnkeySection } from '@/components/TurnkeySection/TurnkeySection'
 
 const title = 'Backyard Estates - Premier ADU builder'
 const description =
@@ -67,6 +68,7 @@ export default async function Home() {
             <Banner events={events} />
             <CustomerStories stories={stories} />
             <Floorplans showNav />
+            <TurnkeySection />
             <div className={style.inclusions}>
                 <h2 className={style.title}>Standard inclusions</h2>
                 <p className={style.explanation}>

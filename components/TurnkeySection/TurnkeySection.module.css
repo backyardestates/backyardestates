@@ -1,0 +1,310 @@
+/* =============================== */
+/* Section — clean luxury base     */
+/* =============================== */
+
+.section {
+    width: 100%;
+}
+
+.inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    text-align: center;
+    padding: 6rem 0;
+}
+
+/* Subtle neutral label */
+.label {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+    margin-bottom: 2.25rem;
+    font-weight: 500;
+    font-family: var(--font-serif);
+}
+
+.header {
+    margin-bottom: 2.75rem;
+}
+
+.h2 {
+    font-size: clamp(2.1rem, 4.2vw, 3.2rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+    color: var(--color-brand-dark-blue);
+    font-weight: 700;
+    font-family: var(--font-serif);
+}
+
+.subhead {
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 48rem;
+    color: rgba(0, 0, 0, 0.62);
+    font-family: var(--font-sans);
+}
+
+/* ======================================== */
+/* Stepper (progress bar)                   */
+/* ======================================== */
+
+.stepper {
+    max-width: 48rem;
+    margin: 0 auto 2.25rem;
+    padding: 0 1rem;
+}
+
+.stepperTrack {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    position: relative;
+}
+
+.stepperFill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--color-brand-beige);
+    transition: width 240ms ease;
+}
+
+.stepperRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+}
+
+.stepDot {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    background: rgba(255, 255, 255, 0.85);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: transform 200ms ease, border-color 200ms ease, background 200ms ease;
+}
+
+.stepDot:hover {
+    transform: translateY(-1px);
+    border-color: rgba(0, 0, 0, 0.22);
+}
+
+.stepDotActive {
+    border-color: var(--color-brand-beige);
+    background: var(--color-brand-beige-subtle);
+}
+
+.stepDotInner {
+    font-weight: 700;
+    font-family: var(--font-serif);
+    color: rgba(0, 0, 0, 0.78);
+}
+
+/* ======================================== */
+/* 3-column checklist cards                  */
+/* ======================================== */
+
+.phaseGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    align-items: stretch;
+    max-width: 72rem;
+    margin: 0 auto;
+}
+
+.phaseCard {
+    text-align: left;
+    border-radius: 22px;
+    padding: 1.35rem 1.35rem 1.2rem;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.phaseCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.10);
+    border-color: var(--color-brand-beige);
+}
+
+.phaseCard:focus-visible {
+    outline: 3px solid rgba(10, 88, 202, 0.25);
+    outline-offset: 3px;
+}
+
+.phaseCardActive {
+    border-width: 2px;
+    border-color: var(--color-brand-beige);
+    background: var(--color-brand-beige-subtle);
+}
+
+.phaseTop {
+    margin-bottom: 0.9rem;
+}
+
+.phaseTitleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.phaseTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.92);
+    font-family: var(--font-serif);
+}
+
+.timelineChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: 999px;
+    background: var(--color-brand-beige);
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+}
+
+.chipIcon {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+}
+
+/* Checklist */
+.checkList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.7rem;
+}
+
+.checkItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+}
+
+.checkIcon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--color-brand-beige);
+    opacity: 0.9;
+    stroke-width: 2;
+}
+
+.checkText {
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: rgba(0, 0, 0, 0.82);
+    font-family: var(--font-sans);
+}
+
+.moreLine {
+    margin-top: 0.85rem;
+    font-size: 0.92rem;
+    color: rgba(0, 0, 0, 0.55);
+    font-family: var(--font-sans);
+}
+
+/* ======================================== */
+/* Fade-in + slide-up luxury animation       */
+/* ======================================== */
+
+.fadeInUp {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeInUp 0.7s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translateY(4px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =============================== */
+/* Responsive                        */
+/* =============================== */
+
+@media (max-width: 980px) {
+
+    .inner {
+        padding: 4rem 0 2rem;
+    }
+
+
+    /* Make it a horizontal carousel */
+    .phaseGrid {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        overflow-y: visible;
+        padding: 0.25rem 0.25rem 2rem;
+        scroll-snap-type: x mandatory;
+        scroll-padding: 1.25rem;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 1rem;
+    }
+
+    /* Hide scrollbar (optional, keeps it clean) */
+    .phaseGrid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .phaseGrid {
+        scrollbar-width: none;
+    }
+
+    /* Each card becomes a “slide” */
+    .phaseCard {
+        flex: 0 0 86%;
+        scroll-snap-align: center;
+    }
+
+    /* Keep your dot row centered on mobile */
+    .stepperRow {
+        justify-content: center;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .phaseCard {
+        flex-basis: 92%;
+    }
+}
