@@ -119,6 +119,20 @@ export function TurnkeySection({
         }, 1000);
     };
 
+    const inViewRef = useRef(false);
+    const isCarouselRef = useRef(false);
+
+    useEffect(() => {
+        // Track whether we are in "carousel mode" (mobile/tablet)
+        const mql = window.matchMedia("(max-width: 980px)");
+        const update = () => {
+            isCarouselRef.current = mql.matches;
+        };
+        update();
+        mql.addEventListener?.("change", update);
+        return () => mql.removeEventListener?.("change", update);
+    }, []);
+
     useEffect(() => {
         const el = sectionRef.current;
         if (!el) return;
@@ -127,7 +141,10 @@ export function TurnkeySection({
             (entries) => {
                 const entry = entries[0];
                 if (!entry) return;
-                if (entry.isIntersecting) startAutoplay();
+                if (entry.isIntersecting) {
+                    inViewRef.current = true;
+                    startAutoplay();
+                };
             },
             { threshold: 0.55 }
         );
@@ -151,9 +168,14 @@ export function TurnkeySection({
         const card = cardRefs.current[idx];
         if (!wrap || !card) return;
 
-        // Only matters on mobile/tablet where wrap is horizontally scrollable.
-        // On desktop it’s a grid; scrollIntoView is harmless but unnecessary.
+        // ✅ Prevent page jump:
+        // only auto-scroll once the section is actually in view
+        // and only when carousel layout is active (mobile/tablet)
+        if (!inViewRef.current) return;
+        if (!isCarouselRef.current) return;
+
         isProgrammaticScrollRef.current = true;
+
         card.scrollIntoView({
             behavior: "smooth",
             inline: "center",
