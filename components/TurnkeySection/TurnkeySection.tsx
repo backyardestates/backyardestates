@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, Clock } from "lucide-react";
 import styles from "./TurnkeySection.module.css";
 
-type PhaseKey = "plans" | "permitting" | "construction";
+type PhaseKey = "plans" | "permits" | "construction";
 
 type Phase = {
     key: PhaseKey;
@@ -38,8 +38,8 @@ const DEFAULT_PHASES: Phase[] = [
         ],
     },
     {
-        key: "permitting",
-        title: "Permitting",
+        key: "permits",
+        title: "Permits",
         timeline: "As Fast as 6 Weeks",
         items: [
             "Planning Department",
