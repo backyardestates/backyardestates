@@ -12,7 +12,7 @@ import style from './page.module.css'
 import CustomerStories from '@/components/CustomerStories'
 
 import { sanityFetch } from '@/sanity/live'
-import { ALL_OPEN_HOUSES_QUERY, CUSTOMER_STORIES_QUERY } from '@/sanity/queries'
+import { ALL_OPEN_HOUSES_QUERY, CUSTOMER_STORIES_QUERY, SELECTIONS_QUERY } from '@/sanity/queries'
 import Modal from '@/components/Modal'
 import RSVPModalWrapper from '@/components/RSVPSucessWrapper'
 import { Suspense } from 'react'
@@ -61,6 +61,10 @@ export default async function Home() {
         query: ALL_OPEN_HOUSES_QUERY
     })
 
+    const { data: selections } = await sanityFetch({
+        query: SELECTIONS_QUERY
+    })
+
 
     return (
         <div className={style.container}>
@@ -70,15 +74,15 @@ export default async function Home() {
             <Floorplans showNav />
             <TurnkeySection />
             <div className={style.inclusions}>
-                <h2 className={style.title}>Standard inclusions</h2>
+                <h2 className={style.title}>Standard Finishes</h2>
                 <p className={style.explanation}>
-                    We provide complete transparency on the exact inclusions of
+                    We provide complete transparency on the exact finishes of
                     our standard and custom ADU builds
                 </p>
                 <StandaloneLink href="/standard-inclusions" theme="beige">
                     View inclusions
                 </StandaloneLink>
-                <InclusionsHomePanel />
+                <InclusionsHomePanel selections={selections} />
             </div>
             <Benefits />
             <Process />
