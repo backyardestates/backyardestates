@@ -73,17 +73,7 @@ export default async function Home() {
             <CustomerStories stories={stories} />
             <Floorplans showNav />
             <TurnkeySection />
-            <div className={style.inclusions}>
-                <h2 className={style.title}>Standard Finishes</h2>
-                <p className={style.explanation}>
-                    We provide complete transparency on the exact finishes of
-                    our standard and custom ADU builds
-                </p>
-                <StandaloneLink href="/standard-inclusions" theme="beige">
-                    View inclusions
-                </StandaloneLink>
-                <InclusionsHomePanel selections={selections} />
-            </div>
+            <InclusionsHomePanel selections={selections} />
             <Benefits />
             <Process />
             <Properties />

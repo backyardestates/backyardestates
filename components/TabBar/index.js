@@ -24,24 +24,18 @@ export default function TabBar() {
     return (
         <>
             <ul className={style.base}>
-                {collections.map((collection, index) => (
-                    <li key={index}>
-                        <TabBarButton
-                            id={collection.id}
-                            value={collection.value}
-                        >
-                            {collection.name}
-                        </TabBarButton>
+                {collections.map((collection) => (
+                    <li key={collection.id} className={style.item}>
+                        <TabBarButton id={collection.id} value={collection.value} />
                     </li>
                 ))}
                 {preview.isCustom && (
-                    <li>
-                        <TabBarButton id={99} value="custom">
-                            Custom package
-                        </TabBarButton>
+                    <li className={style.item}>
+                        <TabBarButton id={99} value="custom" />
                     </li>
                 )}
             </ul>
+
         </>
     )
 }

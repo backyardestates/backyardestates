@@ -10,10 +10,17 @@ import type { PackageKey } from "@/lib/inclusions/packages";
 import { flattenSelectionsToIdMap } from "@/lib/inclusions/flattenSelections";
 import { buildPackageDisplay } from "@/lib/inclusions/buildPackageDisplay";
 import SelectionsGallery from "../SelectionsGallery";
-import { groupSelections } from "@/lib/groupSelections";
 import { groupSelectionsFromPackage } from "@/lib/inclusions/groupSelections";
+import SoftCTA from "../SoftCTA";
 
-export const PreviewHomeContext = createContext<any>(null);
+import type { PreviewContextValue, PreviewState } from "@/components/TabBarButton";
+
+const DEFAULT_PREVIEW: PreviewState = { collection: "light", isCustom: false };
+
+export const PreviewHomeContext = createContext<PreviewContextValue>({
+    preview: DEFAULT_PREVIEW,
+    setPreview: () => { }, // safe default; real value provided by Provider
+});
 
 export default function InclusionsHomePanel({ selections }: { selections: any }) {
     const [preview, setPreview] = useState<{ collection: PackageKey }>({ collection: "light" });
@@ -33,11 +40,21 @@ export default function InclusionsHomePanel({ selections }: { selections: any })
     const groupedSelections = useMemo(() => {
         return groupSelectionsFromPackage(packageItems);
     }, [packageItems]);
+    const label = "YOUR ADU. YOUR WAY.";
+    const headline = "Fully Custom. Surprisingly Simple.";
+    const subheadline = "Choose from our high-quality standard finishes or upgrade any selection to match your vision.";
 
     return (
         <PreviewHomeContext.Provider value={{ preview, setPreview }}>
+
             <div className={style.base}>
                 <div className={style.interface}>
+                    <p className={`${style.label} ${style.fadeInUp}`}>{label}</p>
+
+                    <header className={`${style.header} ${style.fadeInUp}`} style={{ animationDelay: "60ms" }}>
+                        <h2 className={style.h2}>{headline}</h2>
+                        <p className={style.subhead}>{subheadline}</p>
+                    </header>
                     <div className={style.header}>
                         <TabBar />
                     </div>
@@ -54,7 +71,9 @@ export default function InclusionsHomePanel({ selections }: { selections: any })
 
                     <SelectionsGallery data={groupedSelections} variant="property" />
                 </div>
+                <SoftCTA href="/selections" linkText="See Our Standard Finishes" />
             </div>
+
         </PreviewHomeContext.Provider>
     );
 }

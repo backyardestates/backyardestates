@@ -35,6 +35,21 @@ const SLOT_LABEL: Record<PackageSlot, string> = {
     bathroomFaucet: "Bathroom Faucet",
     flooring: "Flooring",
     showerTile: "Shower Tile",
+
+    kitchenSink: "Kitchen Sink",
+    kitchenFaucet: "Kitchen Faucet",
+    dishwasher: "Dishwasher",
+    fridge: "Fridge",
+    microwave: "Microwave",
+    range: "Range",
+
+    bathroomSink: "Bathroom Sink",
+    toilet: "Toilet",
+    bathtubInsert: "Bathtub Insert",
+    showerPanInsert: "Shower Pan Insert",
+
+    recessedLighting: "Recessed Lighting",
+    orangePeelWallFinish: "Orange Peel Wall Finish",
 };
 
 export function buildPackageDisplay(opts: {
