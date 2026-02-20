@@ -12,11 +12,13 @@ import style from './page.module.css'
 import CustomerStories from '@/components/CustomerStories'
 
 import { sanityFetch } from '@/sanity/live'
-import { ALL_OPEN_HOUSES_QUERY, CUSTOMER_STORIES_QUERY } from '@/sanity/queries'
+import { ALL_OPEN_HOUSES_QUERY, CUSTOMER_STORIES_QUERY, SELECTIONS_QUERY } from '@/sanity/queries'
 import Modal from '@/components/Modal'
 import RSVPModalWrapper from '@/components/RSVPSucessWrapper'
 import { Suspense } from 'react'
 import Banner from '@/components/Banners/Banner'
+import { TurnkeySection } from '@/components/TurnkeySection/TurnkeySection'
+import OfficeVisitSection from '@/components/OfficeVisit/OfficeVisit'
 
 const title = 'Backyard Estates - Premier ADU builder'
 const description =
@@ -60,6 +62,10 @@ export default async function Home() {
         query: ALL_OPEN_HOUSES_QUERY
     })
 
+    const { data: selections } = await sanityFetch({
+        query: SELECTIONS_QUERY
+    })
+
 
     return (
         <div className={style.container}>
@@ -67,19 +73,11 @@ export default async function Home() {
             <Banner events={events} />
             <CustomerStories stories={stories} />
             <Floorplans showNav />
-            <div className={style.inclusions}>
-                <h2 className={style.title}>Standard inclusions</h2>
-                <p className={style.explanation}>
-                    We provide complete transparency on the exact inclusions of
-                    our standard and custom ADU builds
-                </p>
-                <StandaloneLink href="/standard-inclusions" theme="beige">
-                    View inclusions
-                </StandaloneLink>
-                <InclusionsHomePanel />
-            </div>
+            <TurnkeySection />
+            <InclusionsHomePanel selections={selections} />
             <Benefits />
-            <Process />
+            {/* <Process /> */}
+            <OfficeVisitSection wistiaId='zezemmgiam' />
             <Properties />
             <Footer />
             <Suspense fallback={null}>

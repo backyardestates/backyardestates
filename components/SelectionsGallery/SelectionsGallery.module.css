@@ -253,6 +253,7 @@
     grid: unset;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .property .typeBlock .card {
@@ -264,5 +265,14 @@
     .property .typeBlock .card {
         height: 250px;
         width: 160px;
+    }
+
+    .wrapper {
+        padding-inline: 0;
+    }
+
+    .types {
+        justify-content: center;
+        gap: 0.5rem;
     }
 }

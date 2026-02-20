@@ -1,0 +1,211 @@
+/* components/GetStartedOfficeVisitSection.module.css */
+
+.section {
+    width: 100%;
+    padding: 72px 16px;
+}
+
+.container {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Subtle neutral label */
+.label {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+    margin-bottom: 2.25rem;
+    font-weight: 500;
+    font-family: var(--font-serif);
+}
+
+.header {
+    margin-bottom: 2.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.h2 {
+    font-size: clamp(2.1rem, 4.2vw, 3.2rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+    color: var(--color-brand-dark-blue);
+    font-weight: 700;
+    font-family: var(--font-serif);
+}
+
+.subhead {
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 52rem;
+    color: rgba(0, 0, 0, 0.62);
+    font-family: var(--font-sans);
+    text-align: center;
+}
+
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.videoCard {
+    border-radius: 18px;
+    width: 100%;
+}
+
+.copyCard {
+    border-radius: 18px;
+    width: 100%;
+}
+
+.videoFrame {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.copyCard {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 14px;
+}
+
+.bullet {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    gap: 12px;
+    align-items: start;
+}
+
+.iconWrap {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 12px;
+    background: rgba(173, 141, 95, 0.14);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    color: var(--color-brand-beige);
+}
+
+.bulletTitle {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.2rem;
+    font-family: var(--font-serif);
+}
+
+.bulletText {
+    margin: 6px 0 0 0;
+    line-height: 1.55;
+    opacity: 0.85;
+    font-size: 14px;
+    font-family: var(--font-sans);
+}
+
+.ctaRow {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.primaryCta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 14px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    background: rgba(173, 141, 95, 1);
+    color: #fff;
+    box-shadow: 0 12px 20px rgba(173, 141, 95, 0.25);
+    font-family: var(--font-sans);
+}
+
+.primaryCta:hover {
+    transform: translateY(-1px);
+}
+
+.ctaIcon {
+    width: 18px;
+    height: 18px;
+}
+
+.secondaryCta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 14px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 500;
+    color: rgba(17, 17, 17, 0.9);
+    border: 1px solid rgba(173, 141, 95, 0.35);
+    background: rgba(255, 255, 255, 0.8);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+}
+
+.secondaryCta:hover {
+    background: rgba(173, 141, 95, 0.08);
+}
+
+.finePrint {
+    margin: 12px 0 0 0;
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.7;
+    font-family: var(--font-sans);
+}
+
+@media (min-width: 960px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .ctaRow {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+
+    .primaryCta,
+    .secondaryCta {
+        flex: 1;
+    }
+
+    .copyCard {
+        padding: 20px;
+    }
+}
