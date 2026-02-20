@@ -45,10 +45,8 @@ export default function OfficeVisitSection({
 
                 <div className={styles.grid}>
                     <div className={styles.videoCard}>
-                        <div className={styles.videoFrame}>
 
-                            <VideoPlayer wistiaID={wistiaId} />
-                        </div>
+                        <VideoPlayer wistiaID={wistiaId} />
                     </div>
 
                     <div className={styles.copyCard}>
