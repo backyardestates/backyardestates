@@ -18,6 +18,7 @@ import RSVPModalWrapper from '@/components/RSVPSucessWrapper'
 import { Suspense } from 'react'
 import Banner from '@/components/Banners/Banner'
 import { TurnkeySection } from '@/components/TurnkeySection/TurnkeySection'
+import OfficeVisitSection from '@/components/OfficeVisit/OfficeVisit'
 
 const title = 'Backyard Estates - Premier ADU builder'
 const description =
@@ -75,7 +76,8 @@ export default async function Home() {
             <TurnkeySection />
             <InclusionsHomePanel selections={selections} />
             <Benefits />
-            <Process />
+            {/* <Process /> */}
+            <OfficeVisitSection wistiaId='zezemmgiam' />
             <Properties />
             <Footer />
             <Suspense fallback={null}>
