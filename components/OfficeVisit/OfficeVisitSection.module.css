@@ -60,7 +60,6 @@
 }
 
 .videoCard {
-    border-radius: 18px;
     width: 100%;
 }
 
@@ -69,11 +68,6 @@
     width: 100%;
 }
 
-.videoFrame {
-    position: relative;
-    width: 100%;
-    height: auto;
-}
 
 .copyCard {
     padding: 18px;
