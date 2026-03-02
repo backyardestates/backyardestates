@@ -4,7 +4,7 @@ import { type SanityDocument } from "next-sanity";
 import StandaloneLink from "../StandaloneLink";
 import style from "./Properties.module.css";
 
-import { PROPERTIES_QUERY } from "@/sanity/queries";
+import { FEATURED_PROPERTIES_QUERY } from "@/sanity/queries";
 import PropertyCard from "../PropertyCard";
 import SoftCTA from "../SoftCTA";
 
@@ -12,7 +12,7 @@ const options = { next: { revalidate: 30 } };
 
 export default async function Properties() {
     const properties = await client.fetch<SanityDocument[]>(
-        PROPERTIES_QUERY,
+        FEATURED_PROPERTIES_QUERY,
         {},
         options
     );
