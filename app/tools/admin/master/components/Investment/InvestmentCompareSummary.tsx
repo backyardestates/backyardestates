@@ -17,86 +17,83 @@ function pct(n?: number | null) {
  * Shows the exact outputs you asked for, for EACH compared ADU.
  * Expects only ADU scenarios (kind === "adu"), but will safely handle anything.
  */
+// InvestmentCompareSummary.tsx
 export function InvestmentCompareSummary({
     styles,
     adus,
+    rentByAduId,
+    setRentByAduId,
 }: {
-    styles: any; // pass AdminMasterClient.module.css in
+    styles: any;
     adus: Scenario[];
+    rentByAduId: Record<string, string>;
+    setRentByAduId: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }) {
     const list = (adus ?? []).filter((s) => s.kind === "adu");
 
-    if (!list.length) {
-        return (
-            <section className={styles.card}>
-                <h2 className={styles.cardTitle}>ADU Comparison Snapshot</h2>
-                <div className={styles.cardBody}>
-                    <div className={styles.empty}>No ADUs selected for comparison.</div>
-                </div>
-            </section>
-        );
-    }
+    const [editingKey, setEditingKey] = React.useState<string | null>(null);
+
+    if (!list.length) { /* ... */ }
 
     return (
         <section className={styles.results}>
             {list.map((adu) => {
-                // “Equity Boost” = your Year 1 equity boost (avg of income + sqft + premium)
-                // If you truly want only income + sqft (no premium), see note below.
-                const equityBoost = adu.year1EquityBoost;
-                console.log(adu)
+                // scenario key is "adu_<floorplanId>"
+                const aduId = adu.key.startsWith("adu_") ? adu.key.slice(4) : adu.key;
+                const isEditing = editingKey === adu.key;
+
+                const currentValue = rentByAduId[aduId] ?? "";
 
                 return (
                     <div key={adu.key} className={styles.card}>
                         <h2 className={styles.cardTitle}>{adu.title}</h2>
 
                         <div className={styles.cardBody}>
-                            {/* Est at e 1200 (sqft) */}
-                            {/* <Row styles={styles} label="Estimate at" value={adu.sqft ? `${adu.sqft.toLocaleString()} sf` : "—"} /> */}
-
-                            {/* Financed Amount : 100%  -> derived from downPaymentRate */}
                             <Row styles={styles} label="Cost" value={money(adu.purchasePrice)} />
                             <Row
                                 styles={styles}
                                 label="Financed Amount"
-                                value={
-                                    typeof adu.downPaymentRate === "number"
-                                        ? `${Math.round((1 - adu.downPaymentRate) * 100)}%`
-                                        : "—"
-                                }
+                                value={typeof adu.downPaymentRate === "number" ? `${Math.round((1 - adu.downPaymentRate) * 100)}%` : "—"}
                             />
-
-                            {/* Cash out-of-pocket */}
                             <Row styles={styles} label="Cash out-of-pocket" value={money(adu.outOfPocket)} />
-                            {/* Estimated Payment (your monthlyCost includes mtg + tax + insurance + maintenance) */}
                             <Row styles={styles} label="Est. Payment" value={money(adu.monthlyCost)} />
-                            {/* Estimated Rent */}
-                            <Row styles={styles} label="Estimated Rent" value={money(adu.rentMonthly)} />
 
-                            {/* (6.5% 30 Yr Term) */}
-                            {/* <Row
-                                styles={styles}
-                                label="Loan terms"
-                                value={
-                                    typeof adu.interestRate === "number" && typeof adu.termYears === "number"
-                                        ? `${(adu.interestRate * 100).toFixed(1)}% • ${adu.termYears} yr`
-                                        : "—"
-                                }
-                            /> */}
+                            {/* ✅ Inline editable rent row */}
+                            <div className={styles.row}>
+                                <div className={styles.rowLabel}>Estimated Rent</div>
+                                <div className={styles.rowValue}>
+                                    {isEditing ? (
+                                        <input
+                                            className={styles.input ?? ""} // use your input class if you have one
+                                            autoFocus
+                                            value={currentValue}
+                                            onChange={(e) =>
+                                                setRentByAduId((prev) => ({ ...prev, [aduId]: e.target.value }))
+                                            }
+                                            onBlur={() => setEditingKey(null)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter") setEditingKey(null);
+                                                if (e.key === "Escape") setEditingKey(null);
+                                            }}
+                                            placeholder="$0"
+                                        />
+                                    ) : (
+                                        <span
+                                            style={{ cursor: "pointer" }}
+                                            title="Click to edit"
+                                            onClick={() => setEditingKey(adu.key)}
+                                        >
+                                            {money(adu.rentMonthly)}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
 
-                            {/* Monthly Cashflow */}
                             <Row styles={styles} label="Monthly Cashflow" value={money(adu.cashflowMonthly)} />
-
-                            {/* Equity Boost */}
-                            <Row styles={styles} label="Equity Boost" value={money(equityBoost)} />
+                            <Row styles={styles} label="Equity Boost" value={money(adu.year1EquityBoost)} />
                             <Row styles={styles} label="Year 5" value={money(adu.year5EquityBoost)} />
                             <Row styles={styles} label="Year 10" value={money(adu.year10EquityBoost)} />
-
-                            {/* (Income and square footage approach) - show both numbers explicitly */}
-                            {/* <Row styles={styles} label="Income approach" value={money(adu.incomeValue)} />
-                            <Row styles={styles} label="Sqft approach" value={money(adu.sqftValue)} /> */}
-                            {/* Return on investment */}
                             <Row styles={styles} label="Return on investment" value={pct(adu.roi)} />
-
                         </div>
                     </div>
                 );

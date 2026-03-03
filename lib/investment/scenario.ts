@@ -301,18 +301,28 @@ function calcScenarioBase(input: {
 }
 
 
-
 export function buildScenarios(input: {
     defaults: Defaults;
     housePrice?: number;
     houseRentEstimate?: number;
-    subjectSqft?: number;
     rentals: RentalListing[];
     selectedAdus: Floorplan[];
-    market: RentcastMarketStats | null;
+    subjectSqft?: number;
+    market?: any;
+    siteWorkByAduId?: Record<string, number>;
+    rentByAduId?: Record<string, number | undefined>;
 }): Scenario[] {
-
-    const { defaults, housePrice, houseRentEstimate, subjectSqft, rentals, selectedAdus, market } = input;
+    const {
+        defaults,
+        housePrice,
+        houseRentEstimate,
+        subjectSqft,
+        rentals,
+        selectedAdus,
+        market,
+        siteWorkByAduId = {}, // ✅ default
+        rentByAduId = {}, // ✅ default
+    } = input;
 
     const estatesOrdered = [
         { key: "estate_350", sqft: 350, beds: 0, baths: 1 },
@@ -320,7 +330,7 @@ export function buildScenarios(input: {
         { key: "estate_450", sqft: 450, beds: 1, baths: 1 },
         { key: "estate_600", sqft: 600, beds: 1, baths: 1 },
         { key: "estate_750", sqft: 750, beds: 2, baths: 1 },
-        { key: "estate_750_plus", sqft: 750, beds: 2, baths: 2 }, // <-- separates via premium
+        { key: "estate_750_plus", sqft: 750, beds: 2, baths: 2 },
         { key: "estate_800", sqft: 800, beds: 2, baths: 2 },
         { key: "estate_950", sqft: 950, beds: 3, baths: 2 },
         { key: "estate_1200", sqft: 1200, beds: 3, baths: 2 },
@@ -358,12 +368,9 @@ export function buildScenarios(input: {
             basePropertyValue: housePrice ?? 0,
             basePropertySqft: subjectSqft ?? 0,
 
-            rentEstimateDebug: {
-                method: "house_scaled_median",
-            },
+            rentEstimateDebug: { method: "house_scaled_median" },
         })
     );
-
 
     // ADUs
     for (const fp of selectedAdus) {
@@ -377,14 +384,33 @@ export function buildScenarios(input: {
             ladderPreviewCount: 6,
         });
 
+        const rentOverride = input.rentByAduId?.[fp._id];
+        const finalRent = (typeof rentOverride === "number" && Number.isFinite(rentOverride))
+            ? rentOverride
+            : rent;
+
+        // ✅ site work add-on for this ADU (per compared unit)
+        const siteWork = Number.isFinite(siteWorkByAduId[fp._id])
+            ? (siteWorkByAduId[fp._id] as number)
+            : 0;
+
+        // ✅ base ADU price (guard against undefined)
+        const baseAduPrice = typeof fp.price === "number" ? fp.price : 0;
+
+        // ✅ final “effective” ADU cost used everywhere downstream
+        const effectiveAduPrice = baseAduPrice + siteWork;
+
         out.push(
             calcScenarioBase({
                 key: `adu_${fp._id}`,
                 title: `ADU — ${fp.name} (${fp.sqft} SF)`,
                 kind: "adu",
                 sqft: fp.sqft,
-                rentMonthly: rent,
-                purchasePrice: fp.price,
+                rentMonthly: finalRent,
+
+                // ✅ IMPORTANT: use effective price
+                purchasePrice: effectiveAduPrice,
+
                 remodelCost: 0,
 
                 downPaymentRate: defaults.downPaymentRateAdu,
@@ -406,7 +432,15 @@ export function buildScenarios(input: {
                 basePropertyValue: housePrice ?? 0,
                 basePropertySqft: subjectSqft ?? 0,
 
-                rentEstimateDebug: debug,
+                // ✅ keep existing debug + add cost breakdown so “Show Calculations” can reveal it
+                rentEstimateDebug: {
+                    ...debug,
+                    costInputs: {
+                        baseAduPrice,
+                        siteWork,
+                        effectiveAduPrice,
+                    },
+                },
             })
         );
     }

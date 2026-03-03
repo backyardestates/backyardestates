@@ -50,6 +50,10 @@ export function InvestmentSection({
     setCurrentFirstPmtMonthly: React.Dispatch<React.SetStateAction<string>>;
 }) {
     const { market } = useRentcastData();
+    const [siteWorkByAduId, setSiteWorkByAduId] = useState<Record<string, string>>({});
+    const [defaultSiteWork, setDefaultSiteWork] = useState<string>(""); // optional global default
+    const [rentByAduId, setRentByAduId] = useState<Record<string, string>>({});
+
     const owedNum = useMemo(() => asNumber(owed) ?? 0, [owed]);
 
     const subjectSqft = avm?.subjectProperty?.squareFootage ?? property?.squareFootage ?? undefined;
@@ -91,8 +95,28 @@ export function InvestmentSection({
                 selectedAdus,
                 subjectSqft,
                 market,
+
+                siteWorkByAduId: Object.fromEntries(
+                    selectedAdus.map((fp) => [fp._id, asNumber(siteWorkByAduId[fp._id] ?? defaultSiteWork) ?? 0])
+                ),
+
+                // ✅ NEW: rent overrides (per ADU)
+                rentByAduId: Object.fromEntries(
+                    selectedAdus.map((fp) => [fp._id, asNumber(rentByAduId[fp._id]) ?? undefined])
+                ),
             }),
-        [defaults, housePrice, houseRentEstimate, rentals, selectedAdus, subjectSqft, market]
+        [
+            defaults,
+            housePrice,
+            houseRentEstimate,
+            rentals,
+            selectedAdus,
+            subjectSqft,
+            market,
+            siteWorkByAduId,
+            defaultSiteWork,
+            rentByAduId,
+        ]
     );
 
     const columns = useMemo(() => scenarios.map((s) => ({ key: s.key, title: s.title, sqft: s.sqft })), [scenarios]);
@@ -125,7 +149,53 @@ export function InvestmentSection({
 
     return (
         <div className={tableStyles.wrap}>
-            <InvestmentCompareSummary styles={adminStyles} adus={aduScenarios} />
+            <div className={tableStyles.topActions} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                    <label style={{ minWidth: 220 }}>Default site-specific work</label>
+                    <input
+                        className={adminStyles.input} // or tableStyles.input, whichever you use
+                        value={defaultSiteWork}
+                        onChange={(e) => setDefaultSiteWork(e.target.value)}
+                        placeholder="$0"
+                    />
+                    <button
+                        className={adminStyles.button}
+                        type="button"
+                        onClick={() => {
+                            // apply default to currently selected ADUs (optional helper)
+                            setSiteWorkByAduId((prev) => {
+                                const next = { ...prev };
+                                for (const fp of selectedAdus) next[fp._id] = defaultSiteWork;
+                                return next;
+                            });
+                        }}
+                    >
+                        Apply to compared ADUs
+                    </button>
+                </div>
+
+                <div style={{ display: "flex", gap: 8, justifyContent: "space-between", flexWrap: "wrap", width: "100%" }}>
+                    {selectedAdus.map((fp) => (
+                        <div key={fp._id} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                            <label style={{ minWidth: 220 }}>{fp.name} site work</label>
+                            <input
+                                className={adminStyles.input}
+                                value={siteWorkByAduId[fp._id] ?? ""}
+                                onChange={(e) =>
+                                    setSiteWorkByAduId((prev) => ({ ...prev, [fp._id]: e.target.value }))
+                                }
+                                placeholder="$0"
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <InvestmentCompareSummary
+                styles={adminStyles}
+                adus={aduScenarios}
+                rentByAduId={rentByAduId}
+                setRentByAduId={setRentByAduId}
+            />
 
             <InvestmentControls
                 defaults={defaults}
