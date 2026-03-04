@@ -113,6 +113,10 @@
 }
 
 .cta {
+    display: block;
+}
+
+.label {
     display: none;
 }
 
@@ -132,9 +136,11 @@
     .root {
         box-shadow: 0px 4px 16px 0px rgba(54, 72, 75, 0.15);
     }
+
     .container {
         width: 100%;
     }
+
     .links {
         display: flex;
         gap: 32px;
@@ -144,9 +150,11 @@
         padding: 0;
         list-style: none;
     }
+
     .menu {
         display: none;
     }
+
     .cta {
         display: block;
     }
@@ -157,16 +165,20 @@
     .root {
         box-shadow: 0px 4px 16px 0px rgba(54, 72, 75, 0.15);
     }
+
     .container {
         margin: 0 auto;
         max-width: 90rem;
     }
+
     .links {
         display: flex;
     }
+
     .menu {
         display: none;
     }
+
     .cta {
         display: block;
     }

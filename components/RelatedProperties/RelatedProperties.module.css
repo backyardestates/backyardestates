@@ -47,7 +47,7 @@
 } */
 
 
-.scroller {
+/* .scroller {
     display: flex;
     gap: 1.5rem;
     padding: 2rem 0 2rem 1.5rem;
@@ -61,7 +61,7 @@
     width: 100%;
     height: -moz-fit-content;
     height: fit-content;
-}
+} */
 
 .inner {
     display: flex;
@@ -89,6 +89,17 @@
     margin-top: 1rem;
 }
 
+.scroller {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    /* margin: 0 0 3rem 0; */
+    padding: 2rem 0 2rem 1.5rem;
+    overflow-x: scroll;
+    /* border: 3px solid magenta; */
+}
+
+
 /* ================================ */
 /* DESKTOP                          */
 /* ================================ */
@@ -96,8 +107,6 @@
 @media (min-width: 1024px) {
     .scroller {
         gap: 2rem;
-        padding: 0;
-        overflow: visible;
     }
 
     .scroller>* {

@@ -11,11 +11,8 @@ import { faXmark } from '@fortawesome/pro-solid-svg-icons'
 import Logo from '@/components/Logo'
 // import OpenGraph from '@/components/OpenGraph'
 
-import style from '../Form.module.css'
+import style from '../../Form.module.css'
 
-// export const metadata: Metadata = {
-//     title: 'Schedule an appoint - Backyard Estates',
-// }
 
 
 export default function Calendly() {
@@ -26,6 +23,7 @@ export default function Calendly() {
     const email = searchParams.get('email')
     const phone = searchParams.get('phone')
     const address = searchParams.get('address')
+    const notes = searchParams.get('notes')
 
     function goBack() {
         router.push('/')
@@ -50,9 +48,7 @@ export default function Calendly() {
                         Schedule your Backyard Estates call
                     </h1>
                     <p className={style.calendlySentence}>
-                        Keep an eye out for a link via text message, which will
-                        provide additional details and prepare you for our
-                        upcoming call.
+                        Pick a time that works best. We’ll review your goals and give you clear next steps.
                     </p>
                     {/* <Suspense> */}
                     <InlineWidget
@@ -71,10 +67,7 @@ export default function Calendly() {
                         prefill={{
                             name: name!,
                             email: email!,
-                            // smsReminderNumber: `+1${phone}`,
-                            customAnswers: {
-                                a1: address!,
-                            },
+                            customAnswers: { a1: `1${phone}`, a2: address ?? '', a3: notes ?? '' },
                         }}
                     />
                     {/* </Suspense> */}

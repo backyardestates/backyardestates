@@ -578,3 +578,29 @@ export const COMPARABLE_PROPERTIES_QUERY = `
   }
 }
 `;
+
+export const FEATURED_PROPERTIES_QUERY = `
+  *[
+    _type == "property" && featured &&
+    defined(photos) &&
+    count(photos) > 0
+  ]
+  | order(coalesce(publishedAt, _createdAt) desc) {
+    name,
+    "slug": slug.current,
+    completed,
+    featured,
+    aduType,
+    sqft,
+    bed,
+    bath,
+    photos,
+    floorplan->{
+      name,
+      bed,
+      bath,
+      sqft,
+      "slug": slug.current
+    }
+  }
+`

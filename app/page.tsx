@@ -12,12 +12,15 @@ import style from './page.module.css'
 import CustomerStories from '@/components/CustomerStories'
 
 import { sanityFetch } from '@/sanity/live'
-import { ALL_OPEN_HOUSES_QUERY, CUSTOMER_STORIES_QUERY } from '@/sanity/queries'
+import { ALL_OPEN_HOUSES_QUERY, CUSTOMER_STORIES_QUERY, SELECTIONS_QUERY } from '@/sanity/queries'
 import Modal from '@/components/Modal'
-import RSVPModal from '@/components/RSVPSuccessModal'
 import RSVPModalWrapper from '@/components/RSVPSucessWrapper'
 import { Suspense } from 'react'
 import Banner from '@/components/Banners/Banner'
+import { TurnkeySection } from '@/components/TurnkeySection/TurnkeySection'
+import OfficeVisitSection from '@/components/OfficeVisit/OfficeVisit'
+import CallToAction from '@/components/CallToAction'
+import AttentionCTA from '@/components/AttentionCTA'
 
 const title = 'Backyard Estates - Premier ADU builder'
 const description =
@@ -61,6 +64,10 @@ export default async function Home() {
         query: ALL_OPEN_HOUSES_QUERY
     })
 
+    const { data: selections } = await sanityFetch({
+        query: SELECTIONS_QUERY
+    })
+
 
     return (
         <div className={style.container}>
@@ -68,20 +75,21 @@ export default async function Home() {
             <Banner events={events} />
             <CustomerStories stories={stories} />
             <Floorplans showNav />
-            <div className={style.inclusions}>
-                <h2 className={style.title}>Standard inclusions</h2>
-                <p className={style.explanation}>
-                    We provide complete transparency on the exact inclusions of
-                    our standard and custom ADU builds
-                </p>
-                <StandaloneLink href="/standard-inclusions" theme="beige">
-                    View inclusions
-                </StandaloneLink>
-                <InclusionsHomePanel />
-            </div>
-            <Benefits />
-            <Process />
+            <OfficeVisitSection wistiaId='zezemmgiam' />
+            <TurnkeySection />
+            <InclusionsHomePanel selections={selections} />
             <Properties />
+            <Benefits />
+            {/* <Process /> */}
+            <AttentionCTA
+                eyebrow="Ready to See What’s Possible?"
+                title="Let’s map out your backyard—together."
+                description="In one office visit, we’ll show you realistic ADU options for your exact property and city requirements. You’ll leave knowing what to do, what to avoid, and how to build without overspending."
+                primaryLabel="Schedule an Office Visit"
+                primaryHref="/talk-to-an-adu-specialist/office-consultation"
+                secondaryText="Call (909) 500-0917"
+                secondaryHref="tel:+19095000917"
+            />
             <Footer />
             <Suspense fallback={null}>
                 <RSVPModalWrapper />

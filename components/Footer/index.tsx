@@ -117,9 +117,9 @@ export default async function Footer() {
                                         Standard inclusions
                                     </Link>
                                 </li>
-                                <li>
+                                {/* <li>
                                     <Link href="/blog">Blog</Link>
-                                </li>
+                                </li> */}
                             </ul>
                         </div>
                         <div className={style.linkColumn}>

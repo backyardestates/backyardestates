@@ -60,6 +60,7 @@
   "devDependencies": {
     "@types/node": "^22.19.7",
     "@types/pg": "^8.16.0",
+    "@types/google.maps": "^3.58.1",
     "@types/react": "^19.1.6",
     "eslint": "^9.26.0",
     "eslint-config-next": "^15.3.2",

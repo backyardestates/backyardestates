@@ -46,3 +46,61 @@
         /* border: 1px solid red; */
     }
 }
+
+.intro {
+    text-align: center;
+    margin-bottom: 22px;
+    padding: 0 1rem;
+}
+
+/* Subtle neutral label */
+.label {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+    margin-bottom: 2.25rem;
+    font-weight: 500;
+    font-family: var(--font-serif);
+}
+
+.header {
+    margin-bottom: 2.75rem;
+}
+
+.h2 {
+    font-size: clamp(2.1rem, 4.2vw, 3.2rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+    color: var(--color-brand-dark-blue);
+    font-weight: 700;
+    font-family: var(--font-serif);
+}
+
+.subhead {
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 52rem;
+    color: rgba(0, 0, 0, 0.62);
+    font-family: var(--font-sans);
+    text-align: center;
+}
+
+/* Animation (only if you don't already have these) */
+.fadeInUp {
+    animation: fadeInUp 520ms ease both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

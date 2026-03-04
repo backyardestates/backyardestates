@@ -1,9 +1,17 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .content {
-    margin: 0;
+    margin: 2rem 0 0;
     padding: 0 1.5rem;
     grid-column: span 12;
     width: 100%;
     overflow: hidden;
+    max-width: 1000px;
 }
 
 .content a {
@@ -84,7 +92,8 @@
     font-size: 1rem;
     font-style: normal;
     font-weight: 500;
-    line-height: 1.5rem; /* 150% */
+    line-height: 1.5rem;
+    /* 150% */
     font-variant: all-small-caps;
     letter-spacing: 0.1rem;
 }

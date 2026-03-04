@@ -48,7 +48,7 @@ export default async function FrequentlyAskedQuestions() {
     <>
       <Nav />
       <Masthead title="Frequently asked questions" explanation="" />
-      <main className="centered">
+      <main className={style.main}>
         <div className={style.content}>
           <div className={style.faqs}>
             {faqs.map((faq, index) => (
