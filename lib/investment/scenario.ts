@@ -311,6 +311,7 @@ export function buildScenarios(input: {
     market?: any;
     siteWorkByAduId?: Record<string, number>;
     rentByAduId?: Record<string, number | undefined>;
+    discountByAduId?: Record<string, number>;
 }): Scenario[] {
     const {
         defaults,
@@ -320,8 +321,9 @@ export function buildScenarios(input: {
         rentals,
         selectedAdus,
         market,
-        siteWorkByAduId = {}, // ✅ default
-        rentByAduId = {}, // ✅ default
+        siteWorkByAduId = {},
+        rentByAduId = {},
+        discountByAduId = {},
     } = input;
 
     const estatesOrdered = [
@@ -384,65 +386,75 @@ export function buildScenarios(input: {
             ladderPreviewCount: 6,
         });
 
-        const rentOverride = input.rentByAduId?.[fp._id];
-        const finalRent = (typeof rentOverride === "number" && Number.isFinite(rentOverride))
-            ? rentOverride
-            : rent;
-
-        // ✅ site work add-on for this ADU (per compared unit)
-        const siteWork = Number.isFinite(siteWorkByAduId[fp._id])
-            ? (siteWorkByAduId[fp._id] as number)
-            : 0;
-
-        // ✅ base ADU price (guard against undefined)
+        // 1) Base ADU cost from floorplan
         const baseAduPrice = typeof fp.price === "number" ? fp.price : 0;
 
-        // ✅ final “effective” ADU cost used everywhere downstream
-        const effectiveAduPrice = baseAduPrice + siteWork;
+        // 2) Site-specific work for this ADU
+        const siteWork = Number.isFinite(siteWorkByAduId?.[fp._id])
+            ? (siteWorkByAduId?.[fp._id] as number)
+            : 0;
 
-        out.push(
-            calcScenarioBase({
-                key: `adu_${fp._id}`,
-                title: `ADU — ${fp.name} (${fp.sqft} SF)`,
-                kind: "adu",
-                sqft: fp.sqft,
-                rentMonthly: finalRent,
+        // 3) Total discounts for this ADU
+        const discount = Number.isFinite(input.discountByAduId?.[fp._id])
+            ? (input.discountByAduId?.[fp._id] as number)
+            : 0;
 
-                // ✅ IMPORTANT: use effective price
-                purchasePrice: effectiveAduPrice,
+        // 4) Final ADU cost
+        const effectiveAduPrice = Math.max(0, baseAduPrice + siteWork - discount);
 
-                remodelCost: 0,
+        // 5) Optional manual rent override
+        const rentOverride = input.rentByAduId?.[fp._id];
+        const finalRent =
+            typeof rentOverride === "number" && Number.isFinite(rentOverride)
+                ? rentOverride
+                : rent;
 
-                downPaymentRate: defaults.downPaymentRateAdu,
-                interestRate: defaults.interestRate,
-                termYears: defaults.termYears,
-                effectiveTaxRate: defaults.effectiveTaxRate,
-                propertyTaxDiscount: defaults.propertyTaxDiscountAdu,
+        const scenario = calcScenarioBase({
+            key: `adu_${fp._id}`,
+            title: `ADU — ${fp.name} (${fp.sqft} SF)`,
+            kind: "adu",
+            sqft: fp.sqft,
+            rentMonthly: finalRent,
+            purchasePrice: effectiveAduPrice,
+            remodelCost: 0,
 
-                maintenanceAnnual: defaults.maintenanceAnnualAdu,
-                insuranceAnnual: defaults.insuranceAnnualAdu,
+            downPaymentRate: defaults.downPaymentRateAdu,
+            interestRate: defaults.interestRate,
+            termYears: defaults.termYears,
+            effectiveTaxRate: defaults.effectiveTaxRate,
+            propertyTaxDiscount: defaults.propertyTaxDiscountAdu,
 
-                rentGrowthYoY: defaults.rentGrowthYoY,
-                capRate: defaults.capRateAdu,
-                equityPremium: defaults.equityPremium,
-                equityGrowthAnnual: defaults.equityGrowthAnnual,
+            maintenanceAnnual: defaults.maintenanceAnnualAdu,
+            insuranceAnnual: defaults.insuranceAnnualAdu,
 
-                noiExpenseRatio: defaults.noiExpenseRatio,
+            rentGrowthYoY: defaults.rentGrowthYoY,
+            capRate: defaults.capRateAdu,
+            equityPremium: defaults.equityPremium,
+            equityGrowthAnnual: defaults.equityGrowthAnnual,
 
-                basePropertyValue: housePrice ?? 0,
-                basePropertySqft: subjectSqft ?? 0,
+            noiExpenseRatio: defaults.noiExpenseRatio,
 
-                // ✅ keep existing debug + add cost breakdown so “Show Calculations” can reveal it
-                rentEstimateDebug: {
-                    ...debug,
-                    costInputs: {
-                        baseAduPrice,
-                        siteWork,
-                        effectiveAduPrice,
-                    },
+            basePropertyValue: housePrice ?? 0,
+            basePropertySqft: subjectSqft ?? 0,
+
+            rentEstimateDebug: {
+                ...debug,
+                costInputs: {
+                    baseAduPrice,
+                    siteWork,
+                    discount,
+                    effectiveAduPrice,
                 },
-            })
-        );
+            },
+        });
+
+        out.push({
+            ...scenario,
+            baseAduPrice,
+            siteWorkApplied: siteWork,
+            discountApplied: discount,
+            finalAduPrice: effectiveAduPrice,
+        });
     }
 
     return out;

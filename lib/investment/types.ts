@@ -109,6 +109,10 @@ export type Scenario = {
     roi: number | null;
 
     debug: Debug;
+    baseAduPrice?: number;
+    siteWorkApplied?: number;
+    discountApplied?: number;
+    finalAduPrice?: number;
 };
 
 export type RowSpec = {

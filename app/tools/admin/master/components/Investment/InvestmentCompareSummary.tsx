@@ -49,7 +49,10 @@ export function InvestmentCompareSummary({
                         <h2 className={styles.cardTitle}>{adu.title}</h2>
 
                         <div className={styles.cardBody}>
-                            <Row styles={styles} label="Cost" value={money(adu.purchasePrice)} />
+                            <Row styles={styles} label="Base Cost" value={money(adu.baseAduPrice)} />
+                            <Row styles={styles} label="Site Work" value={money(adu.siteWorkApplied)} />
+                            <Row styles={styles} label="Discounts" value={money(adu.discountApplied)} />
+                            <Row styles={styles} label="Final Cost" value={money(adu.purchasePrice)} />
                             <Row
                                 styles={styles}
                                 label="Financed Amount"
