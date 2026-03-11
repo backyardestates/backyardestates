@@ -21,15 +21,24 @@ function pct(n?: number | null) {
 export function InvestmentCompareSummary({
     styles,
     adus,
+    baseCostByAduId,
+    setBaseCostByAduId,
+    sqftByAduId,
+    setSqftByAduId,
     rentByAduId,
     setRentByAduId,
 }: {
     styles: any;
     adus: Scenario[];
+    baseCostByAduId: Record<string, string>;
+    setBaseCostByAduId: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    sqftByAduId: Record<string, string>;
+    setSqftByAduId: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     rentByAduId: Record<string, string>;
     setRentByAduId: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }) {
     const list = (adus ?? []).filter((s) => s.kind === "adu");
+    const [editingField, setEditingField] = React.useState<string | null>(null);
 
     const [editingKey, setEditingKey] = React.useState<string | null>(null);
 
@@ -40,6 +49,10 @@ export function InvestmentCompareSummary({
             {list.map((adu) => {
                 // scenario key is "adu_<floorplanId>"
                 const aduId = adu.key.startsWith("adu_") ? adu.key.slice(4) : adu.key;
+
+                const baseCostEditingKey = `baseCost:${adu.key}`;
+                const sqftEditingKey = `sqft:${adu.key}`;
+                const rentEditingKey = `rent:${adu.key}`;
                 const isEditing = editingKey === adu.key;
 
                 const currentValue = rentByAduId[aduId] ?? "";
@@ -49,7 +62,73 @@ export function InvestmentCompareSummary({
                         <h2 className={styles.cardTitle}>{adu.title}</h2>
 
                         <div className={styles.cardBody}>
-                            <Row styles={styles} label="Base Cost" value={money(adu.baseAduPrice)} />
+                            <div className={styles.row}>
+                                <div className={styles.rowLabel}>Sqft</div>
+                                <div className={styles.rowValue}>
+                                    {editingField === sqftEditingKey ? (
+                                        <input
+                                            className={styles.input}
+                                            autoFocus
+                                            value={sqftByAduId[aduId] ?? ""}
+                                            onChange={(e) =>
+                                                setSqftByAduId((prev) => ({
+                                                    ...prev,
+                                                    [aduId]: e.target.value,
+                                                }))
+                                            }
+                                            onBlur={() => setEditingField(null)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter" || e.key === "Escape") {
+                                                    setEditingField(null);
+                                                }
+                                            }}
+                                            placeholder={typeof adu.sqft === "number" ? String(adu.sqft) : "0"}
+                                        />
+                                    ) : (
+                                        <span
+                                            style={{ cursor: "pointer" }}
+                                            title="Click to edit sqft"
+                                            onClick={() => setEditingField(sqftEditingKey)}
+                                        >
+                                            {typeof adu.sqft === "number" ? `${adu.sqft.toLocaleString()} sqft` : "—"}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className={styles.row}>
+                                <div className={styles.rowLabel}>Base Cost</div>
+                                <div className={styles.rowValue}>
+                                    {editingField === baseCostEditingKey ? (
+                                        <input
+                                            className={styles.input}
+                                            autoFocus
+                                            value={baseCostByAduId[aduId] ?? ""}
+                                            onChange={(e) =>
+                                                setBaseCostByAduId((prev) => ({
+                                                    ...prev,
+                                                    [aduId]: e.target.value,
+                                                }))
+                                            }
+                                            onBlur={() => setEditingField(null)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter" || e.key === "Escape") {
+                                                    setEditingField(null);
+                                                }
+                                            }}
+                                            placeholder={typeof adu.baseAduPrice === "number" ? String(adu.baseAduPrice) : "0"}
+                                        />
+                                    ) : (
+                                        <span
+                                            style={{ cursor: "pointer" }}
+                                            title="Click to edit base cost"
+                                            onClick={() => setEditingField(baseCostEditingKey)}
+                                        >
+                                            {money(adu.baseAduPrice)}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+
                             <Row styles={styles} label="Site Work" value={money(adu.siteWorkApplied)} />
                             <Row styles={styles} label="Discounts" value={money(adu.discountApplied)} />
                             <Row styles={styles} label="Final Cost" value={money(adu.purchasePrice)} />

@@ -113,6 +113,7 @@ export type Scenario = {
     siteWorkApplied?: number;
     discountApplied?: number;
     finalAduPrice?: number;
+    finalSqft?: number;
 };
 
 export type RowSpec = {

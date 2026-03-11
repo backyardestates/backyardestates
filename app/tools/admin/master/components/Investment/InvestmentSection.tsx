@@ -55,6 +55,8 @@ export function InvestmentSection({
     const { market } = useRentcastData();
     const [siteWorkByAduId, setSiteWorkByAduId] = useState<Record<string, string>>({});
     const [defaultSiteWork, setDefaultSiteWork] = useState<string>(""); // optional global default
+    const [baseCostByAduId, setBaseCostByAduId] = useState<Record<string, string>>({});
+    const [sqftByAduId, setSqftByAduId] = useState<Record<string, string>>({});
     const [rentByAduId, setRentByAduId] = useState<Record<string, string>>({});
     const [discountsByAduId, setDiscountsByAduId] = useState<Record<string, DiscountKey[]>>({});
 
@@ -181,11 +183,19 @@ export function InvestmentSection({
                 siteWorkByAduId: Object.fromEntries(
                     selectedAdus.map((fp) => [fp._id, asNumber(siteWorkByAduId[fp._id] ?? defaultSiteWork) ?? 0])
                 ),
+
                 rentByAduId: Object.fromEntries(
                     selectedAdus.map((fp) => [fp._id, asNumber(rentByAduId[fp._id]) ?? undefined])
                 ),
 
-                // ✅ NEW
+                baseCostByAduId: Object.fromEntries(
+                    selectedAdus.map((fp) => [fp._id, asNumber(baseCostByAduId[fp._id]) ?? undefined])
+                ),
+
+                sqftByAduId: Object.fromEntries(
+                    selectedAdus.map((fp) => [fp._id, asNumber(sqftByAduId[fp._id]) ?? undefined])
+                ),
+
                 discountByAduId: discountAmountByAduId,
             }),
         [
@@ -199,6 +209,8 @@ export function InvestmentSection({
             siteWorkByAduId,
             defaultSiteWork,
             rentByAduId,
+            baseCostByAduId,
+            sqftByAduId,
             discountAmountByAduId,
         ]
     );
@@ -417,6 +429,10 @@ export function InvestmentSection({
             <InvestmentCompareSummary
                 styles={adminStyles}
                 adus={aduScenarios}
+                baseCostByAduId={baseCostByAduId}
+                setBaseCostByAduId={setBaseCostByAduId}
+                sqftByAduId={sqftByAduId}
+                setSqftByAduId={setSqftByAduId}
                 rentByAduId={rentByAduId}
                 setRentByAduId={setRentByAduId}
             />

@@ -281,10 +281,23 @@ function calcScenarioBase(input: {
     const year1EquityBoost =
         (incomeApproachEquity + sfApproachEquity + premiumApproachEquity) / 3;
 
-    // Growth: Year5 = Year1*(1+g)^4, Year10 = Year1*(1+g)^9
     const g = 1 + input.equityGrowthAnnual;
-    const year5EquityBoost = year1EquityBoost * Math.pow(g, 4);
-    const year10EquityBoost = year5EquityBoost * Math.pow(g, 9);
+
+    const compound = (value: number, rate: number, periods: number) => {
+        let result = value;
+        for (let i = 0; i < periods; i++) {
+            result *= rate;
+        }
+        return result;
+    };
+
+    const year5EquityBoost =
+        year1EquityBoost *
+        compound(year1EquityBoost, g, 5);
+
+    const year10EquityBoost =
+        year5EquityBoost *
+        compound(year5EquityBoost, g, 5);
     const rentDbg = input.rentEstimateDebug;
     const debug: Debug = {
         purchasePrice: {

@@ -71,11 +71,18 @@ function calcScenarioBase(input: {
     const sfApproachEquity = propertySqft > 0 ? (propertyValue / propertySqft) * aduSqft : 0;
     const premiumApproachEquity = propertyValue * (input.equityPremium ?? 0);
 
-    const year1EquityBoost = (incomeApproachEquity + sfApproachEquity + premiumApproachEquity) / 3;
-    const g = 1 + input.equityGrowthAnnual;
-    const year5EquityBoost = year1EquityBoost * Math.pow(g, 4);
-    const year10EquityBoost = year5EquityBoost * Math.pow(g, 9);
+    const year1EquityBoost =
+        (incomeApproachEquity + sfApproachEquity + premiumApproachEquity) / 3;
 
+    const g = 1 + input.equityGrowthAnnual;
+
+    const year5EquityBoost =
+        year1EquityBoost *
+        g * g * g * g * g * g;
+
+    const year10EquityBoost =
+        year5EquityBoost *
+        g * g * g * g * g * g;
 
     const rentDbg = input.rentEstimateDebug;
     const debug: Debug = {
@@ -312,6 +319,8 @@ export function buildScenarios(input: {
     siteWorkByAduId?: Record<string, number>;
     rentByAduId?: Record<string, number | undefined>;
     discountByAduId?: Record<string, number>;
+    baseCostByAduId?: Record<string, number | undefined>;
+    sqftByAduId?: Record<string, number | undefined>;
 }): Scenario[] {
     const {
         defaults,
@@ -321,9 +330,11 @@ export function buildScenarios(input: {
         rentals,
         selectedAdus,
         market,
-        siteWorkByAduId = {},
-        rentByAduId = {},
-        discountByAduId = {},
+        siteWorkByAduId,
+        rentByAduId,
+        discountByAduId,
+        baseCostByAduId,
+        sqftByAduId,
     } = input;
 
     const estatesOrdered = [
@@ -376,8 +387,13 @@ export function buildScenarios(input: {
 
     // ADUs
     for (const fp of selectedAdus) {
+        const finalSqft =
+            typeof sqftByAduId?.[fp._id] === "number" && Number.isFinite(sqftByAduId[fp._id])
+                ? (sqftByAduId[fp._id] as number)
+                : (fp.sqft ?? 0);
+
         const { rent, debug } = estimateRent(rentals, {
-            targetSqft: fp.sqft,
+            targetSqft: finalSqft,
             targetBeds: fp.beds,
             targetBaths: fp.baths,
             estatesOrdered,
@@ -387,7 +403,10 @@ export function buildScenarios(input: {
         });
 
         // 1) Base ADU cost from floorplan
-        const baseAduPrice = typeof fp.price === "number" ? fp.price : 0;
+        const baseAduPrice =
+            typeof baseCostByAduId?.[fp._id] === "number" && Number.isFinite(baseCostByAduId[fp._id])
+                ? (baseCostByAduId[fp._id] as number)
+                : (typeof fp.price === "number" ? fp.price : 0);
 
         // 2) Site-specific work for this ADU
         const siteWork = Number.isFinite(siteWorkByAduId?.[fp._id])
@@ -411,9 +430,9 @@ export function buildScenarios(input: {
 
         const scenario = calcScenarioBase({
             key: `adu_${fp._id}`,
-            title: `ADU — ${fp.name} (${fp.sqft} SF)`,
+            title: `ADU — ${fp.name} (${finalSqft} SF)`,
             kind: "adu",
-            sqft: fp.sqft,
+            sqft: finalSqft,
             rentMonthly: finalRent,
             purchasePrice: effectiveAduPrice,
             remodelCost: 0,
