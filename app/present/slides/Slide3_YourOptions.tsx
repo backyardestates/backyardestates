@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
 import { getDiscountLines, createEmptyDiscountState, type DiscountState } from "@/lib/investment/discounts";
 import s from "./Slide3.module.css";
@@ -9,7 +9,7 @@ function fmt$(n: number) {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 }
 
-function useCountUp(target: number, active: boolean, delay = 0, duration = 900) {
+function useCountUp(target: number, active: boolean, delay = 0, duration = 1400) {
     const [value, setValue] = useState(0);
     const rafRef = useRef<number | null>(null);
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -34,8 +34,8 @@ function useCountUp(target: number, active: boolean, delay = 0, duration = 900) 
     return value;
 }
 
-function AnimDollar({ n, active, delay = 0 }: { n: number; active: boolean; delay?: number }) {
-    const v = useCountUp(n, active, delay);
+function AnimDollar({ n, active, delay = 0, duration = 1400 }: { n: number; active: boolean; delay?: number; duration?: number }) {
+    const v = useCountUp(n, active, delay, duration);
     return <>{fmt$(v)}</>;
 }
 
@@ -44,42 +44,71 @@ function cityFromAddress(addr: string) {
     return parts.length >= 2 ? parts[parts.length - 2].trim() : addr;
 }
 
-const LEFT_CATEGORIES = [
-    { label: "SERVICES", items: ["Custom architectural plans", "Structural + Title 24 engineering", "Full permit expediting (fees included)", "Dedicated project manager", "Weekly photo updates + portal", "Solar PV system (2+ bed detached)"] },
-    { label: "CONSTRUCTION", items: ["Slab-on-grade foundation", "2x4 framing + R19/R30 insulation", "40-gal heat pump water heater", "CA Title 24 energy compliant"] },
-    { label: "INTERIOR", items: ["LVP flooring (7 options)", "Vaulted ceilings in living/kitchen", "Mini-split HVAC", "Ceiling fans in bedrooms"] },
-    { label: "KITCHEN + BATHROOMS", items: ["Shaker cabinets (8 color options)", "Quartz counters (13 options)", "Samsung stainless appliance package", "Quartz vanity countertops"] },
-    { label: "EXTERIOR", items: ["Stucco siding", "30-yr asphalt shingle roof", "Dual-pane Low-E vinyl windows"] },
+function lastNameFromFull(full?: string) {
+    if (!full) return "";
+    const parts = full.trim().split(/\s+/);
+    return parts[parts.length - 1] ?? "";
+}
+
+const INCLUDED_COLS = [
+    {
+        label: "Services",
+        items: ["Custom plans", "Engineering", "Title 24", "Permit expediting", "Project manager"],
+    },
+    {
+        label: "Construction",
+        items: ["Slab-on-grade", "2×4 framing", "R19/R30 insulation", "Heat pump water"],
+    },
+    {
+        label: "Interior",
+        items: ["LVP flooring", "Vaulted ceilings", "Mini-split HVAC", "LED lighting"],
+    },
+    {
+        label: "Kitchen & Bath",
+        items: ["Shaker cabinets", "Quartz counters", "Samsung appliances", "Undermount sinks"],
+    },
+    {
+        label: "Exterior",
+        items: ["Stucco siding", "30-yr shingle roof", "Low-E windows", "Solar PV (2+ bed)"],
+    },
 ];
 
 export function Slide3_YourOptions() {
-    const { comparedUnitIds, floorplans, scenarios, aduType, propertyAddress, siteWorkTagsByUnitId, discountLinesByUnitId, currentSlide } = usePresentationStore();
+    const {
+        comparedUnitIds,
+        floorplans,
+        scenarios,
+        aduType,
+        propertyAddress,
+        customerName,
+        siteWorkTagsByUnitId,
+        discountLinesByUnitId,
+        currentSlide,
+    } = usePresentationStore();
     const active = currentSlide === 3;
 
     const units = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
     const displayUnits = units.length > 0 ? units : floorplans.slice(0, 3);
-    const unitCount = displayUnits.length;
 
     const aduLabel = aduType
         ? ({ detached: "Detached ADU", attached: "Attached ADU", garage: "Garage Conversion" }[aduType] ?? aduType)
         : "";
     const city = propertyAddress ? cityFromAddress(propertyAddress) : "";
-    const headerRight = [aduLabel, city].filter(Boolean).join(" · ");
+    const lastName = lastNameFromFull(customerName);
+    const subheadParts = [aduLabel, city].filter(Boolean);
+    const subhead = subheadParts.join(" · ");
 
     function getScenario(unitId: string) {
         return scenarios.find((sc) => sc.kind === "adu" && sc.key === `adu_${unitId}`);
     }
 
-    // Dynamic grid: left label col + one value col per unit
-    const gridCols = `190px ${displayUnits.map(() => "1fr").join(" ")}`;
+    // Featured plan = middle plan by sqft (when 3 plans). When ≤2 plans, no featured.
+    const featuredId = useMemo(() => {
+        if (displayUnits.length < 3) return null;
+        const bySqft = [...displayUnits].sort((a, b) => (a.sqft ?? 0) - (b.sqft ?? 0));
+        return bySqft[Math.floor(bySqft.length / 2)]?._id ?? null;
+    }, [displayUnits]);
 
-    // Site work tags
-    const siteWorkTagsPerUnit = displayUnits.map((fp) => siteWorkTagsByUnitId[fp._id] ?? []);
-    const firstLabels = siteWorkTagsPerUnit[0]?.join("|") ?? "";
-    const siteWorkIsSame = siteWorkTagsPerUnit.every((tags) => tags.join("|") === firstLabels);
-    const sharedSiteWorkTags = siteWorkIsSame ? (siteWorkTagsPerUnit[0] ?? []) : [];
-
-    // Discount lines from localStorage (most reliable)
     const [lsDiscountLines, setLsDiscountLines] = useState<Record<string, { label: string; amount: number }[]>>({});
     const comparedKey = comparedUnitIds.join(",");
     useEffect(() => {
@@ -104,175 +133,145 @@ export function Slide3_YourOptions() {
     const useNamedRows = allDiscountLabels.length > 0;
     const showFallbackDiscount = !useNamedRows && anyDiscount;
 
+    const colsClass = displayUnits.length === 1 ? s.cols1
+                    : displayUnits.length === 2 ? s.cols2
+                    : "";
+
     return (
         <div className={s.slide}>
-            {/* Header */}
-            <div className="slide-header">
-                <span className="slide-header-title">Your options — project breakdown</span>
-                {headerRight && <span className="slide-header-pill">{headerRight}</span>}
+            {/* Running header */}
+            <div className="running-header rh-light">
+                <span className="running-header-left">
+                    {lastName ? `${lastName} · ` : ""}{city || "—"}
+                </span>
+                <span className="running-header-center">Your Options</span>
+                <span className="running-header-right">
+                    <span className="running-header-num">03</span> / 10
+                </span>
             </div>
 
-            <div className={s.body}>
-                {/* LEFT: inclusions list */}
-                <div className={s.leftPanel}>
-                    <div className={s.leftHead}>
-                        <div className={s.leftHeadTitle}>Base Price Includes</div>
-                    </div>
-                    <div className={s.leftCategories}>
-                        {LEFT_CATEGORIES.map((cat) => (
-                            <div key={cat.label}>
-                                <div className={s.catLabel}>{cat.label}</div>
-                                {cat.items.map((item) => (
-                                    <div key={item} className={s.catItem}>{item}</div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-                    <div className={s.leftFooter}>
-                        <span className={s.leftFooterText}>We build for you.</span>
-                    </div>
+            {/* Headline row */}
+            <div className={s.headRow}>
+                <div className={s.headLeft}>
+                    <h2 className="section-title">
+                        Your <em>options</em>
+                    </h2>
+                    {subhead && <span className={s.headSubhead}>{subhead}</span>}
                 </div>
+            </div>
 
-                {/* RIGHT: price table */}
-                <div className={s.rightPanel}>
-                    {/* Column headers */}
-                    <div className={s.colHeaders} style={{ gridTemplateColumns: gridCols }}>
-                        <div className={s.colHeaderLabel}>Line Item</div>
-                        {displayUnits.map((fp) => (
-                            <div key={fp._id} className={s.colHeaderVal}>{fp.name}</div>
+            {/* Inclusions strip */}
+            <div className={s.inclusionsStrip}>
+                <div className={s.inclusionsLabel}>
+                    <span className={s.inclusionsLabelTitle}>Every plan includes</span>
+                    <span className={s.inclusionsLabelSub}>Five departments · one price</span>
+                </div>
+                {INCLUDED_COLS.map((col) => (
+                    <div key={col.label} className={s.inclusionCol}>
+                        <div className={s.inclusionColTitle}>{col.label}</div>
+                        {col.items.map((item) => (
+                            <div key={item} className={s.inclusionItem}>{item}</div>
                         ))}
                     </div>
+                ))}
+            </div>
 
-                    {/* ROW 1 — Base unit inclusions */}
-                    <div className={s.rowSection} style={{ gridTemplateColumns: gridCols }}>
-                        <div className={s.rowLabelCell}>
-                            <div className={s.rowLabelPrimary}>Base unit inclusions</div>
-                            <div className={s.rowLabelSub}>Modern open layout · Clerestory windows · Shaker cabinets · Quartz countertops · LVP flooring · Appliances · Mini-split HVAC</div>
-                        </div>
-                        {displayUnits.map((fp, i) => {
-                            const sc = getScenario(fp._id);
-                            const base = sc?.baseAduPrice ?? fp.price ?? 0;
-                            return (
-                                <div key={fp._id} className={`${s.rowValCenter} ${s.valBase}`}>
-                                    {base ? <AnimDollar n={base} active={active} delay={i * 60} /> : "—"}
+            {/* Plan columns */}
+            <div className={`${s.planColumns} ${colsClass}`}>
+                {displayUnits.map((fp, i) => {
+                    const sc = getScenario(fp._id);
+                    const base = sc?.baseAduPrice ?? fp.price ?? 0;
+                    const sw = sc?.siteWorkApplied ?? 0;
+                    const total = sc?.finalAduPrice ?? sc?.purchasePrice ?? 0;
+                    const perUnitTags = siteWorkTagsByUnitId[fp._id] ?? [];
+                    const isFeatured = fp._id === featuredId;
+
+                    const unitDiscounts: { label: string; amount: number }[] = useNamedRows
+                        ? allDiscountLabels.map((label) => {
+                            const line = (discountLines[fp._id] ?? []).find((d) => d.label === label);
+                            return line ? { label, amount: line.amount } : { label, amount: 0 };
+                        }).filter((d) => d.amount > 0)
+                        : showFallbackDiscount
+                            ? (() => { const disc = sc?.discountApplied ?? 0; return disc > 0 ? [{ label: "Discount", amount: disc }] : []; })()
+                            : [];
+
+                    return (
+                        <div key={fp._id} className={`${s.planCol} ${isFeatured ? s.featured : ""}`}>
+                            {isFeatured && <div className="rec-badge">Recommended</div>}
+
+                            {/* Plan header */}
+                            <div className={s.planColHeader}>
+                                <div className={s.planEyebrow}>The Plan</div>
+                                <div className={s.planName}>{fp.name}</div>
+                                <div className={s.planSqft}>
+                                    {fp.sqft ? fp.sqft.toLocaleString() : "—"}
+                                    <span className={s.planSqftLabel}>sqft</span>
                                 </div>
-                            );
-                        })}
-                    </div>
+                            </div>
 
-                    {/* ROW 2 — Pre-permitting */}
-                    <div className={s.rowFlat} style={{ gridTemplateColumns: gridCols }}>
-                        <div className={s.rowLabelCell}>
-                            <span className={s.rowLabelNormal}>Pre-permitting & construction</span>
-                        </div>
-                        {displayUnits.map((fp) => (
-                            <div key={fp._id} className={`${s.rowValCenter} ${s.valIncluded}`}>Included</div>
-                        ))}
-                    </div>
+                            {/* Hero total — THE biggest thing on the slide */}
+                            <div className={s.heroTotal}>
+                                <div className={s.heroTotalEyebrow}>Total · After Discounts</div>
+                                <div className={s.heroTotalVal}>
+                                    {total ? <AnimDollar n={total} active={active} delay={i * 80} /> : "—"}
+                                </div>
+                                <div className={s.heroTotalSub}>Turnkey · nothing due until each milestone is completed</div>
+                            </div>
 
-                    {/* ROW 3 — Site work */}
-                    <div className={s.rowSection} style={{ gridTemplateColumns: gridCols }}>
-                        <div className={s.rowLabelCell}>
-                            <div className={s.rowLabelPrimary}>* Additional site work</div>
-                            {siteWorkIsSame && sharedSiteWorkTags.length > 0 && (
-                                <div className={s.tagRow}>
-                                    {sharedSiteWorkTags.map((label, i) => (
-                                        <span key={i} className="p-tag">{label}</span>
+                            {/* Breakdown */}
+                            <div className={s.planBreakdown}>
+                                <div className={s.breakdownRow}>
+                                    <span className={s.breakdownLabel}>Base unit</span>
+                                    <span className={s.breakdownVal}>
+                                        {base ? <AnimDollar n={base} active={active} delay={400 + i * 60} /> : "—"}
+                                    </span>
+                                </div>
+                                <div className={s.breakdownRow}>
+                                    <span className={s.breakdownLabel}>Pre-permit &amp; build</span>
+                                    <span className={`${s.breakdownVal} ${s.valIncluded}`}>Included</span>
+                                </div>
+                                {sw > 0 && (
+                                    <div className={s.breakdownRow}>
+                                        <span className={s.breakdownLabel}>Site work</span>
+                                        <span className={s.breakdownVal}>
+                                            <AnimDollar n={sw} active={active} delay={460 + i * 60} />
+                                        </span>
+                                    </div>
+                                )}
+
+                                {perUnitTags.length > 0 && (
+                                    <div className={s.tagRow}>
+                                        {perUnitTags.map((label, j) => (
+                                            <span key={j} className={s.siteTag}>{label}</span>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Discount callouts */}
+                            {unitDiscounts.length > 0 && (
+                                <div className={s.discounts}>
+                                    {unitDiscounts.map((d, j) => (
+                                        <div key={j} className={s.discountCallout}>
+                                            <span className={s.discountLabel}>{d.label}</span>
+                                            <span className={s.discountAmt}>
+                                                −<AnimDollar n={d.amount} active={active} delay={600 + i * 60 + j * 40} />
+                                            </span>
+                                        </div>
                                     ))}
                                 </div>
                             )}
                         </div>
-                        {displayUnits.map((fp, i) => {
-                            const sc = getScenario(fp._id);
-                            const sw = sc?.siteWorkApplied ?? 0;
-                            const perUnitTags = !siteWorkIsSame ? (siteWorkTagsByUnitId[fp._id] ?? []) : [];
-                            return (
-                                <div key={fp._id} className={s.rowValCenter}>
-                                    {!siteWorkIsSame && perUnitTags.length > 0 && (
-                                        <div className={s.tagRow} style={{ justifyContent: "center", marginBottom: 4 }}>
-                                            {perUnitTags.map((label, j) => <span key={j} className="p-tag">{label}</span>)}
-                                        </div>
-                                    )}
-                                    <span className={s.valSiteWork} style={{ color: sw > 0 ? "var(--p-text-primary)" : "var(--p-text-muted)" }}>
-                                        {sw > 0 ? <AnimDollar n={sw} active={active} delay={100 + i * 60} /> : <em>None</em>}
-                                    </span>
-                                </div>
-                            );
-                        })}
-                    </div>
+                    );
+                })}
+            </div>
 
-                    {/* ROW 4 — Subtotal */}
-                    <div className={s.rowSubtotal} style={{ gridTemplateColumns: gridCols }}>
-                        <div className={s.rowLabelCell}>
-                            <span className={s.rowLabelSubtotal}>Subtotal</span>
-                        </div>
-                        {displayUnits.map((fp, i) => {
-                            const sc = getScenario(fp._id);
-                            const base = sc?.baseAduPrice ?? fp.price ?? 0;
-                            const sw = sc?.siteWorkApplied ?? 0;
-                            return (
-                                <div key={fp._id} className={`${s.rowValCenter} ${s.valSubtotal}`}>
-                                    <AnimDollar n={base + sw} active={active} delay={160 + i * 60} />
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* ROW 5+ — Named discount rows */}
-                    {useNamedRows && allDiscountLabels.map((label) => (
-                        <div key={label} className={s.rowDiscount} style={{ gridTemplateColumns: gridCols }}>
-                            <div className={s.rowLabelCell}>
-                                <span className={s.rowLabelDiscount}>{label} Discount</span>
-                            </div>
-                            {displayUnits.map((fp, i) => {
-                                const line = (discountLines[fp._id] ?? []).find((d) => d.label === label);
-                                return (
-                                    <div key={fp._id} className={`${s.rowValCenter} ${s.valDiscount}`}>
-                                        {line ? <>−<AnimDollar n={line.amount} active={active} delay={220 + i * 60} /></> : "—"}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ))}
-
-                    {showFallbackDiscount && (
-                        <div className={s.rowDiscount} style={{ gridTemplateColumns: gridCols }}>
-                            <div className={s.rowLabelCell}><span className={s.rowLabelDiscount}>Discounts applied</span></div>
-                            {displayUnits.map((fp, i) => {
-                                const sc = getScenario(fp._id);
-                                const disc = sc?.discountApplied ?? 0;
-                                return (
-                                    <div key={fp._id} className={`${s.rowValCenter} ${s.valDiscount}`}>
-                                        {disc > 0 ? <>−<AnimDollar n={disc} active={active} delay={220 + i * 60} /></> : "—"}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-
-                    {/* FINAL ROW — Total */}
-                    <div className={s.rowTotal} style={{ gridTemplateColumns: gridCols }}>
-                        <div className={s.rowLabelCell}>
-                            <span className={s.rowLabelTotal}>Total</span>
-                        </div>
-                        {displayUnits.map((fp, i) => {
-                            const sc = getScenario(fp._id);
-                            const total = sc?.finalAduPrice ?? sc?.purchasePrice ?? 0;
-                            return (
-                                <div key={fp._id} className={`${s.rowValCenter} ${s.valTotal}`}>
-                                    {total ? <AnimDollar n={total} active={active} delay={280 + i * 60} /> : "—"}
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Footer */}
-                    <div className={s.tableFooter}>
-                        <span className={s.tableFooterText}>
-                            *Offer valid 15 days · $10,000 water meter allowance if required · We build for you.
-                        </span>
-                    </div>
-                </div>
+            {/* Footer */}
+            <div className={s.footer}>
+                <span className={s.footerDisclaimer}>
+                    Offer valid 15 days · $10,000 water meter allowance if required · Nothing due until each milestone is completed.
+                </span>
+                <span className={s.footerTagline}>We build for you.</span>
             </div>
         </div>
     );

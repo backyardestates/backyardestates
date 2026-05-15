@@ -1,1 +1,208 @@
+/* Slide 5 — Completed Builds · editorial gallery */
 
+.slide {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  background: var(--p-dark);
+  font-family: var(--p-font);
+  overflow: hidden;
+  padding: 90px 40px 32px;
+  gap: 22px;
+  color: var(--p-cream);
+}
+
+/* Headline */
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 0 16px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: rgba(247,245,240,0.50);
+  letter-spacing: 0.04em;
+}
+
+.headRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.plateCounter {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-md);
+  color: var(--p-gold-soft);
+  letter-spacing: 0.02em;
+}
+
+.pauseBtn {
+  background: transparent;
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  color: var(--p-gold);
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: var(--p-semi);
+  transition: background 0.18s;
+}
+
+.pauseBtn:hover {
+  background: var(--p-gold-dim);
+}
+
+/* 3×3 grid with editorial gaps + plate numbers */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
+  min-height: 0;
+}
+
+.cell {
+  position: relative;
+  overflow: hidden;
+  background: var(--p-dark-3);
+  border-radius: var(--p-radius-md);
+  border: 1px solid rgba(184,149,74,0.18);
+}
+
+.cellImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.cellPlate {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold-bright);
+  letter-spacing: 0.04em;
+  background: rgba(13,31,31,0.72);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  padding: 4px 12px;
+  backdrop-filter: blur(8px);
+  z-index: 2;
+}
+
+.cellOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 50px 16px 14px;
+  background: linear-gradient(to bottom, transparent, rgba(13,31,31,0.85));
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  z-index: 2;
+}
+
+.cellName {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-base);
+  color: var(--p-cream);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+
+.cellLocation {
+  font-size: var(--p-text-micro);
+  color: var(--p-gold-soft);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: var(--p-semi);
+}
+
+.cellEmpty {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--p-teal-deep) 0%, var(--p-dark-3) 100%);
+}
+
+/* Footer (dots + tagline) */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  padding-right: 16px;
+  padding-left: 16px;
+  border-top: 1px solid rgba(184,149,74,0.18);
+  gap: 24px;
+}
+
+.dotsWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dotsLabel {
+  font-size: var(--p-text-micro);
+  color: rgba(247,245,240,0.42);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-right: 8px;
+  font-weight: var(--p-semi);
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(247,245,240,0.18);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.dotActive {
+  background: var(--p-gold);
+  width: 24px;
+  border-radius: 4px;
+}
+
+.realLabel {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+}

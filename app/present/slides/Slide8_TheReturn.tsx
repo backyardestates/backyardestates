@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { RunningHeader } from "./_shared/RunningHeader";
+import { RunningFooter } from "./_shared/RunningFooter";
 import s from "./Slide8.module.css";
 
 function fmt$(n: number) {
@@ -55,100 +57,113 @@ export function Slide8_TheReturn() {
     const hcf = houseScenario?.cashflowMonthly ?? 0;
     const acf = aduSc?.cashflowMonthly ?? 0;
 
+    // Anchor number: 10-yr cashflow advantage + equity delta vs house down payment
+    const tenYearAdvantage = aduSc
+        ? Math.round((aduSc.cashflowAnnual * 10) + (aduSc.year10EquityBoost ?? 0) - (houseScenario?.downPayment ?? 0))
+        : 0;
+
     return (
         <div className={s.slide}>
-            <div className="slide-header slide-header-dark">
-                <span className="slide-header-title">ADU vs purchasing a house</span>
+            <RunningHeader slideNumber={8} topic="ADU vs. buying a house" theme="light" />
+
+            <div className={s.titleRow}>
+                <h2 className={s.titleText}>ADU vs. buying a house.</h2>
             </div>
 
-            <div className={s.body}>
-                <div className={s.tableWrap}>
-                    <div className={s.thead}>
-                        <div className={s.thCosts}>Costs</div>
-                        <div className={s.thHouse}>House</div>
-                        <div className={s.thAdu}>Your ADU</div>
+            {/* Anchor banner */}
+            {tenYearAdvantage > 0 && (
+                <div className={s.anchorBanner}>
+                    <div className={s.anchorLeft}>
+                        <span className={s.anchorLeftSub}>10-year advantage in your favor</span>
+                        10 years of owning an ADU vs.<br />carrying a starter home.
                     </div>
-                    <div className={s.tbody}>
-                        {/* Purchase price */}
-                        <div className={s.row}>
-                            <div className={s.cellLabel}>Purchase Price</div>
-                            <div className={s.cellVal}><AnimVal n={houseScenario?.purchasePrice ?? 0} active={active} delay={0} /></div>
-                            <div className={s.cellVal}><AnimVal n={aduSc?.finalAduPrice ?? aduSc?.purchasePrice ?? 0} active={active} delay={50} /></div>
+                    <div className={s.anchorCenter}>
+                        An ADU keeps your cash in your pocket and pays you back, while a starter house drains it.
+                    </div>
+                    <div className={s.anchorRight}>
+                        <div className={s.anchorNum}>
+                            +<AnimVal n={tenYearAdvantage} active={active} delay={0} />
                         </div>
-                        {/* Down payment */}
-                        <div className={s.row}>
-                            <div className={s.cellLabel}>Down Payment</div>
-                            <div className={s.cellVal}><AnimVal n={houseScenario?.downPayment ?? 0} active={active} delay={80} /> <span style={{ fontSize: 9, color: "#aaa" }}>(20%)</span></div>
-                            <div className={`${s.cellVal} ${s.cellValPos} ${s.cellValBold}`}>$0</div>
-                        </div>
-                        {/* Remodel */}
-                        <div className={s.row}>
-                            <div className={s.cellLabel}>Remodel</div>
-                            <div className={s.cellVal} style={{ color: "#888" }}>$0</div>
-                            <div className={s.cellVal} style={{ color: "#888" }}>$0</div>
-                        </div>
-                        {/* Cost out of pocket */}
-                        <div className={`${s.row} ${s.rowDark}`}>
-                            <div className={`${s.cellLabel} ${s.cellLabelBold}`}>Cost Out of Pocket</div>
-                            <div className={`${s.cellVal} ${s.cellValNeg} ${s.cellValBold}`}><AnimVal n={houseScenario?.downPayment ?? 0} active={active} delay={120} /></div>
-                            <div className={`${s.cellVal} ${s.cellValPos} ${s.cellValBold}`}>$0</div>
-                        </div>
-                        {/* Monthly payment */}
-                        <div className={s.row}>
-                            <div className={s.cellLabel}>Monthly Payment</div>
-                            <div className={s.cellVal}><AnimVal n={houseScenario?.mtgPaymentMonthly ?? 0} active={active} delay={160} /></div>
-                            <div className={s.cellVal}><AnimVal n={aduSc?.mtgPaymentMonthly ?? 0} active={active} delay={200} /></div>
-                        </div>
-                        {/* Property tax */}
-                        <div className={s.row}>
-                            <div className={s.cellLabel}>Property Tax</div>
-                            <div className={s.cellVal}><AnimVal n={houseScenario?.propertyTaxMonthly ?? 0} active={active} delay={220} /></div>
-                            <div className={s.cellVal}><AnimVal n={aduSc?.propertyTaxMonthly ?? 0} active={active} delay={260} /></div>
-                        </div>
-                        {/* Insurance */}
-                        <div className={s.row}>
-                            <div className={s.cellLabel}>Insurance</div>
-                            <div className={s.cellVal}><AnimVal n={houseScenario?.insuranceMonthly ?? 0} active={active} delay={280} /></div>
-                            <div className={s.cellVal}><AnimVal n={aduSc?.insuranceMonthly ?? 0} active={active} delay={300} /></div>
-                        </div>
-                        {/* Maintenance */}
-                        <div className={s.row}>
-                            <div className={s.cellLabel}>Maintenance</div>
-                            <div className={s.cellVal}><AnimVal n={houseScenario?.maintenanceMonthly ?? 0} active={active} delay={320} /></div>
-                            <div className={s.cellVal}><AnimVal n={aduSc?.maintenanceMonthly ?? 0} active={active} delay={340} /></div>
-                        </div>
-                        {/* Monthly cost */}
-                        <div className={`${s.row} ${s.rowDark}`}>
-                            <div className={`${s.cellLabel} ${s.cellLabelBold}`}>Monthly Cost</div>
-                            <div className={`${s.cellVal} ${s.cellValNeg} ${s.cellValBold}`}><AnimVal n={houseScenario?.monthlyCost ?? 0} active={active} delay={360} /></div>
-                            <div className={`${s.cellVal} ${s.cellValPos} ${s.cellValBold}`}><AnimVal n={aduSc?.monthlyCost ?? 0} active={active} delay={380} /></div>
-                        </div>
-                        {/* Rent */}
-                        <div className={s.row}>
-                            <div className={s.cellLabel}>Rent</div>
-                            <div className={s.cellVal}><AnimVal n={houseScenario?.rentMonthly ?? 0} active={active} delay={400} /></div>
-                            <div className={s.cellVal}><AnimVal n={aduSc?.rentMonthly ?? 0} active={active} delay={420} /></div>
-                        </div>
-                        {/* Cashflow */}
-                        <div className={`${s.row} ${s.rowCashflow}`}>
-                            <div className={`${s.cellLabel} ${s.cellLabelCashflow}`}>Cashflow</div>
-                            <div className={`${s.cellVal} ${s.cellValCfNeg}`}>↓ <AnimVal n={Math.abs(hcf)} active={active} delay={440} /></div>
-                            <div className={`${s.cellVal} ${s.cellValCfPos}`}>↑ <AnimVal n={Math.abs(acf)} active={active} delay={460} /></div>
-                        </div>
-                        {/* Avg equity */}
-                        <div className={`${s.row} ${s.rowEquity}`}>
-                            <div className={s.cellLabel}>AVG Equity Boost</div>
-                            <div className={s.cellVal} style={{ color: "#bbb" }}>—</div>
-                            <div className={`${s.cellVal} ${s.cellValPos} ${s.cellValBold}`}><AnimVal n={avgEquity} active={active} delay={500} /></div>
-                        </div>
+                        <div className={s.anchorNumSub}>Illustrative</div>
                     </div>
                 </div>
+            )}
 
-                <div className={s.wbfy}>We build for you.</div>
-                <div className={s.disclaimer}>
-                    Backyard Estates does not make any guarantees regarding rental income or long-term value.
+            {/* Comparison table */}
+            <div className={s.tableWrap}>
+                <div className={s.thead}>
+                    <div className={`${s.th} ${s.thCosts}`}>Line item</div>
+                    <div className={`${s.th} ${s.thHouse}`}>House</div>
+                    <div className={`${s.th} ${s.thAdu}`}>Your ADU</div>
+                </div>
+                <div className={s.tbody}>
+                    <div className={s.row}>
+                        <div className={s.cellLabel}>Purchase Price</div>
+                        <div className={s.cellVal}><AnimVal n={houseScenario?.purchasePrice ?? 0} active={active} delay={40} /></div>
+                        <div className={s.cellVal}><AnimVal n={aduSc?.finalAduPrice ?? aduSc?.purchasePrice ?? 0} active={active} delay={60} /></div>
+                    </div>
+                    <div className={s.row}>
+                        <div className={s.cellLabel}>Down Payment</div>
+                        <div className={s.cellVal}><AnimVal n={houseScenario?.downPayment ?? 0} active={active} delay={80} /></div>
+                        <div className={`${s.cellVal} ${s.cellValPos} ${s.cellValBold}`}>$0</div>
+                    </div>
+                    <div className={s.row}>
+                        <div className={s.cellLabel}>Remodel</div>
+                        <div className={`${s.cellVal} ${s.cellValMuted}`}>$0</div>
+                        <div className={`${s.cellVal} ${s.cellValMuted}`}>$0</div>
+                    </div>
+                    <div className={`${s.row} ${s.rowDark}`}>
+                        <div className={`${s.cellLabel} ${s.cellLabelBold}`}>Cost Out of Pocket</div>
+                        <div className={`${s.cellVal} ${s.cellValNeg} ${s.cellValBold}`}><AnimVal n={houseScenario?.downPayment ?? 0} active={active} delay={120} /></div>
+                        <div className={`${s.cellVal} ${s.cellValPos} ${s.cellValBold}`}>$0</div>
+                    </div>
+                    <div className={s.row}>
+                        <div className={s.cellLabel}>Monthly Payment</div>
+                        <div className={s.cellVal}><AnimVal n={houseScenario?.mtgPaymentMonthly ?? 0} active={active} delay={160} /></div>
+                        <div className={s.cellVal}><AnimVal n={aduSc?.mtgPaymentMonthly ?? 0} active={active} delay={180} /></div>
+                    </div>
+                    <div className={s.row}>
+                        <div className={s.cellLabel}>Property Tax</div>
+                        <div className={s.cellVal}><AnimVal n={houseScenario?.propertyTaxMonthly ?? 0} active={active} delay={200} /></div>
+                        <div className={s.cellVal}><AnimVal n={aduSc?.propertyTaxMonthly ?? 0} active={active} delay={220} /></div>
+                    </div>
+                    <div className={s.row}>
+                        <div className={s.cellLabel}>Insurance</div>
+                        <div className={s.cellVal}><AnimVal n={houseScenario?.insuranceMonthly ?? 0} active={active} delay={240} /></div>
+                        <div className={s.cellVal}><AnimVal n={aduSc?.insuranceMonthly ?? 0} active={active} delay={260} /></div>
+                    </div>
+                    <div className={s.row}>
+                        <div className={s.cellLabel}>Maintenance</div>
+                        <div className={s.cellVal}><AnimVal n={houseScenario?.maintenanceMonthly ?? 0} active={active} delay={280} /></div>
+                        <div className={s.cellVal}><AnimVal n={aduSc?.maintenanceMonthly ?? 0} active={active} delay={300} /></div>
+                    </div>
+                    <div className={`${s.row} ${s.rowDark}`}>
+                        <div className={`${s.cellLabel} ${s.cellLabelBold}`}>Monthly Cost</div>
+                        <div className={`${s.cellVal} ${s.cellValNeg} ${s.cellValBold}`}><AnimVal n={houseScenario?.monthlyCost ?? 0} active={active} delay={320} /></div>
+                        <div className={`${s.cellVal} ${s.cellValPos} ${s.cellValBold}`}><AnimVal n={aduSc?.monthlyCost ?? 0} active={active} delay={340} /></div>
+                    </div>
+                    <div className={s.row}>
+                        <div className={s.cellLabel}>Rent Collected</div>
+                        <div className={`${s.cellVal} ${s.cellValMuted}`}>—</div>
+                        <div className={s.cellVal}><AnimVal n={aduSc?.rentMonthly ?? 0} active={active} delay={360} /></div>
+                    </div>
+                    <div className={`${s.row} ${s.rowCashflow}`}>
+                        <div className={`${s.cellLabel} ${s.cellLabelCashflow}`}>Monthly Cashflow</div>
+                        <div className={s.cellValCfNeg}>↓ <AnimVal n={Math.abs(hcf)} active={active} delay={400} /></div>
+                        <div className={s.cellValCfPos}>↑ <AnimVal n={Math.abs(acf)} active={active} delay={420} /></div>
+                    </div>
+                    <div className={s.row}>
+                        <div className={s.cellLabel}>AVG Equity Boost</div>
+                        <div className={`${s.cellVal} ${s.cellValMuted}`}>—</div>
+                        <div className={`${s.cellVal} ${s.cellValPos} ${s.cellValBold}`}><AnimVal n={avgEquity} active={active} delay={460} /></div>
+                    </div>
                 </div>
             </div>
+
+            <RunningFooter
+                theme="light"
+                left={<span className={s.disclaimer}>Backyard Estates does not guarantee rental income or long-term value. Illustrative — for comparison purposes only.</span>}
+            />
         </div>
     );
 }

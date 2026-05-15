@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { RunningHeader } from "./_shared/RunningHeader";
+import { RunningFooter } from "./_shared/RunningFooter";
 import s from "./Slide4.module.css";
 
 export function Slide4_SeeItInPerson() {
@@ -32,11 +34,15 @@ export function Slide4_SeeItInPerson() {
 
     return (
         <div className={s.slide}>
-            <div className="slide-header slide-header-dark">
-                <span className="slide-header-title">Real Backyard Estates ADUs</span>
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                    {allImages.length > PER_PAGE && (
-                        <span className="slide-header-pill">{page + 1} / {totalPages} pages</span>
+            <RunningHeader slideNumber={4} topic="See it in person" theme="dark" />
+
+            <div className={s.titleRow}>
+                <h2 className={s.titleText}>See it <em>in person</em></h2>
+                <div className={s.titleRight}>
+                    {totalPages > 1 && (
+                        <span className={s.plateCounter}>
+                            Plate {String(page + 1).padStart(2, "0")} / {String(totalPages).padStart(2, "0")}
+                        </span>
                     )}
                     <button className={s.pauseBtn} onClick={() => setGalleryPaused(!galleryPaused)}>
                         {galleryPaused ? "▶ Resume" : "⏸ Pause"}
@@ -45,19 +51,24 @@ export function Slide4_SeeItInPerson() {
             </div>
 
             <div className={s.content}>
-                <div className={s.eyebrow}>Real Homes We&rsquo;ve Built</div>
+                <div className={s.realhomesLabel}>Real homes we&rsquo;ve built</div>
 
                 {allImages.length > 0 ? (
-                    <div className={s.grid} style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)`, gridTemplateRows: `repeat(${ROWS}, 1fr)` }}>
+                    <div
+                        className={s.grid}
+                        style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)`, gridTemplateRows: `repeat(${ROWS}, 1fr)` }}
+                    >
                         {visible.map((img, i) => (
                             <div key={i} className={s.cell}>
                                 <img src={img.url} alt={img.name} className={s.cellImg} />
+                                <span className={s.cellPlate}>№ {String(page * PER_PAGE + i + 1).padStart(2, "0")}</span>
+                                <div className={s.cellCaption}>{img.name}</div>
                             </div>
                         ))}
                     </div>
                 ) : (
                     <div className={s.placeholder}>
-                        <span style={{ fontSize: 48, opacity: 0.2 }}>🏡</span>
+                        <span style={{ fontSize: 40, opacity: 0.10 }}>🏡</span>
                         <span className={s.placeholderText}>Completed properties loading…</span>
                     </div>
                 )}
@@ -70,7 +81,7 @@ export function Slide4_SeeItInPerson() {
                                 onClick={() => setPage(i)}
                                 className={s.dot}
                                 style={{
-                                    background: i === page ? "var(--p-gold)" : "rgba(255,255,255,0.25)",
+                                    background: i === page ? "var(--p-gold)" : "rgba(255,255,255,0.22)",
                                     transform: i === page ? "scale(1.4)" : "scale(1)",
                                 }}
                             />
@@ -78,7 +89,8 @@ export function Slide4_SeeItInPerson() {
                     </div>
                 )}
             </div>
-            <div className={s.wbfy}>We build for you.</div>
+
+            <RunningFooter theme="dark" />
         </div>
     );
 }

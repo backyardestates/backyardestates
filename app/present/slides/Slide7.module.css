@@ -1,1 +1,330 @@
+/* Slide 7 — How It Works · dark editorial */
 
+.slide {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 0%, var(--p-teal-deep) 0%, var(--p-dark) 60%, var(--p-dark-2) 100%);
+  overflow: hidden;
+  padding: 90px 56px 32px;
+  gap: 22px;
+  color: var(--p-cream);
+  font-family: var(--p-font);
+}
+
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: rgba(247,245,240,0.50);
+  letter-spacing: 0.04em;
+}
+
+/* ── PROCESS STEPS ── */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+
+.stepCard {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid var(--p-border-dark);
+  border-radius: var(--p-radius-lg);
+  padding: 22px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--p-shadow-md);
+}
+
+.stepCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--p-gold-bright), transparent);
+  opacity: 0.7;
+}
+
+.stepHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stepNum {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-xl);
+  color: var(--p-gold);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.stepBadge {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-semi);
+}
+
+.stepTitle {
+  font-family: var(--p-font);
+  font-size: var(--p-text-lg);
+  color: var(--p-cream);
+  font-weight: var(--p-semi);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.stepDesc {
+  font-size: var(--p-text-xs);
+  color: rgba(247,245,240,0.62);
+  line-height: 1.45;
+  margin-top: 2px;
+}
+
+/* ── BODY (callout + schedule) ── */
+.body {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 22px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Callout band */
+.callout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, var(--p-gold-bg) 0%, rgba(184,149,74,0.04) 100%);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-lg);
+  padding: 22px 32px;
+}
+
+.calloutText {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-xl);
+  color: var(--p-gold-bright);
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+/* Payment schedule */
+.scheduleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+.scheduleTopRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.scheduleHead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scheduleTitle {
+  font-family: var(--p-font);
+  font-size: var(--p-text-xl);
+  font-weight: var(--p-light);
+  color: var(--p-cream);
+  letter-spacing: var(--p-track-tight);
+  line-height: 1.1;
+}
+
+.scheduleTitle em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--p-gold-bright);
+}
+
+.scheduleSub {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-semi);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: var(--p-semi);
+  padding: 8px 16px;
+  border-radius: var(--p-radius-pill);
+  border: 1px solid rgba(184,149,74,0.30);
+  background: transparent;
+  cursor: pointer;
+  color: rgba(247,245,240,0.55);
+  transition: all 0.18s;
+}
+
+.tabActive {
+  background: var(--p-gold);
+  color: var(--p-teal-ink);
+  border-color: var(--p-gold);
+}
+
+.tabInactive:hover {
+  background: rgba(184,149,74,0.08);
+  color: var(--p-cream);
+}
+
+/* milestone grid */
+.milestoneGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.milestoneCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px 14px 14px 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%);
+  border: 1px solid var(--p-border-dark);
+  border-radius: var(--p-radius-md);
+  overflow: hidden;
+}
+
+.milestoneCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--phase-color, var(--p-gold));
+}
+
+.milestoneNum {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-base);
+  color: var(--p-gold-soft);
+  line-height: 1;
+}
+
+.milestoneLabel {
+  font-size: var(--p-text-micro);
+  color: rgba(247,245,240,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  font-weight: var(--p-semi);
+}
+
+.milestoneAmt {
+  font-family: var(--p-font);
+  font-size: var(--p-text-md);
+  font-weight: var(--p-light);
+  color: var(--p-cream);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* Total card */
+.totalCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 14px 18px;
+  background: linear-gradient(180deg, var(--p-gold-bg) 0%, rgba(184,149,74,0.04) 100%);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-md);
+}
+
+.totalLabel {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-semi);
+}
+
+.totalAmt {
+  font-family: var(--p-font);
+  font-size: var(--p-text-lg);
+  font-weight: var(--p-light);
+  color: var(--p-gold-bright);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+  line-height: 1;
+}
+
+.emptySchedule {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-base);
+  color: rgba(247,245,240,0.32);
+  padding: 28px 0;
+  text-align: center;
+}
+
+.footerNote {
+  font-size: var(--p-text-micro);
+  color: rgba(247,245,240,0.45);
+  letter-spacing: 0.04em;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(184,149,74,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.footerTagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+}

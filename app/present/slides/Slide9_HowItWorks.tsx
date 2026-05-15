@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { RunningHeader } from "./_shared/RunningHeader";
+import { RunningFooter } from "./_shared/RunningFooter";
 import s from "./Slide9.module.css";
 
 function fmt$(n: number) {
@@ -38,12 +40,19 @@ function AnimDollar({ n, active, delay = 0 }: { n: number; active: boolean; dela
     return <>{fmt$(v)}</>;
 }
 
+function toRoman(n: number): string {
+    const map: [number, string][] = [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]];
+    let result = "";
+    for (const [val, sym] of map) { while (n >= val) { result += sym; n -= val; } }
+    return result;
+}
+
 const STEPS = [
-    { icon: "✍️", title: "Sign & Deposit", desc: "DocuSign sent by tomorrow" },
-    { icon: "📍", title: "Site Visit", desc: "On-site within one week" },
-    { icon: "📐", title: "Floor Plan Review", desc: "Custom design, your input" },
-    { icon: "🏛️", title: "Permits & Plans", desc: "We handle everything" },
-    { icon: "🔑", title: "Build & Keys", desc: "Weekly updates in BuilderTrend" },
+    { title: "Sign & Deposit", desc: "DocuSign sent by tomorrow" },
+    { title: "Site Visit", desc: "On-site within one week" },
+    { title: "Floor Plan Review", desc: "Custom design, your input" },
+    { title: "Permits & Plans", desc: "We handle everything" },
+    { title: "Build & Keys", desc: "Weekly updates in BuilderTrend" },
 ];
 
 const SHORT_LABELS: Record<string, string> = {
@@ -83,15 +92,17 @@ export function Slide9_HowItWorks() {
 
     return (
         <div className={s.slide}>
-            <div className={s.header}>
-                <span className={s.headerText}>What Happens After You Say Yes</span>
+            <RunningHeader slideNumber={9} topic="After you say yes" theme="dark" />
+
+            <div className={s.titleRow}>
+                <h2 className={s.titleText}>What happens after you say yes.</h2>
             </div>
 
             {/* Process steps */}
             <div className={s.steps}>
-                {STEPS.map((step) => (
+                {STEPS.map((step, i) => (
                     <div key={step.title} className={s.stepCard}>
-                        <div className={s.stepIcon}>{step.icon}</div>
+                        <div className={s.stepNum}>{toRoman(i + 1)}</div>
                         <div className={s.stepTitle}>{step.title}</div>
                         <div className={s.stepDesc}>{step.desc}</div>
                     </div>
@@ -99,12 +110,14 @@ export function Slide9_HowItWorks() {
             </div>
 
             {/* Callout */}
-            <div className={s.callout}>You talk to us. We talk to everyone else.</div>
+            <div className={s.callout}>
+                <div className={s.calloutText}>You talk to us. We talk to everyone else.</div>
+            </div>
 
             {/* Payment schedule */}
             <div className={s.scheduleSection}>
                 <div className={s.scheduleHeader}>
-                    <div className={s.scheduleLabel}>Your Payment Schedule</div>
+                    <div className={s.scheduleLabel}>Payment schedule</div>
                     {displayAdus.length > 1 && (
                         <div className={s.tabs}>
                             {displayAdus.map((sc, i) => (
@@ -124,8 +137,8 @@ export function Slide9_HowItWorks() {
                     <>
                         <div className={s.milestoneRow1}>
                             {row1.map((m, i) => (
-                                <div key={m.id} className={s.milestoneCard} style={{ borderLeft: `2px solid ${PHASE_BORDER[m.phase] ?? "var(--p-gold)"}` }}>
-                                    <div className={s.milestoneNum}>#{i + 1}</div>
+                                <div key={m.id} className={s.milestoneCard} style={{ borderLeftColor: PHASE_BORDER[m.phase] ?? "var(--p-gold)" }}>
+                                    <div className={s.milestoneNum}>{toRoman(i + 1)}</div>
                                     <div className={s.milestoneLabel}>{SHORT_LABELS[m.id] ?? m.label}</div>
                                     <div className={s.milestoneAmt}><AnimDollar n={m.amount} active={active} delay={i * 60} /></div>
                                 </div>
@@ -133,29 +146,31 @@ export function Slide9_HowItWorks() {
                         </div>
                         <div className={s.milestoneRow2}>
                             {row2.map((m, i) => (
-                                <div key={m.id} className={s.milestoneCard} style={{ borderLeft: `2px solid ${PHASE_BORDER[m.phase] ?? "var(--p-gold)"}` }}>
-                                    <div className={s.milestoneNum}>#{row1.length + i + 1}</div>
+                                <div key={m.id} className={s.milestoneCard} style={{ borderLeftColor: PHASE_BORDER[m.phase] ?? "var(--p-gold)" }}>
+                                    <div className={s.milestoneNum}>{toRoman(row1.length + i + 1)}</div>
                                     <div className={s.milestoneLabel}>{SHORT_LABELS[m.id] ?? m.label}</div>
                                     <div className={s.milestoneAmt}><AnimDollar n={m.amount} active={active} delay={(row1.length + i) * 60} /></div>
                                 </div>
                             ))}
                             {activeUnit && (
                                 <div className={s.totalCard}>
-                                    <div className={s.totalLabel}>Total</div>
+                                    <div className={s.totalLabel}>Total contract</div>
                                     <div className={s.totalAmt}>{fmt$(activeUnit.finalAduPrice ?? activeUnit.purchasePrice ?? 0)}</div>
                                 </div>
                             )}
                         </div>
                     </>
                 ) : (
-                    <div style={{ color: "var(--p-text-white-25)", fontSize: 13, fontFamily: "var(--p-font)", padding: "12px 0" }}>
+                    <div style={{ color: "rgba(212,176,116,0.30)", fontSize: 13, fontFamily: "var(--p-font)", padding: "12px 0" }}>
                         Payment schedule loading…
                     </div>
                 )}
             </div>
 
-            <div className={s.wbfy}>We build for you.</div>
-            <div className={s.footer}>Nothing is due until the milestone is completed.</div>
+            <RunningFooter
+                theme="dark"
+                left={<span className={s.footerNote}>Nothing due until each milestone is completed.</span>}
+            />
         </div>
     );
 }

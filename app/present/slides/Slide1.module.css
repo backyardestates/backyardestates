@@ -1,1 +1,245 @@
+/* Slide 1 — Cover · dark editorial cover */
 
+.slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 30% 50%, var(--p-teal-deep) 0%, var(--p-dark) 60%, var(--p-dark-2) 100%);
+  overflow: hidden;
+  color: var(--p-cream);
+  font-family: var(--p-font);
+}
+
+/* Photo right 55% with inset gold border */
+.photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 55%;
+  background-size: cover;
+  background-position: center;
+}
+
+.photoFrame {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  bottom: 24px;
+  width: calc(55% - 48px);
+  border: 1px solid var(--p-gold-border);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.photoFade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    var(--p-dark) 0%,
+    var(--p-dark) 24%,
+    rgba(13,31,31,0.86) 46%,
+    rgba(13,31,31,0.38) 70%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+
+/* Content stack on left */
+.content {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 96px 56px 56px;
+  z-index: 3;
+}
+
+/* TOP — logo + proposal eyebrow */
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 50%;
+}
+
+.logo {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  object-position: left;
+}
+
+.proposalEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-semi);
+}
+
+/* MIDDLE — customer headline */
+.middle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  width: 50%;
+  padding-right: 32px;
+}
+
+.eyebrowTop {
+  font-size: var(--p-text-micro);
+  font-weight: var(--p-semi);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+}
+
+.customerName {
+  font-family: var(--p-font-display);
+  font-weight: 300;
+  font-size: var(--p-text-display);
+  font-optical-sizing: auto;
+  color: var(--p-cream);
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  font-style: normal;
+}
+
+.residence {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-3xl);
+  color: var(--p-gold-bright);
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+  margin-top: 6px;
+}
+
+.address {
+  font-size: var(--p-text-sm);
+  color: rgba(247,245,240,0.62);
+  letter-spacing: 0.04em;
+  font-weight: var(--p-light);
+  margin-top: 8px;
+}
+
+.goldRule {
+  width: 88px;
+  height: 1px;
+  background: var(--p-gold);
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* CASHFLOW BADGE — floats over the photo seam, hero element */
+.cashflowBadge {
+  position: absolute;
+  top: 50%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 38px 52px 32px;
+  background: linear-gradient(180deg, var(--p-teal-ink) 0%, var(--p-dark) 100%);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-float), var(--p-glow-gold);
+  z-index: 5;
+  min-width: 360px;
+}
+
+.cashflowChip {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--p-teal-ink);
+  color: var(--p-gold-bright);
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 8px 22px;
+  border-radius: var(--p-radius-pill);
+  font-weight: var(--p-semi);
+  white-space: nowrap;
+  border: 1px solid var(--p-gold-border);
+  box-shadow: var(--p-shadow-sm);
+}
+
+.cashflowValue {
+  font-family: var(--p-font);
+  font-size: var(--p-text-hero);
+  font-weight: var(--p-light);
+  color: var(--p-positive-bright);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  line-height: 0.95;
+  letter-spacing: var(--p-track-tight);
+  text-align: center;
+}
+
+.cashflowSub {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold-soft);
+  text-align: center;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+}
+
+/* BOTTOM — meta strip */
+.bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(184,149,74,0.20);
+  width: 50%;
+}
+
+.metaCluster {
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 100px;
+}
+
+.metaLabel {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247,245,240,0.34);
+  font-weight: var(--p-medium);
+}
+
+.metaVal {
+  font-size: var(--p-text-xs);
+  color: rgba(247,245,240,0.82);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.tagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-md);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}

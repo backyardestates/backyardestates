@@ -1,0 +1,147 @@
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
+import { usePresentationStore, SanityProperty } from "@/lib/store/presentationStore";
+import s from "./Slide5.module.css";
+
+type BuildImage = {
+    url: string;
+    name: string;
+    location: string;
+};
+
+function buildImageList(completedProperties: SanityProperty[]): BuildImage[] {
+    const images: BuildImage[] = [];
+    for (const prop of completedProperties) {
+        for (const url of prop.images ?? []) {
+            images.push({ url, name: prop.name, location: prop.location ?? "" });
+        }
+        if (!prop.images?.length && prop.thumbnailUrl) {
+            images.push({ url: prop.thumbnailUrl, name: prop.name, location: prop.location ?? "" });
+        }
+    }
+    return images;
+}
+
+const PAGE_SIZE = 9;
+
+function pad2(n: number) {
+    return n.toString().padStart(2, "0");
+}
+
+function lastNameFromFull(full?: string) {
+    if (!full) return "";
+    const parts = full.trim().split(/\s+/);
+    return parts[parts.length - 1] ?? "";
+}
+
+function cityFromAddress(addr: string) {
+    const parts = addr.split(",");
+    return parts.length >= 2 ? parts[parts.length - 2].trim() : addr;
+}
+
+export function Slide5_CompletedBuilds() {
+    const { completedProperties, galleryPaused, setGalleryPaused, currentSlide, customerName, propertyAddress } = usePresentationStore();
+    const active = currentSlide === 5;
+
+    const images = buildImageList(completedProperties);
+    const pageCount = Math.max(1, Math.ceil(images.length / PAGE_SIZE));
+    const [page, setPage] = useState(0);
+
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    useEffect(() => {
+        if (!active || galleryPaused || pageCount <= 1) return;
+        timerRef.current = setInterval(() => {
+            setPage((p) => (p + 1) % pageCount);
+        }, 6000);
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, [active, galleryPaused, pageCount]);
+
+    useEffect(() => {
+        if (active) setPage(0);
+    }, [active]);
+
+    const pageImages = images.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+    const cells: (BuildImage | null)[] = [...pageImages];
+    while (cells.length < PAGE_SIZE) cells.push(null);
+
+    const lastName = lastNameFromFull(customerName);
+    const city = propertyAddress ? cityFromAddress(propertyAddress) : "—";
+
+    return (
+        <div className={s.slide}>
+            {/* Running header */}
+            <div className="running-header rh-dark">
+                <span className="running-header-left">{lastName} · {city}</span>
+                <span className="running-header-center">Completed Builds</span>
+                <span className="running-header-right">
+                    <span className="running-header-num">05</span> / 10
+                </span>
+            </div>
+
+            {/* Headline */}
+            <div className={s.headRow}>
+                <div className={s.headLeft}>
+                    <h2 className="section-title on-dark">
+                        See it <em>in person.</em>
+                    </h2>
+                    <span className={s.headSubhead}>{completedProperties.length > 0 ? `${completedProperties.length}+ homes built across Southern California` : ""}</span>
+                </div>
+                <div className={s.headRight}>
+                    <span className={s.plateCounter}>Plate {pad2(page + 1)} / {pad2(pageCount)}</span>
+                    {pageCount > 1 && (
+                        <button
+                            className={s.pauseBtn}
+                            onClick={() => setGalleryPaused(!galleryPaused)}
+                            aria-label={galleryPaused ? "Resume gallery" : "Pause gallery"}
+                        >
+                            {galleryPaused ? "Resume ▶" : "Pause ⏸"}
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* 3×3 grid */}
+            <div className={s.grid}>
+                {cells.map((cell, i) => (
+                    <div key={i} className={s.cell}>
+                        {cell ? (
+                            <>
+                                <img src={cell.url} alt={cell.name} className={s.cellImg} loading="lazy" />
+                                <span className={s.cellPlate}>№ {pad2(i + 1)}</span>
+                                <div className={s.cellOverlay}>
+                                    <span className={s.cellName}>{cell.name}</span>
+                                    {cell.location && <span className={s.cellLocation}>{cell.location}</span>}
+                                </div>
+                            </>
+                        ) : (
+                            <div className={s.cellEmpty} />
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            {/* Footer */}
+            <div className={s.footer}>
+                <div className={s.dotsWrap}>
+                    {pageCount > 1 && <span className={s.dotsLabel}>Pages</span>}
+                    {pageCount > 1 && (
+                        <div className={s.dots}>
+                            {Array.from({ length: pageCount }).map((_, i) => (
+                                <button
+                                    key={i}
+                                    className={`${s.dot} ${i === page ? s.dotActive : ""}`}
+                                    onClick={() => setPage(i)}
+                                    aria-label={`Page ${i + 1}`}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <span className={s.realLabel}>Real homes we&apos;ve built.</span>
+            </div>
+        </div>
+    );
+}

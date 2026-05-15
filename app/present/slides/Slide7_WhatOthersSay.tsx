@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { RunningHeader } from "./_shared/RunningHeader";
+import { RunningFooter } from "./_shared/RunningFooter";
 import s from "./Slide7.module.css";
 
 function getInitials(name: string) {
@@ -26,14 +28,13 @@ export function Slide7_WhatOthersSay() {
 
     if (!selectedStory) {
         return (
-            <div className={s.slide}>
-                <div className="slide-header">
-                    <span className="slide-header-title">What Others Say</span>
-                </div>
+            <div className={s.slide} style={{ flexDirection: "column" }}>
+                <RunningHeader slideNumber={7} topic="What others say" theme="dark" />
                 <div className={s.noStory}>
-                    <span style={{ fontSize: 48, opacity: 0.15 }}>💬</span>
-                    <span className={s.noStoryText}>Loading customer stories…</span>
+                    <span style={{ fontSize: 40, opacity: 0.10 }}>💬</span>
+                    <span className={s.noStoryText}>Testimonial coming soon</span>
                 </div>
+                <RunningFooter theme="dark" />
             </div>
         );
     }
@@ -43,20 +44,26 @@ export function Slide7_WhatOthersSay() {
 
     return (
         <div className={s.slide}>
-            {/* LEFT: photo */}
+            {/* LEFT: completed-build photo */}
             <div className={s.photoHalf}>
                 {photoUrl ? (
                     <img src={photoUrl} alt={selectedStory.names} className={s.photoImg} />
                 ) : (
                     <div className={s.photoPlaceholder}>
-                        <span style={{ fontSize: 64, opacity: 0.25 }}>👤</span>
+                        <span style={{ fontSize: 56, opacity: 0.15 }}>🏡</span>
                     </div>
+                )}
+                <span className={s.photoBadge}>Completed build</span>
+                {selectedStory.names && (
+                    <span className={s.photoCaption}>{selectedStory.names}</span>
                 )}
                 <div className={s.photoFade} />
             </div>
 
             {/* RIGHT: story panel */}
             <div className={s.storyHalf}>
+                <RunningHeader slideNumber={7} topic="What others say" theme="dark" />
+
                 {/* Portrait */}
                 <div className={s.portrait}>
                     {selectedStory.portraitUrl ? (
@@ -67,7 +74,9 @@ export function Slide7_WhatOthersSay() {
                 </div>
 
                 <div className={s.name}>{selectedStory.names}</div>
-                {selectedStory.purpose && <div className={s.purpose}>{selectedStory.purpose}</div>}
+                {selectedStory.purpose && (
+                    <div className={s.purpose}>{selectedStory.purpose}</div>
+                )}
 
                 <div className={s.qmark}>&ldquo;</div>
 
@@ -92,7 +101,7 @@ export function Slide7_WhatOthersSay() {
                                 src={`https://fast.wistia.net/embed/medias/${selectedStory.wistiaId}/swatch`}
                                 alt="Video thumbnail"
                                 className={s.videoThumb}
-                                onError={(e) => { (e.target as HTMLImageElement).style.background = "var(--p-teal)"; }}
+                                onError={(e) => { (e.target as HTMLImageElement).style.background = "var(--p-teal-ink)"; }}
                             />
                             <div className={s.playOverlay}>
                                 <div className={s.playBtn}>▶</div>
@@ -104,8 +113,9 @@ export function Slide7_WhatOthersSay() {
                         </div>
                     </div>
                 )}
+
+                <RunningFooter theme="dark" />
             </div>
-            <div className={s.wbfy}>We build for you.</div>
         </div>
     );
 }

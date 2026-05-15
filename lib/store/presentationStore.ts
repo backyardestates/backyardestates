@@ -3,7 +3,7 @@ import type { Scenario } from "@/lib/investment/types";
 import type { RentalListing } from "@/lib/rentcast/types";
 import type { PaymentMilestone } from "@/lib/investment/paymentSchedule";
 
-export const SLIDE_COUNT = 10;
+export const SLIDE_COUNT = 13;
 
 // ─── Sanity data types ────────────────────────────────────────────────────────
 
