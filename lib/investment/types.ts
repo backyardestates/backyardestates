@@ -112,6 +112,7 @@ export type Scenario = {
     baseAduPrice?: number;
     siteWorkApplied?: number;
     discountApplied?: number;
+    discountLines?: { label: string; amount: number }[];
     finalAduPrice?: number;
     finalSqft?: number;
 };

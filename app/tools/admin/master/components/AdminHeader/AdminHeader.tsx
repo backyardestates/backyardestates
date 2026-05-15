@@ -1,15 +1,40 @@
 "use client";
 
 import React from "react";
-import styles from "../../components/AdminMasterClient.module.css"
+import { SignOutButton } from "@clerk/nextjs";
+import styles from "./AdminHeader.module.css";
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+    onOpenPresenter?: () => void;
+}
+
+export function AdminHeader({ onOpenPresenter }: AdminHeaderProps) {
     return (
         <header className={styles.header}>
-            <h1 className={styles.h1}>Admin Master</h1>
-            <p className={styles.subhead}>
-                Enter address + owed amount, select floorplan (sqft only), then pull RentCast data.
-            </p>
+            <div className={styles.logoWrap}>
+                <img
+                    src="/images/logo-mobile.png"
+                    alt="Backyard Estates"
+                    className={styles.logo}
+                />
+                <span className={styles.wordmark}>Backyard Estates</span>
+            </div>
+
+            <div className={styles.center}>
+                <span className={styles.toolLabel}>ADU Proposal Tool</span>
+            </div>
+
+            <div className={styles.actions}>
+                {onOpenPresenter && (
+                    <button className={styles.presentBtn} onClick={onOpenPresenter}>
+                        <span className={styles.presentIcon}>▶</span>
+                        Present
+                    </button>
+                )}
+                <SignOutButton>
+                    <button className={styles.signOutBtn}>Sign out</button>
+                </SignOutButton>
+            </div>
         </header>
     );
 }

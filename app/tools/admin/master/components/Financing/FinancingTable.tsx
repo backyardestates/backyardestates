@@ -170,8 +170,8 @@ export function FinancingTable({
             </header>
 
             {/* ✅ Policy editor */}
-            <div className={styles.policyCard}>
-                <div className={styles.policyHead}>
+            <details className={styles.policyCard}>
+                <summary className={styles.policyHead}>
                     <div>
                         <div className={styles.policyTitle}>Policy knobs</div>
                         <div className={styles.policySub}>
@@ -179,10 +179,10 @@ export function FinancingTable({
                         </div>
                     </div>
 
-                    <button type="button" className={styles.resetBtn} onClick={resetKnobs}>
+                    <button type="button" className={styles.resetBtn} onClick={(e) => { e.preventDefault(); resetKnobs(); }}>
                         Reset
                     </button>
-                </div>
+                </summary>
 
                 <div className={styles.policyGrid}>
                     <Knob
@@ -255,7 +255,7 @@ export function FinancingTable({
                         suffix={pct(knobs.renovationMaxLTV)}
                     />
                 </div>
-            </div>
+            </details>
 
             {!canRender ? (
                 <div className={styles.empty}>
@@ -351,7 +351,7 @@ function OptionCell({ option }: { option?: FinancingOptionResult }) {
     return (
         <td className={styles.optionTd}>
             <div className={`${styles.finBadge} ${ok ? styles.finBadgeOk : styles.finBadgeBad}`}>
-                {ok ? "✅ OK" : "❌ No"}
+                {ok ? "Eligible" : "Not eligible"}
             </div>
 
             <div className={styles.finLine}>

@@ -1,0 +1,263 @@
+/* ── COLORS ── */
+:root {
+  --p-dark:        #080f0f;
+  --p-dark-2:      #0c1414;
+  --p-dark-3:      #101c1c;
+  --p-dark-4:      #131f1f;
+  --p-teal:        #2D5F5F;
+  --p-teal-light:  #3a7070;
+  --p-gold:        #B8954A;
+  --p-gold-dim:    rgba(184,149,74,0.12);
+  --p-gold-border: rgba(184,149,74,0.25);
+  --p-cream:       #ffffff;
+  --p-cream-2:     #f5f5f7;
+  --p-cream-3:     #ebebeb;
+  --p-white:       #ffffff;
+  --p-card:        #ffffff;
+
+  --p-text-primary:   #1a1a1a;
+  --p-text-secondary: rgba(0,0,0,0.40);
+  --p-text-muted:     rgba(0,0,0,0.25);
+  --p-text-white:     #ffffff;
+  --p-text-white-50:  rgba(255,255,255,0.50);
+  --p-text-white-40:  rgba(255,255,255,0.40);
+  --p-text-white-30:  rgba(255,255,255,0.30);
+  --p-text-white-25:  rgba(255,255,255,0.25);
+
+  --p-positive:    #3a9e82;
+  --p-negative:    #b33333;
+  --p-included:    #2D5F5F;
+
+  --p-border:       rgba(255,255,255,0.07);
+  --p-border-light: rgba(0,0,0,0.07);
+  --p-border-med:   rgba(0,0,0,0.10);
+}
+
+/* ── TYPOGRAPHY ── */
+:root {
+  --p-font: var(--font-outfit, -apple-system, BlinkMacSystemFont,
+            "SF Pro Display", "Segoe UI", sans-serif);
+
+  --p-display:  62px;
+  --p-h1:       32px;
+  --p-h2:       20px;
+  --p-h3:       16px;
+  --p-body:     13px;
+  --p-small:    11px;
+  --p-xs:       9px;
+  --p-xxs:      7.5px;
+
+  --p-weight-thin:    200;
+  --p-weight-regular: 300;
+  --p-weight-normal:  400;
+  --p-weight-medium:  500;
+  --p-weight-semi:    600;
+
+  --p-tracking-wide:    0.3px;
+  --p-tracking-wider:   1px;
+  --p-tracking-widest:  3px;
+  --p-tracking-tight:   -1.5px;
+  --p-tracking-med:     -0.5px;
+}
+
+/* ── SPACING ── */
+:root {
+  --p-slide-pad:   6%;
+  --p-panel-pad:   24px;
+  --p-card-pad:    16px;
+  --p-gap-sm:      8px;
+  --p-gap-md:      12px;
+  --p-gap-lg:      20px;
+}
+
+/* ── SHAPES ── */
+:root {
+  --p-radius-sm:    6px;
+  --p-radius-md:    12px;
+  --p-radius-lg:    16px;
+  --p-radius-pill:  20px;
+}
+
+/* ── SHADOWS ── */
+:root {
+  --p-shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.08);
+  --p-shadow-dark: 0 4px 24px rgba(0,0,0,0.30);
+}
+
+/* ── TRANSITIONS ── */
+:root {
+  --p-transition: all 0.2s ease;
+  --p-fade:       opacity 0.3s ease;
+}
+
+/* ── OVERLAYS ── */
+.overlay-dark-left {
+  background: linear-gradient(
+    100deg,
+    #080f0f 0%,
+    #080f0f 22%,
+    rgba(8,15,15,0.80) 50%,
+    rgba(8,15,15,0.22) 75%,
+    transparent 100%
+  );
+}
+
+.overlay-photo {
+  background: linear-gradient(90deg, transparent 55%, #080f0f 100%);
+}
+
+/* ── SLIDE SHELL ── */
+.slide-root {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--p-font);
+}
+
+.slide-dark  { background: var(--p-dark); }
+.slide-light { background: var(--p-cream); }
+.slide-black { background: #000000; }
+
+/* ── SHARED HEADER BAR ── */
+/* Apple: thin dark strip, barely-there, gold hairline */
+.slide-header {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  flex-shrink: 0;
+  background: #080f0f;
+  border-bottom: 0.5px solid rgba(184,149,74,0.12);
+}
+
+/* On light slides the header is still dark — consistent brand anchor */
+.slide-header-dark {
+  background: #080f0f;
+  border-bottom: 0.5px solid rgba(184,149,74,0.12);
+}
+
+.slide-header-title {
+  color: rgba(255,255,255,0.30);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: var(--p-font);
+}
+
+.slide-header-pill {
+  background: transparent;
+  border: 0.5px solid rgba(184,149,74,0.25);
+  border-radius: 20px;
+  padding: 2px 9px;
+  font-size: 7px;
+  color: rgba(184,149,74,0.55);
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-family: var(--p-font);
+}
+
+/* ── EYEBROW LABEL ── */
+.eyebrow {
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  color: var(--p-gold);
+  text-transform: uppercase;
+  font-family: var(--p-font);
+}
+
+/* ── GOLD RULE ── */
+.gold-rule {
+  width: 40px;
+  height: 0.5px;
+  background: rgba(184,149,74,0.60);
+}
+
+/* ── TAGLINE ── */
+.tagline {
+  font-size: 10px;
+  font-style: italic;
+  color: rgba(184,149,74,0.70);
+  font-weight: 300;
+  letter-spacing: 1px;
+  font-family: var(--p-font);
+}
+
+/* ── CARD BASE ── */
+.p-card {
+  background: var(--p-card);
+  border-radius: var(--p-radius-md);
+  overflow: hidden;
+  box-shadow: var(--p-shadow-card);
+}
+
+/* ── PILL TAG ── */
+.p-tag {
+  font-size: 7px;
+  color: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.04);
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 20px;
+  padding: 2px 8px;
+  line-height: 1.4;
+  white-space: nowrap;
+  font-family: var(--p-font);
+  letter-spacing: 0.3px;
+}
+
+/* ── META ROW ── */
+.meta-row {
+  display: flex;
+  align-items: center;
+}
+
+.meta-divider {
+  width: 0.5px;
+  height: 18px;
+  background: rgba(255,255,255,0.10);
+  margin: 0 16px;
+}
+
+.meta-label {
+  font-size: 7px;
+  color: rgba(255,255,255,0.20);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 3px;
+  font-family: var(--p-font);
+}
+
+.meta-val {
+  font-size: 9px;
+  color: rgba(255,255,255,0.35);
+  font-weight: 300;
+  font-family: var(--p-font);
+}
+
+/* ── LOGO ── */
+.be-logo {
+  height: 22px;
+  object-fit: contain;
+  object-position: left;
+  display: block;
+}
+
+/* ── PHOTO BG ── */
+.photo-fill {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+/* ── FONT SMOOTHING ── */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -5,10 +5,11 @@
 }
 
 .panel {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-brand-beige-A020);
+    background: #fff;
     border-radius: 18px;
     padding: 18px;
+    box-shadow: 0px 4px 16px rgba(54, 72, 75, 0.08);
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -33,12 +34,15 @@
     font-weight: 700;
     line-height: 1.2;
     color: var(--color-brand-dark-blue);
+    font-family: var(--font-serif);
 }
 
 .panelSubtitle {
     font-size: 13px;
     line-height: 1.4;
     color: var(--color-brand-dark-blue);
+    opacity: 0.65;
+    font-family: var(--font-sans);
 }
 
 .grid {
@@ -61,9 +65,11 @@
 
 .card {
     grid-column: span 4;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid var(--color-brand-beige-A020);
+    background: #fff;
     border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0px 2px 8px rgba(54, 72, 75, 0.06);
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -73,6 +79,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    margin-bottom: 12px;
 }
 
 .cardTitle {
@@ -80,11 +87,14 @@
     font-weight: 700;
     color: var(--color-brand-dark-blue);
     line-height: 1.3;
+    font-family: var(--font-sans);
 }
 
 .cardMeta {
     font-size: 12px;
     color: var(--color-brand-dark-blue);
+    opacity: 0.6;
+    font-family: var(--font-sans);
 }
 
 .field {
@@ -97,13 +107,16 @@
 .label {
     font-size: 13px;
     font-weight: 600;
-    color: var(--color-brand-dark-blue)
+    color: var(--color-brand-dark-blue);
+    font-family: var(--font-sans);
 }
 
 .helpText {
     font-size: 12px;
     line-height: 1.35;
     color: var(--color-brand-dark-blue);
+    opacity: 0.6;
+    font-family: var(--font-sans);
 }
 
 .inputWrap {
@@ -118,6 +131,7 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--color-brand-dark-blue);
+    opacity: 0.6;
     pointer-events: none;
 }
 
@@ -126,18 +140,18 @@
     min-height: 42px;
     padding: 0 12px 0 28px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-brand-beige-A040);
+    background: #fff;
     color: var(--color-brand-dark-blue);
     font-size: 14px;
+    font-family: var(--font-sans);
     outline: none;
-    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .moneyInput:focus {
-    border-color: rgba(255, 255, 255, 0.26);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
-    background: rgba(0, 0, 0, 0.28);
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 0 0 3px var(--color-brand-beige-A020);
 }
 
 .inlineActions {
@@ -151,28 +165,31 @@
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
+    gap: 6px;
 }
 
 .checkPill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    min-height: 40px;
+    min-height: 38px;
+    padding: 0 12px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-brand-beige-A040);
+    background: var(--color-brand-beige-subtle);
     cursor: pointer;
     user-select: none;
-    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    transition: background 0.18s ease, border-color 0.18s ease;
 }
 
 .checkPill:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.16);
+    background: var(--color-brand-beige-A020);
+    border-color: var(--color-brand-beige);
 }
 
 .checkPill input {
     margin: 0;
+    accent-color: var(--color-brand-dark-blue);
 }
 
 .checkPillText {
@@ -182,10 +199,69 @@
     font-size: 13px;
     color: var(--color-brand-dark-blue);
     line-height: 1.2;
+    font-family: var(--font-sans);
 }
 
 .checkPillMeta {
     color: var(--color-brand-dark-blue);
+    opacity: 0.6;
+}
+
+.specialInput {
+    height: 34px;
+    width: 100%;
+    border-radius: var(--be-radius-sm);
+    border: 1px solid var(--be-gray-200);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--be-gray-900);
+    font-family: var(--be-font);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.specialInput:focus {
+    border-color: var(--be-teal-800);
+    box-shadow: 0 0 0 3px rgba(45, 95, 95, 0.12);
+}
+
+.rentRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.rentBadge {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 140px;
+}
+
+.rentBadgeLabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--be-gray-400);
+    font-family: var(--be-font);
+}
+
+.rentBadgeInput {
+    height: 34px;
+    border-radius: var(--be-radius-sm);
+    border: 1px solid var(--be-gray-200);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--be-gray-900);
+    font-family: var(--be-font);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rentBadgeInput:focus {
+    border-color: var(--be-teal-800);
+    box-shadow: 0 0 0 3px rgba(45, 95, 95, 0.12);
 }
 
 .summaryBadge {
@@ -194,19 +270,23 @@
     min-height: 30px;
     padding: 0 10px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--color-brand-beige-A020);
+    border: 1px solid var(--color-brand-beige-A040);
     color: var(--color-brand-dark-blue);
     font-size: 12px;
     font-weight: 600;
+    font-family: var(--font-sans);
 }
 
 .emptyState {
-    border: 1px dashed rgba(255, 255, 255, 0.12);
+    border: 1px dashed var(--color-brand-beige-A040);
     border-radius: 14px;
     padding: 18px;
     color: var(--color-brand-dark-blue);
+    opacity: 0.6;
     font-size: 13px;
     line-height: 1.45;
+    font-family: var(--font-sans);
 }
 
 @media (max-width: 1100px) {

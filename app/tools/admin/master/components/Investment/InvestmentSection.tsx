@@ -16,6 +16,15 @@ import sectionStyles from "./InvestmentSection.module.css";
 import { InvestmentControls } from "./InvestmentControls";
 import { ModelTable } from "./ModelTable";
 import { InvestmentCompareSummary } from "../Investment/InvestmentCompareSummary";
+import { SiteWorkEstimator } from "../SiteWorkEstimator/SiteWorkEstimator";
+import { RentalsPanel } from "../RentalsPanel/RentalsPanel";
+import { StepSection } from "../StepSection/StepSection";
+import {
+    type EstimatorState,
+    computeTotal,
+    createEmptyState,
+    mergeEstimatorStates,
+} from "@/lib/investment/siteWorkItems";
 import { useInvestmentModel } from "@/hooks/investment/useInvestmentModel";
 import { useRentcastData } from "@/hooks/rentcast/useRentcastData";
 import { FinancingTable } from "../Financing/FinancingTable";
@@ -51,14 +60,16 @@ export function InvestmentSection({
     maxAduComparisons: number;
     currentFirstPmtMonthly: string;
     setCurrentFirstPmtMonthly: React.Dispatch<React.SetStateAction<string>>;
+    siteWorkConfirmed: boolean;
+    setSiteWorkConfirmed: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
     const { market } = useRentcastData();
-    const [siteWorkByAduId, setSiteWorkByAduId] = useState<Record<string, string>>({});
-    const [defaultSiteWork, setDefaultSiteWork] = useState<string>(""); // optional global default
+    const [estimatorByAduId, setEstimatorByAduId] = useState<Record<string, EstimatorState>>({});
     const [baseCostByAduId, setBaseCostByAduId] = useState<Record<string, string>>({});
     const [sqftByAduId, setSqftByAduId] = useState<Record<string, string>>({});
     const [rentByAduId, setRentByAduId] = useState<Record<string, string>>({});
     const [discountsByAduId, setDiscountsByAduId] = useState<Record<string, DiscountKey[]>>({});
+    const [specialAmountByAduId, setSpecialAmountByAduId] = useState<Record<string, string>>({});
 
     type DiscountKey = "solarPanels" | "educators" | "firstResponders" | "openHouse" | "special";
 
@@ -163,12 +174,15 @@ export function InvestmentSection({
         for (const fp of selectedAdus) {
             const selectedDiscounts = discountsByAduId[fp._id] ?? [];
             out[fp._id] = selectedDiscounts.reduce((sum, key) => {
+                if (key === "special") {
+                    return sum + Math.max(0, Number(specialAmountByAduId[fp._id] || "0"));
+                }
                 return sum + (DISCOUNT_OPTIONS[key]?.amount ?? 0);
             }, 0);
         }
 
         return out;
-    }, [selectedAdus, discountsByAduId]);
+    }, [selectedAdus, discountsByAduId, specialAmountByAduId]);
 
     const scenarios = useMemo<Scenario[]>(
         () =>
@@ -181,7 +195,10 @@ export function InvestmentSection({
                 subjectSqft,
                 market,
                 siteWorkByAduId: Object.fromEntries(
-                    selectedAdus.map((fp) => [fp._id, asNumber(siteWorkByAduId[fp._id] ?? defaultSiteWork) ?? 0])
+                    selectedAdus.map((fp) => [
+                        fp._id,
+                        computeTotal(estimatorByAduId[fp._id] ?? createEmptyState()),
+                    ])
                 ),
 
                 rentByAduId: Object.fromEntries(
@@ -206,8 +223,7 @@ export function InvestmentSection({
             selectedAdus,
             subjectSqft,
             market,
-            siteWorkByAduId,
-            defaultSiteWork,
+            estimatorByAduId,
             rentByAduId,
             baseCostByAduId,
             sqftByAduId,
@@ -245,165 +261,109 @@ export function InvestmentSection({
 
     return (
         <div className={tableStyles.wrap}>
-            <div className={sectionStyles.sectionStack}>
-                <section className={sectionStyles.panel}>
-                    <div className={sectionStyles.panelHeader}>
-                        <div className={sectionStyles.panelTitleWrap}>
-                            <div className={sectionStyles.panelTitle}>Site-specific work</div>
-                            <div className={sectionStyles.panelSubtitle}>
-                                Set a default site work amount, then fine-tune each compared ADU individually.
-                            </div>
-                        </div>
+
+            {/* ── Step 2 — Unit Selection ──────────────────────────────────────── */}
+            <StepSection step={2} title="Unit Selection">
+                <InvestmentControls
+                    defaults={defaults}
+                    defaultsProp={defaultsProp}
+                    setDefaults={setDefaults}
+                    updateDefault={updateDefault}
+                    allFloorplans={allFloorplans}
+                    aduCompareIds={aduCompareIds}
+                    toggleAdu={toggleAdu}
+                    view="picker"
+                />
+            </StepSection>
+
+            {/* ── Step 3 — Site Work Estimator ─────────────────────────────────── */}
+            <StepSection step={3} title="Site Work Estimator">
+                <p className={sectionStyles.panelSubtitle}>
+                    Add line items per ADU. Use presets or custom entries. &ldquo;Copy &amp; merge to all&rdquo; copies this ADU&apos;s items to others, skipping labels that already exist.
+                </p>
+                {selectedAdus.length === 0 ? (
+                    <div className={sectionStyles.emptyState}>
+                        Select one or more ADUs in Unit Selection to enter site-specific work.
                     </div>
+                ) : (
+                    selectedAdus.map((fp) => (
+                        <SiteWorkEstimator
+                            key={fp._id}
+                            aduName={fp.name}
+                            value={estimatorByAduId[fp._id] ?? createEmptyState()}
+                            onChange={(next) =>
+                                setEstimatorByAduId((prev) => ({ ...prev, [fp._id]: next }))
+                            }
+                        />
+                    ))
+                )}
+            </StepSection>
 
-                    <div className={sectionStyles.grid}>
-                        <div className={`${sectionStyles.field} ${sectionStyles.full}`}>
-                            <label className={sectionStyles.label}>Default site work for compared ADUs</label>
-                            <div className={sectionStyles.inlineActions}>
-                                <div className={sectionStyles.inputWrap} style={{ minWidth: 220, flex: "0 1 260px" }}>
-                                    <span className={sectionStyles.prefix}>$</span>
+            {/* ── Step 4 — Discounts ───────────────────────────────────────────── */}
+            <StepSection step={4} title="Discounts">
+                <div className={sectionStyles.field}>
+                    <label className={sectionStyles.label}>Apply to all compared ADUs</label>
+                    <div className={sectionStyles.optionRow}>
+                        {Object.entries(DISCOUNT_OPTIONS).map(([key, opt]) => {
+                            const discountKey = key as DiscountKey;
+
+                            const allSelected =
+                                selectedAdus.length > 0 &&
+                                selectedAdus.every((fp) => (discountsByAduId[fp._id] ?? []).includes(discountKey));
+
+                            return (
+                                <label key={discountKey} className={sectionStyles.checkPill}>
                                     <input
-                                        type="number"
-                                        inputMode="decimal"
-                                        min="0"
-                                        step="100"
-                                        className={sectionStyles.moneyInput}
-                                        value={defaultSiteWork}
-                                        onChange={(e) => setDefaultSiteWork(e.target.value)}
-                                        placeholder="0"
+                                        type="checkbox"
+                                        checked={allSelected}
+                                        onChange={(e) => {
+                                            if (e.target.checked) applyDiscountToAll(discountKey);
+                                            else removeDiscountFromAll(discountKey);
+                                        }}
                                     />
-                                </div>
+                                    <span className={sectionStyles.checkPillText}>
+                                        {opt.label}
+                                        <span className={sectionStyles.checkPillMeta}>({money(opt.amount)} off)</span>
+                                    </span>
+                                </label>
+                            );
+                        })}
+                    </div>
+                </div>
 
-                                <button
-                                    className={adminStyles.button}
-                                    type="button"
-                                    onClick={() => {
-                                        setSiteWorkByAduId((prev) => {
-                                            const next = { ...prev };
-                                            for (const fp of selectedAdus) next[fp._id] = defaultSiteWork;
-                                            return next;
-                                        });
-                                    }}
-                                >
-                                    Apply to compared ADUs
-                                </button>
-                            </div>
-                            <div className={sectionStyles.helpText}>
-                                Use this when most compared options share similar site conditions.
-                            </div>
-                        </div>
+                {selectedAdus.length === 0 ? (
+                    <div className={sectionStyles.emptyState}>
+                        Select one or more ADUs in Unit Selection to manage discounts.
+                    </div>
+                ) : (
+                    <div className={sectionStyles.grid}>
+                        {selectedAdus.map((fp) => {
+                            const selectedDiscounts = discountsByAduId[fp._id] ?? [];
+                            const totalDiscount = selectedDiscounts.reduce(
+                                (sum, key) => sum + (DISCOUNT_OPTIONS[key]?.amount ?? 0),
+                                0
+                            );
 
-                        {selectedAdus.length === 0 ? (
-                            <div className={sectionStyles.full}>
-                                <div className={sectionStyles.emptyState}>
-                                    Select one or more ADUs in the compare controls to enter site-specific work.
-                                </div>
-                            </div>
-                        ) : (
-                            selectedAdus.map((fp) => (
+                            return (
                                 <div key={fp._id} className={sectionStyles.card}>
                                     <div className={sectionStyles.cardHeader}>
                                         <div className={sectionStyles.cardTitle}>{fp.name}</div>
-                                        <div className={sectionStyles.cardMeta}>
-                                            {fp.sqft ? `${fp.sqft} sq ft` : "Compared ADU"}
-                                        </div>
+                                        {totalDiscount > 0 && (
+                                            <div className={sectionStyles.cardMeta}>
+                                                {money(totalDiscount)} total discount
+                                            </div>
+                                        )}
                                     </div>
 
-                                    <div className={sectionStyles.field}>
-                                        <label className={sectionStyles.label}>Site work amount</label>
-                                        <div className={sectionStyles.inputWrap}>
-                                            <span className={sectionStyles.prefix}>$</span>
-                                            <input
-                                                type="number"
-                                                inputMode="decimal"
-                                                min="0"
-                                                step="100"
-                                                className={sectionStyles.moneyInput}
-                                                value={siteWorkByAduId[fp._id] ?? ""}
-                                                onChange={(e) =>
-                                                    setSiteWorkByAduId((prev) => ({
-                                                        ...prev,
-                                                        [fp._id]: e.target.value,
-                                                    }))
-                                                }
-                                                placeholder="0"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </section>
+                                    <div className={sectionStyles.optionRow}>
+                                        {Object.entries(DISCOUNT_OPTIONS).map(([key, opt]) => {
+                                            const discountKey = key as DiscountKey;
+                                            const checked = selectedDiscounts.includes(discountKey);
+                                            const isSpecial = discountKey === "special";
 
-                <section className={sectionStyles.panel}>
-                    <div className={sectionStyles.panelHeader}>
-                        <div className={sectionStyles.panelTitleWrap}>
-                            <div className={sectionStyles.panelTitle}>Discounts</div>
-                            <div className={sectionStyles.panelSubtitle}>
-                                Apply discounts globally or customize them for each compared ADU.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className={sectionStyles.field}>
-                        <label className={sectionStyles.label}>Apply to all compared ADUs</label>
-                        <div className={sectionStyles.optionRow}>
-                            {Object.entries(DISCOUNT_OPTIONS).map(([key, opt]) => {
-                                const discountKey = key as DiscountKey;
-
-                                const allSelected =
-                                    selectedAdus.length > 0 &&
-                                    selectedAdus.every((fp) => (discountsByAduId[fp._id] ?? []).includes(discountKey));
-
-                                return (
-                                    <label key={discountKey} className={sectionStyles.checkPill}>
-                                        <input
-                                            type="checkbox"
-                                            checked={allSelected}
-                                            onChange={(e) => {
-                                                if (e.target.checked) applyDiscountToAll(discountKey);
-                                                else removeDiscountFromAll(discountKey);
-                                            }}
-                                        />
-                                        <span className={sectionStyles.checkPillText}>
-                                            {opt.label}
-                                            <span className={sectionStyles.checkPillMeta}>({money(opt.amount)} off)</span>
-                                        </span>
-                                    </label>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <div className={sectionStyles.grid}>
-                        {selectedAdus.length === 0 ? (
-                            <div className={sectionStyles.full}>
-                                <div className={sectionStyles.emptyState}>
-                                    Select one or more ADUs in the compare controls to manage discounts.
-                                </div>
-                            </div>
-                        ) : (
-                            selectedAdus.map((fp) => {
-                                const selectedDiscounts = discountsByAduId[fp._id] ?? [];
-                                const totalDiscount = selectedDiscounts.reduce(
-                                    (sum, key) => sum + (DISCOUNT_OPTIONS[key]?.amount ?? 0),
-                                    0
-                                );
-
-                                return (
-                                    <div key={fp._id} className={sectionStyles.card}>
-                                        <div className={sectionStyles.cardHeader}>
-                                            <div className={sectionStyles.cardTitle}>{fp.name}</div>
-                                        </div>
-
-                                        <div className={sectionStyles.optionRow}>
-                                            {Object.entries(DISCOUNT_OPTIONS).map(([key, opt]) => {
-                                                const discountKey = key as DiscountKey;
-                                                const checked = selectedDiscounts.includes(discountKey);
-
-                                                return (
-                                                    <label key={discountKey} className={sectionStyles.checkPill}>
+                                            return (
+                                                <React.Fragment key={discountKey}>
+                                                    <label className={sectionStyles.checkPill}>
                                                         <input
                                                             type="checkbox"
                                                             checked={checked}
@@ -411,68 +371,136 @@ export function InvestmentSection({
                                                         />
                                                         <span className={sectionStyles.checkPillText}>
                                                             {opt.label}
-                                                            <span className={sectionStyles.checkPillMeta}>
-                                                                ({money(opt.amount)} off)
-                                                            </span>
+                                                            {!isSpecial && (
+                                                                <span className={sectionStyles.checkPillMeta}>
+                                                                    ({money(opt.amount)} off)
+                                                                </span>
+                                                            )}
                                                         </span>
                                                     </label>
-                                                );
-                                            })}
-                                        </div>
+                                                    {isSpecial && checked && (
+                                                        <input
+                                                            type="number"
+                                                            min={0}
+                                                            step={100}
+                                                            placeholder="Custom amount ($)"
+                                                            className={sectionStyles.specialInput}
+                                                            value={specialAmountByAduId[fp._id] ?? ""}
+                                                            onChange={(e) =>
+                                                                setSpecialAmountByAduId((prev) => ({
+                                                                    ...prev,
+                                                                    [fp._id]: e.target.value,
+                                                                }))
+                                                            }
+                                                        />
+                                                    )}
+                                                </React.Fragment>
+                                            );
+                                        })}
                                     </div>
-                                );
-                            })
-                        )}
+                                </div>
+                            );
+                        })}
                     </div>
-                </section>
-            </div>
-            <InvestmentCompareSummary
-                styles={adminStyles}
-                adus={aduScenarios}
-                baseCostByAduId={baseCostByAduId}
-                setBaseCostByAduId={setBaseCostByAduId}
-                sqftByAduId={sqftByAduId}
-                setSqftByAduId={setSqftByAduId}
-                rentByAduId={rentByAduId}
-                setRentByAduId={setRentByAduId}
-            />
+                )}
+            </StepSection>
 
-            <InvestmentControls
-                defaults={defaults}
-                defaultsProp={defaultsProp}
-                setDefaults={setDefaults}
-                updateDefault={updateDefault}
-                allFloorplans={allFloorplans}
-                aduCompareIds={aduCompareIds}
-                toggleAdu={toggleAdu}
-            />
-            <FinancingTable
-                owed={owed}
-                propertyValue={
-                    avm?.price ??
-                    avm?.priceRangeHigh ??
-                    avm?.priceRangeLow ??
-                    property?.lastSalePrice ??
-                    0
-                }
-                comparedFloorplans={selectedAdus}
-                selectedFloorplanId={selectedFloorplan?._id ?? null}
-                termYears={30}
-                currentFirstPmtMonthly={Number(currentFirstPmtMonthly) || 0}
-            />
+            {/* ── Step 5 — Rental Analysis ─────────────────────────────────────── */}
+            <StepSection step={5} title="Rental Analysis">
+                {selectedAdus.length > 0 && (
+                    <div className={sectionStyles.rentRow}>
+                        {selectedAdus.map((fp) => (
+                            <div key={fp._id} className={sectionStyles.rentBadge}>
+                                <span className={sectionStyles.rentBadgeLabel}>{fp.name}</span>
+                                <input
+                                    type="number"
+                                    min={0}
+                                    step={50}
+                                    placeholder="Rent / mo"
+                                    className={sectionStyles.rentBadgeInput}
+                                    value={rentByAduId[fp._id] ?? ""}
+                                    onChange={(e) =>
+                                        setRentByAduId((prev) => ({ ...prev, [fp._id]: e.target.value }))
+                                    }
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <RentalsPanel
+                    styles={adminStyles}
+                    rentals={rentals}
+                    targetSqft={selectedFloorplan?.sqft}
+                    onRentPick={
+                        selectedAdus.length === 1
+                            ? (rent) => setRentByAduId((prev) => ({ ...prev, [selectedAdus[0]._id]: String(rent) }))
+                            : undefined
+                    }
+                />
+            </StepSection>
 
-            <div className={tableStyles.topActions}>
-                <label className={tableStyles.toggle}>
-                    <input type="checkbox" checked={showDebug} onChange={(e) => setShowDebug(e.target.checked)} />
-                    <span>Show Calculations</span>
-                </label>
-            </div>
+            {/* ── Step 6 — Financial Summary ───────────────────────────────────── */}
+            <StepSection step={6} title="Financial Summary">
+                <InvestmentCompareSummary
+                    styles={adminStyles}
+                    adus={aduScenarios}
+                    baseCostByAduId={baseCostByAduId}
+                    setBaseCostByAduId={setBaseCostByAduId}
+                    sqftByAduId={sqftByAduId}
+                    setSqftByAduId={setSqftByAduId}
+                    rentByAduId={rentByAduId}
+                    setRentByAduId={setRentByAduId}
+                />
+            </StepSection>
 
-            <ModelTable rows={rows} columns={columns} scenarios={scenarios} showDebug={showDebug} />
+            {/* ── Step 7 — Financing Options ───────────────────────────────────── */}
+            <StepSection step={7} title="Financing Options">
+                <FinancingTable
+                    owed={owed}
+                    propertyValue={
+                        avm?.price ??
+                        avm?.priceRangeHigh ??
+                        avm?.priceRangeLow ??
+                        property?.lastSalePrice ??
+                        0
+                    }
+                    comparedFloorplans={selectedAdus}
+                    selectedFloorplanId={selectedFloorplan?._id ?? null}
+                    termYears={30}
+                    currentFirstPmtMonthly={Number(currentFirstPmtMonthly) || 0}
+                />
+            </StepSection>
 
-            <div className={tableStyles.footerNote}>
-                <span className={tableStyles.footerLabel}>Debug tip:</span> If a value looks off, check the formula + inputs under that cell.
-            </div>
+            {/* ── Step 8 — Full Model (internal) ───────────────────────────────── */}
+            <StepSection step={8} title="Full Model" badge="INTERNAL">
+                <details className={tableStyles.assumptionsDetails}>
+                    <summary className={tableStyles.assumptionsSummary}>Assumptions</summary>
+                    <InvestmentControls
+                        defaults={defaults}
+                        defaultsProp={defaultsProp}
+                        setDefaults={setDefaults}
+                        updateDefault={updateDefault}
+                        allFloorplans={allFloorplans}
+                        aduCompareIds={aduCompareIds}
+                        toggleAdu={toggleAdu}
+                        view="assumptions"
+                    />
+                </details>
+
+                <div className={tableStyles.topActions}>
+                    <label className={tableStyles.toggle}>
+                        <input type="checkbox" checked={showDebug} onChange={(e) => setShowDebug(e.target.checked)} />
+                        <span>Show Calculations</span>
+                    </label>
+                </div>
+
+                <ModelTable rows={rows} columns={columns} scenarios={scenarios} showDebug={showDebug} />
+
+                <div className={tableStyles.footerNote}>
+                    <span className={tableStyles.footerLabel}>Debug tip:</span> If a value looks off, check the formula + inputs under that cell.
+                </div>
+            </StepSection>
+
         </div>
     );
 }

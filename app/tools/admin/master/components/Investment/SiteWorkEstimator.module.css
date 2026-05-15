@@ -1,0 +1,440 @@
+/* ─── Card shell ──────────────────────────────────────────────────────────── */
+
+.estimatorCard {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.025);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px;
+    grid-column: span 4;
+    min-width: 0;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.cardTitleGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cardTitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-brand-dark-blue);
+    line-height: 1.3;
+}
+
+.cardMeta {
+    font-size: 12px;
+    color: var(--color-brand-dark-blue);
+    opacity: 0.7;
+}
+
+.cardActions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.totalBadge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--color-brand-dark-blue);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.copyBtn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: transparent;
+    color: var(--color-brand-dark-blue);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.copyBtn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Active items list ───────────────────────────────────────────────────── */
+
+.itemList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.emptyItems {
+    font-size: 12px;
+    color: var(--color-brand-dark-blue);
+    opacity: 0.5;
+    padding: 4px 0;
+}
+
+/* Individual item card */
+.itemCard {
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Row 1: label + type tag */
+.itemRowTop {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.itemLabelInput {
+    flex: 1;
+    min-width: 0;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.18);
+    color: var(--color-brand-dark-blue);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.itemLabelInput:focus {
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.07);
+}
+
+/* Type badge — clickable for custom items, static for presets */
+.typeTag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border: 1px solid transparent;
+    cursor: default;
+}
+
+.typeTagFixed {
+    background: rgba(45, 95, 95, 0.25);
+    color: var(--color-brand-dark-blue);
+    border-color: rgba(45, 95, 95, 0.4);
+}
+
+.typeTagQuote {
+    background: rgba(184, 149, 74, 0.2);
+    color: var(--color-brand-dark-blue);
+    border-color: rgba(184, 149, 74, 0.35);
+}
+
+button.typeTag {
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+button.typeTag:hover {
+    opacity: 0.7;
+}
+
+/* Row 2: math inputs */
+.itemRowInputs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* Groups a prefix symbol + input + optional suffix */
+.inputGroup {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.inputPrefix {
+    position: absolute;
+    left: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.compactInput {
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.18);
+    color: var(--color-brand-dark-blue);
+    font-size: 13px;
+    outline: none;
+    padding: 0 8px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    /* width is set inline per context */
+}
+
+.compactInput:focus {
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.07);
+}
+
+/* Unit label attached to an input: "SF", "LF", "/SF", "×" */
+.unitTag {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+    opacity: 0.65;
+    padding: 0 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Operator symbols between groups: "×", "=" */
+.operatorSymbol {
+    font-size: 13px;
+    color: var(--color-brand-dark-blue);
+    opacity: 0.45;
+    flex-shrink: 0;
+}
+
+/* "Sub quote:" label before the input */
+.quoteLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+    opacity: 0.7;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Computed customer price result */
+.priceResult {
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 0 10px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.priceResultActive {
+    background: rgba(45, 95, 95, 0.2);
+    color: var(--color-brand-dark-blue);
+}
+
+.priceResultZero {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-brand-dark-blue);
+    opacity: 0.4;
+}
+
+/* Delete button */
+.deleteBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+    color: var(--color-brand-dark-blue);
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: background 0.15s ease, opacity 0.15s ease;
+    margin-left: auto;
+}
+
+.deleteBtn:hover {
+    background: rgba(220, 60, 60, 0.15);
+    border-color: rgba(220, 60, 60, 0.3);
+    opacity: 1;
+}
+
+/* Helper text below SF/LF inputs */
+.helperText {
+    font-size: 11px;
+    color: var(--color-brand-dark-blue);
+    opacity: 0.5;
+    padding: 0 2px;
+}
+
+/* ─── Divider ─────────────────────────────────────────────────────────────── */
+
+.divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    margin: 0;
+}
+
+/* ─── Preset categories ───────────────────────────────────────────────────── */
+
+.presetArea {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.categorySection {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.categoryTitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-brand-dark-blue);
+    opacity: 0.55;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.presetChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.presetChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 28px;
+    padding: 0 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--color-brand-dark-blue);
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    text-align: left;
+}
+
+.presetChip:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Quote-type preset chips get a gold tint */
+.presetChipQuote {
+    border-color: rgba(184, 149, 74, 0.2);
+}
+
+.presetChipQuote:hover {
+    background: rgba(184, 149, 74, 0.08);
+    border-color: rgba(184, 149, 74, 0.35);
+}
+
+.presetChipUnit {
+    font-size: 10px;
+    font-weight: 700;
+    opacity: 0.55;
+    text-transform: uppercase;
+}
+
+.presetChipCost {
+    font-size: 10px;
+    opacity: 0.55;
+}
+
+.presetChipQuoteTag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: 0.6;
+    color: #b8954a;
+}
+
+.presetChipNote {
+    font-size: 10px;
+    opacity: 0.5;
+}
+
+/* "+ Custom item" button inside each category */
+.customItemRow {
+    display: flex;
+}
+
+.addCustomBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    background: transparent;
+    color: var(--color-brand-dark-blue);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    opacity: 0.8;
+}
+
+.addCustomBtn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.22);
+    opacity: 1;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+    .estimatorCard {
+        grid-column: span 6;
+    }
+}
+
+@media (max-width: 720px) {
+    .estimatorCard {
+        grid-column: span 12;
+    }
+
+    .itemRowInputs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 2px;
+    }
+}

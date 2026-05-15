@@ -1,0 +1,157 @@
+.sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--be-teal-900);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+
+    /* Stick below the 56px header while the main area scrolls */
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* Hide scrollbar but keep it functional */
+    scrollbar-width: none;
+}
+
+.sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+.inner {
+    padding: 20px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* ── Section label ─────────────────────────────────────────────────────────── */
+
+.sectionLabel {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.25);
+    padding: 0 8px;
+    margin-bottom: 6px;
+    margin-top: 4px;
+    font-family: var(--be-font);
+}
+
+/* ── Step button ───────────────────────────────────────────────────────────── */
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 8px;
+    border: none;
+    border-radius: var(--be-radius-md);
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+}
+
+.step:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.stepActive {
+    background: rgba(184, 149, 74, 0.12);
+}
+
+.stepActive:hover {
+    background: rgba(184, 149, 74, 0.18);
+}
+
+.stepDone {
+    opacity: 0.7;
+}
+
+.stepDone:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* ── Step number circle ────────────────────────────────────────────────────── */
+
+.stepNum {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: var(--be-font);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.stepNumActive {
+    background: var(--be-gold-600);
+    color: #ffffff;
+    border-color: var(--be-gold-600);
+}
+
+.stepNumDone {
+    background: rgba(45, 95, 95, 0.6);
+    color: var(--be-teal-100);
+    border-color: rgba(45, 95, 95, 0.8);
+    font-size: 12px;
+}
+
+/* ── Step label ────────────────────────────────────────────────────────────── */
+
+.stepLabel {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.3;
+    font-family: var(--be-font);
+    transition: color 0.15s ease;
+}
+
+.stepActive .stepLabel {
+    color: var(--be-gold-600);
+    font-weight: 600;
+}
+
+.stepDone .stepLabel {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Internal badge ────────────────────────────────────────────────────────── */
+
+.internalBadge {
+    display: inline-flex;
+    align-items: center;
+    height: 16px;
+    padding: 0 5px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-family: var(--be-font);
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* ── Divider ───────────────────────────────────────────────────────────────── */
+
+.divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin: 8px 8px;
+}

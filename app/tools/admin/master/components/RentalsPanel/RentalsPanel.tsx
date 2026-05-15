@@ -70,12 +70,14 @@ export function RentalsPanel({
     // optional defaults
     defaultMode = "selected",
     defaultBandPct = 0.15,
+    onRentPick,
 }: {
     styles: any;
     rentals: RentalListing[];
     targetSqft?: number;
     defaultMode?: Mode;
     defaultBandPct?: number; // 0.15 = 15%
+    onRentPick?: (rent: number) => void;
 }) {
 
     // ✅ Mode toggle
@@ -348,6 +350,18 @@ export function RentalsPanel({
                             </div>
 
                             <div className={styles.compRight}>
+                                {onRentPick && (
+                                    <button
+                                        type="button"
+                                        className={styles.useBtn}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            onRentPick(r.price);
+                                        }}
+                                    >
+                                        Use
+                                    </button>
+                                )}
                                 <span className={styles.chev} aria-hidden>
                                     ▾
                                 </span>

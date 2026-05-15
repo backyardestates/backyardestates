@@ -1,6 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { normalizeRole } from "./types/roles";
 
+const isPublicRoute = createRouteMatcher(["/present", "/present/(.*)"]);
 const isCustomerRoute = createRouteMatcher(["/tools/feasibility(.*)"]);
 const isArchitectRoute = createRouteMatcher(["/tools/fpa(.*)", "/api/architect(.*)"]);
 const isAdminRoute = createRouteMatcher(["/tools/admin(.*)", "/api/admin(.*)"]);
@@ -14,6 +15,9 @@ function getRoleFromClaims(sessionClaims: any) {
 
 export default clerkMiddleware(async (auth, req) => {
     const { userId, sessionClaims, redirectToSignIn } = await auth();
+
+    // Public routes — never require auth
+    if (isPublicRoute(req)) return;
 
     // Require sign-in for protected routes
     if ((isAdminRoute(req) || isArchitectRoute(req) || isCustomerRoute(req)) && !userId) {

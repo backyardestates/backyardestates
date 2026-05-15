@@ -1,0 +1,596 @@
+/* ─── Local tokens ─────────────────────────────────────────────────────────── */
+
+.panel {
+    --dp-bg:        #ffffff;
+    --dp-bg2:       var(--color-brand-beige-subtle);
+    --dp-bg3:       var(--color-brand-beige-A020);
+    --dp-text:      var(--color-brand-dark-blue);
+    --dp-text2:     rgba(54, 72, 75, 0.70);
+    --dp-text3:     rgba(54, 72, 75, 0.45);
+    --dp-border:    var(--color-brand-beige-A020);
+    --dp-border2:   var(--color-brand-beige-A040);
+    --dp-accent:    var(--color-brand-dark-blue);
+    --dp-accent-lt: var(--color-brand-beige-subtle);
+    --dp-gold:      var(--color-brand-beige, #c9a96e);
+    --dp-gold-lt:   var(--color-brand-beige-A020);
+    --dp-green:     #1a7a4f;
+    --dp-green-lt:  #edf7f2;
+    --dp-green-mid: #d0eddf;
+    --dp-radius:    10px;
+    --dp-radius-lg: 16px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ─── Empty state ─────────────────────────────────────────────────────────── */
+
+.empty {
+    padding: 32px 0;
+    text-align: center;
+    font-size: 14px;
+    color: var(--dp-text3);
+}
+
+/* ─── Unit summary cards ──────────────────────────────────────────────────── */
+
+.unitRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.unitCard {
+    flex: 1 1 180px;
+    min-width: 160px;
+    background: var(--dp-bg);
+    border: 1.5px solid var(--dp-border2);
+    border-radius: var(--dp-radius-lg);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: 0 1px 4px rgba(54, 72, 75, 0.06);
+    transition: border-color 0.15s;
+}
+
+.unitCardActive {
+    border-color: var(--dp-green-mid);
+}
+
+.unitCardCustom {
+    border-color: var(--dp-gold);
+    background: color-mix(in srgb, var(--dp-gold-lt) 35%, #fff);
+}
+
+.unitName {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dp-text);
+}
+
+.unitAmount {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dp-green);
+    letter-spacing: -0.5px;
+    font-family: var(--font-serif, serif);
+    line-height: 1.1;
+}
+
+.unitMeta {
+    font-size: 11px;
+    color: var(--dp-text3);
+}
+
+.statusPill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 20px;
+    padding: 2px 9px;
+    margin-top: 2px;
+    width: fit-content;
+}
+
+.statusPillSynced {
+    background: var(--dp-green-lt);
+    color: var(--dp-green);
+}
+
+.statusPillCustom {
+    background: var(--dp-gold-lt);
+    color: var(--dp-gold);
+}
+
+.unitActions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.unitBtn {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--dp-accent);
+    background: transparent;
+    border: 1px solid var(--dp-accent);
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background 0.1s;
+    font-family: var(--font-sans);
+}
+
+.unitBtn:hover,
+.unitBtnActive {
+    background: var(--dp-accent-lt);
+}
+
+.resetBtn {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--dp-border2);
+    background: transparent;
+    color: var(--dp-text3);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s;
+}
+
+.resetBtn:hover {
+    background: #fff0f0;
+    border-color: #f09595;
+    color: #a32d2d;
+}
+
+/* ─── Per-unit override panel ─────────────────────────────────────────────── */
+
+.overridePanel {
+    background: var(--dp-bg2);
+    border: 1.5px solid var(--dp-gold);
+    border-radius: var(--dp-radius-lg);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.overrideHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 18px;
+    background: var(--dp-gold-lt);
+    border-bottom: 1px solid var(--dp-gold);
+}
+
+.overrideName {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dp-accent);
+    margin-right: 8px;
+}
+
+.overrideBadge {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--dp-gold-lt);
+    color: var(--dp-gold);
+    border: 1px solid var(--dp-gold);
+    border-radius: 4px;
+    padding: 2px 7px;
+}
+
+.overrideActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.applyAllBtn {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--dp-accent);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: opacity 0.1s;
+}
+
+.applyAllBtn:hover { opacity: 0.85; }
+
+.resetDefaultBtn {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--dp-text2);
+    background: transparent;
+    border: 1px solid var(--dp-border2);
+    border-radius: 6px;
+    padding: 5px 11px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: background 0.1s;
+}
+
+.resetDefaultBtn:hover { background: var(--dp-bg); }
+
+/* ─── Master section ──────────────────────────────────────────────────────── */
+
+.masterSection {
+    background: var(--dp-bg);
+    border: 1.5px solid var(--dp-border2);
+    border-radius: var(--dp-radius-lg);
+    overflow: hidden;
+}
+
+.masterHeader {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--dp-border);
+    background: var(--dp-bg2);
+}
+
+.masterTitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dp-accent);
+}
+
+.masterSub {
+    font-size: 12px;
+    color: var(--dp-text3);
+    margin-top: 2px;
+}
+
+/* ─── Editor ──────────────────────────────────────────────────────────────── */
+
+.editor {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ─── Running total bar ───────────────────────────────────────────────────── */
+
+.totalBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 20px;
+    background: var(--dp-green-lt);
+    border-bottom: 1px solid var(--dp-green-mid);
+}
+
+.totalBarLabel {
+    font-size: 13px;
+    color: var(--dp-green);
+    font-weight: 500;
+}
+
+.totalBarAmount {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dp-green);
+    letter-spacing: -0.4px;
+    font-family: var(--font-serif, serif);
+}
+
+/* ─── Section bar (label + quick actions) ────────────────────────────────── */
+
+.presetSection,
+.customSection {
+    border-bottom: 1px solid var(--dp-border);
+}
+
+.customSection {
+    border-bottom: none;
+}
+
+.sectionBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px 8px;
+}
+
+.sectionLabel {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--dp-text3);
+}
+
+.sectionCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--dp-green);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.quickActions {
+    display: flex;
+    gap: 6px;
+}
+
+.quickBtn {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--dp-accent);
+    background: transparent;
+    border: 1px solid var(--dp-border2);
+    border-radius: 5px;
+    padding: 3px 9px;
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+    font-family: var(--font-sans);
+}
+
+.quickBtn:hover {
+    background: var(--dp-accent-lt);
+    border-color: var(--dp-accent);
+}
+
+.quickBtnDestructive {
+    composes: quickBtn;
+    color: var(--dp-text3);
+}
+
+.quickBtnDestructive:hover {
+    background: #fff0f0;
+    border-color: #f09595;
+    color: #a32d2d;
+}
+
+/* ─── Preset rows ─────────────────────────────────────────────────────────── */
+
+.presetList {
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px 12px;
+    gap: 6px;
+}
+
+.presetRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: var(--dp-radius);
+    border: 1.5px solid var(--dp-border2);
+    background: var(--dp-bg2);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+    font-family: var(--font-sans);
+}
+
+.presetRow:hover {
+    border-color: var(--dp-green-mid);
+    background: var(--dp-green-lt);
+}
+
+.presetRowOn {
+    border-color: var(--dp-green);
+    background: var(--dp-green-lt);
+    box-shadow: 0 0 0 1px var(--dp-green);
+}
+
+/* ─── Shared row elements (presets + custom) ─────────────────────────────── */
+
+.rowIndicator {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--dp-border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.12s, background 0.12s;
+    background: var(--dp-bg);
+}
+
+.rowIndicatorOn {
+    border-color: var(--dp-green);
+    background: var(--dp-green);
+}
+
+.rowIndicatorCustom {
+    border-style: dashed;
+}
+
+.checkMark {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+}
+
+.rowLabel {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dp-text);
+    min-width: 0;
+}
+
+.presetRowOn .rowLabel {
+    color: var(--dp-green);
+    font-weight: 600;
+}
+
+.rowAmount {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dp-text3);
+    white-space: nowrap;
+    letter-spacing: -0.2px;
+}
+
+.rowAmountOn {
+    color: var(--dp-green);
+}
+
+/* ─── Custom rows ─────────────────────────────────────────────────────────── */
+
+.customList {
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px 8px;
+    gap: 6px;
+}
+
+.customRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--dp-radius);
+    border: 1.5px solid var(--dp-border2);
+    background: var(--dp-bg2);
+    transition: border-color 0.12s, background 0.12s;
+}
+
+.customRowActive {
+    border-color: var(--dp-green);
+    background: var(--dp-green-lt);
+}
+
+.labelInput {
+    flex: 1;
+    font-size: 13px;
+    color: var(--dp-text);
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--font-sans);
+    min-width: 0;
+    padding: 0;
+}
+
+.labelInput::placeholder { color: var(--dp-text3); }
+
+.customRowActive .labelInput {
+    color: var(--dp-green);
+    font-weight: 500;
+}
+
+.amountWrap {
+    display: flex;
+    align-items: center;
+    background: var(--dp-bg);
+    border: 1px solid var(--dp-border2);
+    border-radius: 7px;
+    padding: 5px 8px;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.customRowActive .amountWrap {
+    border-color: var(--dp-green-mid);
+    background: #fff;
+}
+
+.amountPrefix {
+    font-size: 13px;
+    color: var(--dp-text3);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.customRowActive .amountPrefix { color: var(--dp-green); }
+
+.amountInput {
+    width: 76px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dp-text);
+    background: transparent;
+    border: none;
+    outline: none;
+    text-align: right;
+    -moz-appearance: textfield;
+    font-family: var(--font-sans);
+}
+
+.amountInput::-webkit-outer-spin-button,
+.amountInput::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.customRowActive .amountInput { color: var(--dp-green); }
+
+.removeBtn {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--dp-text3);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.1s;
+}
+
+.removeBtn:hover {
+    background: #fff0f0;
+    border-color: #f09595;
+    color: #a32d2d;
+}
+
+/* ─── Add button ──────────────────────────────────────────────────────────── */
+
+.addBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dp-accent);
+    background: transparent;
+    border: 1.5px dashed var(--dp-border2);
+    border-radius: var(--dp-radius);
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+    font-family: var(--font-sans);
+    margin: 0 12px 14px;
+}
+
+.addBtn:hover {
+    background: var(--dp-accent-lt);
+    border-color: var(--dp-accent);
+}
+
+.addIcon {
+    font-size: 17px;
+    line-height: 1;
+}

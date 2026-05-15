@@ -1,3 +1,5 @@
+import { groq } from "next-sanity";
+
 export const FLOORPLANS_QUERY = `*[_type == "floorplan" && isClickable != false && name != "Custom Estate"]|order(orderID asc){_id, bed, bath, sqft, price, name, body, publishedAt, drawing, slug}`
 
 export const PRICING_FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){orderID, isClickable, slug, name, bed, bath, length, width, price}`
@@ -602,5 +604,63 @@ export const FEATURED_PROPERTIES_QUERY = `
       sqft,
       "slug": slug.current
     }
+  }
+`
+
+
+
+
+// ─── Presenter View — correct Cloudinary field names ─────────────────────────
+
+
+export const PRESENTER_FLOORPLANS_QUERY = groq`
+  *[_type == "floorplan"
+    && !(_id in path("drafts.**"))
+    && isClickable == true
+    && _id in $ids]
+  | order(orderID asc) {
+    _id, name, slug, sqft, bed, bath, price,
+    length, width, orderID, videoID,
+    "floorPlanUrl": drawing.secure_url,
+    "images": images[].secure_url,
+    "inclusions": body
+  }
+`
+
+export const PRESENTER_ALL_FLOORPLANS_QUERY = groq`
+  *[_type == "floorplan"
+    && !(_id in path("drafts.**"))
+    && isClickable == true
+    && price > 0]
+  | order(orderID asc) {
+    _id, name, slug, sqft, bed, bath, price,
+    length, width, orderID, videoID,
+    "floorPlanUrl": drawing.secure_url,
+    "images": images[].secure_url,
+  }
+`
+
+export const PRESENTER_STORIES_QUERY = groq`
+  *[_type == "story" && featured == true]
+  | order(_createdAt desc) {
+    _id, names, quote, purpose, wistiaId, slug,
+    "portraitUrl": portrait.secure_url,
+    "images": images[].secure_url,
+  }
+`
+
+export const PRESENTER_COMPLETED_PROPERTIES_QUERY = groq`
+  *[_type == "property"
+    && !(_id in path("drafts.**"))
+    && featured == true
+    && defined(photos)
+    && count(photos) > 0]
+  | order(_createdAt desc) [0...12] {
+    _id, name, slug, sqft, bed, bath,
+    videoID,
+    "thumbnailUrl": photos[0].url,
+    "images": photos[].url,
+    "floorplanName": floorplan->name,
+    "floorplanSqft": floorplan->sqft,
   }
 `

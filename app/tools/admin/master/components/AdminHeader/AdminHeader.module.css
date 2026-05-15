@@ -1,0 +1,116 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    background: var(--be-teal-900);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+}
+
+/* ── Left: logo + wordmark ─────────────────────────────────────────────────── */
+
+.logoWrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.logo {
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    opacity: 0.92;
+}
+
+.wordmark {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    font-family: var(--be-font);
+    opacity: 0.92;
+    white-space: nowrap;
+}
+
+/* ── Center: tool label ────────────────────────────────────────────────────── */
+
+.center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.toolLabel {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.02em;
+    font-family: var(--be-font);
+    white-space: nowrap;
+}
+
+/* ── Right: sign out ───────────────────────────────────────────────────────── */
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.signOutBtn {
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--be-font);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.signOutBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Present button ────────────────────────────────────────────────────────── */
+
+.presentBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: none;
+    background: #2a7a52;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--be-font);
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+    white-space: nowrap;
+}
+
+.presentBtn:hover {
+    background: #236644;
+}
+
+.presentIcon {
+    font-size: 9px;
+    line-height: 1;
+    opacity: 0.85;
+}

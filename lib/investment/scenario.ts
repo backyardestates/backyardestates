@@ -319,6 +319,7 @@ export function buildScenarios(input: {
     siteWorkByAduId?: Record<string, number>;
     rentByAduId?: Record<string, number | undefined>;
     discountByAduId?: Record<string, number>;
+    discountLinesByAduId?: Record<string, { label: string; amount: number }[]>;
     baseCostByAduId?: Record<string, number | undefined>;
     sqftByAduId?: Record<string, number | undefined>;
 }): Scenario[] {
@@ -333,6 +334,7 @@ export function buildScenarios(input: {
         siteWorkByAduId,
         rentByAduId,
         discountByAduId,
+        discountLinesByAduId,
         baseCostByAduId,
         sqftByAduId,
     } = input;
@@ -472,6 +474,7 @@ export function buildScenarios(input: {
             baseAduPrice,
             siteWorkApplied: siteWork,
             discountApplied: discount,
+            discountLines: discountLinesByAduId?.[fp._id] ?? [],
             finalAduPrice: effectiveAduPrice,
         });
     }
