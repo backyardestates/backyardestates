@@ -1,306 +1,285 @@
-/* Slide 8 — ROI · the close · dark editorial */
-
 .slide {
-  position: relative;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  height: 100%;
-  background: radial-gradient(ellipse at 30% 100%, var(--p-teal-deep) 0%, var(--p-dark) 55%, var(--p-dark-2) 100%);
-  overflow: hidden;
-  padding: 90px 56px 28px;
-  gap: 22px;
-  color: var(--p-cream);
-  font-family: var(--p-font);
+    width: 100%;
+    height: 100%;
+    background: var(--p-tan);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--p-ink);
 }
 
-/* faint grid texture */
-.slide::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(184,149,74,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(184,149,74,0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
-  pointer-events: none;
+.hero {
+    position: relative;
+    height: 200px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--p-teal-ink);
 }
 
-.headRow {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  z-index: 2;
+.heroImg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.5);
 }
 
-.headLeft {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.headSubhead {
-  font-size: var(--p-text-sm);
-  color: rgba(247,245,240,0.50);
-  letter-spacing: 0.04em;
-}
-
-.termsChip {
-  font-size: var(--p-text-micro);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--p-gold-bright);
-  background: var(--p-gold-bg);
-  border: 1px solid var(--p-gold-border);
-  border-radius: var(--p-radius-pill);
-  padding: 8px 18px;
-  font-weight: var(--p-semi);
-  white-space: nowrap;
-}
-
-/* ── CARDS GRID ── */
-.body {
-  position: relative;
-  display: grid;
-  gap: 22px;
-  min-height: 0;
-  z-index: 2;
-}
-
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%), var(--p-teal-ink);
-  border: 1px solid var(--p-border-dark);
-  border-radius: var(--p-radius-lg);
-  overflow: hidden;
-  box-shadow: var(--p-shadow-lg);
-}
-
-.cardFeatured {
-  border: 1px solid var(--p-gold-border);
-  box-shadow: var(--p-glow-gold), var(--p-shadow-lg);
-  transform: translateY(-6px);
-}
-
-/* ── CARD HEAD ── */
-.cardHead {
-  padding: 22px 24px 16px;
-  border-bottom: 1px solid rgba(184,149,74,0.18);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.cardEyebrow {
-  font-size: var(--p-text-micro);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--p-gold-soft);
-  font-weight: var(--p-semi);
-}
-
-.cardName {
-  font-family: var(--p-font-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: var(--p-text-xl);
-  color: var(--p-gold-bright);
-  line-height: 1;
-  letter-spacing: -0.005em;
-}
-
-.cardSqft {
-  font-size: var(--p-text-sm);
-  color: rgba(247,245,240,0.55);
-  font-variant-numeric: tabular-nums;
-  margin-top: 2px;
-}
-
-/* ── HERO BAND: Cashflow + ROI side-by-side ── */
-.heroBand {
-  display: grid;
-  grid-template-columns: 1.2fr 1px 1fr;
-  align-items: stretch;
-  padding: 24px 24px 22px;
-  gap: 18px;
-  background: linear-gradient(180deg, rgba(184,149,74,0.06) 0%, transparent 100%);
-  border-bottom: 1px solid rgba(184,149,74,0.18);
-}
-
-.heroDivider {
-  background: rgba(184,149,74,0.25);
-}
-
-.heroBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 80px;
+    z-index: 2;
 }
 
 .heroEyebrow {
-  font-size: var(--p-text-micro);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--p-gold);
-  font-weight: var(--p-semi);
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--p-cream);
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.85;
 }
 
-.cashflowVal {
-  font-family: var(--p-font);
-  font-size: var(--p-text-hero);
-  font-weight: var(--p-light);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
-  line-height: 0.95;
-  letter-spacing: var(--p-track-tight);
+.heroTitle {
+    margin: 0;
+    font-family: var(--p-font-display);
+    font-weight: 700;
+    font-size: 76px;
+    color: var(--p-cream);
+    line-height: 0.95;
+    letter-spacing: -1.4px;
+    text-transform: uppercase;
 }
 
-.cashflowPos { color: var(--p-positive-bright); }
-.cashflowNeg { color: var(--p-negative-coral); }
-
-.cashflowSub {
-  font-size: var(--p-text-xs);
-  color: rgba(247,245,240,0.55);
-  letter-spacing: 0.04em;
+.meta {
+    background: var(--p-paper);
+    padding: 14px 80px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--p-border);
+    font-family: var(--p-font);
+    font-size: 15px;
+    color: var(--p-ink);
+    font-weight: 500;
+    letter-spacing: 0.02em;
 }
 
-.roiVal {
-  font-family: var(--p-font);
-  font-size: var(--p-text-2xl);
-  font-weight: var(--p-light);
-  color: var(--p-gold-bright);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  letter-spacing: var(--p-track-tight);
+.metaSep {
+    color: var(--p-border-strong);
+    font-weight: 300;
 }
 
-.roiSub {
-  font-size: var(--p-text-xs);
-  color: rgba(247,245,240,0.55);
-  letter-spacing: 0.04em;
+.body {
+    flex: 1;
+    padding: 28px 80px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+    min-height: 0;
 }
 
-/* ── SUPPORTING NUMBERS ── */
-.support {
-  padding: 18px 24px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  border-bottom: 1px solid rgba(184,149,74,0.10);
+.topRow {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 40px;
+    flex-shrink: 0;
+    align-items: center;
 }
 
-.kv {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.brandCol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--p-ink);
 }
 
-.kvLabel {
-  font-size: var(--p-text-micro);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(247,245,240,0.45);
-  font-weight: var(--p-semi);
+.brandName {
+    font-family: var(--p-font-display);
+    font-weight: 600;
+    font-size: 26px;
+    color: var(--p-ink);
+    margin-top: 10px;
+    letter-spacing: -0.3px;
 }
 
-.kvVal {
-  font-size: var(--p-text-base);
-  font-weight: var(--p-medium);
-  color: var(--p-cream);
-  font-variant-numeric: tabular-nums;
+.brandTag {
+    font-family: var(--p-font-display);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--p-ink-soft);
+    letter-spacing: 0.02em;
 }
 
-.kvVal.pos { color: var(--p-positive-bright); }
-
-/* ── EQUITY LADDER ── */
-.equityLadder {
-  flex: 1;
-  padding: 20px 24px 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 14px;
-  min-height: 0;
+.specialistCard {
+    background: var(--p-slate);
+    border: 3px solid var(--p-ink-soft);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-width: 620px;
 }
 
-.equityHead {
-  font-size: var(--p-text-micro);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--p-gold);
-  font-weight: var(--p-semi);
-  margin-bottom: 4px;
+.specialistHeader {
+    background: var(--p-slate);
+    padding: 10px 28px;
+    color: var(--p-cream);
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--p-ink-soft);
 }
 
-.equityRow {
-  display: grid;
-  grid-template-columns: 56px 1fr 80px;
-  align-items: center;
-  gap: 14px;
+.specialistBody {
+    background: var(--p-paper);
+    flex: 1;
+    padding: 18px 26px;
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 22px;
+    align-items: center;
 }
 
-.equityLabel {
-  font-family: var(--p-font-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: var(--p-text-base);
-  color: var(--p-gold-soft);
-  letter-spacing: 0.02em;
+.specialistPhoto {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--p-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--p-slate-deep);
+    font-family: var(--p-font-display);
+    font-size: 30px;
+    font-weight: 600;
+    border: 3px solid var(--p-ink-soft);
 }
 
-.equityBarTrack {
-  height: 8px;
-  background: rgba(184,149,74,0.10);
-  border: 1px solid rgba(184,149,74,0.18);
-  border-radius: 4px;
-  overflow: hidden;
+.specialistPhoto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
 }
 
-.equityBarFill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--p-gold) 0%, var(--p-gold-bright) 100%);
-  border-radius: 4px;
-  transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: width;
+.specialistInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.equityVal {
-  font-family: var(--p-font);
-  font-size: var(--p-text-base);
-  font-weight: var(--p-medium);
-  color: var(--p-cream);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
+.specialistName {
+    font-family: var(--p-font-display);
+    font-weight: 600;
+    font-size: 26px;
+    color: var(--p-ink);
+    letter-spacing: -0.2px;
+    margin-bottom: 4px;
 }
 
-/* ── FOOTER ── */
-.footer {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 14px;
-  border-top: 1px solid rgba(184,149,74,0.18);
-  gap: 24px;
+.specialistContact {
+    font-family: var(--p-font);
+    font-size: 16px;
+    color: var(--p-ink);
+    font-weight: 500;
+    letter-spacing: 0.02em;
 }
 
-.disclaimer {
-  font-size: var(--p-text-micro);
-  color: rgba(247,245,240,0.45);
-  letter-spacing: 0.04em;
-  font-style: italic;
+.teamGrid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 16px;
+    min-height: 0;
 }
 
-.tagline {
-  font-family: var(--p-font-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: var(--p-text-sm);
-  color: var(--p-gold);
-  letter-spacing: -0.005em;
-  white-space: nowrap;
+.member {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--p-paper);
+    border: 2px solid var(--p-ink-soft);
+    overflow: hidden;
+}
+
+.memberName {
+    background: var(--p-teal-dark);
+    color: var(--p-cream);
+    padding: 8px 12px;
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.memberPhoto {
+    flex: 1;
+    overflow: hidden;
+    background: var(--p-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--p-slate-deep);
+    font-family: var(--p-font-display);
+    font-weight: 600;
+    font-size: 36px;
+    min-height: 0;
+}
+
+.memberPhoto img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.memberRole {
+    background: var(--p-tan);
+    color: var(--p-cream);
+    padding: 8px 12px;
+    font-family: var(--p-font);
+    font-weight: 600;
+    font-size: 13px;
+    text-align: center;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.partners {
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    padding: 4px 24px;
+    align-items: center;
+    justify-items: center;
+}
+
+.partner {
+    font-family: var(--p-font-display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--p-ink);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }

@@ -1,13 +1,7 @@
-/* ─── Backyard Estates Presenter View ─────────────────────────────────────────
-   Brand colors:
-   --p-dark:  #1a3a3a   dark bg slides
-   --p-teal:  #2D5F5F   headers, accents
-   --p-gold:  #B8954A   labels, highlights
-   --p-cream: #f8f7f3   light bg slides
-   --p-white: #ffffff
-   ─────────────────────────────────────────────────────────────────────────── */
-
-/* ── Shell ── */
+/* ─── Backyard Estates Presenter Shell ─────────────────────────────────────
+   Shell + nav only — slides live inside a 1920×1080 canvas that scales
+   to fit any viewport via JS-driven transform: scale().
+   ───────────────────────────────────────────────────────────────────────── */
 
 .shell {
     position: fixed;
@@ -15,20 +9,38 @@
     width: 100vw;
     height: 100dvh;
     overflow: hidden;
-    font-family: var(--pf);
-    color: #ffffff;
+    background: var(--p-teal-dark);
+    color: var(--p-ink);
     user-select: none;
-    background: #1a3a3a;
+    font-family: var(--p-font);
 }
 
-/* ── Slide stack — absolute positioned, fade in/out ── */
+/* Scaler — positioned at viewport center, transformed via JS each resize */
+.scaler {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1920px;
+    height: 1080px;
+    transform: translate(-50%, -50%) scale(1);
+    transform-origin: center center;
+    will-change: transform;
+}
+
+.canvas {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
 
 .slideWrapper {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100dvh;
+    width: 1920px;
+    height: 1080px;
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
@@ -40,345 +52,28 @@
     pointer-events: all;
 }
 
-/* ── Slide base classes ── */
-
-.dark {
-    width: 100%;
-    height: 100%;
-    background: #1a3a3a;
-    color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-    font-family: var(--pf);
-}
-
-.light {
-    width: 100%;
-    height: 100%;
-    background: #f8f7f3;
-    color: #1a3a3a;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-    font-family: var(--pf);
-}
-
-/* ── Header bars ── */
-
-.headerBar {
-    background: #2D5F5F;
-    padding: 0 32px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-    gap: 16px;
-}
-
-.headerBarCenter {
-    background: #2D5F5F;
-    padding: 0 32px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.headerBarLg {
-    background: #2D5F5F;
-    padding: 0 32px;
-    height: 60px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    gap: 3px;
-}
-
-.headerTitle {
-    font-size: 14px;
-    font-weight: 500;
-    color: #ffffff;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-}
-
-.headerTitleLg {
-    font-size: 20px;
-    font-weight: 500;
-    color: #ffffff;
-    letter-spacing: 0.2px;
-}
-
-.headerSub {
-    font-size: 12px;
-    font-weight: 400;
-    color: #B8954A;
-}
-
-.headerRight {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.55);
-    white-space: nowrap;
-}
-
-.headerGold {
-    font-size: 12px;
-    color: #B8954A;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-/* ── Content layouts ── */
-
-.content {
-    flex: 1;
-    padding: 16px 20px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    overflow: hidden;
-    min-height: 0;
-}
-
-.contentRow {
-    flex: 1;
-    display: flex;
-    gap: 0;
-    overflow: hidden;
-    min-height: 0;
-}
-
-/* ── Typography ── */
-
-.eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    color: #B8954A;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-}
-
-.displayNum {
-    font-size: 56px;
-    font-weight: 200;
-    color: #ffffff;
-    line-height: 1;
-    letter-spacing: -1px;
-}
-
-.displayNumDark {
-    font-size: 56px;
-    font-weight: 200;
-    color: #1a3a3a;
-    line-height: 1;
-    letter-spacing: -1px;
-}
-
-.goldLabel {
-    font-size: 11px;
-    font-weight: 500;
-    color: #B8954A;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-}
-
-.redLabel {
-    font-size: 11px;
-    font-weight: 500;
-    color: #a32d2d;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-}
-
-.goldRule {
-    width: 80px;
-    height: 1px;
-    background: #B8954A;
-    margin: 0 auto;
-}
-
-.goldRuleLeft {
-    width: 40px;
-    height: 1px;
-    background: #B8954A;
-}
-
-/* ── Cards ── */
-
-.cardWhite {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.cardTeal {
-    background: #2D5F5F;
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.cardDark {
-    background: #1a3a3a;
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.cardHeader {
-    background: #2D5F5F;
-    padding: 12px 16px;
-}
-
-.cardHeaderTitle {
-    font-size: 14px;
-    font-weight: 500;
-    color: #ffffff;
-}
-
-.cardHeaderSub {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.50);
-    margin-top: 2px;
-}
-
-.cardBody {
-    padding: 14px 16px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-/* ── Table rows ── */
-
-.tableRow {
-    display: flex;
-    align-items: center;
-    padding: 9px 16px;
-    border-bottom: 0.5px solid rgba(26, 58, 58, 0.07);
-    gap: 8px;
-}
-
-.tableRowDark {
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
-    background: #1a3a3a;
-    color: #ffffff;
-    gap: 8px;
-}
-
-.tableRowTeal {
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
-    background: #2D5F5F;
-    color: #ffffff;
-    gap: 8px;
-}
-
-.tableRowLabel {
-    flex: 1;
-    font-size: 12px;
-    color: #888;
-    line-height: 1.4;
-    letter-spacing: 0.3px;
-}
-
-.tableRowLabelWhite {
-    flex: 1;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.70);
-    line-height: 1.4;
-}
-
-.tableRowValue {
-    font-size: 13px;
-    font-weight: 500;
-    color: #1a3a3a;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.tableRowValueTeal {
-    font-size: 13px;
-    font-weight: 500;
-    color: #2D5F5F;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.tableRowValueGold {
-    font-size: 13px;
-    font-weight: 500;
-    color: #B8954A;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.tableRowValueWhite {
-    font-size: 13px;
-    font-weight: 500;
-    color: #ffffff;
-    text-align: right;
-    white-space: nowrap;
-}
-
-/* ── Callouts ── */
-
-.calloutTeal {
-    background: #2D5F5F;
-    border-radius: 10px;
-    padding: 12px 20px;
-    font-size: 16px;
-    color: #ffffff;
-    font-style: italic;
-    font-weight: 300;
-    text-align: center;
-    line-height: 1.5;
-}
-
-.calloutGold {
-    background: rgba(184, 149, 74, 0.10);
-    border-left: 2px solid #B8954A;
-    border-radius: 0 8px 8px 0;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.75);
-    line-height: 1.6;
-}
-
-/* ── Navigation dots ── */
+/* ── Navigation dots (stay viewport-fixed, not scaled) ── */
 
 .dots {
     position: fixed;
-    bottom: 12px;
+    bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 50;
     display: flex;
-    gap: 7px;
+    gap: 10px;
     align-items: center;
+    padding: 8px 14px;
+    background: rgba(26, 42, 46, 0.35);
+    backdrop-filter: blur(8px);
+    border-radius: 999px;
 }
 
 .dot {
-    width: 6px;
-    height: 6px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.20);
+    background: rgba(245, 237, 218, 0.40);
     border: none;
     cursor: pointer;
     padding: 0;
@@ -386,11 +81,11 @@
 }
 
 .dotActive {
-    background: #B8954A;
+    background: var(--p-tan);
     transform: scale(1.5);
 }
 
-/* ── Waiting overlay ── */
+/* ── Waiting overlay (viewport-fixed) ── */
 
 .waiting {
     position: fixed;
@@ -400,35 +95,36 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    background: #1a3a3a;
+    gap: 24px;
+    background: var(--p-teal-dark);
 }
 
 .waitingLogo {
-    height: 40px;
+    height: 56px;
     width: auto;
     filter: brightness(0) invert(1);
-    opacity: 0.30;
+    opacity: 0.45;
 }
 
 .waitingText {
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    color: rgba(255, 255, 255, 0.25);
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    color: rgba(245, 237, 218, 0.50);
     text-transform: uppercase;
-    font-family: var(--pf);
+    font-family: var(--p-font);
+    font-weight: 500;
 }
 
 .waitingDots {
     display: flex;
-    gap: 8px;
+    gap: 10px;
 }
 
 .waitingDot {
-    width: 7px;
-    height: 7px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: #B8954A;
+    background: var(--p-tan);
     opacity: 0.4;
     animation: blink 1.4s ease-in-out infinite;
 }
@@ -439,152 +135,4 @@
 @keyframes blink {
     0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
     40% { opacity: 0.9; transform: scale(1); }
-}
-
-/* ── Check / X rows ── */
-
-.checkRow {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    line-height: 1.7;
-}
-
-.checkIcon {
-    color: #2D5F5F;
-    font-size: 13px;
-    flex-shrink: 0;
-    margin-top: 2px;
-    font-weight: 700;
-}
-
-.xIcon {
-    color: #a32d2d;
-    font-size: 13px;
-    flex-shrink: 0;
-    margin-top: 2px;
-}
-
-.checkLabel {
-    font-size: 12px;
-    color: #1a3a3a;
-}
-
-.xLabel {
-    font-size: 12px;
-    color: rgba(26, 58, 58, 0.45);
-    text-decoration: line-through;
-    text-decoration-color: rgba(163, 45, 45, 0.35);
-}
-
-/* ── Step boxes ── */
-
-.stepBox {
-    flex: 1;
-    background: rgba(255, 255, 255, 0.05);
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 14px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    text-align: center;
-}
-
-.stepIcon {
-    font-size: 24px;
-    color: #B8954A;
-    margin-bottom: 2px;
-}
-
-.stepTitle {
-    font-size: 12px;
-    font-weight: 500;
-    color: #ffffff;
-}
-
-.stepDesc {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.45);
-    line-height: 1.4;
-}
-
-.stepArrow {
-    color: #B8954A;
-    font-size: 18px;
-    align-self: center;
-    flex-shrink: 0;
-}
-
-/* ── Phase labels ── */
-
-.phaseLabel {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 5px 16px;
-    background: rgba(45, 95, 95, 0.25);
-    color: rgba(255, 255, 255, 0.40);
-}
-
-.phaseLabelGold {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 5px 16px;
-    background: rgba(184, 149, 74, 0.12);
-    color: #B8954A;
-}
-
-/* ── Stat callout ── */
-
-.statCallout {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.statNum {
-    font-size: 40px;
-    font-weight: 200;
-    color: #B8954A;
-    line-height: 1;
-    letter-spacing: -0.5px;
-}
-
-.statLabel {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.40);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
-/* ── Count-up ── */
-
-.countUp {
-    display: inline-block;
-}
-
-/* ── Pill tag ── */
-
-.tagPill {
-    background: rgba(255, 255, 255, 0.06);
-    border: 0.5px solid rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
-    padding: 4px 10px;
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 11px;
-    white-space: nowrap;
-}
-
-.tagPillLight {
-    background: #ffffff;
-    border: 0.5px solid #d8d6d0;
-    border-radius: 20px;
-    padding: 5px 12px;
-    color: #555;
-    font-size: 12px;
-    white-space: nowrap;
 }
