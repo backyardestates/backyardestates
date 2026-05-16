@@ -1,4 +1,5 @@
 {
+    "root": true,
     "extends": "next/core-web-vitals",
     "rules": {
         "import/no-anonymous-default-export": [

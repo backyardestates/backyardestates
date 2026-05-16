@@ -119,7 +119,7 @@ export function Slide2_FloorPlans() {
                                                 <span>{fp.bath} bath</span>
                                             </div>
                                             {fp.length && fp.width && (
-                                                <div className={s.planDims}>{fp.length}' × {fp.width}'</div>
+                                                <div className={s.planDims}>{fp.length}&prime; × {fp.width}&prime;</div>
                                             )}
                                         </div>
                                     ))}
