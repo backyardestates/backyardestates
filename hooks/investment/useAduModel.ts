@@ -162,6 +162,46 @@ export function useAduModel({
     const columns = useMemo(() => scenarios.map((s) => ({ key: s.key, title: s.title, sqft: s.sqft })), [scenarios]);
     const rows = useMemo<RowSpec[]>(() => buildRows(defaults), [defaults]);
 
+    // Auto-fill the per-unit rent input from each scenario's computed rentMonthly.
+    // Step 5 and Step 6 both read from rentByAduId, so once it's populated they
+    // stay tied to the same value and propagate edits through the model.
+    // Only fills truly-empty entries — once the user types anything (including 0),
+    // we preserve their value.
+    useEffect(() => {
+        setRentByAduId((prev) => {
+            let changed = false;
+            const next = { ...prev };
+            for (const sc of aduScenarios) {
+                const id = sc.key.replace(/^adu_/, "");
+                const cur = next[id];
+                const estimated = Math.round(sc.rentMonthly ?? 0);
+                if ((cur === undefined || cur === "") && estimated > 0) {
+                    next[id] = String(estimated);
+                    changed = true;
+                }
+            }
+            return changed ? next : prev;
+        });
+    }, [aduScenarios]);
+
+    // Drop rent overrides for ADUs no longer in the comparison so a re-add starts
+    // fresh from the latest estimate.
+    useEffect(() => {
+        setRentByAduId((prev) => {
+            const allowed = new Set(selectedAdus.map((fp) => fp._id));
+            let changed = false;
+            const next: Record<string, string> = {};
+            for (const [id, v] of Object.entries(prev)) {
+                if (allowed.has(id)) {
+                    next[id] = v;
+                } else {
+                    changed = true;
+                }
+            }
+            return changed ? next : prev;
+        });
+    }, [selectedAdus]);
+
     const activeSnapshotByAduId = useMemo<Record<string, ActiveLineItem[]>>(() => {
         const out: Record<string, ActiveLineItem[]> = {};
         for (const fp of selectedAdus) {

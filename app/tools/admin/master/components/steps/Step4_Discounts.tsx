@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { StepCard } from "../shared/StepCard";
+import { StepCard, type StepKind } from "../shared/StepCard";
 
 export interface Step4Props {
     isComplete: boolean;
@@ -10,28 +10,17 @@ export interface Step4Props {
     completeSummary: string;
     onEdit: () => void;
     children: React.ReactNode;
+    kind?: StepKind;
+    needsInput?: boolean;
+    needsInputMessage?: string;
+    onDone?: () => void;
+    doneLabel?: string;
 }
 
-export function Step4_Discounts({
-    isComplete,
-    isActive,
-    isPending,
-    completeSummary,
-    onEdit,
-    children,
-}: Step4Props) {
+export function Step4_Discounts(props: Step4Props) {
     return (
-        <StepCard
-            stepNumber={4}
-            title="Discounts"
-            badge="OPTIONAL"
-            isComplete={isComplete}
-            isActive={isActive}
-            isPending={isPending}
-            completeSummary={completeSummary}
-            onEdit={onEdit}
-        >
-            {children}
+        <StepCard stepNumber={4} title="Discounts" {...props}>
+            {props.children}
         </StepCard>
     );
 }

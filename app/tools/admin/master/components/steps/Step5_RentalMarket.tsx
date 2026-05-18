@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { StepCard } from "../shared/StepCard";
+import { StepCard, type StepKind } from "../shared/StepCard";
 
 export interface Step5Props {
     isComplete: boolean;
@@ -10,27 +10,17 @@ export interface Step5Props {
     completeSummary: string;
     onEdit: () => void;
     children: React.ReactNode;
+    kind?: StepKind;
+    needsInput?: boolean;
+    needsInputMessage?: string;
+    onDone?: () => void;
+    doneLabel?: string;
 }
 
-export function Step5_RentalMarket({
-    isComplete,
-    isActive,
-    isPending,
-    completeSummary,
-    onEdit,
-    children,
-}: Step5Props) {
+export function Step5_RentalMarket(props: Step5Props) {
     return (
-        <StepCard
-            stepNumber={5}
-            title="Rental Market"
-            isComplete={isComplete}
-            isActive={isActive}
-            isPending={isPending}
-            completeSummary={completeSummary}
-            onEdit={onEdit}
-        >
-            {children}
+        <StepCard stepNumber={5} title="Rental Market" {...props}>
+            {props.children}
         </StepCard>
     );
 }

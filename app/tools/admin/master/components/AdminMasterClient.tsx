@@ -54,6 +54,23 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
         setFloorplanId((prev) => prev || initialFloorplans?.[0]?._id || "");
     }, [initialFloorplans]);
 
+    // Scroll to the top of the active step's section whenever it changes.
+    // Skip the first mount so the page doesn't jump on initial load.
+    const isFirstStepMount = React.useRef(true);
+    useEffect(() => {
+        if (isFirstStepMount.current) {
+            isFirstStepMount.current = false;
+            return;
+        }
+        const id = `step-${activeStep}`;
+        // requestAnimationFrame lets React commit the new expanded body first
+        // so scrollIntoView measures the post-expansion layout correctly.
+        requestAnimationFrame(() => {
+            const el = document.getElementById(id);
+            el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    }, [activeStep]);
+
     const selectedFloorplan = useMemo(
         () => floorplans.find((fp) => fp._id === floorplanId) ?? null,
         [floorplans, floorplanId]
@@ -162,25 +179,44 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
         setAduCompareIds((prev) => prev.filter((x) => x !== id));
     }
 
-    // ── Step completion ────────────────────────────────────────────────────────
-    const step1Complete = address.length > 5;
-    const step2Complete = aduCompareIds.length > 0;
-    const step3Complete = siteWorkConfirmed;
-    const step4Complete = true;
-    const step5Complete = false;
-    const step6Complete = false;
+    // ── Step state model ──────────────────────────────────────────────────────
+    // Two separate concepts:
+    //  • hasData[n]   — required form data is present for step n
+    //  • doneSteps[n] — user explicitly clicked Done on step n
+    // "Complete" = both true (so editing the data invalidates a prior Done).
+    const [doneSteps, setDoneSteps] = useState<Set<number>>(new Set());
 
-    const completions = [step1Complete, step2Complete, step3Complete, step4Complete, step5Complete, step6Complete];
+    function markDone(n: 1 | 2 | 3 | 4 | 5 | 6) {
+        setDoneSteps((prev) => {
+            const next = new Set(prev);
+            next.add(n);
+            return next;
+        });
+        if (n < 6) setActiveStep(((n + 1) as 1 | 2 | 3 | 4 | 5 | 6));
+    }
+
+    // Per-step required-data validation
+    const step1HasData = address.length > 5;
+    const step2HasData = aduCompareIds.length > 0;
+    const step3HasData = adu.selectedAdus.length > 0;
+    const step4HasData = true; // discounts are optional
+    const step5HasData = true; // review-only
+    const step6HasData = true; // review-only
+    const hasData = [step1HasData, step2HasData, step3HasData, step4HasData, step5HasData, step6HasData];
+
+    const completions = [1, 2, 3, 4, 5, 6].map((n) => doneSteps.has(n) && hasData[n - 1]);
 
     const completedSteps = completions
         .map((done, i) => (done ? i + 1 : null))
         .filter((n): n is number => n !== null);
 
+    const needsInputSteps = [1, 2, 3, 4, 5, 6].filter((n) => !hasData[n - 1]);
+
     function stepState(n: 1 | 2 | 3 | 4 | 5 | 6) {
         const isComplete = completions[n - 1];
         return {
             isActive: activeStep === n,
-            isPending: n > activeStep && !isComplete,
+            isPending: !isComplete && activeStep !== n,
             isComplete,
             onEdit: () => setActiveStep(n),
         };
@@ -209,6 +245,7 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                 <StepSidebar
                     activeStep={activeStep}
                     completedSteps={completedSteps}
+                    needsInputSteps={needsInputSteps}
                     onStepClick={(n) => setActiveStep(n as 1 | 2 | 3 | 4 | 5 | 6)}
                 />
 
@@ -217,6 +254,10 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                     {/* ── Step 1 · Who & Where ─────────────────────────────── */}
                     <Step1_WhoAndWhere
                         {...stepState(1)}
+                        kind="data"
+                        needsInput={!step1HasData}
+                        needsInputMessage="Enter the property address to continue"
+                        onDone={() => markDone(1)}
                         completeSummary={address || "No address yet"}
                     >
                         <DealForm
@@ -252,6 +293,10 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                     {/* ── Step 2 · Choose Units ─────────────────────────────── */}
                     <Step2_ChooseUnits
                         {...stepState(2)}
+                        kind="data"
+                        needsInput={!step2HasData}
+                        needsInputMessage="Select at least one floor plan to continue"
+                        onDone={() => markDone(2)}
                         completeSummary={
                             aduCompareIds.length > 0
                                 ? `${aduCompareIds.length} unit${aduCompareIds.length > 1 ? "s" : ""} selected`
@@ -275,6 +320,10 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                     {/* ── Step 3 · Estimate the Job ─────────────────────────── */}
                     <Step3_EstimateJob
                         {...stepState(3)}
+                        kind="data"
+                        needsInput={!step3HasData}
+                        needsInputMessage="Select units in Step 2 before estimating site work"
+                        onDone={() => { setSiteWorkConfirmed(true); markDone(3); }}
                         completeSummary="Site work confirmed"
                     >
                         {adu.selectedAdus.length === 0 ? (
@@ -288,23 +337,13 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                                 setEstimatorByAduId={adu.setEstimatorByAduId}
                             />
                         )}
-                        {adu.selectedAdus.length > 0 && (
-                            <button
-                                className={styles.button}
-                                style={{ width: "auto", alignSelf: "flex-start", marginTop: 8 }}
-                                onClick={() => {
-                                    setSiteWorkConfirmed(true);
-                                    setActiveStep(4);
-                                }}
-                            >
-                                Done with estimate
-                            </button>
-                        )}
                     </Step3_EstimateJob>
 
                     {/* ── Step 4 · Discounts ────────────────────────────────── */}
                     <Step4_Discounts
                         {...stepState(4)}
+                        kind="data"
+                        onDone={() => markDone(4)}
                         completeSummary="Discounts applied"
                     >
                         <DiscountsPanel
@@ -317,6 +356,8 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                     {/* ── Step 5 · Rental Market ────────────────────────────── */}
                     <Step5_RentalMarket
                         {...stepState(5)}
+                        kind="review"
+                        onDone={() => markDone(5)}
                         completeSummary="Rental market reviewed"
                     >
                         {adu.selectedAdus.length > 0 && (
@@ -358,10 +399,8 @@ export default function AdminMasterClient({ initialFloorplans }: { initialFloorp
                     {/* ── Step 6 · Review & Generate ────────────────────────── */}
                     <Step6_ReviewAndGenerate
                         {...stepState(6)}
-                        completeSummary=""
-                        isActive={true}
-                        isPending={false}
-                        isComplete={false}
+                        kind="review"
+                        completeSummary="Ready to present"
                     >
                         <InvestmentCompareSummary
                             styles={styles}

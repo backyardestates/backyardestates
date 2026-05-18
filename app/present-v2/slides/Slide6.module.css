@@ -1,0 +1,395 @@
+/* Slide 6 — Customer Stories · split editorial */
+
+.slide {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  height: 100%;
+  font-family: var(--p-font);
+  overflow: hidden;
+  background: var(--p-dark);
+}
+
+/* LEFT — story photo with overlays */
+.photoHalf {
+  position: relative;
+  overflow: hidden;
+  background: var(--p-dark-3);
+}
+
+.photoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.photoPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--p-teal-deep) 0%, var(--p-dark-3) 100%);
+}
+
+.photoBadge {
+  position: absolute;
+  top: 96px;
+  left: 40px;
+  z-index: 2;
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: var(--p-semi);
+  color: var(--p-gold-bright);
+  background: rgba(13,31,31,0.86);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  padding: 8px 18px;
+  backdrop-filter: blur(8px);
+}
+
+.photoCaptionWrap {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 60px 40px 40px;
+  background: linear-gradient(to bottom, transparent, rgba(13,31,31,0.85));
+  z-index: 2;
+}
+
+.photoCaption {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-lg);
+  color: var(--p-cream);
+  letter-spacing: -0.005em;
+}
+
+.photoCaptionSub {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--p-font);
+  font-style: normal;
+  font-size: var(--p-text-micro);
+  color: var(--p-gold-soft);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: var(--p-semi);
+}
+
+/* RIGHT — content panel */
+.rightPanel {
+  background: linear-gradient(180deg, var(--p-teal-deep) 0%, var(--p-teal-ink) 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 96px 56px 32px;
+  gap: 32px;
+  color: var(--p-cream);
+}
+
+/* Story pills selector */
+.storySelector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.storySelectorLabel {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-semi);
+}
+
+.storyPills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.storyPill {
+  background: transparent;
+  border: 1px solid rgba(184,149,74,0.30);
+  border-radius: var(--p-radius-pill);
+  color: rgba(247,245,240,0.55);
+  font-size: var(--p-text-micro);
+  font-family: var(--p-font);
+  letter-spacing: 0.05em;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-weight: var(--p-medium);
+}
+
+.storyPill:hover {
+  color: var(--p-cream);
+  border-color: var(--p-gold-border);
+}
+
+.storyPillActive {
+  background: var(--p-gold);
+  border-color: var(--p-gold);
+  color: var(--p-teal-ink);
+  font-weight: var(--p-semi);
+}
+
+.storiesCount {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-xs);
+  color: var(--p-gold-soft);
+  padding: 0 8px;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+}
+
+.identityRow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.portrait {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--p-gold-border);
+  flex-shrink: 0;
+  background: var(--p-teal);
+  box-shadow: var(--p-shadow-md);
+}
+
+.portraitImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portraitInitials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--p-teal) 0%, var(--p-teal-deep) 100%);
+  color: var(--p-gold-bright);
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-lg);
+  letter-spacing: 0.04em;
+}
+
+.identityText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.storyName {
+  font-family: var(--p-font-display);
+  font-style: normal;
+  font-weight: 400;
+  font-size: var(--p-text-xl);
+  color: var(--p-cream);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.storyPurpose {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-semi);
+}
+
+/* Quote */
+.quoteWrap {
+  position: relative;
+  padding: 16px 8px 4px;
+}
+
+.qmark {
+  position: absolute;
+  top: -28px;
+  left: -8px;
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-hero);
+  line-height: 0.85;
+  color: var(--p-gold);
+  opacity: 0.40;
+  pointer-events: none;
+}
+
+.quote {
+  position: relative;
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-lg);
+  color: var(--p-cream);
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Video card */
+.videoCard {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-lg);
+  padding: 16px 20px;
+  cursor: pointer;
+  margin-top: auto;
+  transition: all 0.18s ease;
+}
+
+.videoCard:hover {
+  background: rgba(184,149,74,0.08);
+  border-color: var(--p-gold);
+  transform: translateY(-1px);
+}
+
+.videoThumbWrap {
+  width: 92px;
+  height: 56px;
+  border-radius: var(--p-radius-sm);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  background: var(--p-dark-3);
+}
+
+.videoThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.playOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13,31,31,0.30);
+  color: var(--p-gold-bright);
+}
+
+.playOverlay svg { width: 26px; height: 26px; }
+
+.videoText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.videoTitle {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-base);
+  color: var(--p-cream);
+  letter-spacing: -0.005em;
+}
+
+.videoSub {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-semi);
+}
+
+/* Tagline footer */
+.tagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  padding-top: 12px;
+  border-top: 1px solid rgba(184,149,74,0.18);
+  text-align: right;
+}
+
+/* Placeholder */
+.placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+.placeholderText {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-lg);
+  color: rgba(247,245,240,0.32);
+  text-align: center;
+}
+
+/* Wistia overlay */
+.videoOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 24px;
+  right: 40px;
+  background: transparent;
+  border: 1px solid var(--p-gold-border);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  color: var(--p-gold);
+  font-size: var(--p-text-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.overlayIframe {
+  /* 80% of the 1920px canvas — scales with the deck transform */
+  width: 1536px;
+  aspect-ratio: 16 / 9;
+  border: none;
+  border-radius: 16px;
+}

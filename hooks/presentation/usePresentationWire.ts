@@ -123,6 +123,10 @@ export function usePresentationWire({
     }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId]);
 }
 
-export function openPresenterWindow() {
-    window.open("/present", "be_presenter", "noopener");
+export type PresenterVariant = "original" | "v2";
+
+export function openPresenterWindow(variant: PresenterVariant = "original") {
+    const path = variant === "v2" ? "/present-v2" : "/present";
+    const name = variant === "v2" ? "be_presenter_v2" : "be_presenter";
+    window.open(path, name, "noopener");
 }

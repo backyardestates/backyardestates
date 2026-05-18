@@ -22,7 +22,7 @@
     margin: 0;
     font-family: var(--p-font-display);
     font-weight: 700;
-    font-size: 96px;
+    font-size: 72px;
     color: var(--p-cream);
     text-align: center;
     line-height: 1;
@@ -34,7 +34,7 @@
     right: 80px;
     bottom: 20px;
     font-family: var(--p-font);
-    font-size: 18px;
+    font-size: 14px;
     color: var(--p-cream);
     font-weight: 500;
     opacity: 0.85;
@@ -78,7 +78,7 @@
 
 .planEyebrow {
     font-family: var(--p-font);
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--p-tan);
     letter-spacing: 0.22em;
@@ -88,7 +88,7 @@
 .planName {
     font-family: var(--p-font-display);
     font-weight: 600;
-    font-size: 30px;
+    font-size: 23px;
     color: var(--p-cream);
     line-height: 1;
     letter-spacing: -0.3px;
@@ -120,7 +120,7 @@
 .k {
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 22px;
+    font-size: 17px;
     color: var(--p-ink);
     letter-spacing: 0.01em;
 }
@@ -128,7 +128,7 @@
 .kIndent {
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 22px;
+    font-size: 17px;
     color: var(--p-ink);
     padding-left: 32px;
     letter-spacing: 0.01em;
@@ -137,7 +137,7 @@
 .v {
     font-family: var(--p-font);
     font-weight: 600;
-    font-size: 22px;
+    font-size: 17px;
     color: var(--p-ink);
     font-variant-numeric: tabular-nums;
 }
@@ -157,12 +157,12 @@
     font-style: italic;
     font-weight: 600;
     color: var(--p-teal-dark);
-    font-size: 24px;
+    font-size: 18px;
 }
 
 .sectionNote {
     font-family: var(--p-font);
-    font-size: 13px;
+    font-size: 10px;
     font-style: italic;
     color: var(--p-ink-muted);
     margin-left: 4px;
@@ -178,6 +178,6 @@
     font-family: var(--p-font-display);
     font-style: italic;
     color: var(--p-cream);
-    font-size: 28px;
+    font-size: 21px;
     opacity: 0.85;
 }

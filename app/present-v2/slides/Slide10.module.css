@@ -1,0 +1,249 @@
+/* Slide 10 — Rental Analysis · dark editorial */
+
+.slide {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  height: 100%;
+  background: radial-gradient(ellipse at 70% 100%, var(--p-teal-deep) 0%, var(--p-dark) 60%, var(--p-dark-2) 100%);
+  overflow: hidden;
+  padding: 90px 56px 28px;
+  gap: 22px;
+  color: var(--p-cream);
+  font-family: var(--p-font);
+}
+
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: rgba(247,245,240,0.50);
+  letter-spacing: 0.04em;
+}
+
+.sourceChip {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  background: var(--p-gold-bg);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  padding: 8px 18px;
+  font-weight: var(--p-semi);
+}
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-lg);
+  color: rgba(247,245,240,0.32);
+  text-align: center;
+  padding: 32px;
+}
+
+/* Rent hero grid */
+.rentHeroGrid {
+  display: grid;
+  gap: 22px;
+}
+
+.rentHeroCard {
+  position: relative;
+  background: linear-gradient(180deg, rgba(184,149,74,0.10) 0%, rgba(255,255,255,0.02) 100%), var(--p-teal-ink);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-lg);
+  padding: 30px 36px 26px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--p-shadow-lg);
+  overflow: hidden;
+}
+
+.rentEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-semi);
+}
+
+.rentUnitName {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-xl);
+  color: var(--p-gold-bright);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  margin-top: 4px;
+}
+
+.rentSqft {
+  font-size: var(--p-text-xs);
+  color: rgba(247,245,240,0.55);
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+.rentValRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.rentVal {
+  font-family: var(--p-font);
+  font-size: var(--p-text-hero);
+  font-weight: var(--p-light);
+  color: var(--p-cream);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  line-height: 0.95;
+  letter-spacing: var(--p-track-tight);
+}
+
+.rentMo {
+  font-family: var(--p-font);
+  font-size: var(--p-text-lg);
+  color: var(--p-gold-soft);
+  font-weight: var(--p-light);
+}
+
+.rentSub {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247,245,240,0.45);
+  font-weight: var(--p-semi);
+  margin-top: 10px;
+}
+
+/* Comps section */
+.compsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+.compsHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.compsTitle {
+  font-family: var(--p-font);
+  font-size: var(--p-text-lg);
+  font-weight: var(--p-light);
+  color: var(--p-cream);
+  letter-spacing: var(--p-track-tight);
+  line-height: 1;
+}
+
+.compsTitle em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--p-gold-bright);
+}
+
+.compsSub {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247,245,240,0.45);
+  font-weight: var(--p-semi);
+}
+
+.compsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.compCard {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+  border: 1px solid var(--p-border-dark);
+  border-radius: var(--p-radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.compPrice {
+  font-family: var(--p-font);
+  font-size: var(--p-text-lg);
+  font-weight: var(--p-light);
+  color: var(--p-gold-bright);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+}
+
+.compMo {
+  font-size: var(--p-text-xs);
+  color: var(--p-gold-soft);
+  font-weight: var(--p-normal);
+}
+
+.compAddress {
+  font-size: var(--p-text-xs);
+  color: rgba(247,245,240,0.65);
+  line-height: 1.4;
+}
+
+.compSpecs {
+  font-size: var(--p-text-micro);
+  color: rgba(247,245,240,0.42);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid rgba(184,149,74,0.18);
+  gap: 24px;
+}
+
+.disclaimer {
+  font-size: var(--p-text-micro);
+  color: rgba(247,245,240,0.42);
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
+.tagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}

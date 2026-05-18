@@ -32,15 +32,15 @@
                       Georgia, serif;
 
   /* ── Scale (16:9 full-screen presentation, readable at distance) ── */
-  --p-text-micro:     22px;
-  --p-text-xs:        26px;
-  --p-text-sm:        30px;
-  --p-text-base:      36px;
-  --p-text-md:        44px;
-  --p-text-lg:        54px;
-  --p-text-xl:        72px;
-  --p-text-2xl:       96px;
-  --p-text-hero:     132px;
+  --p-text-micro:     17px;
+  --p-text-xs:        20px;
+  --p-text-sm:        23px;
+  --p-text-base:      27px;
+  --p-text-md:        33px;
+  --p-text-lg:        41px;
+  --p-text-xl:        54px;
+  --p-text-2xl:       72px;
+  --p-text-hero:     99px;
 
   /* ── Spacing ── */
   --p-pad-slide:      0;          /* slides bleed edge-to-edge */

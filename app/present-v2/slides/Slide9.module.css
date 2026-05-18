@@ -1,0 +1,280 @@
+/* Slide 9 — ADU vs House · light editorial comparison */
+
+.slide {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  height: 100%;
+  background: var(--p-paper);
+  font-family: var(--p-font);
+  overflow: hidden;
+  padding: 90px 56px 28px;
+  gap: 22px;
+}
+
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-faint);
+  letter-spacing: 0.04em;
+}
+
+/* Anchor banner — the dramatic 10-year advantage */
+.anchor {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 26px 36px;
+  background: linear-gradient(90deg, var(--p-teal-ink) 0%, var(--p-teal-deep) 100%);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  gap: 32px;
+  color: var(--p-cream);
+}
+
+.anchorLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.anchorEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-semi);
+}
+
+.anchorLabel {
+  font-family: var(--p-font);
+  font-size: var(--p-text-lg);
+  font-weight: var(--p-light);
+  color: var(--p-cream);
+  line-height: 1;
+  letter-spacing: var(--p-track-tight);
+}
+
+.anchorBlurb {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-base);
+  color: rgba(247,245,240,0.78);
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  max-width: 540px;
+}
+
+.anchorValue {
+  font-family: var(--p-font);
+  font-size: var(--p-text-2xl);
+  font-weight: var(--p-light);
+  color: var(--p-positive-bright);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+  line-height: 1;
+}
+
+/* Table card */
+.tableCard {
+  display: flex;
+  flex-direction: column;
+  background: var(--p-white);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Table header */
+.thead {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  background: var(--p-teal-ink);
+  flex-shrink: 0;
+}
+
+.thLabel {
+  font-size: var(--p-text-micro);
+  color: var(--p-gold-soft);
+  font-weight: var(--p-semi);
+  padding: 18px 32px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.thCol {
+  font-family: var(--p-font);
+  font-size: var(--p-text-md);
+  font-weight: var(--p-medium);
+  padding: 18px 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: var(--p-track-wide);
+}
+
+.thHouse { color: rgba(247,245,240,0.72); }
+
+.thAdu {
+  color: var(--p-gold-bright);
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  background: linear-gradient(180deg, var(--p-teal-deep) 0%, var(--p-teal-ink) 100%);
+}
+
+/* Table body */
+.tbody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  flex: 1;
+  align-items: center;
+  border-bottom: 1px solid var(--p-border-light);
+  min-height: 0;
+}
+
+.row:nth-child(even) { background: rgba(20,48,47,0.025); }
+
+.rowSummary {
+  background: rgba(184,149,74,0.06) !important;
+  border-top: 1px solid var(--p-gold-border);
+  border-bottom: 1px solid var(--p-gold-border);
+}
+
+.rowLabel {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-muted);
+  padding: 0 32px;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+.rowSummary .rowLabel {
+  font-weight: var(--p-semi);
+  color: var(--p-teal-ink);
+}
+
+.rowVal {
+  font-size: var(--p-text-base);
+  color: var(--p-teal-ink);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--p-medium);
+}
+
+.rowAdu {
+  background: rgba(45,95,95,0.04);
+}
+
+.rowPos { color: var(--p-positive); font-weight: var(--p-semi); }
+.rowNeg { color: var(--p-negative); font-weight: var(--p-semi); }
+.rowMuted { color: var(--p-ink-faint); }
+
+/* Cashflow hero row */
+.rowCashflow {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  background: var(--p-teal-ink);
+  flex: 0 0 96px;
+  align-items: center;
+  border-bottom: none;
+  color: var(--p-cream);
+}
+
+.rowCashflow .rowLabel {
+  color: var(--p-gold-bright);
+  font-weight: var(--p-semi);
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-size: var(--p-text-lg);
+  letter-spacing: -0.005em;
+}
+
+.rowCfVal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--p-font);
+  font-size: var(--p-text-2xl);
+  font-weight: var(--p-light);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+}
+
+.cfArrow {
+  font-size: var(--p-text-md);
+  font-weight: var(--p-medium);
+}
+
+.cfArrow.down { color: var(--p-negative-coral); }
+.cfArrow.up   { color: var(--p-positive-bright); }
+
+.cfValNeg { color: var(--p-negative-coral); }
+.cfValPos { color: var(--p-positive-bright); }
+
+/* Empty state */
+.empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-lg);
+  color: var(--p-ink-faint);
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--p-border-light);
+  gap: 24px;
+}
+
+.disclaimer {
+  font-size: var(--p-text-micro);
+  color: var(--p-ink-faint);
+  font-style: italic;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  max-width: 70%;
+}
+
+.tagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}

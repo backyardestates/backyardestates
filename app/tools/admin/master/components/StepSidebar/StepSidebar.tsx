@@ -4,29 +4,27 @@ import React from "react";
 import styles from "./StepSidebar.module.css";
 
 const STEPS = [
-    { n: 1, label: "Who & Where" },
-    { n: 2, label: "Choose Units" },
-    { n: 3, label: "Estimate the Job" },
-    { n: 4, label: "Discounts" },
-    { n: 5, label: "Rental Market" },
-    { n: 6, label: "Review & Generate" },
-] as const;
+    { n: 1, label: "Who & Where",       kind: "data"   as const },
+    { n: 2, label: "Choose Units",      kind: "data"   as const },
+    { n: 3, label: "Estimate the Job",  kind: "data"   as const },
+    { n: 4, label: "Discounts",         kind: "data"   as const },
+    { n: 5, label: "Rental Market",     kind: "review" as const },
+    { n: 6, label: "Review & Generate", kind: "review" as const },
+];
 
 export function StepSidebar({
     activeStep,
     completedSteps,
+    needsInputSteps = [],
     onStepClick,
 }: {
     activeStep: number;
     completedSteps: number[];
+    needsInputSteps?: number[];
     onStepClick: (n: number) => void;
 }) {
     function goTo(n: number) {
         onStepClick(n);
-        const el = document.getElementById(`step-${n}`);
-        if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
     }
 
     return (
@@ -34,40 +32,44 @@ export function StepSidebar({
             <div className={styles.inner}>
                 <div className={styles.sectionLabel}>Workflow</div>
 
-                {STEPS.map((step, idx) => {
+                {STEPS.map((step) => {
                     const isActive = step.n === activeStep;
                     const isDone = completedSteps.includes(step.n);
-                    const showDivider = false;
+                    const needsInput = !isDone && !isActive && needsInputSteps.includes(step.n);
+                    const isReview = step.kind === "review";
 
                     return (
-                        <React.Fragment key={step.n}>
-                            {showDivider && <hr className={styles.divider} />}
-                            <button
+                        <button
+                            key={step.n}
+                            className={[
+                                styles.step,
+                                isActive ? styles.stepActive : "",
+                                isDone ? styles.stepDone : "",
+                                needsInput ? styles.stepNeedsInput : "",
+                            ]
+                                .filter(Boolean)
+                                .join(" ")}
+                            onClick={() => goTo(step.n)}
+                            aria-current={isActive ? "step" : undefined}
+                        >
+                            <span
                                 className={[
-                                    styles.step,
-                                    isActive ? styles.stepActive : "",
-                                    isDone ? styles.stepDone : "",
+                                    styles.stepNum,
+                                    isActive ? styles.stepNumActive : "",
+                                    isDone ? styles.stepNumDone : "",
+                                    needsInput ? styles.stepNumNeedsInput : "",
                                 ]
                                     .filter(Boolean)
                                     .join(" ")}
-                                onClick={() => goTo(step.n)}
-                                aria-current={isActive ? "step" : undefined}
+                                aria-hidden
                             >
-                                <span
-                                    className={[
-                                        styles.stepNum,
-                                        isActive ? styles.stepNumActive : "",
-                                        isDone ? styles.stepNumDone : "",
-                                    ]
-                                        .filter(Boolean)
-                                        .join(" ")}
-                                    aria-hidden
-                                >
-                                    {isDone ? "✓" : step.n}
-                                </span>
-                                <span className={styles.stepLabel}>{step.label}</span>
-                            </button>
-                        </React.Fragment>
+                                {isDone ? "✓" : needsInput ? "!" : step.n}
+                            </span>
+                            <span className={styles.stepLabel}>{step.label}</span>
+                            {isReview && !isDone && (
+                                <span className={styles.reviewTag} aria-hidden>review</span>
+                            )}
+                        </button>
                     );
                 })}
             </div>

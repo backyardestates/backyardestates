@@ -38,7 +38,7 @@
 .heroEyebrow {
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 26px;
+    font-size: 20px;
     color: var(--p-cream);
     letter-spacing: 0.42em;
     text-transform: uppercase;
@@ -53,7 +53,7 @@
     flex-shrink: 0;
     border-bottom: 1px solid var(--p-border);
     font-family: var(--p-font);
-    font-size: 16px;
+    font-size: 12px;
     color: var(--p-ink);
     font-weight: 500;
     letter-spacing: 0.02em;
@@ -97,7 +97,7 @@
 .cardHeader {
     padding: 14px 28px;
     font-family: var(--p-font);
-    font-size: 22px;
+    font-size: 17px;
     font-weight: 700;
     color: var(--p-cream);
     letter-spacing: 0.05em;
@@ -154,7 +154,7 @@
     color: var(--p-cream);
     font-family: var(--p-font-display);
     font-style: italic;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 .detailsList {
@@ -174,7 +174,7 @@
 
 .detailsList dt {
     font-family: var(--p-font);
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--p-tan-deep);
     text-transform: uppercase;
@@ -184,7 +184,7 @@
 .detailsList dd {
     margin: 0;
     font-family: var(--p-font);
-    font-size: 22px;
+    font-size: 17px;
     font-weight: 600;
     color: var(--p-ink);
     line-height: 1.25;
@@ -212,7 +212,7 @@
 .planName {
     font-family: var(--p-font-display);
     font-weight: 600;
-    font-size: 24px;
+    font-size: 18px;
     color: var(--p-ink);
     line-height: 1.1;
     letter-spacing: -0.2px;
@@ -228,7 +228,7 @@
 .planSqftNum {
     font-family: var(--p-font-display);
     font-weight: 700;
-    font-size: 40px;
+    font-size: 30px;
     color: var(--p-teal-dark);
     line-height: 1;
     font-variant-numeric: tabular-nums;
@@ -237,7 +237,7 @@
 
 .planSqftLabel {
     font-family: var(--p-font);
-    font-size: 13px;
+    font-size: 10px;
     color: var(--p-ink-muted);
     font-weight: 600;
     text-transform: uppercase;
@@ -249,7 +249,7 @@
     align-items: center;
     gap: 6px;
     font-family: var(--p-font);
-    font-size: 15px;
+    font-size: 11px;
     color: var(--p-ink-muted);
     font-weight: 500;
     margin-top: 4px;
@@ -261,7 +261,7 @@
 
 .planDims {
     font-family: var(--p-font);
-    font-size: 13px;
+    font-size: 10px;
     color: var(--p-ink-muted);
     font-weight: 500;
     margin-top: 2px;
@@ -275,7 +275,7 @@
     color: var(--p-ink-muted);
     font-family: var(--p-font-display);
     font-style: italic;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 .timelineBody {
@@ -300,7 +300,7 @@
 
 .timelineCurrentEyebrow {
     font-family: var(--p-font);
-    font-size: 12px;
+    font-size: 9px;
     font-weight: 700;
     color: var(--p-tan-deep);
     text-transform: uppercase;
@@ -311,13 +311,13 @@
 .timelineCurrentTitle {
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 18px;
+    font-size: 14px;
     color: var(--p-ink);
     line-height: 1.2;
 }
 
 .timelineArrow {
-    font-size: 32px;
+    font-size: 24px;
     color: var(--p-tan-deep);
     flex-shrink: 0;
     align-self: center;
@@ -334,7 +334,7 @@
 
 .timelineStepsTitle {
     font-family: var(--p-font);
-    font-size: 12px;
+    font-size: 9px;
     font-weight: 700;
     color: var(--p-tan-deep);
     letter-spacing: 0.18em;
@@ -353,7 +353,7 @@
 
 .timelineList li {
     font-family: var(--p-font);
-    font-size: 16px;
+    font-size: 12px;
     color: var(--p-ink);
     font-weight: 500;
     line-height: 1.3;

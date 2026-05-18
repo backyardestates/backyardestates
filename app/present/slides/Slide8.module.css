@@ -38,7 +38,7 @@
 .heroEyebrow {
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 22px;
+    font-size: 17px;
     color: var(--p-cream);
     letter-spacing: 0.42em;
     text-transform: uppercase;
@@ -50,7 +50,7 @@
     margin: 0;
     font-family: var(--p-font-display);
     font-weight: 700;
-    font-size: 76px;
+    font-size: 57px;
     color: var(--p-cream);
     line-height: 0.95;
     letter-spacing: -1.4px;
@@ -66,7 +66,7 @@
     flex-shrink: 0;
     border-bottom: 1px solid var(--p-border);
     font-family: var(--p-font);
-    font-size: 15px;
+    font-size: 11px;
     color: var(--p-ink);
     font-weight: 500;
     letter-spacing: 0.02em;
@@ -107,7 +107,7 @@
 .brandName {
     font-family: var(--p-font-display);
     font-weight: 600;
-    font-size: 26px;
+    font-size: 20px;
     color: var(--p-ink);
     margin-top: 10px;
     letter-spacing: -0.3px;
@@ -116,7 +116,7 @@
 .brandTag {
     font-family: var(--p-font-display);
     font-style: italic;
-    font-size: 16px;
+    font-size: 12px;
     color: var(--p-ink-soft);
     letter-spacing: 0.02em;
 }
@@ -136,7 +136,7 @@
     color: var(--p-cream);
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 18px;
+    font-size: 14px;
     text-align: center;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -164,7 +164,7 @@
     justify-content: center;
     color: var(--p-slate-deep);
     font-family: var(--p-font-display);
-    font-size: 30px;
+    font-size: 23px;
     font-weight: 600;
     border: 3px solid var(--p-ink-soft);
 }
@@ -185,7 +185,7 @@
 .specialistName {
     font-family: var(--p-font-display);
     font-weight: 600;
-    font-size: 26px;
+    font-size: 20px;
     color: var(--p-ink);
     letter-spacing: -0.2px;
     margin-bottom: 4px;
@@ -193,7 +193,7 @@
 
 .specialistContact {
     font-family: var(--p-font);
-    font-size: 16px;
+    font-size: 12px;
     color: var(--p-ink);
     font-weight: 500;
     letter-spacing: 0.02em;
@@ -223,7 +223,7 @@
     padding: 8px 12px;
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 14px;
+    font-size: 11px;
     letter-spacing: 0.08em;
     text-align: center;
     text-transform: uppercase;
@@ -240,7 +240,7 @@
     color: var(--p-slate-deep);
     font-family: var(--p-font-display);
     font-weight: 600;
-    font-size: 36px;
+    font-size: 27px;
     min-height: 0;
 }
 
@@ -258,7 +258,7 @@
     padding: 8px 12px;
     font-family: var(--p-font);
     font-weight: 600;
-    font-size: 13px;
+    font-size: 10px;
     text-align: center;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -278,7 +278,7 @@
 .partner {
     font-family: var(--p-font-display);
     font-weight: 700;
-    font-size: 18px;
+    font-size: 14px;
     color: var(--p-ink);
     letter-spacing: 0.06em;
     text-transform: uppercase;

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { StepCard } from "../shared/StepCard";
+import { StepCard, type StepKind } from "../shared/StepCard";
 
 export interface Step1Props {
     isComplete: boolean;
@@ -10,27 +10,17 @@ export interface Step1Props {
     completeSummary: string;
     onEdit: () => void;
     children: React.ReactNode;
+    kind?: StepKind;
+    needsInput?: boolean;
+    needsInputMessage?: string;
+    onDone?: () => void;
+    doneLabel?: string;
 }
 
-export function Step1_WhoAndWhere({
-    isComplete,
-    isActive,
-    isPending,
-    completeSummary,
-    onEdit,
-    children,
-}: Step1Props) {
+export function Step1_WhoAndWhere(props: Step1Props) {
     return (
-        <StepCard
-            stepNumber={1}
-            title="Who & Where"
-            isComplete={isComplete}
-            isActive={isActive}
-            isPending={isPending}
-            completeSummary={completeSummary}
-            onEdit={onEdit}
-        >
-            {children}
+        <StepCard stepNumber={1} title="Who & Where" {...props}>
+            {props.children}
         </StepCard>
     );
 }

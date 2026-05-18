@@ -77,6 +77,14 @@
     background: rgba(255, 255, 255, 0.04);
 }
 
+.stepNeedsInput {
+    background: rgba(217, 119, 6, 0.08);
+}
+
+.stepNeedsInput:hover {
+    background: rgba(217, 119, 6, 0.16);
+}
+
 /* ── Step number circle ────────────────────────────────────────────────────── */
 
 .stepNum {
@@ -103,9 +111,16 @@
 }
 
 .stepNumDone {
-    background: rgba(45, 95, 95, 0.6);
-    color: var(--be-teal-100);
-    border-color: rgba(45, 95, 95, 0.8);
+    background: rgba(22, 163, 74, 0.85);
+    color: #ffffff;
+    border-color: rgba(22, 163, 74, 0.85);
+    font-size: 12px;
+}
+
+.stepNumNeedsInput {
+    background: #D97706;
+    color: #ffffff;
+    border-color: #D97706;
     font-size: 12px;
 }
 
@@ -118,6 +133,8 @@
     line-height: 1.3;
     font-family: var(--be-font);
     transition: color 0.15s ease;
+    flex: 1;
+    min-width: 0;
 }
 
 .stepActive .stepLabel {
@@ -126,10 +143,32 @@
 }
 
 .stepDone .stepLabel {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.6);
 }
 
-/* ── Internal badge ────────────────────────────────────────────────────────── */
+.stepNeedsInput .stepLabel {
+    color: rgba(255, 220, 180, 0.85);
+}
+
+/* ── Review tag (review-only steps) ────────────────────────────────────────── */
+
+.reviewTag {
+    display: inline-flex;
+    align-items: center;
+    height: 16px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--be-font);
+    flex-shrink: 0;
+}
+
+/* ── Internal badge (legacy) ───────────────────────────────────────────────── */
 
 .internalBadge {
     display: inline-flex;

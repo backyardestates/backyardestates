@@ -18,7 +18,7 @@
     margin: 0;
     font-family: var(--p-font-display);
     font-weight: 700;
-    font-size: 84px;
+    font-size: 63px;
     color: var(--p-cream);
     text-align: center;
     line-height: 1;
@@ -39,7 +39,7 @@
     margin: 0;
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 28px;
+    font-size: 21px;
     color: var(--p-cream);
     text-align: center;
     letter-spacing: 0.02em;
@@ -77,7 +77,7 @@
 .compList dt {
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 22px;
+    font-size: 17px;
     color: var(--p-cream);
     line-height: 1;
 }
@@ -90,20 +90,20 @@
     margin: 0;
     font-family: var(--p-font);
     font-weight: 500;
-    font-size: 20px;
+    font-size: 15px;
     color: var(--p-cream);
     line-height: 1.25;
 }
 
 .compBb {
     opacity: 0.85;
-    font-size: 17px;
+    font-size: 13px;
 }
 
 .compRent {
     font-family: var(--p-font-display);
     font-weight: 700;
-    font-size: 28px;
+    font-size: 21px;
     color: var(--p-cream);
     font-variant-numeric: tabular-nums;
 }
@@ -116,7 +116,7 @@
     font-family: var(--p-font-display);
     font-style: italic;
     color: var(--p-cream);
-    font-size: 26px;
+    font-size: 20px;
     opacity: 0.75;
 }
 
@@ -142,7 +142,7 @@
 .estimatePlan {
     font-family: var(--p-font-display);
     font-weight: 600;
-    font-size: 22px;
+    font-size: 17px;
     color: var(--p-cream);
     letter-spacing: -0.2px;
     line-height: 1;
@@ -151,7 +151,7 @@
 .estimateLabel {
     font-family: var(--p-font);
     font-weight: 600;
-    font-size: 16px;
+    font-size: 12px;
     color: var(--p-cream);
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -161,7 +161,7 @@
 .estimateValue {
     font-family: var(--p-font-display);
     font-weight: 700;
-    font-size: 44px;
+    font-size: 33px;
     color: var(--p-cream);
     line-height: 1;
     font-variant-numeric: tabular-nums;

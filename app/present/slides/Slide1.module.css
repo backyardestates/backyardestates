@@ -19,7 +19,7 @@
 .title {
     font-family: var(--p-font-display);
     font-weight: 600;
-    font-size: 72px;
+    font-size: 54px;
     color: var(--p-cream);
     letter-spacing: -1.2px;
     line-height: 1;
@@ -64,7 +64,7 @@
     color: rgba(245, 237, 218, 0.40);
     font-family: var(--p-font-display);
     font-style: italic;
-    font-size: 28px;
+    font-size: 21px;
 }
 
 .preparedFor {
@@ -79,7 +79,7 @@
 
 .preparedEyebrow {
     font-family: var(--p-font);
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--p-tan);
     letter-spacing: 0.32em;
@@ -89,7 +89,7 @@
 .preparedName {
     font-family: var(--p-font-display);
     font-weight: 500;
-    font-size: 32px;
+    font-size: 24px;
     color: var(--p-cream);
     line-height: 1.1;
     letter-spacing: -0.3px;
@@ -97,7 +97,7 @@
 
 .preparedAddress {
     font-family: var(--p-font);
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 400;
     color: rgba(245, 237, 218, 0.70);
     letter-spacing: 0.02em;
@@ -121,7 +121,7 @@
 .footerBrand {
     font-family: var(--p-font);
     font-weight: 600;
-    font-size: 20px;
+    font-size: 15px;
     color: var(--p-cream);
     letter-spacing: 0.02em;
 }

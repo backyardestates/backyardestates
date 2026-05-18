@@ -1,0 +1,306 @@
+/* Slide 8 — ROI · the close · dark editorial */
+
+.slide {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  height: 100%;
+  background: radial-gradient(ellipse at 30% 100%, var(--p-teal-deep) 0%, var(--p-dark) 55%, var(--p-dark-2) 100%);
+  overflow: hidden;
+  padding: 90px 56px 28px;
+  gap: 22px;
+  color: var(--p-cream);
+  font-family: var(--p-font);
+}
+
+/* faint grid texture */
+.slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(184,149,74,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,149,74,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.headRow {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  z-index: 2;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: rgba(247,245,240,0.50);
+  letter-spacing: 0.04em;
+}
+
+.termsChip {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold-bright);
+  background: var(--p-gold-bg);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  padding: 8px 18px;
+  font-weight: var(--p-semi);
+  white-space: nowrap;
+}
+
+/* ── CARDS GRID ── */
+.body {
+  position: relative;
+  display: grid;
+  gap: 22px;
+  min-height: 0;
+  z-index: 2;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%), var(--p-teal-ink);
+  border: 1px solid var(--p-border-dark);
+  border-radius: var(--p-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--p-shadow-lg);
+}
+
+.cardFeatured {
+  border: 1px solid var(--p-gold-border);
+  box-shadow: var(--p-glow-gold), var(--p-shadow-lg);
+  transform: translateY(-6px);
+}
+
+/* ── CARD HEAD ── */
+.cardHead {
+  padding: 22px 24px 16px;
+  border-bottom: 1px solid rgba(184,149,74,0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cardEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-semi);
+}
+
+.cardName {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-xl);
+  color: var(--p-gold-bright);
+  line-height: 1;
+  letter-spacing: -0.005em;
+}
+
+.cardSqft {
+  font-size: var(--p-text-sm);
+  color: rgba(247,245,240,0.55);
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+
+/* ── HERO BAND: Cashflow + ROI side-by-side ── */
+.heroBand {
+  display: grid;
+  grid-template-columns: 1.2fr 1px 1fr;
+  align-items: stretch;
+  padding: 24px 24px 22px;
+  gap: 18px;
+  background: linear-gradient(180deg, rgba(184,149,74,0.06) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(184,149,74,0.18);
+}
+
+.heroDivider {
+  background: rgba(184,149,74,0.25);
+}
+
+.heroBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.heroEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-semi);
+}
+
+.cashflowVal {
+  font-family: var(--p-font);
+  font-size: var(--p-text-hero);
+  font-weight: var(--p-light);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  line-height: 0.95;
+  letter-spacing: var(--p-track-tight);
+}
+
+.cashflowPos { color: var(--p-positive-bright); }
+.cashflowNeg { color: var(--p-negative-coral); }
+
+.cashflowSub {
+  font-size: var(--p-text-xs);
+  color: rgba(247,245,240,0.55);
+  letter-spacing: 0.04em;
+}
+
+.roiVal {
+  font-family: var(--p-font);
+  font-size: var(--p-text-2xl);
+  font-weight: var(--p-light);
+  color: var(--p-gold-bright);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: var(--p-track-tight);
+}
+
+.roiSub {
+  font-size: var(--p-text-xs);
+  color: rgba(247,245,240,0.55);
+  letter-spacing: 0.04em;
+}
+
+/* ── SUPPORTING NUMBERS ── */
+.support {
+  padding: 18px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  border-bottom: 1px solid rgba(184,149,74,0.10);
+}
+
+.kv {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kvLabel {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(247,245,240,0.45);
+  font-weight: var(--p-semi);
+}
+
+.kvVal {
+  font-size: var(--p-text-base);
+  font-weight: var(--p-medium);
+  color: var(--p-cream);
+  font-variant-numeric: tabular-nums;
+}
+
+.kvVal.pos { color: var(--p-positive-bright); }
+
+/* ── EQUITY LADDER ── */
+.equityLadder {
+  flex: 1;
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  min-height: 0;
+}
+
+.equityHead {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-semi);
+  margin-bottom: 4px;
+}
+
+.equityRow {
+  display: grid;
+  grid-template-columns: 56px 1fr 80px;
+  align-items: center;
+  gap: 14px;
+}
+
+.equityLabel {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-base);
+  color: var(--p-gold-soft);
+  letter-spacing: 0.02em;
+}
+
+.equityBarTrack {
+  height: 8px;
+  background: rgba(184,149,74,0.10);
+  border: 1px solid rgba(184,149,74,0.18);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.equityBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--p-gold) 0%, var(--p-gold-bright) 100%);
+  border-radius: 4px;
+  transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: width;
+}
+
+.equityVal {
+  font-family: var(--p-font);
+  font-size: var(--p-text-base);
+  font-weight: var(--p-medium);
+  color: var(--p-cream);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ── FOOTER ── */
+.footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid rgba(184,149,74,0.18);
+  gap: 24px;
+}
+
+.disclaimer {
+  font-size: var(--p-text-micro);
+  color: rgba(247,245,240,0.45);
+  letter-spacing: 0.04em;
+  font-style: italic;
+}
+
+.tagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}

@@ -18,7 +18,7 @@
     margin: 0;
     font-family: var(--p-font-display);
     font-weight: 700;
-    font-size: 76px;
+    font-size: 57px;
     color: var(--p-cream);
     text-align: center;
     line-height: 1;
@@ -49,7 +49,7 @@
     color: var(--p-cream);
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 20px;
+    font-size: 15px;
     padding: 12px 24px;
     text-align: center;
     letter-spacing: 0.08em;
@@ -63,7 +63,7 @@
     color: var(--p-cream);
     font-family: var(--p-font);
     font-weight: 700;
-    font-size: 18px;
+    font-size: 14px;
     padding: 14px 22px;
     text-align: center;
     border: 2px solid var(--p-teal-ink);
@@ -88,7 +88,7 @@
 .thPlanSqft {
     display: block;
     font-weight: 400;
-    font-size: 13px;
+    font-size: 10px;
     opacity: 0.85;
     margin-top: 2px;
     text-transform: none;
@@ -106,7 +106,7 @@
 
 .itemName {
     display: block;
-    font-size: 17px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.02em;
     line-height: 1.2;
@@ -114,7 +114,7 @@
 
 .itemDesc {
     display: block;
-    font-size: 13px;
+    font-size: 10px;
     color: var(--p-ink-muted);
     font-weight: 400;
     line-height: 1.45;
@@ -126,7 +126,7 @@
     border: 1px solid var(--p-border);
     font-family: var(--p-font);
     color: var(--p-ink);
-    font-size: 19px;
+    font-size: 14px;
     font-weight: 700;
     text-align: center;
     background: var(--p-paper);
@@ -140,7 +140,7 @@
     font-style: italic;
     font-weight: 500;
     color: var(--p-teal-dark);
-    font-size: 19px;
+    font-size: 14px;
 }
 
 .discount {
@@ -153,7 +153,7 @@
 
 .rowSubtotal .itemName,
 .rowSubtotal .tdValue {
-    font-size: 19px;
+    font-size: 14px;
 }
 
 .rowTotal td {
@@ -171,18 +171,18 @@
 }
 
 .rowTotal .itemName {
-    font-size: 22px;
+    font-size: 17px;
     color: var(--p-cream);
 }
 
 .rowTotal .tdValue {
-    font-size: 22px;
+    font-size: 17px;
 }
 
 .disclaimer {
     margin: 0;
     font-family: var(--p-font);
-    font-size: 13px;
+    font-size: 10px;
     color: var(--p-cream);
     font-weight: 500;
     font-style: italic;

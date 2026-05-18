@@ -6,26 +6,31 @@
     scroll-margin-top: 72px;
     border-radius: var(--be-radius-lg);
     overflow: hidden;
-    transition: opacity 0.2s ease;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 /* ── State: active ─────────────────────────────────────────────────────────── */
 
 .cardActive {
-    box-shadow: 0 0 0 2px var(--be-teal-800);
+    box-shadow: 0 0 0 2px var(--be-teal-800), 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* ── State: pending ────────────────────────────────────────────────────────── */
+/* ── State: done (collapsed) ───────────────────────────────────────────────── */
 
-.cardPending {
-    opacity: 0.45;
-    pointer-events: none;
+.cardDone {
+    /* Slight lift to suggest "finished" */
+}
+
+/* ── State: needs input (collapsed) ────────────────────────────────────────── */
+
+.cardNeedsInput {
+    /* Treated like pending but with warning treatment on the header */
 }
 
 /* ── Header ────────────────────────────────────────────────────────────────── */
 
 .header {
-    height: 52px;
+    min-height: 52px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -40,7 +45,6 @@
 .headerComplete {
     background: rgba(22, 163, 74, 0.06);
     border-color: rgba(22, 163, 74, 0.2);
-    cursor: pointer;
 }
 
 .headerComplete:hover {
@@ -49,9 +53,40 @@
 
 .headerPending {
     background: var(--be-gray-50);
+    border-color: var(--be-gray-200);
 }
 
-/* ── Dot / check ───────────────────────────────────────────────────────────── */
+.headerNeedsInput {
+    background: rgba(217, 119, 6, 0.06);
+    border-color: rgba(217, 119, 6, 0.3);
+}
+
+/* Collapsed → clickable affordance */
+.headerClickable {
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.headerClickable.headerPending:hover {
+    background: var(--be-gray-100);
+    border-color: var(--be-gray-300);
+}
+
+.headerClickable.headerComplete:hover {
+    background: rgba(22, 163, 74, 0.12);
+}
+
+.headerClickable.headerNeedsInput:hover {
+    background: rgba(217, 119, 6, 0.10);
+    border-color: rgba(217, 119, 6, 0.45);
+}
+
+.headerClickable:focus-visible {
+    outline: 2px solid var(--be-gold-600, #B8954A);
+    outline-offset: 2px;
+}
+
+/* ── Dot / status indicator ────────────────────────────────────────────────── */
 
 .dot {
     width: 24px;
@@ -64,7 +99,9 @@
     font-weight: 600;
     flex-shrink: 0;
     font-family: var(--be-font);
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease;
+    background: var(--be-gray-200);
+    color: var(--be-gray-600);
 }
 
 .dotActive {
@@ -80,7 +117,13 @@
 
 .dotPending {
     background: var(--be-gray-300);
-    color: var(--be-gray-600);
+    color: var(--be-gray-700);
+}
+
+.dotNeedsInput {
+    background: #D97706;
+    color: #fff;
+    font-size: 13px;
 }
 
 /* ── Header text ───────────────────────────────────────────────────────────── */
@@ -99,18 +142,15 @@
     letter-spacing: -0.01em;
 }
 
-.titlePending {
-    color: var(--be-gray-400);
-}
-
 .badge {
     font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 2px 7px;
+    padding: 3px 8px;
     border-radius: 4px;
     font-family: var(--be-font);
+    flex-shrink: 0;
 }
 
 .badgeOptional {
@@ -125,10 +165,24 @@
     border: 1px solid rgba(255, 140, 60, 0.38);
 }
 
-/* ── Complete summary row ──────────────────────────────────────────────────── */
+.badgeReview {
+    color: rgba(45, 95, 95, 0.95);
+    background: rgba(45, 95, 95, 0.1);
+    border: 1px solid rgba(45, 95, 95, 0.3);
+}
+
+/* ── Status group on the right of collapsed header ─────────────────────────── */
+
+.statusGroup {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex-shrink: 1;
+}
 
 .summary {
-    flex: 1;
     font-size: 12px;
     color: var(--be-gray-600);
     font-family: var(--be-font);
@@ -136,27 +190,34 @@
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;
+    max-width: 320px;
 }
 
-.editBtn {
-    margin-left: auto;
-    flex-shrink: 0;
-    height: 28px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(22, 163, 74, 0.3);
-    background: transparent;
-    color: rgba(22, 163, 74, 0.9);
-    font-size: 11px;
+.statusChip {
+    font-size: 10px;
     font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
     font-family: var(--be-font);
-    cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
 }
 
-.editBtn:hover {
-    background: rgba(22, 163, 74, 0.85);
+.statusChipDone {
     color: #fff;
+    background: rgba(22, 163, 74, 0.85);
+}
+
+.statusChipPending {
+    color: var(--be-gray-700);
+    background: var(--be-gray-200);
+    border: 1px solid var(--be-gray-300);
+}
+
+.statusChipNeeds {
+    color: #fff;
+    background: #D97706;
 }
 
 /* ── Body ──────────────────────────────────────────────────────────────────── */
@@ -171,4 +232,65 @@
     flex-direction: column;
     gap: 20px;
     box-shadow: var(--be-shadow-sm);
+}
+
+/* ── Done button row ──────────────────────────────────────────────────────── */
+
+.doneRow {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    padding-top: 6px;
+    border-top: 1px solid var(--be-gray-200);
+    margin-top: 4px;
+}
+
+.doneHint {
+    font-size: 12px;
+    color: #B45309;
+    font-family: var(--be-font);
+    font-weight: 500;
+    flex: 1;
+}
+
+.doneBtn {
+    height: 36px;
+    padding: 0 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(22, 163, 74, 0.4);
+    background: rgba(22, 163, 74, 0.92);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--be-font);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.05s ease;
+    letter-spacing: 0.01em;
+}
+
+.doneBtn:hover:not(:disabled) {
+    background: rgba(18, 130, 60, 0.95);
+    border-color: rgba(18, 130, 60, 0.6);
+}
+
+.doneBtn:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.doneBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    background: var(--be-gray-400);
+    border-color: var(--be-gray-400);
+}
+
+.doneBtnReview {
+    background: rgba(45, 95, 95, 0.92);
+    border-color: rgba(45, 95, 95, 0.4);
+}
+
+.doneBtnReview:hover:not(:disabled) {
+    background: rgba(30, 70, 70, 0.95);
+    border-color: rgba(30, 70, 70, 0.6);
 }
