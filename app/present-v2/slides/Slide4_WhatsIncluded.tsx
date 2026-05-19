@@ -1,262 +1,145 @@
 "use client";
 
 import React from "react";
-import { usePresentationStore } from "@/lib/store/presentationStore";
-import {
-    IconBolt, IconSnowflake, IconDroplet, IconFrame, IconClipboard, IconUsers,
-} from "./_shared/SvgIcons";
 import s from "./Slide4.module.css";
 
-/* ── Zone 1 data ── */
-const FINISHES = [
+/* ── Inclusions: 6 categories mirroring the proposal PDF ── */
+type IncRow = { label: string; text: string };
+type IncCategory = { name: string; rows: IncRow[] };
+
+const INCLUSIONS: IncCategory[] = [
     {
-        cat: "Kitchen",
-        items: [
-            { text: "Wood shaker cabinets — soft-close · pantry · lazy susan" },
-            { text: "Quartz countertops — 4\" backsplash · mitered edge" },
-            { text: "30\" fridge, range, dishwasher, microwave — stainless" },
-            { text: "Pulldown faucet · LED recessed lighting", brand: "Delta® Antony" },
+        name: "Kitchen",
+        rows: [
+            { label: "Cabinets", text: "Wood shaker, soft-close · pantry · lazy susan · spice + trash roll-outs" },
+            { label: "Countertops", text: "Quartz · 4\" backsplash · mitered edge" },
+            { label: "Appliances", text: "30\" fridge · range · dishwasher · over-range microwave (stainless)" },
+            { label: "Sink + Faucet", text: "Undermount stainless · garbage disposal · Delta® Antony pulldown" },
+            { label: "Lighting", text: "4\" LED recessed (4–8 per plan)" },
         ],
     },
     {
-        cat: "Bathrooms",
-        items: [
-            { text: "Quartz vanity — undermount sink · soft-close doors" },
-            { text: "Faucet · mirror · towel bar · accessories", brand: "Delta® Portwood" },
-            { text: "Quiet-series exhaust · subway tiled shower", brand: "Nutone®" },
+        name: "Bathroom",
+        rows: [
+            { label: "Shower", text: "60\" fiberglass pan or tub · subway-tile walls · Delta® Portwood" },
+            { label: "Vanity", text: "30\" wood, soft-close · undermount sink · quartz top" },
+            { label: "Toilet", text: "Elongated low-flow, water-saving" },
+            { label: "Accessories", text: "Mirror · towel bar · ring · paper holder · widespread faucet" },
+            { label: "Lighting", text: "3-light vanity · 2 recessed · Nutone® quiet exhaust" },
         ],
     },
     {
-        cat: "Interior",
-        items: [
-            { text: "LVP flooring throughout · vaulted ceilings 8'–10'" },
-            { text: "Mirrored wardrobe doors · shaker passage doors" },
-            { text: "Two-tone interior", brand: "Dunn Edwards SuperPaint®" },
+        name: "Interior",
+        rows: [
+            { label: "Ceilings", text: "Vaulted 8'–10' in great room · 8' in bedrooms" },
+            { label: "Floors + Doors", text: "LVP throughout · shaker 6'8\" passage doors w/ lever sets" },
+            { label: "Paint + Trim", text: "Dunn Edwards SuperPaint® · 1×2.5\" casing · 1×4\" base" },
+            { label: "Electrical", text: "Decora® dimmers · outlets every 12' · prewired data hub" },
+            { label: "Closets", text: "Mirrored wardrobe doors · shelf + pole" },
         ],
     },
     {
-        cat: "Exterior",
-        items: [
-            { text: "Stucco 16/20 · 30-yr asphalt shingles · Low-E windows" },
-            { text: "Fiberglass entry door", brand: "Masonite®" },
-            { text: "Dawn-to-dusk light · GFCI outlets · EV charger prep" },
+        name: "Exterior",
+        rows: [
+            { label: "Siding + Roof", text: "Stucco 16/20 · 30-yr asphalt shingles · 8\" Windsor fascia" },
+            { label: "Windows", text: "White vinyl, dual-pane, Low-E · Title 24 · 2\" faux blinds" },
+            { label: "Door", text: "36\" Masonite® fiberglass, prehung + primed" },
+            { label: "Electrical", text: "Dawn-to-dusk light · 2 GFCI outlets · EV charger prep" },
+            { label: "Plumbing", text: "1 exterior hose bib" },
+        ],
+    },
+    {
+        name: "Construction",
+        rows: [
+            { label: "Structure", text: "Wood-framed · slab-on-grade · 2×4 walls · 5/8\" fire-rated drywall" },
+            { label: "Insulation", text: "R15 walls + R30 roof · interior + exterior walls insulated" },
+            { label: "Energy", text: "CA Title 24 compliant · PV solar on 2+ bed plans" },
+            { label: "Roof", text: "Gabled · 20\" front/rear overhang · 3'×3' concrete patio stoop" },
+        ],
+    },
+    {
+        name: "Systems & Utilities",
+        rows: [
+            { label: "Water Heater", text: "High-efficiency 50-gal heat pump · 3.24 EF · enclosure" },
+            { label: "HVAC", text: "Mini-split · flush cassettes · 1 head per bedroom · heat + cool" },
+            { label: "Plumbing", text: "PEX water lines · shutoffs at every fixture · external exhaust venting" },
+            { label: "Electrical", text: "200A panel + 225 busbar · 100A ADU sub-panel · CAT 6 + coax" },
         ],
     },
 ];
 
-/* ── Zone 2 data ── */
-const SPECS: {
-    Icon: typeof IconBolt;
-    title: string;
-    sub: string;
-    desc: React.ReactNode;
-}[] = [
-    {
-        Icon: IconBolt,
-        title: "Electrical",
-        sub: "fully upgraded",
-        desc: <>200A panel + 225 busbar · 100A ADU sub panel · <span className={s.hi}>Decora® dimmers</span> · CAT 6 + coax · EV prep</>,
-    },
-    {
-        Icon: IconSnowflake,
-        title: "HVAC",
-        sub: "mini-split system",
-        desc: <>Flush-mounted cassettes · <span className={s.hi}>one head per bedroom</span> · single condenser · heat + cool</>,
-    },
-    {
-        Icon: IconDroplet,
-        title: "Water heater",
-        sub: "heat pump",
-        desc: <><span className={s.hi}>50-gal high-efficiency</span> (3.24 EF) · PEX lines · shutoff at every fixture</>,
-    },
-    {
-        Icon: IconFrame,
-        title: "Structure + insulation",
-        sub: "",
-        desc: <>2×4 stick-frame · slab-on-grade · 5/8" fire-rated · <span className={s.br}>R15 walls + R30 roof</span> · Title 24</>,
-    },
-    {
-        Icon: IconClipboard,
-        title: "Online project portal",
-        sub: "24/7",
-        desc: <>Plan set · city approvals · jobsite photos · payments · <span className={s.hi}>weekly updates</span></>,
-    },
-    {
-        Icon: IconUsers,
-        title: "Dedicated team",
-        sub: "start to finish",
-        desc: <>Design · engineer · PM · superintendent · <span className={s.hi}>one relationship</span></>,
-    },
-];
-
-/* ── Zone 3 data ── */
-const PLANS_PILLS = [
-    "Custom floor plan", "Site plan + elevations",
-    "T24 + structural", "Design selections", "Door + window schedules",
-];
+/* ── Departments + city fees data ── */
 const DEPT_PILLS = [
     "Planning", "Building", "Engineering",
     "Public Works", "Waste", "City / County Fire",
     "Recorder", "Water", "Electric Provider",
     "School Districts", "CA ADU Law",
 ];
+
 const FEE_BULLETS = [
     "Address + plan check + building fees — admin, inspection, sub panel, fire",
     "School fees · notarization · permit pull · plan checker follow-up",
     "Corrections review · state compliance · dedicated PM + superintendent",
 ];
 
-/* ── Stat bar ── */
-const STATS = [
-    { val: "Delta®", label: "fixtures" },
-    { val: "200A", label: "panel upgrade" },
-    { val: "R15/R30", label: "insulation" },
-    { val: "50-gal", label: "heat pump" },
-    { val: "11", label: "city depts" },
-    { val: "Solar", label: "2+ bed detached" },
-];
-
-function lastNameFromFull(full?: string) {
-    if (!full) return "";
-    const parts = full.trim().split(/\s+/);
-    return parts[parts.length - 1] ?? "";
-}
-
-function cityFromAddress(addr: string) {
-    const parts = addr.split(",");
-    return parts.length >= 2 ? parts[parts.length - 2].trim() : addr;
-}
-
 export function Slide4_WhatsIncluded() {
-    const { customerName, propertyAddress } = usePresentationStore();
-    const lastName = lastNameFromFull(customerName);
-    const city = propertyAddress ? cityFromAddress(propertyAddress) : "—";
-
     return (
         <div className={s.slide}>
-            {/* Running header */}
-            <div className="running-header rh-light">
-                <span className="running-header-left">{lastName} · {city}</span>
-                <span className="running-header-center">What's Included</span>
-                <span className="running-header-right">
-                    <span className="running-header-num">04</span> / 13
-                </span>
+            {/* Title */}
+            <div className={s.titleBar}>
+                <h2 className={s.title}>What's <em>Included</em></h2>
+                <span className={s.titleRule} />
             </div>
 
-            {/* Headline */}
-            <div className={s.headRow}>
-                <div className={s.headLeft}>
-                    <h2 className="section-title">
-                        One price. <em>Fully turnkey.</em>
-                    </h2>
-                    <span className={s.headSubhead}>Premium finishes · engineered specs · complete city coordination</span>
-                </div>
-                <span className={s.headBadge}>Standard, not Extra</span>
-            </div>
-
-            {/* Body: 3 zones */}
-            <div className={s.body}>
-                {/* ── ZONE 1: Finishes ── */}
-                <div className={s.zone}>
-                    <div className={s.zoneHead}>
-                        <div className={s.zoneEyebrow}>What you'll see every day</div>
-                        <div className={s.zoneTitle}>Premium <em>finishes</em></div>
-                        <div className={s.zoneTagline}>Brand-name fixtures, not builder-grade</div>
-                    </div>
-                    <div className={s.zoneBody}>
-                        {FINISHES.map((cat) => (
-                            <div key={cat.cat} className={s.finCat}>
-                                <div className={s.catNameRow}>
-                                    <span className={s.catName}>{cat.cat}</span>
-                                </div>
-                                {cat.items.map((item, i) => (
-                                    <div key={i} className={s.finItem}>
-                                        {item.brand && (
-                                            <span className={s.brandTag}>{item.brand}</span>
-                                        )}
-                                        <span className={s.finItemText}>{item.text}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* ── ZONE 2: Engineered specs ── */}
-                <div className={s.zone}>
-                    <div className={s.zoneHead}>
-                        <div className={s.zoneEyebrow}>What's behind the walls</div>
-                        <div className={s.zoneTitle}>Engineered <em>specs</em></div>
-                        <div className={s.zoneTagline}>Where quality separates from cheaper bids</div>
-                    </div>
-                    <div className={s.zoneBody}>
-                        {SPECS.map(({ Icon, title, sub, desc }) => (
-                            <div key={title} className={s.specRow}>
-                                <div className={s.specIcon}><Icon /></div>
-                                <div className={s.specContent}>
-                                    <div className={s.specTitle}>
-                                        {title}{sub ? <span className={s.specSub}>— {sub}</span> : null}
-                                    </div>
-                                    <div className={s.specDesc}>{desc}</div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* ── ZONE 3: Departments ── */}
-                <div className={`${s.zone} ${s.zoneDark}`}>
-                    <div className={s.zoneHead}>
-                        <div className={s.zoneEyebrow}>The part no one else talks about</div>
-                        <div className={s.zoneTitle}>11 <em>departments</em></div>
-                        <div className={s.zoneTagline}>We coordinate every entity your permit requires</div>
-                    </div>
-                    <div className={s.zoneBody}>
-                        <div className={s.deptSection}>
-                            <span className={s.deptLabel}>Plans · 4–6 weeks</span>
-                            <div className={s.pillWrap}>
-                                {PLANS_PILLS.map((p) => (
-                                    <span key={p} className={s.deptPill}>{p}</span>
-                                ))}
-                            </div>
+            {/* 6-category inclusions grid */}
+            <div className={s.grid}>
+                {INCLUSIONS.map((cat) => (
+                    <div key={cat.name} className={s.card}>
+                        <div className={s.cardHead}>
+                            <span className={s.cardName}>{cat.name}</span>
+                            <span className={s.cardRule} />
                         </div>
-                        <div className={s.zoneSeparator} />
-                        <div className={s.deptSection}>
-                            <span className={s.deptLabel}>City departments</span>
-                            <div className={s.pillWrap}>
-                                {DEPT_PILLS.map((p) => (
-                                    <span key={p} className={s.deptPill}>{p}</span>
-                                ))}
-                            </div>
-                        </div>
-                        <div className={s.zoneSeparator} />
-                        <div className={s.deptSection}>
-                            <span className={s.deptLabel}>City fees · all included</span>
-                            {FEE_BULLETS.map((bullet, i) => (
-                                <div key={i} className={s.feeBullet}>
-                                    <span className={s.feeDot} />
-                                    <span className={s.feeText}>{bullet}</span>
+                        <div className={s.cardBody}>
+                            {cat.rows.map((row) => (
+                                <div key={row.label} className={s.row}>
+                                    <span className={s.rowLabel}>{row.label}</span>
+                                    <span className={s.rowText}>{row.text}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <div className={s.zone3Footer}>
-                        <span className={s.zone3FooterLeft}>You talk to us. We talk to everyone else.</span>
-                        <span className={s.zone3Stat}>
-                            <strong>11</strong> depts · <strong>1</strong> team · <strong>0</strong> calls
-                        </span>
-                    </div>
-                </div>
+                ))}
             </div>
 
-            {/* Stat bar */}
-            <div className={s.statBar}>
-                {STATS.map((item) => (
-                    <div key={item.val} className={s.statItem}>
-                        <span className={s.statVal}>{item.val}</span>
-                        <span className={s.statLabel}>{item.label}</span>
+            {/* Departments + city fees band */}
+            <div className={s.deptBand}>
+                <div className={s.deptHead}>
+                    <span className={s.deptEyebrow}>The part almost no one talks about</span>
+                    <h3 className={s.deptTitle}>
+                        We coordinate <em>11 departments</em> + all city fees
+                    </h3>
+                </div>
+
+                <div className={s.deptBody}>
+                    <div className={s.deptCol}>
+                        <span className={s.deptColLabel}>City departments we manage</span>
+                        <div className={s.pillWrap}>
+                            {DEPT_PILLS.map((p) => (
+                                <span key={p} className={s.deptPill}>{p}</span>
+                            ))}
+                        </div>
+
                     </div>
-                ))}
+                    <div className={s.deptCol}>
+                        <span className={s.deptColLabel}>City fees — all included</span>
+                        {FEE_BULLETS.map((b, i) => (
+                            <div key={i} className={s.feeBullet}>
+                                <span className={s.feeDot} />
+                                <span className={s.feeText}>{b}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     );

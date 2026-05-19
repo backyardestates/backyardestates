@@ -83,35 +83,27 @@ export function Slide1_Cover() {
             <div className={s.photoFade} />
             <div className={s.photoFrame} />
 
-            {/* Running header */}
-            <div className="running-header rh-dark">
-                <span className="running-header-left">
-                    {lastName} · {city}
-                </span>
-                <span className="running-header-center">Proposal</span>
-                <span className="running-header-right">
-                    <span className="running-header-num">01</span> / 13
-                </span>
-            </div>
+
 
             {/* Content */}
             <div className={s.content}>
                 {/* Top */}
                 <div className={s.topRow}>
                     <img
-                        src="/assets/be-logo-white.png"
+                        src="/android-chrome-512x512.png"
                         alt="Backyard Estates"
                         className={s.logo}
                         onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     />
-                    <span className={s.proposalEyebrow}>ADU Proposal · {year}</span>
                 </div>
 
                 {/* Middle */}
                 <div className={s.middle}>
+                    <div className={s.proposalHeading}>ADU Proposal</div>
                     <div className={s.eyebrowTop}>Prepared for</div>
                     <div className={s.customerName}>{displayName}</div>
-                    {lastName && <div className={s.residence}>The {lastName} Residence</div>}
+
+
                     <div className={s.goldRule} />
                     <div className={s.address}>{propertyAddress || "Your Address"}</div>
                 </div>
@@ -135,19 +127,6 @@ export function Slide1_Cover() {
                     <span className={s.tagline}>We build for you.</span>
                 </div>
             </div>
-
-            {/* Cashflow teaser badge */}
-            {teaserCashflow !== null && (
-                <div className={s.cashflowBadge}>
-                    <span className={s.cashflowChip}>Est · Monthly · Cashflow</span>
-                    <div className={s.cashflowValue}>
-                        +{fmt$(countVal)}
-                    </div>
-                    <div className={s.cashflowSub}>
-                        at $0 out of pocket · 100% financed
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

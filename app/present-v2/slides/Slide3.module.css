@@ -1,14 +1,19 @@
 /* Slide 3 — Your Options · light editorial surface */
 
 .slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   background: var(--p-paper);
   overflow: hidden;
-  padding: 90px 56px 28px;
-  gap: 28px;
+  font-family: var(--p-font);
+  padding: 16px 44px 40px;
+  gap: 32px;
 }
 
 /* ── HEADLINE ROW ── */
@@ -104,7 +109,7 @@
   flex: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 28px;
   min-height: 0;
 }
 
@@ -129,10 +134,10 @@
 /* Plan header */
 .planColHeader {
   background: linear-gradient(180deg, var(--p-teal-ink) 0%, var(--p-teal-deep) 100%);
-  padding: 28px 28px 22px;
+  padding: 32px 32px 26px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .featured .planColHeader {
@@ -161,25 +166,36 @@
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  color: rgba(255,255,255,0.62);
+  color: rgba(255, 255, 255, 0.62);
   font-size: var(--p-text-sm);
   font-variant-numeric: tabular-nums;
 }
 
 .planSqftLabel {
   font-size: var(--p-text-xs);
-  color: rgba(255,255,255,0.42);
+  color: rgba(255, 255, 255, 0.42);
   letter-spacing: var(--p-track-wide);
 }
 
-/* ── HERO TOTAL — the biggest thing on the slide ── */
+/* ── MIDDLE — flexes between header and pinned total. Anything that
+   doesn't fit is clipped, so the total never gets pushed off-card. ── */
+.planMiddle {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── TOTAL FOOTER — pinned to the bottom of each plan column ── */
 .heroTotal {
-  padding: 28px 28px 24px;
-  background: var(--p-paper);
-  border-bottom: 1px solid var(--p-border-light);
+  padding: 26px 32px 24px;
+  background: var(--p-cream-2);
+  border-top: 1px solid var(--p-border-light);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .heroTotalEyebrow {
@@ -191,7 +207,7 @@
 }
 
 .heroTotalVal {
-  font-size: var(--p-text-3xl);
+  font-size: var(--p-text-xl);
   font-weight: var(--p-light);
   color: var(--p-teal-ink);
   line-height: 0.95;
@@ -208,12 +224,11 @@
 
 /* Breakdown rows */
 .planBreakdown {
-  padding: 20px 28px;
+  padding: 22px 32px 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-height: 0;
-  flex: 1;
+  gap: 2px;
+  flex-shrink: 0;
 }
 
 .breakdownRow {
@@ -221,14 +236,16 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(20,48,47,0.05);
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(20, 48, 47, 0.05);
 }
 
-.breakdownRow:last-child { border-bottom: none; }
+.breakdownRow:last-child {
+  border-bottom: none;
+}
 
 .breakdownLabel {
-  font-size: var(--p-text-xs);
+  font-size: var(--p-text-sm);
   color: var(--p-ink-muted);
   letter-spacing: var(--p-track-wide);
   flex: 1;
@@ -260,23 +277,26 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  padding: 10px 0 4px;
+  padding: 12px 0 4px;
+  min-height: 0;
+  overflow: hidden;
+  align-content: flex-start;
 }
 
 .siteTag {
-  font-size: var(--p-text-micro);
+  font-size: var(--p-text-xs);
   color: var(--p-teal);
-  background: rgba(45,95,95,0.06);
-  border: 1px solid rgba(45,95,95,0.18);
+  background: rgba(45, 95, 95, 0.06);
+  border: 1px solid rgba(45, 95, 95, 0.18);
   border-radius: var(--p-radius-pill);
   padding: 5px 14px;
   letter-spacing: 0.05em;
   line-height: 1;
 }
 
-/* Discount callouts */
+/* Discount callouts — pinned, never clipped. Auto-compacts when many. */
 .discounts {
-  padding: 0 28px 16px;
+  padding: 0 32px 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -287,7 +307,7 @@
   background: rgba(46, 125, 91, 0.06);
   border-left: 3px solid var(--p-positive);
   border-radius: 0 var(--p-radius-sm) var(--p-radius-sm) 0;
-  padding: 12px 16px;
+  padding: 11px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -309,12 +329,28 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* When a column has 5+ discounts, compact the callouts so they fit
+   alongside the tag row without overlap. */
+.planCol[data-disc="5"] .discounts,
+.planCol[data-disc="6"] .discounts,
+.planCol[data-disc="7"] .discounts,
+.planCol[data-disc="8"] .discounts {
+  gap: 6px;
+}
+
+.planCol[data-disc="5"] .discountCallout,
+.planCol[data-disc="6"] .discountCallout,
+.planCol[data-disc="7"] .discountCallout,
+.planCol[data-disc="8"] .discountCallout {
+  padding: 8px 14px;
+}
+
 /* ── FOOTER ── */
 .footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 12px;
+  padding-top: 20px;
   border-top: 1px solid var(--p-border-light);
   flex-shrink: 0;
   gap: 24px;
@@ -340,5 +376,11 @@
 }
 
 /* ── ADAPTIVE GRID (1 or 2 plans) ── */
-.planColumns.cols1 { grid-template-columns: minmax(0, 560px); justify-content: center; }
-.planColumns.cols2 { grid-template-columns: repeat(2, 1fr); }
+.planColumns.cols1 {
+  grid-template-columns: minmax(0, 560px);
+  justify-content: center;
+}
+
+.planColumns.cols2 {
+  grid-template-columns: repeat(2, 1fr);
+}

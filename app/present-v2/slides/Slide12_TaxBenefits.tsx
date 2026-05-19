@@ -2,45 +2,20 @@
 
 import React from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
-import { IconCoin, IconBank, IconTrendUp } from "./_shared/SvgIcons";
 import s from "./Slide12.module.css";
 
 const WRITE_OFFS = [
-    "Mortgage interest",
-    "Property taxes",
-    "Depreciation",
-    "Repairs & maintenance",
-    "Insurance premiums",
-    "Management fees",
-    "Advertising",
-    "Utilities (rental %)",
-    "HOA fees (rental %)",
-    "Professional services",
-    "Travel for property",
-];
-
-const BENEFITS = [
-    {
-        Icon: IconCoin,
-        title: "Depreciation deduction",
-        desc: "Deduct the ADU's structure value over 27.5 years — straight-line, automatic.",
-        stat: "$5K–$15K",
-        statSub: "per year",
-    },
-    {
-        Icon: IconBank,
-        title: "Expense deductions",
-        desc: "Mortgage interest, property taxes, repairs, insurance — all potentially deductible.",
-        stat: "100%",
-        statSub: "deductible",
-    },
-    {
-        Icon: IconTrendUp,
-        title: "Long-term equity",
-        desc: "An ADU can add $50K–$200K to your home's appraised value over time.",
-        stat: "$50K–$200K",
-        statSub: "appraisal lift",
-    },
+    { name: "Mortgage Interest",     note: "Interest on financing tied to the ADU." },
+    { name: "Property Taxes",        note: "Annual tax on the new construction's assessed value." },
+    { name: "Depreciation",          note: "Spread the building's cost across its useful life." },
+    { name: "Repairs & Maintenance", note: "Ongoing fixes to keep the rental in shape." },
+    { name: "Insurance Premiums",    note: "Hazard, liability, and rental coverage." },
+    { name: "Management Fees",       note: "Property manager and leasing service costs." },
+    { name: "Advertising",           note: "Listing fees and marketing the rental." },
+    { name: "Utilities (rental %)",  note: "The tenant-attributable share of shared utilities." },
+    { name: "HOA Fees (rental %)",   note: "The rental-attributable share of HOA dues." },
+    { name: "Professional Services", note: "CPA, attorney, and bookkeeping fees." },
+    { name: "Travel for Property",   note: "Mileage and trips for rental management." },
 ];
 
 function lastNameFromFull(full?: string) {
@@ -64,7 +39,7 @@ export function Slide12_TaxBenefits() {
             {/* Running header */}
             <div className="running-header rh-dark">
                 <span className="running-header-left">{lastName} · {city}</span>
-                <span className="running-header-center">Income Benefits</span>
+                <span className="running-header-center">Tax Topics</span>
                 <span className="running-header-right">
                     <span className="running-header-num">12</span> / 13
                 </span>
@@ -73,54 +48,38 @@ export function Slide12_TaxBenefits() {
             {/* Headline */}
             <div className={s.headRow}>
                 <div className={s.headLeft}>
-                    <h2 className="section-title on-dark">
-                        Other <em>income benefits.</em>
+                    <span className={s.headEyebrow}>Worth raising</span>
+                    <h2 className={s.headTitle}>
+                        Bring these to <em>your CPA.</em>
                     </h2>
-                    <span className={s.headSubhead}>Beyond cashflow — what the IRS lets you keep</span>
+                    <span className={s.headSubhead}>
+                        Items worth verifying with your tax advisor — not tax advice from us.
+                    </span>
                 </div>
-                <span className={s.headChip}>Consult your CPA</span>
+                <span className={s.headChip}>Recommendations · not tax advice</span>
             </div>
 
-            {/* Body */}
-            <div className={s.body}>
-                {/* LEFT */}
-                <div className={s.leftCol}>
-                    <span className={s.leftEyebrow}>Common Write-Offs</span>
-                    <h3 className={s.leftTitle}>
-                        What rental owners <em>deduct</em>
-                    </h3>
-                    <div className={s.pillCloud}>
-                        {WRITE_OFFS.map((label) => (
-                            <span key={label} className={s.writeOff}>{label}</span>
-                        ))}
+            {/* Write-off grid */}
+            <div className={s.grid}>
+                {WRITE_OFFS.map((item) => (
+                    <div key={item.name} className={s.card}>
+                        <p className={s.cardName}>{item.name}</p>
+                        <p className={s.cardNote}>{item.note}</p>
                     </div>
-                </div>
+                ))}
 
-                {/* RIGHT */}
-                <div className={s.rightCol}>
-                    {BENEFITS.map((b) => (
-                        <div key={b.title} className={s.benefitBlock}>
-                            <div className={s.benefitIcon}>
-                                <b.Icon />
-                            </div>
-                            <div className={s.benefitContent}>
-                                <span className={s.benefitEyebrow}>The Benefit</span>
-                                <div className={s.benefitTitle}>{b.title}</div>
-                                <div className={s.benefitDesc}>{b.desc}</div>
-                            </div>
-                            <div className={s.benefitNumeric}>
-                                <span className={s.benefitStat}>{b.stat}</span>
-                                <span className={s.benefitStatSub}>{b.statSub}</span>
-                            </div>
-                        </div>
-                    ))}
+                {/* 12th slot — closing CPA reminder, visually distinct */}
+                <div className={`${s.card} ${s.cardClose}`}>
+                    <p className={s.cardName}>Bring this list to your CPA.</p>
+                    <p className={s.cardNote}>Tax treatment varies — confirm what applies to your situation.</p>
                 </div>
             </div>
 
             {/* Footer */}
             <div className={s.footer}>
                 <span className={s.disclaimer}>
-                    Tax treatment varies by individual situation. Always consult a licensed CPA or tax attorney.
+                    Tax treatment varies by individual situation. Always consult a licensed CPA or tax attorney
+                    before relying on any of the items above.
                 </span>
                 <span className={s.tagline}>We build for you.</span>
             </div>

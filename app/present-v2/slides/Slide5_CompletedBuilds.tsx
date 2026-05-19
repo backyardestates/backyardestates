@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { usePresentationStore, SanityProperty } from "@/lib/store/presentationStore";
+import { cldOptimize } from "@/lib/cloudinary";
 import s from "./Slide5.module.css";
 
 type BuildImage = {
@@ -23,7 +24,7 @@ function buildImageList(completedProperties: SanityProperty[]): BuildImage[] {
     return images;
 }
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 4;
 
 function pad2(n: number) {
     return n.toString().padStart(2, "0");
@@ -41,10 +42,29 @@ function cityFromAddress(addr: string) {
 }
 
 export function Slide5_CompletedBuilds() {
-    const { completedProperties, galleryPaused, setGalleryPaused, currentSlide, customerName, propertyAddress } = usePresentationStore();
+    const {
+        completedProperties,
+        featuredPropertyIds,
+        galleryPaused,
+        setGalleryPaused,
+        currentSlide,
+        customerName,
+        propertyAddress,
+    } = usePresentationStore();
     const active = currentSlide === 5;
 
-    const images = buildImageList(completedProperties);
+    // Admin-curated order takes precedence; otherwise fall back to Sanity `featured`.
+    let visibleProperties: SanityProperty[];
+    if (featuredPropertyIds.length > 0) {
+        const byId = new Map(completedProperties.map((p) => [p._id, p] as const));
+        visibleProperties = featuredPropertyIds
+            .map((id) => byId.get(id))
+            .filter((p): p is SanityProperty => Boolean(p));
+    } else {
+        visibleProperties = completedProperties.filter((p) => p.featured);
+    }
+
+    const images = buildImageList(visibleProperties);
     const pageCount = Math.max(1, Math.ceil(images.length / PAGE_SIZE));
     const [page, setPage] = useState(0);
 
@@ -73,22 +93,14 @@ export function Slide5_CompletedBuilds() {
 
     return (
         <div className={s.slide}>
-            {/* Running header */}
-            <div className="running-header rh-dark">
-                <span className="running-header-left">{lastName} · {city}</span>
-                <span className="running-header-center">Completed Builds</span>
-                <span className="running-header-right">
-                    <span className="running-header-num">05</span> / 13
-                </span>
-            </div>
 
             {/* Headline */}
             <div className={s.headRow}>
                 <div className={s.headLeft}>
                     <h2 className="section-title on-dark">
-                        See it <em>in person.</em>
+                        A showcase of <em>our work</em>
                     </h2>
-                    <span className={s.headSubhead}>{completedProperties.length > 0 ? `${completedProperties.length}+ homes built across Southern California` : ""}</span>
+                    <span className={s.headSubhead}>{visibleProperties.length > 0 ? `${visibleProperties.length}+ similar ADUs built across Southern California` : ""}</span>
                 </div>
                 <div className={s.headRight}>
                     <span className={s.plateCounter}>Plate {pad2(page + 1)} / {pad2(pageCount)}</span>
@@ -108,7 +120,7 @@ export function Slide5_CompletedBuilds() {
             <div className={s.grid}>
                 {cells.map((cell, i) => (
                     <div key={i} className={s.cell}>
-                        <img src={cell.url} alt={cell.name} className={s.cellImg} loading="lazy" />
+                        <img src={cldOptimize(cell.url, 1800)} alt={cell.name} className={s.cellImg} loading="lazy" />
                         <span className={s.cellPlate}>№ {pad2(i + 1)}</span>
                         <div className={s.cellOverlay}>
                             <span className={s.cellName}>{cell.name}</span>

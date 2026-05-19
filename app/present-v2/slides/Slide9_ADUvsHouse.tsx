@@ -66,12 +66,9 @@ export function Slide9_ADUvsHouse() {
     const acfCount = useCountUp(Math.abs(acf), active, 600);
     const hcfCount = useCountUp(Math.abs(hcf), active, 600);
 
-    // 10-year advantage anchor: total cashflow + total equity over 10 years for ADU minus house downpayment lost
-    const tenYearAdvantage = useCountUp(
-        Math.max(
-            0,
-            (acf * 12 * 10) + (aduSc?.year10EquityBoost ?? 0) + (houseSc?.downPayment ?? 0)
-        ),
+    // 10-year property value increase — the ADU's equity boost over 10 years.
+    const propertyBoost = useCountUp(
+        Math.max(0, aduSc?.year10EquityBoost ?? 0),
         active, 800, 1700
     );
 
@@ -140,7 +137,7 @@ export function Slide9_ADUvsHouse() {
         },
         {
             label: "Rent collected",
-            house: <span className={s.rowMuted}>—</span>,
+            house: <AnimDollar n={houseSc?.rentMonthly ?? 0} active={active} delay={420} />,
             adu: <AnimDollar n={aduSc?.rentMonthly ?? 0} active={active} delay={420} />,
         },
     ];
@@ -166,21 +163,8 @@ export function Slide9_ADUvsHouse() {
                 </div>
             </div>
 
-            {/* Anchor banner */}
-            <div className={s.anchor}>
-                <div className={s.anchorLeft}>
-                    <span className={s.anchorEyebrow}>10-Year Advantage</span>
-                    <span className={s.anchorLabel}>in your favor</span>
-                </div>
-                <span className={s.anchorBlurb}>
-                    An ADU keeps your cash in your pocket and pays you back — while a starter house drains it.
-                </span>
-                <div className={s.anchorValue}>
-                    +{fmt$(tenYearAdvantage)}
-                </div>
-            </div>
-
-            {/* Comparison table */}
+            {/* Comparison table + tax-detail bullets */}
+            <div className={s.tableRow}>
             <div className={s.tableCard}>
                 <div className={s.thead}>
                     <div className={s.thLabel}>Line Item</div>
@@ -212,6 +196,54 @@ export function Slide9_ADUvsHouse() {
                             <span className={s.cfValPos}>+{fmt$(acfCount)}</span>
                         </div>
                     </div>
+                </div>
+            </div>
+
+                {/* Tax-detail bullets — to the right of the table */}
+                <div className={s.bulletsCol}>
+                    <span className={s.bulletsEyebrow}>Tax advantage</span>
+                    <h3 className={s.bulletsTitle}>
+                        Your tax base <em>doesn&apos;t move.</em>
+                    </h3>
+                    <ul className={s.bullets}>
+                        <li className={s.bullet}>
+                            <span className={s.bulletIcon}>✓</span>
+                            <span className={s.bulletText}>
+                                <strong>No reassessment</strong> of your existing home or land. Prop&nbsp;13 keeps your base locked.
+                            </span>
+                        </li>
+                        <li className={s.bullet}>
+                            <span className={s.bulletIcon}>✓</span>
+                            <span className={s.bulletText}>
+                                The county only adds the ADU&apos;s <strong>hard construction cost</strong> — not its market value.
+                            </span>
+                        </li>
+                        <li className={s.bullet}>
+                            <span className={s.bulletIcon}>✓</span>
+                            <span className={s.bulletText}>
+                                When the property appreciates, <strong>your tax bill doesn&apos;t.</strong>
+                            </span>
+                        </li>
+                        <li className={s.bullet}>
+                            <span className={s.bulletIcon}>✓</span>
+                            <span className={s.bulletText}>
+                                Net effect: more equity, more rent — <strong>almost no tax bump.</strong>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {/* 10-Year Advantage — anchored to bottom of slide */}
+            <div className={s.anchor}>
+                <div className={s.anchorLeft}>
+                    <span className={s.anchorEyebrow}>10-Year Advantage</span>
+                    <span className={s.anchorBlurb}>
+                        In 10 years your property value could go up by
+                    </span>
+                </div>
+                <div className={s.anchorValue}>
+                    +{fmt$(propertyBoost)}
                 </div>
             </div>
 

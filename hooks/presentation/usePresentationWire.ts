@@ -8,6 +8,7 @@ import type { Scenario } from "@/lib/investment/types";
 import type { RentalListing } from "@/lib/rentcast/types";
 import type { ActiveLineItem } from "@/lib/investment/siteWorkItems";
 import { computeDiscountTotal, createEmptyDiscountState, getDiscountLines, type DiscountState } from "@/lib/investment/discounts";
+import type { FeaturedRental } from "@/lib/store/presentationStore";
 
 interface WireInput {
     customerName: string;
@@ -16,6 +17,10 @@ interface WireInput {
     propertyPhotoUrl: string | null;
     customerMotivation: CustomerMotivation;
     comparedUnitIds: string[];
+    featuredPropertyIds: string[];
+    featuredStoryIds: string[];
+    featuredRentals: FeaturedRental[];
+    slideOrder: number[];
     scenarios: Scenario[];
     rentalComps: RentalListing[];
     rentByUnitId: Record<string, string>;
@@ -30,6 +35,10 @@ export function usePresentationWire({
     propertyPhotoUrl,
     customerMotivation,
     comparedUnitIds,
+    featuredPropertyIds,
+    featuredStoryIds,
+    featuredRentals,
+    slideOrder,
     scenarios,
     rentalComps,
     rentByUnitId,
@@ -105,6 +114,10 @@ export function usePresentationWire({
             propertyPhotoUrl,
             customerMotivation,
             comparedUnitIds,
+            featuredPropertyIds,
+            featuredStoryIds,
+            featuredRentals,
+            slideOrder,
             scenarios: serializableScenarios,
             rentalComps,
             rentByUnitId: rentNums,
@@ -120,7 +133,7 @@ export function usePresentationWire({
         // Directly broadcast to presenter window — bypasses the fragile Zustand
         // subscription chain which breaks under React StrictMode's double-invoke
         broadcastAdminState(data);
-    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId]);
+    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId, discountLinesByAduId]);
 }
 
 export type PresenterVariant = "original" | "v2";

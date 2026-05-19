@@ -1,6 +1,10 @@
 /* Slide 13 — Why Backyard Estates · dark editorial */
 
 .slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
   position: relative;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
@@ -8,8 +12,8 @@
   background: radial-gradient(ellipse at 50% 100%, var(--p-teal-deep) 0%, var(--p-dark) 60%, var(--p-dark-2) 100%);
   font-family: var(--p-font);
   overflow: hidden;
-  padding: 90px 56px 24px;
-  gap: 22px;
+  padding: 96px 64px 36px;
+  gap: 28px;
   color: var(--p-cream);
 }
 
@@ -36,7 +40,7 @@
 .body {
   display: grid;
   grid-template-columns: 1fr 0.95fr 1.05fr;
-  gap: 22px;
+  gap: 28px;
   min-height: 0;
 }
 
@@ -45,7 +49,7 @@
   background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%);
   border: 1px solid var(--p-border-dark);
   border-radius: var(--p-radius-lg);
-  padding: 28px 28px;
+  padding: 32px 32px;
   display: flex;
   flex-direction: column;
   box-shadow: var(--p-shadow-md);
@@ -79,15 +83,15 @@
 .fixedItems {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: 22px;
+  gap: 16px;
+  margin-top: 26px;
 }
 
 .fixedItem {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   align-items: flex-start;
-  padding: 12px 0;
+  padding: 14px 0;
   border-bottom: 1px solid rgba(184,149,74,0.18);
 }
 
@@ -131,17 +135,17 @@
 .centerCol {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
 }
 
 .riskCard {
-  background: linear-gradient(180deg, rgba(226,162,132,0.10) 0%, rgba(226,162,132,0.02) 100%);
-  border: 1px solid rgba(226,162,132,0.30);
+  background: linear-gradient(180deg, var(--p-coral-tint) 0%, var(--p-coral-tint-2) 100%);
+  border: 1px solid var(--p-coral-border);
   border-radius: var(--p-radius-lg);
-  padding: 26px 28px 22px;
+  padding: 30px 32px 26px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .riskEyebrow {
@@ -167,29 +171,29 @@
   font-style: italic;
   font-weight: 400;
   font-size: var(--p-text-sm);
-  color: rgba(226,162,132,0.85);
+  color: var(--p-coral-soft);
   letter-spacing: -0.005em;
 }
 
 .riskItems {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 4px 8px;
+  gap: 12px;
+  padding: 6px 8px;
 }
 
 .riskItem {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: flex-start;
 }
 
 .riskX {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: rgba(226,162,132,0.10);
-  border: 1px solid rgba(226,162,132,0.30);
+  background: var(--p-coral-tint);
+  border: 1px solid var(--p-coral-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -211,7 +215,7 @@
   background: linear-gradient(180deg, var(--p-gold-bg) 0%, rgba(184,149,74,0.02) 100%);
   border: 1px solid var(--p-gold-border);
   border-radius: var(--p-radius-md);
-  padding: 18px 20px;
+  padding: 22px 24px;
   margin-top: auto;
 }
 
@@ -241,10 +245,10 @@
   background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%);
   border: 1px solid var(--p-border-dark);
   border-radius: var(--p-radius-lg);
-  padding: 28px;
+  padding: 32px;
   box-shadow: var(--p-shadow-md);
   overflow: hidden;
-  gap: 14px;
+  gap: 18px;
 }
 
 .rightEyebrow {
@@ -299,10 +303,10 @@
 
 .quoteSource {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   align-items: center;
-  margin-top: 14px;
-  padding-top: 14px;
+  margin-top: 18px;
+  padding-top: 18px;
   border-top: 1px solid rgba(184,149,74,0.18);
 }
 
@@ -353,12 +357,12 @@
 .videoCard {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   margin-top: auto;
   background: rgba(184,149,74,0.06);
   border: 1px solid var(--p-gold-border);
   border-radius: var(--p-radius-md);
-  padding: 14px 18px;
+  padding: 18px 22px;
   cursor: pointer;
   transition: all 0.18s ease;
 }
@@ -387,7 +391,7 @@
 .statBar {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  padding: 16px 22px;
+  padding: 22px 28px;
   background: linear-gradient(180deg, var(--p-gold-bg) 0%, rgba(184,149,74,0.02) 100%);
   border: 1px solid var(--p-gold-border);
   border-radius: var(--p-radius-lg);
@@ -433,7 +437,7 @@
   color: var(--p-gold);
   letter-spacing: -0.005em;
   text-align: center;
-  padding-top: 8px;
+  padding-top: 14px;
 }
 
 /* Wistia overlay */

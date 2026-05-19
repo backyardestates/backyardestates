@@ -4,49 +4,17 @@ import React from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
 import s from "./Slide2.module.css";
 
-const ADU_BLURB: Record<string, string> = {
-    detached: "A standalone unit built in your backyard — separate entrance, full privacy, complete independence.",
-    attached: "We handle the tie-in, firewall, and exterior matching. Seamless with your existing home.",
-    garage: "We handle the conversion, structural requirements, and all permits. Your garage, reimagined.",
-};
-
-function lastNameFromFull(full?: string) {
-    if (!full) return "";
-    const parts = full.trim().split(/\s+/);
-    return parts[parts.length - 1] ?? "";
-}
-
-function cityFromAddress(addr: string) {
-    const parts = addr.split(",");
-    return parts.length >= 2 ? parts[parts.length - 2].trim() : addr;
-}
-
 export function Slide2_YourProperty() {
-    const { customerName, propertyAddress, aduType, propertyPhotoUrl, floorplans, comparedUnitIds, siteWorkTagsByUnitId } = usePresentationStore();
+    const { propertyAddress, aduType, propertyPhotoUrl, floorplans, comparedUnitIds } = usePresentationStore();
 
     const aduLabel = aduType
         ? ({ detached: "Detached ADU", attached: "Attached ADU", garage: "Garage Conversion" }[aduType] ?? aduType)
         : "ADU";
-    const blurbText = aduType ? ADU_BLURB[aduType] : null;
 
     const comparedUnits = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
-    const allSiteTags = Array.from(new Set(
-        comparedUnitIds.flatMap((id) => siteWorkTagsByUnitId[id] ?? [])
-    )).slice(0, 8);
-
-    const lastName = lastNameFromFull(customerName);
-    const city = propertyAddress ? cityFromAddress(propertyAddress) : "—";
 
     return (
         <div className={s.slide}>
-            {/* Running header */}
-            <div className="running-header rh-dark">
-                <span className="running-header-left">{lastName} · {city}</span>
-                <span className="running-header-center">Your Property</span>
-                <span className="running-header-right">
-                    <span className="running-header-num">02</span> / 13
-                </span>
-            </div>
 
             {/* Headline row */}
             <div className={s.headRow}>
@@ -56,6 +24,7 @@ export function Slide2_YourProperty() {
                     </h2>
                     <span className={s.headSubhead}>{propertyAddress}</span>
                 </div>
+                <div className={s.aduBadge}>{aduLabel}</div>
             </div>
 
             {/* Body */}
@@ -74,39 +43,47 @@ export function Slide2_YourProperty() {
                     )}
                 </div>
 
-                {/* RIGHT: info */}
-                <div className={s.infoPanel}>
-                    <div className={s.aduBadge}>{aduLabel}</div>
+                {/* RIGHT: options being discussed */}
+                <div className={s.optionsPanel}>
+                    <div className={s.optionsEyebrow}>Options we'll discuss today</div>
 
-                    {blurbText && <p className={s.blurb}>{blurbText}</p>}
-
-                    <div className={s.optionsSection}>
-                        <div className={s.optionsEyebrow}>Options being compared</div>
-                        <div className={s.unitList}>
-                            {comparedUnits.length > 0 ? comparedUnits.map((fp) => (
-                                <div key={fp._id} className={s.unitItem}>
-                                    <span className={s.unitName}>The {fp.name}</span>
-                                    <span className={s.unitSqft}>
-                                        <span className={s.unitSqftNum}>{fp.sqft?.toLocaleString() ?? "—"}</span>
-                                        <span className={s.unitSqftLabel}>sqft</span>
-                                    </span>
+                    <div className={s.unitGrid}>
+                        {comparedUnits.length > 0 ? comparedUnits.map((fp, idx) => (
+                            <div key={fp._id} className={s.unitCard}>
+                                <div className={s.unitMeta}>
+                                    <div className={s.unitIndex}>Option {String(idx + 1).padStart(2, "0")}</div>
+                                    <div className={s.unitName}>The {fp.name}</div>
+                                    <div className={s.unitStats}>
+                                        <div className={s.unitStat}>
+                                            <span className={s.unitStatNum}>{fp.bed ?? "—"}</span>
+                                            <span className={s.unitStatLabel}>{fp.bed === 1 ? "bed" : "beds"}</span>
+                                        </div>
+                                        <div className={s.unitStat}>
+                                            <span className={s.unitStatNum}>{fp.bath ?? "—"}</span>
+                                            <span className={s.unitStatLabel}>{fp.bath === 1 ? "bath" : "baths"}</span>
+                                        </div>
+                                        <div className={s.unitStat}>
+                                            <span className={s.unitStatNum}>{fp.sqft?.toLocaleString() ?? "—"}</span>
+                                            <span className={s.unitStatLabel}>sqft</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            )) : (
-                                <div className={s.noUnits}>No units selected</div>
-                            )}
-                        </div>
-                    </div>
-
-                    {allSiteTags.length > 0 && (
-                        <div className={s.siteFindingsSection}>
-                            <div className={s.siteFindingsLabel}>Site findings</div>
-                            <div className={s.siteTags}>
-                                {allSiteTags.map((tag) => (
-                                    <span key={tag} className={s.siteTag}>{tag}</span>
-                                ))}
+                                <div className={s.unitDrawing}>
+                                    {fp.floorPlanUrl ? (
+                                        <img
+                                            src={fp.floorPlanUrl}
+                                            alt={`${fp.name} floor plan`}
+                                            className={s.unitDrawingImg}
+                                        />
+                                    ) : (
+                                        <div className={s.unitDrawingPlaceholder}>No drawing</div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )) : (
+                            <div className={s.noUnits}>No units selected</div>
+                        )}
+                    </div>
                 </div>
             </div>
 

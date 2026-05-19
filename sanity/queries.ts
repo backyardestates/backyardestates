@@ -641,9 +641,9 @@ export const PRESENTER_ALL_FLOORPLANS_QUERY = groq`
 `
 
 export const PRESENTER_STORIES_QUERY = groq`
-  *[_type == "story" && featured == true]
+  *[_type == "story"]
   | order(_createdAt desc) {
-    _id, names, quote, purpose, wistiaId, slug,
+    _id, names, quote, purpose, wistiaId, slug, featured,
     "portraitUrl": portrait.secure_url,
     "images": images[].secure_url,
   }
@@ -652,12 +652,11 @@ export const PRESENTER_STORIES_QUERY = groq`
 export const PRESENTER_COMPLETED_PROPERTIES_QUERY = groq`
   *[_type == "property"
     && !(_id in path("drafts.**"))
-    && featured == true
     && defined(photos)
     && count(photos) > 0]
-  | order(_createdAt desc) [0...12] {
+  | order(_createdAt desc) [0...50] {
     _id, name, slug, sqft, bed, bath,
-    videoID,
+    videoID, featured,
     "thumbnailUrl": photos[0].url,
     "images": photos[].url,
     "floorplanName": floorplan->name,

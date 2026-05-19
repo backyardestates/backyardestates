@@ -101,5 +101,18 @@ export function useRentcastData() {
         }
     }
 
-    return { loading, error, property, avm, rentals, market, getApiData };
+    function hydrate(data: {
+        property: PropertyRecord | null;
+        avm: AvmValue | null;
+        rentals: RentalListing[];
+        market: RentcastMarketStats | null;
+    }) {
+        setProperty(data.property);
+        setAvm(data.avm);
+        setRentals(data.rentals ?? []);
+        setMarket(data.market);
+        setError(null);
+    }
+
+    return { loading, error, property, avm, rentals, market, getApiData, hydrate };
 }

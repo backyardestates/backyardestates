@@ -34,8 +34,8 @@ const CANVAS_H = 1080;
 const SLIDES = [
     Slide1_Cover,
     Slide2_YourProperty,
-    Slide3_YourOptions,
     Slide4_WhatsIncluded,
+    Slide3_YourOptions,
     Slide5_CompletedBuilds,
     Slide6_CustomerStories,
     Slide7_HowItWorks,
@@ -50,8 +50,8 @@ const SLIDES = [
 const SLIDE_NAMES: Record<number, string> = {
     1:  "Cover",
     2:  "Your Property",
-    3:  "Your Options",
-    4:  "What's Included",
+    3:  "What's Included",
+    4:  "Your Options",
     5:  "Completed Builds",
     6:  "Customer Stories",
     7:  "How It Works",
@@ -83,7 +83,46 @@ export function PresentClient({ floorplans, stories, completedProperties }: Prop
         setActiveStoryIndex,
         activeStoryIndex,
         stories: storeStories,
+        featuredStoryIds,
+        slideOrder,
     } = usePresentationStore();
+
+    // Effective slide order: admin's custom order, or natural 1..FLOW_COUNT.
+    const effectiveOrder = React.useMemo(() => {
+        if (Array.isArray(slideOrder) && slideOrder.length > 0) {
+            // Defensive: drop duplicates and out-of-range entries.
+            const seen = new Set<number>();
+            const cleaned: number[] = [];
+            for (const n of slideOrder) {
+                if (n >= 1 && n <= FLOW_COUNT && !seen.has(n)) {
+                    seen.add(n);
+                    cleaned.push(n);
+                }
+            }
+            if (cleaned.length > 0) return cleaned;
+        }
+        return Array.from({ length: FLOW_COUNT }, (_, i) => i + 1);
+    }, [slideOrder]);
+
+    function slideAtPosition(pos: number): number {
+        const i = Math.max(0, Math.min(effectiveOrder.length - 1, pos));
+        return effectiveOrder[i];
+    }
+    function positionOfSlide(slide: number): number {
+        const idx = effectiveOrder.indexOf(slide);
+        return idx >= 0 ? idx : 0;
+    }
+
+    // Visible stories on Slide 6 — admin curation wins; otherwise Sanity `featured`.
+    const visibleStories = React.useMemo(() => {
+        if (featuredStoryIds.length > 0) {
+            const byId = new Map(storeStories.map((st) => [st._id, st] as const));
+            return featuredStoryIds
+                .map((id) => byId.get(id))
+                .filter((st): st is SanityStory => Boolean(st));
+        }
+        return storeStories.filter((st) => st.featured);
+    }, [storeStories, featuredStoryIds]);
 
     const syncStarted = useRef(false);
     const scalerRef = useRef<HTMLDivElement | null>(null);
@@ -100,9 +139,10 @@ export function PresentClient({ floorplans, stories, completedProperties }: Prop
 
     useEffect(() => {
         if (storyOverridden) return;
-        const story = selectStory(customerMotivation, storeStories);
+        const pool = visibleStories.length > 0 ? visibleStories : storeStories;
+        const story = selectStory(customerMotivation, pool);
         setSelectedStory(story);
-    }, [customerMotivation, storeStories, storyOverridden, setSelectedStory]);
+    }, [customerMotivation, visibleStories, storeStories, storyOverridden, setSelectedStory]);
 
     // Auto-scale the 1920×1080 canvas to fit any viewport while preserving aspect ratio
     useEffect(() => {
@@ -129,12 +169,20 @@ export function PresentClient({ floorplans, stories, completedProperties }: Prop
                 case "ArrowRight":
                 case " ":
                     e.preventDefault();
-                    // Standard flow: 1-12, slide 13 only via Shift+3
-                    setSlide(Math.min(FLOW_COUNT, currentSlide + 1));
+                    // Walk the (possibly custom) slide order.
+                    {
+                        const pos = positionOfSlide(currentSlide);
+                        const next = Math.min(effectiveOrder.length - 1, pos + 1);
+                        setSlide(slideAtPosition(next));
+                    }
                     break;
                 case "ArrowLeft":
                     e.preventDefault();
-                    setSlide(Math.max(1, currentSlide - 1));
+                    {
+                        const pos = positionOfSlide(currentSlide);
+                        const prev = Math.max(0, pos - 1);
+                        setSlide(slideAtPosition(prev));
+                    }
                     break;
                 case "p":
                 case "P":
@@ -142,11 +190,14 @@ export function PresentClient({ floorplans, stories, completedProperties }: Prop
                     break;
                 case "s":
                 case "S":
-                    // Advance story on slide 6
-                    if (storeStories.length > 0) {
-                        const next = (activeStoryIndex + 1) % storeStories.length;
-                        setActiveStoryIndex(next);
-                        setSelectedStory(storeStories[next]);
+                    // Advance story on slide 6 — cycle through the curated/featured pool
+                    {
+                        const pool = visibleStories.length > 0 ? visibleStories : storeStories;
+                        if (pool.length > 0) {
+                            const next = (activeStoryIndex + 1) % pool.length;
+                            setActiveStoryIndex(next);
+                            setSelectedStory(pool[next]);
+                        }
                     }
                     break;
                 case "Escape":
@@ -173,7 +224,7 @@ export function PresentClient({ floorplans, stories, completedProperties }: Prop
         }
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
-    }, [currentSlide, setSlide, toggleGalleryPaused, storeStories, activeStoryIndex, setActiveStoryIndex, setSelectedStory]);
+    }, [currentSlide, setSlide, toggleGalleryPaused, visibleStories, storeStories, activeStoryIndex, setActiveStoryIndex, setSelectedStory, effectiveOrder]);
 
     const hasData = propertyAddress.length > 0 || scenarios.length > 0;
 

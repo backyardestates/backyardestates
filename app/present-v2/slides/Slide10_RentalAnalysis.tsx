@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { proxiedImage } from "@/lib/cloudinary";
 import s from "./Slide10.module.css";
 
 function useCountUp(target: number, active: boolean, delay = 0, duration = 1400) {
@@ -46,17 +47,20 @@ function cityFromAddress(addr: string) {
 }
 
 export function Slide10_RentalAnalysis() {
-    const { comparedUnitIds, floorplans, rentalComps, rentByUnitId, customerName, propertyAddress, currentSlide } = usePresentationStore();
+    const { comparedUnitIds, floorplans, rentalComps, featuredRentals, rentByUnitId, customerName, propertyAddress, currentSlide } = usePresentationStore();
     const active = currentSlide === 10;
 
     const comparedUnits = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
     const displayUnits = comparedUnits.length > 0 ? comparedUnits : floorplans.slice(0, 1);
 
     const hasRentData = displayUnits.some((fp) => (rentByUnitId[fp._id] ?? 0) > 0);
-    const hasComps = rentalComps.length > 0;
+    const hasComps = rentalComps.length > 0 || featuredRentals.length > 0;
     const showEmpty = !hasRentData && !hasComps;
 
-    const displayComps = rentalComps.slice(0, 6);
+    // If the admin curated rentals in Step 9, show those (with images).
+    // Otherwise, fall back to the first 4 raw RentCast comps.
+    const usingCurated = featuredRentals.length > 0;
+    const displayComps = usingCurated ? featuredRentals : rentalComps.slice(0, 4);
     const lastName = lastNameFromFull(customerName);
     const city = propertyAddress ? cityFromAddress(propertyAddress) : "—";
 
@@ -88,7 +92,63 @@ export function Slide10_RentalAnalysis() {
                 </div>
             ) : (
                 <>
-                    {/* Rent hero — per unit */}
+                    {/* Comparable rentals — now on top, centered */}
+                    {hasComps && (
+                        <div className={s.compsSection}>
+                            <div className={s.compsHead}>
+                                <h3 className={s.compsTitle}>Market <em>comparables</em></h3>
+                                <span className={s.compsSub}>Within 1 mi · last 90 days</span>
+                            </div>
+                            <div className={`${s.compsGrid} ${usingCurated ? s.compsGridCurated : ""}`}>
+                                {displayComps.map((comp, i) => {
+                                    const imageUrl = usingCurated ? (comp as typeof featuredRentals[number]).imageUrl : undefined;
+                                    const specs = [
+                                        comp.bedrooms != null ? `${comp.bedrooms} bd` : null,
+                                        comp.bathrooms != null ? `${comp.bathrooms} ba` : null,
+                                        comp.squareFootage != null ? `${comp.squareFootage.toLocaleString()} sqft` : null,
+                                    ].filter(Boolean).join(" · ");
+
+                                    if (usingCurated) {
+                                        return (
+                                            <div key={i} className={`${s.compCard} ${s.compCardCurated}`}>
+                                                <div className={s.compImage}>
+                                                    <img
+                                                        src={imageUrl ? proxiedImage(imageUrl) : "/images/rental-placeholder.svg"}
+                                                        alt={comp.formattedAddress ?? "Listing photo unavailable"}
+                                                        className={s.compImageImg}
+                                                        referrerPolicy="no-referrer"
+                                                        onError={(e) => {
+                                                            const img = e.currentTarget as HTMLImageElement;
+                                                            if (img.src.endsWith("/images/rental-placeholder.svg")) return;
+                                                            img.src = "/images/rental-placeholder.svg";
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className={s.compBody}>
+                                                    <div className={s.compPrice}>
+                                                        ${(comp.price ?? 0).toLocaleString()}<span className={s.compMo}> / mo</span>
+                                                    </div>
+                                                    <div className={s.compAddress}>{comp.formattedAddress ?? ""}</div>
+                                                    <div className={s.compSpecs}>{specs}</div>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    return (
+                                        <div key={i} className={s.compCard}>
+                                            <div className={s.compPrice}>
+                                                ${(comp.price ?? 0).toLocaleString()}<span className={s.compMo}> / mo</span>
+                                            </div>
+                                            <div className={s.compAddress}>{comp.formattedAddress ?? ""}</div>
+                                            <div className={s.compSpecs}>{specs}</div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Rent hero — per unit, below the comps */}
                     <div
                         className={s.rentHeroGrid}
                         style={{ gridTemplateColumns: `repeat(${displayUnits.length}, 1fr)` }}
@@ -107,38 +167,11 @@ export function Slide10_RentalAnalysis() {
                                         </span>
                                         <span className={s.rentMo}>/ mo</span>
                                     </div>
-                                    <span className={s.rentSub}>Estimated · Monthly · Rent</span>
+                                    <span className={s.rentSub}>Estimated Monthly Rent</span>
                                 </div>
                             );
                         })}
                     </div>
-
-                    {/* Comparable rentals */}
-                    {hasComps && (
-                        <div className={s.compsSection}>
-                            <div className={s.compsHead}>
-                                <h3 className={s.compsTitle}>Market <em>comparables</em></h3>
-                                <span className={s.compsSub}>Within 1 mi · last 90 days</span>
-                            </div>
-                            <div className={s.compsGrid}>
-                                {displayComps.map((comp, i) => (
-                                    <div key={i} className={s.compCard}>
-                                        <div className={s.compPrice}>
-                                            ${(comp.price ?? 0).toLocaleString()}<span className={s.compMo}> / mo</span>
-                                        </div>
-                                        <div className={s.compAddress}>{comp.formattedAddress ?? ""}</div>
-                                        <div className={s.compSpecs}>
-                                            {[
-                                                comp.bedrooms != null ? `${comp.bedrooms} bd` : null,
-                                                comp.bathrooms != null ? `${comp.bathrooms} ba` : null,
-                                                comp.squareFootage != null ? `${comp.squareFootage.toLocaleString()} sqft` : null,
-                                            ].filter(Boolean).join(" · ")}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </>
             )}
 

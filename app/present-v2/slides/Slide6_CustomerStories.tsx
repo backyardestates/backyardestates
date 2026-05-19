@@ -23,6 +23,7 @@ function cityFromAddress(addr: string) {
 export function Slide6_CustomerStories() {
     const {
         stories,
+        featuredStoryIds,
         selectedStory,
         setSelectedStory,
         setStoryOverridden,
@@ -30,6 +31,17 @@ export function Slide6_CustomerStories() {
         customerName,
         propertyAddress,
     } = usePresentationStore();
+
+    // Admin-curated order takes precedence; otherwise fall back to Sanity featured.
+    let visibleStories: SanityStory[];
+    if (featuredStoryIds.length > 0) {
+        const byId = new Map(stories.map((st) => [st._id, st] as const));
+        visibleStories = featuredStoryIds
+            .map((id) => byId.get(id))
+            .filter((st): st is SanityStory => Boolean(st));
+    } else {
+        visibleStories = stories.filter((st) => st.featured);
+    }
 
     const [overlayWistiaId, setOverlayWistiaId] = useState<string | null>(null);
 
@@ -42,34 +54,53 @@ export function Slide6_CustomerStories() {
         return () => window.removeEventListener("keydown", handler);
     }, [overlayWistiaId]);
 
-    function selectStory(story: SanityStory, idx: number) {
+    function promoteStory(story: SanityStory) {
+        const idx = visibleStories.findIndex((st) => st._id === story._id);
         setSelectedStory(story);
         setStoryOverridden(true);
-        setActiveStoryIndex(idx);
+        setActiveStoryIndex(idx >= 0 ? idx : 0);
     }
 
-    const photoUrl = selectedStory?.images?.[0] ?? null;
+    // Side cards = curated stories minus the currently featured one (max 3 visible)
+    const sideStories = visibleStories
+        .filter((st) => st._id !== selectedStory?._id)
+        .slice(0, 3);
+    const overflowCount = Math.max(0, visibleStories.length - 1 - sideStories.length);
+
+    const photoUrl = selectedStory?.portraitUrl ?? null;
     const lastName = lastNameFromFull(customerName);
     const city = propertyAddress ? cityFromAddress(propertyAddress) : "—";
 
     return (
         <div className={s.slide}>
-            {/* LEFT — story photo */}
+            {/* LEFT — portrait + build context */}
             <div className={s.photoHalf}>
-                {photoUrl ? (
-                    <img src={photoUrl} alt={selectedStory?.names ?? "Story photo"} className={s.photoImg} />
-                ) : (
-                    <div className={s.photoPlaceholder} />
-                )}
-                <span className={s.photoBadge}>Completed Build</span>
-                {selectedStory?.names && (
-                    <div className={s.photoCaptionWrap}>
-                        <div className={s.photoCaption}>{selectedStory.names}</div>
-                        {selectedStory.purpose && (
-                            <span className={s.photoCaptionSub}>{selectedStory.purpose}</span>
-                        )}
-                    </div>
-                )}
+                <span className={s.photoBadge}>Neighbor</span>
+
+                <div className={s.portraitFrame}>
+                    {photoUrl ? (
+                        <img src={photoUrl} alt={selectedStory?.names ?? "Portrait"} className={s.photoImg} />
+                    ) : (
+                        <div className={s.photoPlaceholder} />
+                    )}
+                </div>
+
+                {(() => {
+                    const buildImages = (selectedStory?.images ?? []).slice(2, 5);
+                    if (buildImages.length === 0) return null;
+                    return (
+                        <div className={s.buildStrip}>
+                            <div className={s.buildEyebrow}>From Their Build</div>
+                            <div className={s.buildThumbs}>
+                                {buildImages.map((img, i) => (
+                                    <div key={i} className={s.buildThumb}>
+                                        <img src={img} alt="" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })()}
             </div>
 
             {/* RIGHT — content */}
@@ -83,81 +114,88 @@ export function Slide6_CustomerStories() {
                     </span>
                 </div>
 
-                {/* Story selector */}
-                <div className={s.storySelector}>
-                    <span className={s.storySelectorLabel}>Stories from neighbors</span>
-                    <div className={s.storyPills}>
-                        {stories.slice(0, 5).map((story, idx) => (
-                            <button
-                                key={story._id}
-                                className={`${s.storyPill} ${selectedStory?._id === story._id ? s.storyPillActive : ""}`}
-                                onClick={() => selectStory(story, idx)}
+                {/* Featured story detail */}
+                {selectedStory ? (
+                    <div className={s.featuredDetail}>
+                        <div className={s.storyName}>{selectedStory.names}</div>
+
+                        <div className={s.quoteWrap}>
+                            <span className={s.qmark}>&ldquo;</span>
+                            <div className={s.quote}>
+                                {selectedStory.quote ?? "Story available in full video…"}
+                            </div>
+                        </div>
+
+                        {selectedStory.wistiaId && (
+                            <div
+                                role="button"
+                                tabIndex={0}
+                                className={s.videoCard}
+                                onClick={() => setOverlayWistiaId(selectedStory.wistiaId!)}
+                                onKeyDown={(e) => e.key === "Enter" && setOverlayWistiaId(selectedStory.wistiaId!)}
                             >
-                                {story.names.split(" ")[0]}
-                            </button>
-                        ))}
-                        {stories.length > 5 && (
-                            <span className={s.storiesCount}>+{stories.length - 5} more</span>
+                                <div className={s.videoThumbWrap}>
+                                    <img
+                                        src={`https://fast.wistia.net/embed/medias/${selectedStory.wistiaId}/swatch`}
+                                        alt="Video thumbnail"
+                                        className={s.videoThumb}
+                                    />
+                                    <div className={s.playOverlay}><IconPlay /></div>
+                                </div>
+                                <div className={s.videoText}>
+                                    <span className={s.videoTitle}>Watch their story</span>
+                                    <span className={s.videoSub}>2 min · Tap to play</span>
+                                </div>
+                            </div>
                         )}
                     </div>
-                </div>
+                ) : (
+                    <div className={s.placeholder}>
+                        <div className={s.placeholderText}>Testimonial coming soon</div>
+                    </div>
+                )}
 
-                {/* Content */}
-                <div className={s.content}>
-                    {selectedStory ? (
-                        <>
-                            <div className={s.identityRow}>
-                                <div className={s.portrait}>
-                                    {selectedStory.portraitUrl ? (
-                                        <img src={selectedStory.portraitUrl} alt={selectedStory.names} className={s.portraitImg} />
-                                    ) : (
-                                        <div className={s.portraitInitials}>{getInitials(selectedStory.names)}</div>
-                                    )}
-                                </div>
-                                <div className={s.identityText}>
-                                    <div className={s.storyName}>{selectedStory.names}</div>
-                                    {selectedStory.purpose && (
-                                        <div className={s.storyPurpose}>{selectedStory.purpose}</div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className={s.quoteWrap}>
-                                <span className={s.qmark}>&ldquo;</span>
-                                <div className={s.quote}>
-                                    {selectedStory.quote ?? "Story available in full video…"}
-                                </div>
-                            </div>
-
-                            {selectedStory.wistiaId && (
-                                <div
-                                    role="button"
-                                    tabIndex={0}
-                                    className={s.videoCard}
-                                    onClick={() => setOverlayWistiaId(selectedStory.wistiaId!)}
-                                    onKeyDown={(e) => e.key === "Enter" && setOverlayWistiaId(selectedStory.wistiaId!)}
-                                >
-                                    <div className={s.videoThumbWrap}>
-                                        <img
-                                            src={`https://fast.wistia.net/embed/medias/${selectedStory.wistiaId}/swatch`}
-                                            alt="Video thumbnail"
-                                            className={s.videoThumb}
-                                        />
-                                        <div className={s.playOverlay}><IconPlay /></div>
-                                    </div>
-                                    <div className={s.videoText}>
-                                        <span className={s.videoTitle}>Watch their story</span>
-                                        <span className={s.videoSub}>2 min · Tap to play</span>
-                                    </div>
-                                </div>
+                {/* Side cards — other neighbors */}
+                {sideStories.length > 0 && (
+                    <div className={s.sideRow}>
+                        <div className={s.sideHeader}>
+                            <span className={s.sideEyebrow}>More neighbors</span>
+                            {overflowCount > 0 && (
+                                <span className={s.sideOverflow}>+{overflowCount} more</span>
                             )}
-                        </>
-                    ) : (
-                        <div className={s.placeholder}>
-                            <div className={s.placeholderText}>Testimonial coming soon</div>
                         </div>
-                    )}
-                </div>
+                        <div className={s.sideCards} data-count={sideStories.length}>
+                            {sideStories.map((story) => (
+                                <button
+                                    key={story._id}
+                                    className={s.sideCard}
+                                    onClick={() => promoteStory(story)}
+                                >
+                                    <div className={s.sidePortrait}>
+                                        {story.portraitUrl ? (
+                                            <img src={story.portraitUrl} alt={story.names} className={s.portraitImg} />
+                                        ) : (
+                                            <div className={s.portraitInitials}>{getInitials(story.names)}</div>
+                                        )}
+                                    </div>
+                                    <div className={s.sideName}>{story.names}</div>
+                                    {story.purpose && <div className={s.sidePurpose}>{story.purpose}</div>}
+                                    {story.quote && (
+                                        <div className={s.sideQuote}>
+                                            &ldquo;{story.quote}&rdquo;
+                                        </div>
+                                    )}
+                                    {story.wistiaId && (
+                                        <div className={s.sidePlay}>
+                                            <IconPlay />
+                                            <span>2 min</span>
+                                        </div>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 <span className={s.tagline}>We build for you.</span>
             </div>

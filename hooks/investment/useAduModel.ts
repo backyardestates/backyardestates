@@ -117,11 +117,41 @@ export function useAduModel({
         return median(rents);
     }, [rentals]);
 
+    // ── Zillow rent for the customer's main house, via HasData ──
+    // Source of truth for the house's rentMonthly (and therefore its cashflow).
+    // Falls back to the median-scaled estimate when Zillow returns nothing.
+    const [zillowRentEstimate, setZillowRentEstimate] = useState<number | null>(null);
+    const propertyAddress = property?.formattedAddress;
+
+    useEffect(() => {
+        if (!propertyAddress) {
+            setZillowRentEstimate(null);
+            return;
+        }
+        let cancelled = false;
+        fetch(`/api/hasdata/zillow-rent?address=${encodeURIComponent(propertyAddress)}`)
+            .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+            .then((data) => {
+                if (cancelled) return;
+                const v = data?.rentZestimate;
+                setZillowRentEstimate(typeof v === "number" && v > 0 ? v : null);
+            })
+            .catch(() => {
+                if (!cancelled) setZillowRentEstimate(null);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [propertyAddress]);
+
     const houseRentEstimate = useMemo(() => {
+        // Prefer Zillow's rentZestimate for the main house.
+        if (zillowRentEstimate && zillowRentEstimate > 0) return zillowRentEstimate;
+        // Fall back to the median-scaled calculation when Zillow is unavailable.
         if (!rentalMedian || !subjectSqft || !selectedFloorplan?.sqft) return undefined;
         const ratio = clamp(subjectSqft / selectedFloorplan.sqft, 1.2, 2.2);
         return rentalMedian * ratio;
-    }, [rentalMedian, subjectSqft, selectedFloorplan?.sqft]);
+    }, [zillowRentEstimate, rentalMedian, subjectSqft, selectedFloorplan?.sqft]);
 
     const scenarios = useMemo<Scenario[]>(
         () =>

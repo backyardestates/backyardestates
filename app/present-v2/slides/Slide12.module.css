@@ -1,6 +1,10 @@
-/* Slide 12 — Tax Benefits · dark editorial */
+/* Slide 12 — Tax Topics for your CPA · dark editorial */
 
 .slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
   position: relative;
   display: grid;
   grid-template-rows: auto 1fr auto;
@@ -8,11 +12,12 @@
   background: radial-gradient(ellipse at 80% 0%, var(--p-teal-deep) 0%, var(--p-dark) 60%, var(--p-dark-2) 100%);
   font-family: var(--p-font);
   overflow: hidden;
-  padding: 90px 56px 28px;
-  gap: 22px;
+  padding: 96px 72px 40px;
+  gap: 28px;
   color: var(--p-cream);
 }
 
+/* ── HEADLINE ──────────────────────────────────────────────── */
 .headRow {
   display: flex;
   align-items: flex-end;
@@ -24,209 +29,146 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-width: 70%;
 }
 
-.headSubhead {
-  font-size: var(--p-text-sm);
-  color: rgba(247,245,240,0.50);
-  letter-spacing: 0.04em;
-}
-
-.headChip {
+.headEyebrow {
   font-size: var(--p-text-micro);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--p-gold-bright);
-  background: var(--p-gold-bg);
-  border: 1px solid var(--p-gold-border);
-  border-radius: var(--p-radius-pill);
-  padding: 8px 18px;
-  font-weight: var(--p-semi);
-}
-
-/* Body — 2 columns */
-.body {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 36px;
-  min-height: 0;
-  align-items: stretch;
-}
-
-/* LEFT — write-offs */
-.leftCol {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.leftEyebrow {
-  font-size: var(--p-text-micro);
-  letter-spacing: 0.22em;
+  letter-spacing: var(--p-track-widest);
   text-transform: uppercase;
   color: var(--p-gold);
-  font-weight: var(--p-semi);
+  font-weight: var(--p-bold);
 }
 
-.leftTitle {
+.headTitle {
   font-family: var(--p-font);
   font-size: var(--p-text-2xl);
   font-weight: var(--p-light);
   color: var(--p-cream);
   letter-spacing: var(--p-track-tight);
-  line-height: 1.05;
+  line-height: 1;
+  margin: 0;
 }
 
-.leftTitle em {
+.headTitle em {
   font-family: var(--p-font-display);
   font-style: italic;
   font-weight: 400;
   color: var(--p-gold-bright);
 }
 
-.pillCloud {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.writeOff {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: var(--p-text-xs);
-  color: var(--p-cream);
-  background: rgba(184,149,74,0.08);
-  border: 1px solid var(--p-border-gold);
-  border-radius: 6px;
-  padding: 7px 14px;
-  letter-spacing: 0.02em;
-  line-height: 1;
-}
-
-.writeOff::before {
-  content: "✓";
-  color: var(--p-gold);
-  font-weight: var(--p-bold);
-}
-
-/* RIGHT — benefit blocks */
-.rightCol {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  justify-content: center;
-}
-
-.benefitBlock {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 22px;
-  padding: 22px 26px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%);
-  border: 1px solid var(--p-border-dark);
-  border-radius: var(--p-radius-lg);
-  box-shadow: var(--p-shadow-md);
-  transition: transform 0.18s ease;
-}
-
-.benefitBlock:hover {
-  transform: translateY(-2px);
-  border-color: var(--p-gold-border);
-}
-
-.benefitIcon {
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
-  background: linear-gradient(180deg, var(--p-gold-bg) 0%, rgba(184,149,74,0.04) 100%);
-  border: 1px solid var(--p-gold-border);
-  border-radius: var(--p-radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--p-gold-bright);
-}
-
-.benefitIcon svg {
-  width: 28px;
-  height: 28px;
-}
-
-.benefitContent {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-
-.benefitEyebrow {
-  font-size: var(--p-text-micro);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--p-gold-soft);
-  font-weight: var(--p-semi);
-}
-
-.benefitTitle {
-  font-family: var(--p-font);
-  font-size: var(--p-text-lg);
-  font-weight: var(--p-semi);
-  color: var(--p-cream);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-}
-
-.benefitDesc {
-  font-size: var(--p-text-xs);
-  color: rgba(247,245,240,0.62);
-  line-height: 1.45;
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: rgba(247, 245, 240, 0.62);
+  letter-spacing: var(--p-track-wide);
   margin-top: 2px;
 }
 
-.benefitNumeric {
+.headChip {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold-bright);
+  background: var(--p-gold-bg);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  padding: 10px 20px;
+  font-weight: var(--p-bold);
+  white-space: nowrap;
+}
+
+/* ── WRITE-OFF GRID — 4 × 3 (11 items + 1 CPA closer) ─────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 18px;
+  min-height: 0;
+}
+
+.card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  flex-shrink: 0;
+  gap: 8px;
+  padding: 22px 22px 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 100%);
+  border: 1px solid var(--p-border-dark);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  overflow: hidden;
 }
 
-.benefitStat {
-  font-family: var(--p-font);
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--p-gold) 0%, transparent 100%);
+  opacity: 0.75;
+}
+
+.cardName {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
   font-size: var(--p-text-md);
-  font-weight: var(--p-light);
+  color: var(--p-cream);
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  margin: 4px 0 0;
+}
+
+.cardNote {
+  font-size: var(--p-text-xs);
+  color: rgba(247, 245, 240, 0.62);
+  font-weight: var(--p-medium);
+  line-height: 1.45;
+  letter-spacing: var(--p-track-wide);
+  margin: 0;
+  margin-top: auto;
+}
+
+/* Closer card — gold-tinted to mark the "talk to your CPA" wrap-up */
+.cardClose {
+  background: linear-gradient(180deg, rgba(184, 149, 74, 0.18) 0%, rgba(184, 149, 74, 0.06) 100%);
+  border: 1px solid var(--p-gold-border);
+  box-shadow: var(--p-shadow-md), 0 0 0 1px rgba(184, 149, 74, 0.12) inset;
+}
+
+.cardClose::before {
+  background: linear-gradient(90deg, var(--p-gold) 0%, var(--p-gold-bright) 100%);
+  opacity: 1;
+  height: 3px;
+}
+
+.cardClose .cardName {
   color: var(--p-gold-bright);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--p-track-tight);
-  line-height: 1;
 }
 
-.benefitStatSub {
-  font-size: var(--p-text-micro);
-  color: rgba(247,245,240,0.42);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-weight: var(--p-semi);
+.cardClose .cardNote {
+  color: rgba(247, 245, 240, 0.75);
 }
 
-/* FOOTER */
+/* ── FOOTER ────────────────────────────────────────────────── */
 .footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 14px;
-  border-top: 1px solid rgba(184,149,74,0.18);
+  padding-top: 20px;
+  border-top: 1px solid rgba(184, 149, 74, 0.18);
   gap: 24px;
 }
 
 .disclaimer {
   font-size: var(--p-text-micro);
-  color: rgba(247,245,240,0.42);
+  color: rgba(247, 245, 240, 0.55);
   font-style: italic;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--p-track-wide);
+  line-height: 1.5;
+  max-width: 70%;
 }
 
 .tagline {

@@ -1,78 +1,31 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { CITY_TIMELINES } from "@/lib/config/cityTimelines";
 import s from "./Slide7.module.css";
 
-function fmt$(n: number) {
-    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+/* ── helpers ── */
+
+// Parse "25 days" / "6 months" / "6-12 months" / "1,202 days" / "Varies" → days, or null
+function parseDays(raw: string): number | null {
+    if (!raw) return null;
+    const v = raw.replace(/,/g, "").toLowerCase().trim();
+    if (v.includes("varies") || v.includes("not tracked")) return null;
+    const dayMatch = v.match(/(\d+(?:\.\d+)?)\s*days?/);
+    if (dayMatch) return Math.round(parseFloat(dayMatch[1]));
+    const monthRange = v.match(/(\d+)\s*-\s*(\d+)\s*months?/);
+    if (monthRange) return Math.round((parseInt(monthRange[1]) + parseInt(monthRange[2])) / 2 * 30);
+    const monthMatch = v.match(/(\d+)\s*months?/);
+    if (monthMatch) return parseInt(monthMatch[1]) * 30;
+    return null;
 }
 
-function useCountUp(target: number, active: boolean, delay = 0, duration = 1400) {
-    const [value, setValue] = useState(0);
-    const rafRef = useRef<number | null>(null);
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    useEffect(() => {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        if (timerRef.current) clearTimeout(timerRef.current);
-        if (!active) { setValue(0); return; }
-        timerRef.current = setTimeout(() => {
-            const start = performance.now();
-            const tick = (now: number) => {
-                const t = Math.min((now - start) / duration, 1);
-                setValue(Math.round((1 - Math.pow(1 - t, 3)) * target));
-                if (t < 1) rafRef.current = requestAnimationFrame(tick);
-            };
-            rafRef.current = requestAnimationFrame(tick);
-        }, delay);
-        return () => {
-            if (rafRef.current) cancelAnimationFrame(rafRef.current);
-            if (timerRef.current) clearTimeout(timerRef.current);
-        };
-    }, [target, active, delay, duration]);
-    return value;
+function daysToMonths(d: number): string {
+    const m = d / 30;
+    const rounded = Math.round(m * 2) / 2;
+    return rounded.toString();
 }
-
-function AnimDollar({ n, active, delay = 0 }: { n: number; active: boolean; delay?: number }) {
-    const v = useCountUp(Math.abs(n), active, delay);
-    return <>{fmt$(v)}</>;
-}
-
-function toRoman(n: number): string {
-    const map: [number, string][] = [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]];
-    let result = "";
-    for (const [val, sym] of map) { while (n >= val) { result += sym; n -= val; } }
-    return result;
-}
-
-const STEPS = [
-    { title: "Sign & Deposit", desc: "DocuSign sent by tomorrow" },
-    { title: "Site Visit", desc: "On-site within one week" },
-    { title: "Floor Plan Review", desc: "Custom design, your input" },
-    { title: "Permits & Plans", desc: "We handle everything" },
-    { title: "Build & Keys", desc: "Weekly updates · BuilderTrend" },
-];
-
-const SHORT_LABELS: Record<string, string> = {
-    signing: "Signing", sub1: "Submittal 1", sub2: "Submittal 2",
-    demo: "Demo", rebar: "Rebar", framing: "Framing",
-    rough_mep: "Rough MEP", fin_start: "Finishes", fin_done: "Fin · Done", final: "Final",
-};
-
-const PHASE_COLORS: Record<string, string> = {
-    signing: "#B8954A",
-    sub1: "#4A90A4",
-    sub2: "#4A90A4",
-    demo: "#7B5EA7",
-    rebar: "#E07060",
-    framing: "#7B5EA7",
-    rough_mep: "#4A7B5E",
-    fin_start: "#9FD9B8",
-    fin_done: "#9FD9B8",
-    final: "#E8C57E",
-    drywall: "#4A7B5E",
-    other: "#666",
-};
 
 function lastNameFromFull(full?: string) {
     if (!full) return "";
@@ -85,29 +38,90 @@ function cityFromAddress(addr: string) {
     return parts.length >= 2 ? parts[parts.length - 2].trim() : addr;
 }
 
+// Placeholder city values when our database has no real number for this address yet.
+const INDUSTRY_AVG = {
+    plans:      "3–6 months",
+    permitting: "6–12 months",
+    build:      "6–12 months",
+};
+
+function cityCellValue(cityVal: string, fallback: string): string {
+    const v = cityVal.toLowerCase();
+    if (v.includes("varies") || v.includes("not tracked")) return fallback;
+    return cityVal;
+}
+
 export function Slide7_HowItWorks() {
-    const { paymentSchedules, comparedUnitIds, floorplans, customerName, propertyAddress, currentSlide } = usePresentationStore();
-    const active = currentSlide === 7;
-
-    const comparedUnits = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
-    const displayUnits = comparedUnits.length > 0 ? comparedUnits : floorplans.slice(0, 1);
-
-    const [activeUnitTab, setActiveUnitTab] = useState(0);
-    const activeUnitId = comparedUnitIds[activeUnitTab] ?? comparedUnitIds[0] ?? displayUnits[0]?._id ?? "";
-
-    const schedule = paymentSchedules[`adu_${activeUnitId}`] ?? paymentSchedules[activeUnitId] ?? [];
-    const milestones = schedule.slice(0, 10);
-    const totalAmt = schedule.reduce((sum, m) => sum + m.amount, 0);
-
-    const activeUnit = displayUnits[activeUnitTab] ?? displayUnits[0];
+    const { customerName, propertyAddress } = usePresentationStore();
     const lastName = lastNameFromFull(customerName);
-    const city = propertyAddress ? cityFromAddress(propertyAddress) : "—";
+    const cityLabel = propertyAddress ? cityFromAddress(propertyAddress) : "—";
+
+    // Match the address to a city in CITY_TIMELINES; else fall back to default placeholder.
+    const matchedCity = propertyAddress
+        ? Object.keys(CITY_TIMELINES).find(
+            (c) => c !== "default" && propertyAddress.toLowerCase().includes(c.toLowerCase())
+        )
+        : undefined;
+
+    const timeline = CITY_TIMELINES[matchedCity ?? "default"];
+
+    const beDesignDays = parseDays(timeline.plans.be)      ?? 25;
+    const bePermitDays = parseDays(timeline.permitting.be) ?? 130;
+    const beBuildDays  = parseDays(timeline.build.be)      ?? 40;
+    const totalDays    = beDesignDays + bePermitDays + beBuildDays;
+    const totalMonths  = daysToMonths(totalDays);
+
+    // 6 rich stations — replaces both the slim timeline + the standalone "what we handle" steps.
+    const STATIONS = [
+        {
+            num: "1",
+            title: "Sign & Deposit",
+            day: "Day 1",
+            desc: "You sign — we lock your build slot. DocuSign sent by tomorrow.",
+        },
+        {
+            num: "2",
+            title: "Site Visit",
+            day: "Within 1 week",
+            desc: "Our team measures, scans, and verifies feasibility on-site.",
+        },
+        {
+            num: "3",
+            title: "Floor Plan Review",
+            day: `~Day ${beDesignDays}`,
+            desc: "Custom design — we iterate until you approve every detail. Plans submitted to city.",
+        },
+        {
+            num: "4",
+            title: "Permits & Plans",
+            day: `~Day ${beDesignDays + bePermitDays}`,
+            desc: "We submit, follow up, correct, pull. Every department — you hear from us, not the city.",
+        },
+        {
+            num: "5",
+            title: "Construction",
+            day: "6–12 weeks",
+            desc: "Break ground, frame, finish. Weekly photo updates via BuilderTrend.",
+        },
+        {
+            num: "6",
+            title: "Move-in",
+            day: `~Day ${totalDays}`,
+            desc: "Final walkthrough — keys handed over. You're home.",
+        },
+    ];
+
+    const COMPARISON_COLS = [
+        { label: "Plans & Design", be: timeline.plans.be,      city: cityCellValue(timeline.plans.city,      INDUSTRY_AVG.plans) },
+        { label: "Permits",        be: timeline.permitting.be, city: cityCellValue(timeline.permitting.city, INDUSTRY_AVG.permitting) },
+        { label: "Construction",   be: timeline.build.be,      city: cityCellValue(timeline.build.city,      INDUSTRY_AVG.build) },
+    ];
 
     return (
         <div className={s.slide}>
             {/* Running header */}
-            <div className="running-header rh-dark">
-                <span className="running-header-left">{lastName} · {city}</span>
+            <div className="running-header rh-light">
+                <span className="running-header-left">{lastName} · {cityLabel}</span>
                 <span className="running-header-center">How It Works</span>
                 <span className="running-header-right">
                     <span className="running-header-num">07</span> / 13
@@ -117,87 +131,79 @@ export function Slide7_HowItWorks() {
             {/* Headline */}
             <div className={s.headRow}>
                 <div className={s.headLeft}>
-                    <h2 className="section-title on-dark">
-                        What happens <em>after you say yes.</em>
+                    <span className={s.headEyebrow}>What happens after you say yes</span>
+                    <h2 className={s.headTitle}>
+                        From here, it's <em>our job.</em>
                     </h2>
-                    <span className={s.headSubhead}>Sign · plan · permit · build — we handle every department</span>
                 </div>
             </div>
 
-            {/* Process steps */}
-            <div className={s.steps}>
-                {STEPS.map((step, i) => (
-                    <div key={step.title} className={s.stepCard}>
-                        <div className={s.stepHead}>
-                            <span className={s.stepNum}>{toRoman(i + 1)}</span>
-                            <span className={s.stepBadge}>Step</span>
+            {/* Rich timeline strip — 6 stations carrying the full process narrative */}
+            <div className={s.timeline}>
+                {STATIONS.map((st, i) => (
+                    <React.Fragment key={st.title}>
+                        <div className={s.station}>
+                            <div className={s.stationDot}>
+                                <span className={s.stationNum}>{st.num}</span>
+                            </div>
+                            <div className={s.stationTitle}>{st.title}</div>
+                            <div className={s.stationDayChip}>{st.day}</div>
+                            <div className={s.stationDesc}>{st.desc}</div>
                         </div>
-                        <div className={s.stepTitle}>{step.title}</div>
-                        <div className={s.stepDesc}>{step.desc}</div>
-                    </div>
+                        {i < STATIONS.length - 1 && (
+                            <div className={s.stationConnector} aria-hidden="true">
+                                <div className={s.stationConnectorLine} />
+                                <div className={s.stationConnectorArrow}>›</div>
+                            </div>
+                        )}
+                    </React.Fragment>
                 ))}
             </div>
 
-            {/* Body: callout + schedule */}
-            <div className={s.body}>
-                <div className={s.callout}>
-                    <div className={s.calloutText}>You talk to us. We talk to <em>everyone else.</em></div>
+            {/* Comparison panel — header now carries the hero BE total alongside the phase title */}
+            <div className={s.compPanel}>
+                <div className={s.compHead}>
+                    <div className={s.compHeadTotal}>
+                        <span className={s.compHeadTotalLabel}>Signature → Move-in</span>
+                        <div className={s.compHeadTotalValueRow}>
+                            <span className={s.compHeadTotalValue}>~{totalMonths}</span>
+                            <span className={s.compHeadTotalUnit}>months</span>
+                        </div>
+                        <span className={s.compHeadTotalNote}>Total project, start to keys</span>
+                    </div>
+                    <div className={s.compHeadLeft}>
+                        <span className={s.compEyebrow}>Phase by phase</span>
+                        <h3 className={s.compTitle}>
+                            Faster <em>at every step.</em>
+                        </h3>
+                    </div>
                 </div>
 
-                <div className={s.scheduleSection}>
-                    <div className={s.scheduleTopRow}>
-                        <div className={s.scheduleHead}>
-                            <span className={s.scheduleSub}>Payment Schedule</span>
-                            <h3 className={s.scheduleTitle}>Nothing due until <em>each milestone is complete.</em></h3>
-                        </div>
-                        {displayUnits.length > 1 && (
-                            <div className={s.tabs}>
-                                {displayUnits.map((fp, idx) => (
-                                    <button
-                                        key={fp._id}
-                                        onClick={() => setActiveUnitTab(idx)}
-                                        className={`${s.tab} ${idx === activeUnitTab ? s.tabActive : s.tabInactive}`}
-                                    >
-                                        {fp.name}
-                                    </button>
-                                ))}
+                <div className={s.compCols}>
+                    {COMPARISON_COLS.map((col) => (
+                        <div key={col.label} className={s.compCol}>
+                            <span className={s.compColLabel}>{col.label}</span>
+                            <div className={s.compChipsStack}>
+                                <div className={s.compCity}>
+                                    <span className={s.compChipKicker}>City average</span>
+                                    <span className={s.compChipValue}>{col.city}</span>
+                                </div>
+                                <div className={s.compBE}>
+                                    <span className={s.compChipKicker}>Backyard Estates</span>
+                                    <span className={s.compChipValue}>{col.be}</span>
+                                </div>
                             </div>
-                        )}
-                    </div>
-
-                    {schedule.length > 0 ? (
-                        <div className={s.milestoneGrid}>
-                            {milestones.map((m, i) => (
-                                <div
-                                    key={m.label + i}
-                                    className={s.milestoneCard}
-                                    style={{ ["--phase-color" as string]: PHASE_COLORS[m.phase] ?? PHASE_COLORS.other }}
-                                >
-                                    <div className={s.milestoneNum}>{toRoman(i + 1)}</div>
-                                    <div className={s.milestoneLabel}>{SHORT_LABELS[m.phase] ?? m.label}</div>
-                                    <div className={s.milestoneAmt}>
-                                        <AnimDollar n={m.amount} active={active} delay={i * 60} />
-                                    </div>
-                                </div>
-                            ))}
-                            {activeUnit && (
-                                <div className={s.totalCard}>
-                                    <div className={s.totalLabel}>Total Contract</div>
-                                    <div className={s.totalAmt}>
-                                        {totalAmt > 0 ? fmt$(totalAmt) : "—"}
-                                    </div>
-                                </div>
-                            )}
                         </div>
-                    ) : (
-                        <div className={s.emptySchedule}>Payment schedule will appear after the admin configures this plan.</div>
-                    )}
-
-                    <div className={s.footerNote}>
-                        <span>Financing arranged before build starts · Nothing due until each milestone is complete</span>
-                        <span className={s.footerTagline}>We build for you.</span>
-                    </div>
+                    ))}
                 </div>
+            </div>
+
+            {/* Closing footer */}
+            <div className={s.footer}>
+                <span className={s.footerLeft}>
+                    Sign this week · On-site within 7 days · Move-in ready in ~{totalMonths} months
+                </span>
+                <span className={s.footerRight}>We build for you.</span>
             </div>
         </div>
     );

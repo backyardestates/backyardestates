@@ -1,14 +1,18 @@
 /* Slide 10 — Rental Analysis · dark editorial */
 
 .slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
   position: relative;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   height: 100%;
   background: radial-gradient(ellipse at 70% 100%, var(--p-teal-deep) 0%, var(--p-dark) 60%, var(--p-dark-2) 100%);
   overflow: hidden;
-  padding: 90px 56px 28px;
-  gap: 22px;
+  padding: 96px 64px 40px;
+  gap: 28px;
   color: var(--p-cream);
   font-family: var(--p-font);
 }
@@ -61,7 +65,7 @@
 /* Rent hero grid */
 .rentHeroGrid {
   display: grid;
-  gap: 22px;
+  gap: 26px;
 }
 
 .rentHeroCard {
@@ -69,7 +73,7 @@
   background: linear-gradient(180deg, rgba(184,149,74,0.10) 0%, rgba(255,255,255,0.02) 100%), var(--p-teal-ink);
   border: 1px solid var(--p-gold-border);
   border-radius: var(--p-radius-lg);
-  padding: 30px 36px 26px;
+  padding: 34px 40px 30px;
   display: flex;
   flex-direction: column;
   box-shadow: var(--p-shadow-lg);
@@ -112,7 +116,7 @@
 
 .rentVal {
   font-family: var(--p-font);
-  font-size: var(--p-text-hero);
+  font-size: 84px;
   font-weight: var(--p-light);
   color: var(--p-cream);
   font-variant-numeric: tabular-nums;
@@ -129,19 +133,19 @@
 }
 
 .rentSub {
-  font-size: var(--p-text-micro);
-  letter-spacing: 0.22em;
+  font-size: var(--p-text-sm);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(247,245,240,0.45);
+  color: rgba(247,245,240,0.60);
   font-weight: var(--p-semi);
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 /* Comps section */
 .compsSection {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
   min-height: 0;
 }
 
@@ -177,16 +181,65 @@
 }
 
 .compsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+/* When showing curated rentals with images, slightly wider cards. */
+.compsGridCurated {
+  /* layout inherited — width difference handled via .compCardCurated */
 }
 
 .compCard {
+  width: 320px;
   background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
   border: 1px solid var(--p-border-dark);
   border-radius: var(--p-radius-md);
-  padding: 16px 20px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compCardCurated {
+  width: 340px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.compImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--p-dark-3);
+  overflow: hidden;
+}
+
+.compImageImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.compImagePlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--p-teal-deep) 0%, var(--p-dark-3) 100%);
+  color: rgba(247,245,240,0.32);
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-size: var(--p-text-sm);
+  letter-spacing: 0.04em;
+}
+
+.compBody {
+  padding: 16px 18px 18px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -226,7 +279,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 14px;
+  padding-top: 22px;
   border-top: 1px solid rgba(184,149,74,0.18);
   gap: 24px;
 }

@@ -1,28 +1,34 @@
 /* Slide 9 — ADU vs House · light editorial comparison */
 
 .slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
   position: relative;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   background: var(--p-paper);
   font-family: var(--p-font);
   overflow: hidden;
-  padding: 90px 56px 28px;
-  gap: 22px;
+  padding: 90px 64px 36px;
+  gap: 24px;
 }
 
 .headRow {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: center;
   gap: 24px;
 }
 
 .headLeft {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
+  text-align: center;
 }
 
 .headSubhead {
@@ -31,203 +37,174 @@
   letter-spacing: 0.04em;
 }
 
-/* Anchor banner — the dramatic 10-year advantage */
-.anchor {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  padding: 26px 36px;
-  background: linear-gradient(90deg, var(--p-teal-ink) 0%, var(--p-teal-deep) 100%);
-  border: 1px solid var(--p-gold-border);
-  border-radius: var(--p-radius-lg);
-  box-shadow: var(--p-shadow-md);
-  gap: 32px;
-  color: var(--p-cream);
-}
-
-.anchorLeft {
+/* ── TABLE ROW — table on the left, tax-detail bullets on the right ───── */
+.tableRow {
+  align-self: center;
+  width: 100%;
+  max-width: 1200px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 28px;
 }
 
-.anchorEyebrow {
-  font-size: var(--p-text-micro);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--p-gold-soft);
-  font-weight: var(--p-semi);
-}
-
-.anchorLabel {
-  font-family: var(--p-font);
-  font-size: var(--p-text-lg);
-  font-weight: var(--p-light);
-  color: var(--p-cream);
-  line-height: 1;
-  letter-spacing: var(--p-track-tight);
-}
-
-.anchorBlurb {
-  font-family: var(--p-font-display);
-  font-style: italic;
-  font-weight: 300;
-  font-size: var(--p-text-base);
-  color: rgba(247,245,240,0.78);
-  line-height: 1.3;
-  letter-spacing: -0.005em;
-  max-width: 540px;
-}
-
-.anchorValue {
-  font-family: var(--p-font);
-  font-size: var(--p-text-2xl);
-  font-weight: var(--p-light);
-  color: var(--p-positive-bright);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--p-track-tight);
-  line-height: 1;
-}
-
-/* Table card */
+/* ── COMPARISON TABLE — content-sized via subgrid ─────────── */
 .tableCard {
-  display: flex;
-  flex-direction: column;
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: minmax(293px, auto) minmax(200px, auto) minmax(200px, auto);
   background: var(--p-white);
-  border: 1px solid var(--p-border-light);
+  border: 1px solid rgba(20, 48, 47, 0.12);
   border-radius: var(--p-radius-lg);
   box-shadow: var(--p-shadow-md);
   overflow: hidden;
-  min-height: 0;
 }
 
-/* Table header */
+/* Header row */
 .thead {
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
   background: var(--p-teal-ink);
-  flex-shrink: 0;
 }
 
 .thLabel {
   font-size: var(--p-text-micro);
   color: var(--p-gold-soft);
-  font-weight: var(--p-semi);
-  padding: 18px 32px;
-  letter-spacing: 0.22em;
+  font-weight: var(--p-bold);
+  padding: 22px 32px;
+  letter-spacing: var(--p-track-widest);
   text-transform: uppercase;
 }
 
 .thCol {
   font-family: var(--p-font);
-  font-size: var(--p-text-md);
-  font-weight: var(--p-medium);
-  padding: 18px 24px;
+  font-size: var(--p-text-sm);
+  font-weight: var(--p-bold);
+  padding: 22px 24px;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  letter-spacing: var(--p-track-wide);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
 }
 
-.thHouse { color: rgba(247,245,240,0.72); }
+.thHouse {
+  color: rgba(247, 245, 240, 0.65);
+}
 
 .thAdu {
   color: var(--p-gold-bright);
-  font-family: var(--p-font-display);
-  font-style: italic;
-  font-weight: 400;
   background: linear-gradient(180deg, var(--p-teal-deep) 0%, var(--p-teal-ink) 100%);
 }
 
-/* Table body */
+/* Tbody passes through so rows participate in the table's grid */
 .tbody {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+  display: contents;
 }
 
 .row {
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr;
-  flex: 1;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
   align-items: center;
+  padding: 18px 0;
   border-bottom: 1px solid var(--p-border-light);
-  min-height: 0;
 }
 
-.row:nth-child(even) { background: rgba(20,48,47,0.025); }
+.row:nth-child(even) {
+  background: rgba(20, 48, 47, 0.025);
+}
 
+/* Summary rows — same sizes as regular rows, just stronger emphasis */
 .rowSummary {
-  background: rgba(184,149,74,0.06) !important;
+  background: rgba(184, 149, 74, 0.08) !important;
   border-top: 1px solid var(--p-gold-border);
   border-bottom: 1px solid var(--p-gold-border);
 }
 
+/* Labels — uniform size + font everywhere */
 .rowLabel {
   font-size: var(--p-text-sm);
   color: var(--p-ink-muted);
-  padding: 0 32px;
-  line-height: 1.4;
+  padding: 0 32px 0 32px;
+  line-height: 1.3;
   letter-spacing: 0.01em;
 }
 
 .rowSummary .rowLabel {
-  font-weight: var(--p-semi);
   color: var(--p-teal-ink);
+  font-weight: var(--p-bold);
 }
 
+/* Values — uniform size + font + alignment */
 .rowVal {
+  font-family: var(--p-font);
   font-size: var(--p-text-base);
   color: var(--p-teal-ink);
+  font-weight: var(--p-medium);
   text-align: center;
   font-variant-numeric: tabular-nums;
-  font-weight: var(--p-medium);
+  padding: 0 16px;
+}
+
+.rowSummary .rowVal {
+  font-weight: var(--p-bold);
 }
 
 .rowAdu {
-  background: rgba(45,95,95,0.04);
+  background: rgba(45, 95, 95, 0.04);
 }
 
-.rowPos { color: var(--p-positive); font-weight: var(--p-semi); }
-.rowNeg { color: var(--p-negative); font-weight: var(--p-semi); }
-.rowMuted { color: var(--p-ink-faint); }
+.rowPos {
+  color: var(--p-positive);
+  font-weight: var(--p-bold);
+}
 
-/* Cashflow hero row */
+.rowNeg {
+  color: var(--p-negative);
+  font-weight: var(--p-bold);
+}
+
+.rowMuted {
+  color: var(--p-ink-faint);
+}
+
+/* Cashflow row — same font family, one tier larger, color-coded */
 .rowCashflow {
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr;
-  background: var(--p-teal-ink);
-  flex: 0 0 96px;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
   align-items: center;
-  border-bottom: none;
-  color: var(--p-cream);
+  background: var(--p-teal-ink);
+  padding: 24px 0;
+  border-top: 2px solid var(--p-gold);
 }
 
 .rowCashflow .rowLabel {
+  font-size: var(--p-text-sm);
+  font-family: var(--p-font);
+  font-style: normal;
   color: var(--p-gold-bright);
-  font-weight: var(--p-semi);
-  font-family: var(--p-font-display);
-  font-style: italic;
-  font-size: var(--p-text-lg);
-  letter-spacing: -0.005em;
+  font-weight: var(--p-bold);
+  letter-spacing: 0.01em;
 }
 
 .rowCfVal {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   font-family: var(--p-font);
-  font-size: var(--p-text-2xl);
-  font-weight: var(--p-light);
+  font-size: var(--p-text-md);
+  font-weight: var(--p-medium);
   font-variant-numeric: tabular-nums;
-  letter-spacing: var(--p-track-tight);
+  letter-spacing: -0.005em;
+  padding: 0 16px;
 }
 
 .cfArrow {
-  font-size: var(--p-text-md);
+  font-size: var(--p-text-base);
   font-weight: var(--p-medium);
 }
 
@@ -237,7 +214,142 @@
 .cfValNeg { color: var(--p-negative-coral); }
 .cfValPos { color: var(--p-positive-bright); }
 
-/* Empty state */
+/* ── TAX-DETAIL BULLETS — sits to the right of the table ─── */
+.bulletsCol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.bulletsEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-bold);
+}
+
+.bulletsTitle {
+  font-family: var(--p-font);
+  font-weight: var(--p-light);
+  font-size: var(--p-text-xl);
+  color: var(--p-teal-ink);
+  line-height: 1.1;
+  letter-spacing: var(--p-track-tight);
+  margin: 0;
+}
+
+.bulletsTitle em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--p-gold);
+}
+
+.bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--p-white);
+  border: 1px solid rgba(20, 48, 47, 0.10);
+  border-radius: var(--p-radius-md);
+  box-shadow: var(--p-shadow-sm);
+}
+
+.bulletIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p-gold-bright) 0%, var(--p-gold-soft) 100%);
+  color: var(--p-teal-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: var(--p-bold);
+  flex-shrink: 0;
+  margin-top: 1px;
+  box-shadow: 0 1px 3px rgba(184, 149, 74, 0.30);
+}
+
+.bulletText {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-muted);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.bulletText strong {
+  color: var(--p-teal-ink);
+  font-weight: var(--p-bold);
+}
+
+/* ── 10-YEAR ADVANTAGE — anchored to bottom, matched width to tableRow ── */
+.anchor {
+  margin-top: auto;
+  align-self: center;
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 26px 36px;
+  background: linear-gradient(90deg, var(--p-teal-ink) 0%, var(--p-teal-deep) 100%);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  gap: 36px;
+  color: var(--p-cream);
+}
+
+.anchorLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.anchorEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-bold);
+}
+
+.anchorBlurb {
+  font-family: var(--p-font);
+  font-weight: var(--p-medium);
+  font-size: var(--p-text-md);
+  color: var(--p-cream);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+
+.anchorValue {
+  font-family: var(--p-font);
+  font-size: var(--p-text-3xl);
+  font-weight: var(--p-light);
+  color: var(--p-positive-bright);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+  line-height: 1;
+}
+
+/* ── EMPTY STATE ───────────────────────────────────────────── */
 .empty {
   flex: 1;
   display: flex;
@@ -250,13 +362,13 @@
   color: var(--p-ink-faint);
 }
 
-/* Footer */
+/* ── FOOTER ────────────────────────────────────────────────── */
 .footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px solid var(--p-border-light);
+  padding-top: 16px;
+  border-top: 1px solid rgba(20, 48, 47, 0.12);
   gap: 24px;
 }
 

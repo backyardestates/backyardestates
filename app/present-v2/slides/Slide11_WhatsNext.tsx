@@ -12,13 +12,6 @@ const NEXT_STEPS = [
     { title: "Break Ground", desc: "Permits pulled, financing arranged. We move dirt within 30 days of approval." },
 ];
 
-function toRoman(n: number): string {
-    const map: [number, string][] = [[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]];
-    let result = "";
-    for (const [val, sym] of map) { while (n >= val) { result += sym; n -= val; } }
-    return result;
-}
-
 function lastNameFromFull(full?: string) {
     if (!full) return "";
     const parts = full.trim().split(/\s+/);
@@ -48,61 +41,36 @@ export function Slide11_WhatsNext() {
                 </span>
             </div>
 
-            {/* HEADER */}
+            {/* HEADER — logo over headline, centered */}
             <div className={s.header}>
-                <div className={s.headerLeft}>
-                    <span className={s.wordmarkSub}>Backyard Estates</span>
-                    <span className={s.wordmark}>est. 2019 · California</span>
-                </div>
+                <img
+                    src="/android-chrome-512x512.png"
+                    alt="Backyard Estates"
+                    className={s.logo}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                />
                 <h1 className={s.headline}>
                     Ready to <em>move forward?</em>
                 </h1>
-                <div className={s.headerRight}>
-                    <span className={s.callLabel}>Talk to us</span>
-                    <span className={s.phone}>{REP_CONFIG.phone}</span>
-                </div>
             </div>
 
             <div className={s.divider} />
 
-            {/* NEXT STEPS GRID */}
+            {/* NEXT STEPS — linear row of 4 */}
             <div className={s.steps}>
                 {NEXT_STEPS.map((step, i) => (
                     <div key={step.title} className={s.stepCard}>
-                        <span className={s.stepNum}>{toRoman(i + 1)}</span>
-                        <div className={s.stepContent}>
-                            <span className={s.stepEyebrow}>Step {toRoman(i + 1)}</span>
-                            <div className={s.stepTitle}>{step.title}</div>
-                            <div className={s.stepDesc}>{step.desc}</div>
-                        </div>
+                        <span className={s.stepNum}>{i + 1}</span>
+                        <div className={s.stepTitle}>{step.title}</div>
+                        <div className={s.stepDesc}>{step.desc}</div>
                     </div>
                 ))}
-            </div>
-
-            {/* TIMELINE */}
-            <div className={s.timeline}>
-                <span className={s.timelineLabel}>Timeline · {city}</span>
-                <div className={s.timelinePhase}>
-                    <span className={s.timelinePhaseName}>Pre-construction</span>
-                    <span className={s.timelinePhaseDur}>2–4 weeks · Backyard Estates</span>
-                </div>
-                <span className={s.timelineArrow}>→</span>
-                <div className={s.timelinePhase}>
-                    <span className={s.timelinePhaseName}>Permitting</span>
-                    <span className={s.timelinePhaseDur}>3–5 months · city average</span>
-                </div>
-                <span className={s.timelineArrow}>→</span>
-                <div className={s.timelinePhase}>
-                    <span className={s.timelinePhaseName}>Construction</span>
-                    <span className={s.timelinePhaseDur}>4–6 months · Backyard Estates</span>
-                </div>
             </div>
 
             {/* FOOTER */}
             <div className={s.footer}>
                 <div className={s.footerLeft}>
-                    <span className={s.footerSmall}>Email · Website</span>
-                    <span className={s.footerVal}>{REP_CONFIG.email}</span>
+                    <span className={s.footerSmall}>Website</span>
                     <span className={s.footerVal}>{REP_CONFIG.website}</span>
                 </div>
                 <span className={s.footerCenter}>We build for you.</span>

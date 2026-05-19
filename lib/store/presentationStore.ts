@@ -31,6 +31,7 @@ export type SanityStory = {
     purpose?: string;
     wistiaId?: string;
     slug: { current: string };
+    featured?: boolean;
     portraitUrl?: string;
     images?: string[];
 };
@@ -44,6 +45,7 @@ export type SanityProperty = {
     bath?: number;
     location?: string;
     videoID?: string;
+    featured?: boolean;
     thumbnailUrl?: string;
     images?: string[];
     floorplanName?: string;
@@ -71,6 +73,23 @@ export type PresentationState = {
 
     // From Step 2
     comparedUnitIds: string[];
+
+    // From Step 7 — admin-curated order for the Completed Builds gallery (Slide 5).
+    // Empty = fall back to Sanity `featured` flag.
+    featuredPropertyIds: string[];
+
+    // From Step 8 — admin-curated order for the Customer Stories slide (Slide 6).
+    // Empty = fall back to Sanity `featured` flag.
+    featuredStoryIds: string[];
+
+    // From Step 9 — admin-curated rental comps to highlight on Slide 10.
+    // Each item is a RentalListing with an optional manually-pasted imageUrl.
+    // Empty = fall back to first N entries of rentalComps.
+    featuredRentals: FeaturedRental[];
+
+    // From Step 10 — custom slide order for the presenter. Each entry is an
+    // original slide number (1..SLIDE_COUNT). Empty = use natural 1..N order.
+    slideOrder: number[];
 
     // From buildScenarios()
     scenarios: Scenario[];
@@ -133,6 +152,21 @@ export type DiscountLineItem = {
     amount: number;
 };
 
+// ─── Featured rental (curated for Slide 10) ───────────────────────────────────
+
+export type FeaturedRental = {
+    formattedAddress?: string;
+    price?: number;
+    bedrooms?: number;
+    bathrooms?: number;
+    squareFootage?: number;
+    propertyType?: string;
+    listedDate?: string;
+    lastSeenDate?: string;
+    /** Manually pasted image URL (e.g. from Zillow). Optional. */
+    imageUrl?: string;
+};
+
 // ─── What the admin broadcasts (subset of state) ──────────────────────────────
 
 export type AdminBroadcast = {
@@ -142,6 +176,10 @@ export type AdminBroadcast = {
     propertyPhotoUrl: string | null;
     customerMotivation: CustomerMotivation;
     comparedUnitIds: string[];
+    featuredPropertyIds: string[];
+    featuredStoryIds: string[];
+    featuredRentals: FeaturedRental[];
+    slideOrder: number[];
     scenarios: Scenario[];
     rentalComps: RentalListing[];
     rentByUnitId: Record<string, number>;
@@ -163,6 +201,10 @@ const initialData = {
     propertyPhotoUrl: null,
     customerMotivation: null as CustomerMotivation,
     comparedUnitIds: [],
+    featuredPropertyIds: [],
+    featuredStoryIds: [],
+    featuredRentals: [],
+    slideOrder: [],
     scenarios: [],
     rentalComps: [],
     rentByUnitId: {},

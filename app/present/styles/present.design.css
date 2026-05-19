@@ -6,62 +6,69 @@
 
 :root {
   /* ── Palette (matched to printed proposal) ── */
-  --p-teal-dark:      #34555B;
-  --p-teal-ink:       #1F3A40;
-  --p-tan:            #B89A66;
-  --p-tan-deep:       #A78656;
-  --p-tan-soft:       rgba(184, 154, 102, 0.20);
-  --p-cream:          #F5EDDA;
-  --p-paper:          #FBF5E6;
-  --p-paper-2:        #EEE5CC;
-  --p-slate:          #93A8B0;
-  --p-slate-deep:     #7B939C;
-  --p-ink:            #1A2A2E;
-  --p-ink-soft:       #2F4448;
-  --p-ink-muted:      #5A6B6F;
-  --p-white:          #ffffff;
-  --p-border:         rgba(26, 42, 46, 0.12);
-  --p-border-strong:  rgba(26, 42, 46, 0.30);
-  --p-positive:       #2E7D5B;
-  --p-negative:       #B85440;
+  --p-teal-dark: #34555B;
+  --p-teal-ink: #1F3A40;
+  --p-tan: #B89A66;
+  --p-tan-deep: #A78656;
+  --p-tan-soft: rgba(184, 154, 102, 0.20);
+  --p-cream: #F5EDDA;
+  --p-paper: #FBF5E6;
+  --p-paper-2: #EEE5CC;
+  --p-slate: #93A8B0;
+  --p-slate-deep: #7B939C;
+  --p-ink: #1A2A2E;
+  --p-ink-soft: #2F4448;
+  --p-ink-muted: #5A6B6F;
+  --p-white: #ffffff;
+  --p-border: rgba(26, 42, 46, 0.12);
+  --p-border-strong: rgba(26, 42, 46, 0.30);
+  --p-positive: #2E7D5B;
+  --p-negative: #B85440;
 
   /* ── Typography ── */
-  --p-font:           var(--font-inter), 'Inter', -apple-system,
-                      BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --p-font-display:   var(--font-fraunces), 'Fraunces', 'Playfair Display',
-                      Georgia, serif;
+  --p-font: var(--font-inter), 'Inter', -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --p-font-display: var(--font-fraunces), 'Fraunces', 'Playfair Display',
+    Georgia, serif;
 
   /* ── Scale (16:9 full-screen presentation, readable at distance) ── */
-  --p-text-micro:     17px;
-  --p-text-xs:        20px;
-  --p-text-sm:        23px;
-  --p-text-base:      27px;
-  --p-text-md:        33px;
-  --p-text-lg:        41px;
-  --p-text-xl:        54px;
-  --p-text-2xl:       72px;
-  --p-text-hero:     99px;
+  --p-text-micro: 17px;
+  --p-text-xs: 20px;
+  --p-text-sm: 23px;
+  --p-text-base: 27px;
+  --p-text-md: 33px;
+  --p-text-lg: 41px;
+  --p-text-xl: 54px;
+  --p-text-2xl: 72px;
+  --p-text-hero: 99px;
 
   /* ── Spacing ── */
-  --p-pad-slide:      0;          /* slides bleed edge-to-edge */
-  --p-pad-band:       40px 64px;  /* banner padding */
-  --p-pad-body:       48px 72px;  /* body padding */
-  --p-gap-sm:         12px;
-  --p-gap-md:         24px;
-  --p-gap-lg:         40px;
+  --p-pad-slide: 0;
+  /* slides bleed edge-to-edge */
+  --p-pad-band: 40px 64px;
+  /* banner padding */
+  --p-pad-body: 48px 72px;
+  /* body padding */
+  --p-gap-sm: 12px;
+  --p-gap-md: 24px;
+  --p-gap-lg: 40px;
 
   /* ── Shapes ── */
-  --p-band-h:         108px;      /* dark teal banner height */
-  --p-band-h-sm:      72px;       /* tan secondary band */
-  --p-metadata-h:     56px;
-  --p-radius:         2px;        /* sharp corners — print style */
-  --p-rule:           2px solid var(--p-ink);
+  --p-band-h: 108px;
+  /* dark teal banner height */
+  --p-band-h-sm: 72px;
+  /* tan secondary band */
+  --p-metadata-h: 56px;
+  --p-radius: 2px;
+  /* sharp corners — print style */
+  --p-rule: 2px solid var(--p-ink);
 }
 
 /* ═══════════════════════════════════════
    GLOBAL — slide-level baseline
 ═══════════════════════════════════════ */
-html, body {
+html,
+body {
   font-family: var(--p-font);
   color: var(--p-ink);
   background: var(--p-teal-dark);

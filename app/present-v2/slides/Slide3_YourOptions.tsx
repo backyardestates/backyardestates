@@ -85,7 +85,7 @@ export function Slide3_YourOptions() {
         discountLinesByUnitId,
         currentSlide,
     } = usePresentationStore();
-    const active = currentSlide === 3;
+    const active = currentSlide === 4;
 
     const units = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
     const displayUnits = units.length > 0 ? units : floorplans.slice(0, 3);
@@ -122,7 +122,7 @@ export function Slide3_YourOptions() {
             }
             setLsDiscountLines(next);
         } catch { /* malformed */ }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [comparedKey]);
 
     const discountLines = Object.keys(lsDiscountLines).length > 0 ? lsDiscountLines : discountLinesByUnitId;
@@ -134,21 +134,11 @@ export function Slide3_YourOptions() {
     const showFallbackDiscount = !useNamedRows && anyDiscount;
 
     const colsClass = displayUnits.length === 1 ? s.cols1
-                    : displayUnits.length === 2 ? s.cols2
-                    : "";
+        : displayUnits.length === 2 ? s.cols2
+            : "";
 
     return (
         <div className={s.slide}>
-            {/* Running header */}
-            <div className="running-header rh-light">
-                <span className="running-header-left">
-                    {lastName ? `${lastName} · ` : ""}{city || "—"}
-                </span>
-                <span className="running-header-center">Your Options</span>
-                <span className="running-header-right">
-                    <span className="running-header-num">03</span> / 13
-                </span>
-            </div>
 
             {/* Headline row */}
             <div className={s.headRow}>
@@ -160,21 +150,6 @@ export function Slide3_YourOptions() {
                 </div>
             </div>
 
-            {/* Inclusions strip */}
-            <div className={s.inclusionsStrip}>
-                <div className={s.inclusionsLabel}>
-                    <span className={s.inclusionsLabelTitle}>Every plan includes</span>
-                    <span className={s.inclusionsLabelSub}>Five departments · one price</span>
-                </div>
-                {INCLUDED_COLS.map((col) => (
-                    <div key={col.label} className={s.inclusionCol}>
-                        <div className={s.inclusionColTitle}>{col.label}</div>
-                        {col.items.map((item) => (
-                            <div key={item} className={s.inclusionItem}>{item}</div>
-                        ))}
-                    </div>
-                ))}
-            </div>
 
             {/* Plan columns */}
             <div className={`${s.planColumns} ${colsClass}`}>
@@ -196,8 +171,11 @@ export function Slide3_YourOptions() {
                             : [];
 
                     return (
-                        <div key={fp._id} className={`${s.planCol} ${isFeatured ? s.featured : ""}`}>
-                            {isFeatured && <div className="rec-badge">Recommended</div>}
+                        <div
+                            key={fp._id}
+                            className={`${s.planCol}`}
+                            data-disc={unitDiscounts.length}
+                        >
 
                             {/* Plan header */}
                             <div className={s.planColHeader}>
@@ -209,7 +187,54 @@ export function Slide3_YourOptions() {
                                 </div>
                             </div>
 
-                            {/* Hero total — THE biggest thing on the slide */}
+                            {/* Middle: line-items, tags, then discounts. This block flexes
+                                so the total stays pinned to the bottom regardless of how
+                                many tags or discount rows render. */}
+                            <div className={s.planMiddle}>
+                                <div className={s.planBreakdown}>
+                                    <div className={s.breakdownRow}>
+                                        <span className={s.breakdownLabel}>Base unit</span>
+                                        <span className={s.breakdownVal}>
+                                            {base ? <AnimDollar n={base} active={active} delay={400 + i * 60} /> : "—"}
+                                        </span>
+                                    </div>
+                                    <div className={s.breakdownRow}>
+                                        <span className={s.breakdownLabel}>Pre-permit &amp; build</span>
+                                        <span className={`${s.breakdownVal} ${s.valIncluded}`}>Included</span>
+                                    </div>
+                                    {sw > 0 && (
+                                        <div className={s.breakdownRow}>
+                                            <span className={s.breakdownLabel}>Site work</span>
+                                            <span className={s.breakdownVal}>
+                                                <AnimDollar n={sw} active={active} delay={460 + i * 60} />
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {perUnitTags.length > 0 && (
+                                        <div className={s.tagRow}>
+                                            {perUnitTags.map((label, j) => (
+                                                <span key={j} className={s.siteTag}>{label}</span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {unitDiscounts.length > 0 && (
+                                    <div className={s.discounts}>
+                                        {unitDiscounts.map((d, j) => (
+                                            <div key={j} className={s.discountCallout}>
+                                                <span className={s.discountLabel}>{d.label}</span>
+                                                <span className={s.discountAmt}>
+                                                    −<AnimDollar n={d.amount} active={active} delay={600 + i * 60 + j * 40} />
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Total — pinned footer strip */}
                             <div className={s.heroTotal}>
                                 <div className={s.heroTotalEyebrow}>Total · After Discounts</div>
                                 <div className={s.heroTotalVal}>
@@ -217,50 +242,6 @@ export function Slide3_YourOptions() {
                                 </div>
                                 <div className={s.heroTotalSub}>Turnkey · nothing due until each milestone is completed</div>
                             </div>
-
-                            {/* Breakdown */}
-                            <div className={s.planBreakdown}>
-                                <div className={s.breakdownRow}>
-                                    <span className={s.breakdownLabel}>Base unit</span>
-                                    <span className={s.breakdownVal}>
-                                        {base ? <AnimDollar n={base} active={active} delay={400 + i * 60} /> : "—"}
-                                    </span>
-                                </div>
-                                <div className={s.breakdownRow}>
-                                    <span className={s.breakdownLabel}>Pre-permit &amp; build</span>
-                                    <span className={`${s.breakdownVal} ${s.valIncluded}`}>Included</span>
-                                </div>
-                                {sw > 0 && (
-                                    <div className={s.breakdownRow}>
-                                        <span className={s.breakdownLabel}>Site work</span>
-                                        <span className={s.breakdownVal}>
-                                            <AnimDollar n={sw} active={active} delay={460 + i * 60} />
-                                        </span>
-                                    </div>
-                                )}
-
-                                {perUnitTags.length > 0 && (
-                                    <div className={s.tagRow}>
-                                        {perUnitTags.map((label, j) => (
-                                            <span key={j} className={s.siteTag}>{label}</span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Discount callouts */}
-                            {unitDiscounts.length > 0 && (
-                                <div className={s.discounts}>
-                                    {unitDiscounts.map((d, j) => (
-                                        <div key={j} className={s.discountCallout}>
-                                            <span className={s.discountLabel}>{d.label}</span>
-                                            <span className={s.discountAmt}>
-                                                −<AnimDollar n={d.amount} active={active} delay={600 + i * 60 + j * 40} />
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
                         </div>
                     );
                 })}
@@ -269,7 +250,7 @@ export function Slide3_YourOptions() {
             {/* Footer */}
             <div className={s.footer}>
                 <span className={s.footerDisclaimer}>
-                    Offer valid 15 days · $10,000 water meter allowance if required · Nothing due until each milestone is completed.
+                    Offer valid 15 days
                 </span>
                 <span className={s.footerTagline}>We build for you.</span>
             </div>
