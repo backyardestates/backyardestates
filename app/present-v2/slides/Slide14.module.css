@@ -37,13 +37,14 @@
   letter-spacing: 0.04em;
 }
 
-/* ── TABLE ROW — schedule on the left, bullets on the right ───────── */
+/* ── TABLE ROW — schedule centered (bullets temporarily removed) ───── */
 .tableRow {
   align-self: center;
   width: 100%;
   max-width: 1200px;
   display: flex;
   align-items: flex-start;
+  justify-content: center;
   gap: 28px;
 }
 

@@ -170,40 +170,6 @@ export function Slide14_PaymentSchedule() {
                     </div>
                 </div>
 
-                {/* Bullets — to the right of the table */}
-                <div className={s.bulletsCol}>
-                    <span className={s.bulletsEyebrow}>How it works</span>
-                    <ul className={s.bullets}>
-                        <li className={s.bullet}>
-                            <span className={s.bulletIcon}>✓</span>
-                            <span className={s.bulletText}>
-                                <strong>Nothing due ahead of progress.</strong> Each payment is
-                                tied to a real milestone you can verify.
-                            </span>
-                        </li>
-                        <li className={s.bullet}>
-                            <span className={s.bulletIcon}>✓</span>
-                            <span className={s.bulletText}>
-                                <strong>First payment locked at $7,500.</strong> Full
-                                transparency from day one — no hidden setup fees.
-                            </span>
-                        </li>
-                        <li className={s.bullet}>
-                            <span className={s.bulletIcon}>✓</span>
-                            <span className={s.bulletText}>
-                                <strong>City-aligned cadence.</strong> Submittals and inspections
-                                trigger each release — we follow the city, not the calendar.
-                            </span>
-                        </li>
-                        <li className={s.bullet}>
-                            <span className={s.bulletIcon}>✓</span>
-                            <span className={s.bulletText}>
-                                <strong>Final payment after final inspection.</strong> You sign
-                                off at the end — not before.
-                            </span>
-                        </li>
-                    </ul>
-                </div>
             </div>
 
             {/* Closing anchor — locked total */}
