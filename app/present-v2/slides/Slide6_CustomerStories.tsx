@@ -110,7 +110,7 @@ export function Slide6_CustomerStories() {
                     <span className="running-header-left">{lastName} · {city}</span>
                     <span className="running-header-center">Customer Stories</span>
                     <span className="running-header-right">
-                        <span className="running-header-num">06</span> / 13
+                        <span className="running-header-num">06</span> / 14
                     </span>
                 </div>
 

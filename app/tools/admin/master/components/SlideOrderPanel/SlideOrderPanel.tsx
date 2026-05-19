@@ -6,20 +6,21 @@ import s from "./SlideOrderPanel.module.css";
 const SLIDE_TITLES: Record<number, string> = {
     1: "Cover",
     2: "Your Property",
-    3: "Your Options",
-    4: "What's Included",
+    3: "What's Included",
+    4: "Your Options",
     5: "Completed Builds",
     6: "Customer Stories",
     7: "How It Works",
     8: "ROI Comparison",
     9: "ADU vs House",
     10: "Rental Analysis",
-    11: "What's Next",
-    12: "Tax Benefits",
-    13: "Why Backyard Estates",
+    11: "Payment Schedule",
+    12: "Our Team",
+    13: "What's Next",
+    14: "Why Backyard Estates",
 };
 
-const SLIDE_COUNT = 13;
+const SLIDE_COUNT = 14;
 
 interface Props {
     /** Custom slide order. Empty array = use natural 1..N order. */

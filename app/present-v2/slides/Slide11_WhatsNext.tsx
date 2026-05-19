@@ -37,7 +37,7 @@ export function Slide11_WhatsNext() {
                 <span className="running-header-left">{lastName} · {city}</span>
                 <span className="running-header-center">What's Next</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">11</span> / 13
+                    <span className="running-header-num">13</span> / 14
                 </span>
             </div>
 

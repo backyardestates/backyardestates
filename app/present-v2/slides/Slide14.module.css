@@ -1,0 +1,339 @@
+/* Slide 14 — Payment Schedule · light editorial, mirrors Slide 9 */
+
+.slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--p-paper);
+  font-family: var(--p-font);
+  overflow: hidden;
+  padding: 90px 64px 36px;
+  gap: 24px;
+}
+
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-faint);
+  letter-spacing: 0.04em;
+}
+
+/* ── TABLE ROW — schedule on the left, bullets on the right ───────── */
+.tableRow {
+  align-self: center;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+/* ── SCHEDULE TABLE — content-sized via subgrid (mirrors Slide 9) ─── */
+.tableCard {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: minmax(40px, auto) minmax(220px, auto) minmax(200px, 1fr) minmax(140px, auto);
+  background: var(--p-white);
+  border: 1px solid rgba(20, 48, 47, 0.12);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  overflow: hidden;
+}
+
+/* Header row */
+.thead {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  background: var(--p-teal-ink);
+}
+
+.thLabel {
+  font-size: var(--p-text-micro);
+  color: var(--p-gold-soft);
+  font-weight: var(--p-bold);
+  padding: 22px 24px;
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.thCol {
+  font-family: var(--p-font);
+  font-size: var(--p-text-sm);
+  font-weight: var(--p-bold);
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.78);
+}
+
+.thTrigger {
+  justify-content: flex-start;
+}
+
+.thAmount {
+  justify-content: flex-end;
+  color: var(--p-gold-bright);
+  background: linear-gradient(180deg, var(--p-teal-deep) 0%, var(--p-teal-ink) 100%);
+}
+
+/* Tbody passes through so rows participate in the table's grid */
+.tbody {
+  display: contents;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--p-border-light);
+}
+
+.row:nth-child(even) {
+  background: rgba(20, 48, 47, 0.025);
+}
+
+/* Fixed-payment rows (#1 and last) — visually marked */
+.rowFixed {
+  background: rgba(184, 149, 74, 0.08) !important;
+  border-top: 1px solid var(--p-gold-border);
+  border-bottom: 1px solid var(--p-gold-border);
+}
+
+.rowNum {
+  font-size: var(--p-text-sm);
+  font-weight: var(--p-bold);
+  color: var(--p-teal);
+  text-align: center;
+  padding: 0 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rowLabel {
+  font-size: var(--p-text-sm);
+  color: var(--p-teal-ink);
+  font-weight: var(--p-semi);
+  padding: 0 24px;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+.rowTrigger {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-muted);
+  padding: 0 16px;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+.rowAmount {
+  font-family: var(--p-font);
+  font-size: var(--p-text-base);
+  color: var(--p-teal-ink);
+  font-weight: var(--p-bold);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  padding: 0 24px;
+}
+
+/* Total row — the closing punctuation of the table */
+.rowTotal {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: center;
+  background: var(--p-teal-ink);
+  padding: 22px 0;
+  border-top: 2px solid var(--p-gold);
+  color: var(--p-cream);
+}
+
+.rowTotal .rowNum {
+  /* keep empty — preserves column alignment */
+  color: transparent;
+}
+
+.rowTotal .rowLabel {
+  font-size: var(--p-text-sm);
+  font-family: var(--p-font);
+  color: var(--p-gold-bright);
+  font-weight: var(--p-bold);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+}
+
+.rowTotal .rowTrigger {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold-soft);
+}
+
+.rowTotalAmount {
+  font-family: var(--p-font);
+  font-size: var(--p-text-md);
+  font-weight: var(--p-light);
+  color: var(--p-gold-bright);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+  padding: 0 24px;
+}
+
+/* ── BULLETS — to the right of the table (mirrors Slide 9) ───────── */
+.bulletsCol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.bulletsEyebrow {
+  font-size: var(--p-text-sm);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-bold);
+}
+
+.bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--p-white);
+  border: 1px solid rgba(20, 48, 47, 0.10);
+  border-radius: var(--p-radius-md);
+  box-shadow: var(--p-shadow-sm);
+}
+
+.bulletIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p-gold-bright) 0%, var(--p-gold-soft) 100%);
+  color: var(--p-teal-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: var(--p-bold);
+  flex-shrink: 0;
+  margin-top: 1px;
+  box-shadow: 0 1px 3px rgba(184, 149, 74, 0.30);
+}
+
+.bulletText {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-muted);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.bulletText strong {
+  color: var(--p-teal-ink);
+  font-weight: var(--p-bold);
+}
+
+/* ── ANCHOR — bottom-locked closing band (mirrors Slide 9) ───────── */
+.anchor {
+  margin-top: auto;
+  align-self: center;
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 26px 36px;
+  background: linear-gradient(90deg, var(--p-teal-ink) 0%, var(--p-teal-deep) 100%);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  gap: 36px;
+  color: var(--p-cream);
+}
+
+.anchorLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.anchorEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-bold);
+}
+
+.anchorBlurb {
+  font-family: var(--p-font);
+  font-weight: var(--p-medium);
+  font-size: var(--p-text-md);
+  color: var(--p-cream);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+
+.anchorValue {
+  font-family: var(--p-font);
+  font-size: var(--p-text-3xl);
+  font-weight: var(--p-light);
+  color: var(--p-gold-bright);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+  line-height: 1;
+}
+
+/* ── EMPTY STATE ─────────────────────────────────────────────────── */
+.empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-lg);
+  color: var(--p-ink-faint);
+  text-align: center;
+  padding: 32px;
+}

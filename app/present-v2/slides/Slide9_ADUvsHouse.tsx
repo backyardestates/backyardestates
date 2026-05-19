@@ -82,7 +82,7 @@ export function Slide9_ADUvsHouse() {
                     <span className="running-header-left">{lastName} · {city}</span>
                     <span className="running-header-center">ADU vs House</span>
                     <span className="running-header-right">
-                        <span className="running-header-num">09</span> / 13
+                        <span className="running-header-num">09</span> / 14
                     </span>
                 </div>
                 <div className={s.empty}>Waiting for scenario data…</div>
@@ -149,7 +149,7 @@ export function Slide9_ADUvsHouse() {
                 <span className="running-header-left">{lastName} · {city}</span>
                 <span className="running-header-center">ADU vs House</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">09</span> / 13
+                    <span className="running-header-num">09</span> / 14
                 </span>
             </div>
 
@@ -201,10 +201,7 @@ export function Slide9_ADUvsHouse() {
 
                 {/* Tax-detail bullets — to the right of the table */}
                 <div className={s.bulletsCol}>
-                    <span className={s.bulletsEyebrow}>Tax advantage</span>
-                    <h3 className={s.bulletsTitle}>
-                        Your tax base <em>doesn&apos;t move.</em>
-                    </h3>
+                    <span className={s.bulletsEyebrow}>Property Tax Advantage</span>
                     <ul className={s.bullets}>
                         <li className={s.bullet}>
                             <span className={s.bulletIcon}>✓</span>

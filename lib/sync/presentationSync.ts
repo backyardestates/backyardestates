@@ -49,6 +49,8 @@ export function startAdminSync(): () => void {
             featuredStoryIds: state.featuredStoryIds,
             featuredRentals: state.featuredRentals,
             slideOrder: state.slideOrder,
+            projectTimeline: state.projectTimeline,
+            proposalPaymentSchedule: state.proposalPaymentSchedule,
             scenarios: state.scenarios,
             rentalComps: state.rentalComps,
             rentByUnitId: state.rentByUnitId,

@@ -225,8 +225,8 @@
 }
 
 .bulletsEyebrow {
-  font-size: var(--p-text-micro);
-  letter-spacing: var(--p-track-widest);
+  font-size: var(--p-text-sm);
+  letter-spacing: var(--p-track-wider);
   text-transform: uppercase;
   color: var(--p-gold);
   font-weight: var(--p-bold);

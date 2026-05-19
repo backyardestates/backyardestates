@@ -2,8 +2,9 @@ import { create } from "zustand";
 import type { Scenario } from "@/lib/investment/types";
 import type { RentalListing } from "@/lib/rentcast/types";
 import type { PaymentMilestone } from "@/lib/investment/paymentSchedule";
+import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
 
-export const SLIDE_COUNT = 13;
+export const SLIDE_COUNT = 14;
 
 // ─── Sanity data types ────────────────────────────────────────────────────────
 
@@ -91,6 +92,15 @@ export type PresentationState = {
     // original slide number (1..SLIDE_COUNT). Empty = use natural 1..N order.
     slideOrder: number[];
 
+    // From Step 11 — admin-entered timeline (BE + city day counts per phase),
+    // surfaced on Slide 7. `null` = fall back to CITY_TIMELINES lookup by address.
+    projectTimeline: ProjectTimeline | null;
+
+    // From Step 12 — admin-tuned payment schedule for the proposal contract.
+    // Replaces the auto-computed `paymentSchedules` map for the dedicated
+    // Payment Schedule slide. `null` until an ADU is selected in Step 12.
+    proposalPaymentSchedule: ProposalPaymentSchedule | null;
+
     // From buildScenarios()
     scenarios: Scenario[];
 
@@ -152,6 +162,29 @@ export type DiscountLineItem = {
     amount: number;
 };
 
+// ─── Project timeline (Step 11 — Slide 7) ────────────────────────────────────
+
+/** Day counts per phase. */
+export type TimelineDays = {
+    plans: number;
+    permits: number;
+    build: number;
+};
+
+/** Both columns shown on Slide 7's comparison panel. */
+export type ProjectTimeline = {
+    be: TimelineDays;
+    city: TimelineDays;
+};
+
+/** Defaults seeded into the admin tool on first load. BE counts mirror the
+ *  CITY_TIMELINES default; city counts are reasonable industry averages
+ *  (4 / 6 / 9 months expressed in days). */
+export const DEFAULT_PROJECT_TIMELINE: ProjectTimeline = {
+    be:   { plans: 25,  permits: 130, build: 40  },
+    city: { plans: 120, permits: 180, build: 270 },
+};
+
 // ─── Featured rental (curated for Slide 10) ───────────────────────────────────
 
 export type FeaturedRental = {
@@ -180,6 +213,8 @@ export type AdminBroadcast = {
     featuredStoryIds: string[];
     featuredRentals: FeaturedRental[];
     slideOrder: number[];
+    projectTimeline: ProjectTimeline | null;
+    proposalPaymentSchedule: ProposalPaymentSchedule | null;
     scenarios: Scenario[];
     rentalComps: RentalListing[];
     rentByUnitId: Record<string, number>;
@@ -205,6 +240,8 @@ const initialData = {
     featuredStoryIds: [],
     featuredRentals: [],
     slideOrder: [],
+    projectTimeline: null as ProjectTimeline | null,
+    proposalPaymentSchedule: null as ProposalPaymentSchedule | null,
     scenarios: [],
     rentalComps: [],
     rentByUnitId: {},

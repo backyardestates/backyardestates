@@ -71,7 +71,7 @@ export function Slide10_RentalAnalysis() {
                 <span className="running-header-left">{lastName} · {city}</span>
                 <span className="running-header-center">Rental Market</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">10</span> / 13
+                    <span className="running-header-num">10</span> / 14
                 </span>
             </div>
 

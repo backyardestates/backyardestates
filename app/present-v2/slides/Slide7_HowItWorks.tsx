@@ -51,8 +51,12 @@ function cityCellValue(cityVal: string, fallback: string): string {
     return cityVal;
 }
 
+function formatDays(d: number): string {
+    return `${d.toLocaleString()} day${d === 1 ? "" : "s"}`;
+}
+
 export function Slide7_HowItWorks() {
-    const { customerName, propertyAddress } = usePresentationStore();
+    const { customerName, propertyAddress, projectTimeline } = usePresentationStore();
     const lastName = lastNameFromFull(customerName);
     const cityLabel = propertyAddress ? cityFromAddress(propertyAddress) : "—";
 
@@ -65,9 +69,10 @@ export function Slide7_HowItWorks() {
 
     const timeline = CITY_TIMELINES[matchedCity ?? "default"];
 
-    const beDesignDays = parseDays(timeline.plans.be)      ?? 25;
-    const bePermitDays = parseDays(timeline.permitting.be) ?? 130;
-    const beBuildDays  = parseDays(timeline.build.be)      ?? 40;
+    // Admin-entered timeline (Step 11) overrides the CITY_TIMELINES lookup when present.
+    const beDesignDays = projectTimeline?.be.plans   ?? parseDays(timeline.plans.be)      ?? 25;
+    const bePermitDays = projectTimeline?.be.permits ?? parseDays(timeline.permitting.be) ?? 130;
+    const beBuildDays  = projectTimeline?.be.build   ?? parseDays(timeline.build.be)      ?? 40;
     const totalDays    = beDesignDays + bePermitDays + beBuildDays;
     const totalMonths  = daysToMonths(totalDays);
 
@@ -87,34 +92,52 @@ export function Slide7_HowItWorks() {
         },
         {
             num: "3",
-            title: "Floor Plan Review",
-            day: `~Day ${beDesignDays}`,
-            desc: "Custom design — we iterate until you approve every detail. Plans submitted to city.",
+            title: "Floor Plan Sign-Off",
+            day: "Within 2 weeks",
+            desc: "Custom layouts — we iterate until you approve every detail.",
         },
         {
             num: "4",
-            title: "Permits & Plans",
-            day: `~Day ${beDesignDays + bePermitDays}`,
-            desc: "We submit, follow up, correct, pull. Every department — you hear from us, not the city.",
+            title: "Schematic Design",
+            day: "Within 3 weeks",
+            desc: "Approved floor plan turned into elevations, sections, and structural drawings.",
         },
         {
             num: "5",
-            title: "Construction",
-            day: "6–12 weeks",
-            desc: "Break ground, frame, finish. Weekly photo updates via BuilderTrend.",
+            title: "Interior Design Selections",
+            day: "Within 5 weeks",
+            desc: "Finishes, fixtures, paint, and tile — your interior, your call.",
         },
         {
             num: "6",
-            title: "Move-in",
-            day: `~Day ${totalDays}`,
-            desc: "Final walkthrough — keys handed over. You're home.",
+            title: "Permit Submittal",
+            day: "Within 6 weeks",
+            desc: "Complete plan set submitted to the city for review and approval.",
         },
     ];
 
+    // Display values: admin-entered (Step 11) wins; otherwise CITY_TIMELINES text.
+    const beDisplay = (phaseDays: number, fallback: string) =>
+        projectTimeline ? formatDays(phaseDays) : fallback;
+    const cityDisplay = (phaseDays: number | undefined, fallback: string) =>
+        projectTimeline && phaseDays != null ? formatDays(phaseDays) : fallback;
+
     const COMPARISON_COLS = [
-        { label: "Plans & Design", be: timeline.plans.be,      city: cityCellValue(timeline.plans.city,      INDUSTRY_AVG.plans) },
-        { label: "Permits",        be: timeline.permitting.be, city: cityCellValue(timeline.permitting.city, INDUSTRY_AVG.permitting) },
-        { label: "Construction",   be: timeline.build.be,      city: cityCellValue(timeline.build.city,      INDUSTRY_AVG.build) },
+        {
+            label: "Plans & Design",
+            be:   beDisplay(beDesignDays, timeline.plans.be),
+            city: cityDisplay(projectTimeline?.city.plans, cityCellValue(timeline.plans.city, INDUSTRY_AVG.plans)),
+        },
+        {
+            label: "Permits",
+            be:   beDisplay(bePermitDays, timeline.permitting.be),
+            city: cityDisplay(projectTimeline?.city.permits, cityCellValue(timeline.permitting.city, INDUSTRY_AVG.permitting)),
+        },
+        {
+            label: "Construction",
+            be:   beDisplay(beBuildDays, timeline.build.be),
+            city: cityDisplay(projectTimeline?.city.build, cityCellValue(timeline.build.city, INDUSTRY_AVG.build)),
+        },
     ];
 
     return (
@@ -124,7 +147,7 @@ export function Slide7_HowItWorks() {
                 <span className="running-header-left">{lastName} · {cityLabel}</span>
                 <span className="running-header-center">How It Works</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">07</span> / 13
+                    <span className="running-header-num">07</span> / 14
                 </span>
             </div>
 

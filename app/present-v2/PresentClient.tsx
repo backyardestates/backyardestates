@@ -23,11 +23,12 @@ import { Slide8_ROIComparison }     from "./slides/Slide8_ROIComparison";
 import { Slide9_ADUvsHouse }        from "./slides/Slide9_ADUvsHouse";
 import { Slide10_RentalAnalysis }   from "./slides/Slide10_RentalAnalysis";
 import { Slide11_WhatsNext }        from "./slides/Slide11_WhatsNext";
-import { Slide12_TaxBenefits }      from "./slides/Slide12_TaxBenefits";
+import { Slide12_OurTeam }          from "./slides/Slide12_OurTeam";
 import { Slide13_WhyBE }            from "./slides/Slide13_WhyBE";
+import { Slide14_PaymentSchedule }  from "./slides/Slide14_PaymentSchedule";
 
-// Slides 1-12 are in the standard flow; slide 13 is jump-only
-const FLOW_COUNT = 12;
+// Slides 1-13 are in the standard flow; slide 14 is jump-only
+const FLOW_COUNT = 13;
 const CANVAS_W = 1920;
 const CANVAS_H = 1080;
 
@@ -42,8 +43,9 @@ const SLIDES = [
     Slide8_ROIComparison,
     Slide9_ADUvsHouse,
     Slide10_RentalAnalysis,
+    Slide14_PaymentSchedule,
+    Slide12_OurTeam,
     Slide11_WhatsNext,
-    Slide12_TaxBenefits,
     Slide13_WhyBE,
 ] as const;
 
@@ -58,9 +60,10 @@ const SLIDE_NAMES: Record<number, string> = {
     8:  "ROI Comparison",
     9:  "ADU vs House",
     10: "Rental Analysis",
-    11: "What's Next",
-    12: "Tax Benefits",
-    13: "Why Backyard Estates",
+    11: "Payment Schedule",
+    12: "Our Team",
+    13: "What's Next",
+    14: "Why Backyard Estates",
 };
 
 interface Props {
@@ -204,17 +207,18 @@ export function PresentClient({ floorplans, stories, completedProperties }: Prop
                     if (window.opener) window.close();
                     break;
                 default: {
-                    // Shift+1→11, Shift+2→12, Shift+3→13
+                    // Shift+1→11, Shift+2→12, Shift+3→13, Shift+4→14
                     if (e.shiftKey) {
                         if (e.key === "!") { e.preventDefault(); setSlide(11); }
                         if (e.key === "@") { e.preventDefault(); setSlide(12); }
                         if (e.key === "#") { e.preventDefault(); setSlide(13); }
+                        if (e.key === "$") { e.preventDefault(); setSlide(14); }
                         break;
                     }
                     const num = parseInt(e.key, 10);
                     if (!isNaN(num)) {
                         const target = num === 0 ? 10 : num;
-                        if (target >= 1 && target <= 13) {
+                        if (target >= 1 && target <= 14) {
                             e.preventDefault();
                             setSlide(target);
                         }

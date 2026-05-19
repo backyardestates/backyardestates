@@ -60,7 +60,7 @@ export function Slide13_WhyBE() {
                 <span className="running-header-left">{lastName} · {city}</span>
                 <span className="running-header-center">Why Backyard Estates</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">13</span>
+                    <span className="running-header-num">14</span>
                 </span>
             </div>
 

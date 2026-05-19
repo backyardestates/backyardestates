@@ -46,7 +46,7 @@ function cityFromAddress(addr: string) {
 }
 
 export function Slide1_Cover() {
-    const { customerName, propertyAddress, propertyPhotoUrl, scenarios, aduType, currentSlide } = usePresentationStore();
+    const { customerName, propertyAddress, scenarios, aduType, currentSlide } = usePresentationStore();
     const active = currentSlide === 1;
 
     const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
@@ -71,14 +71,10 @@ export function Slide1_Cover() {
 
     return (
         <div className={s.slide}>
-            {/* Photo — right 55% */}
+            {/* Photo — right 55%. Always uses the office photo on the cover slide. */}
             <div
                 className={s.photo}
-                style={{
-                    backgroundImage: propertyPhotoUrl
-                        ? `url(${propertyPhotoUrl})`
-                        : "radial-gradient(ellipse at 60% 40%, #2D5F5F 0%, #14302F 70%)",
-                }}
+                style={{ backgroundImage: "url(/images/office.png)" }}
             />
             <div className={s.photoFade} />
             <div className={s.photoFrame} />

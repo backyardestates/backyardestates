@@ -8,7 +8,8 @@ import type { Scenario } from "@/lib/investment/types";
 import type { RentalListing } from "@/lib/rentcast/types";
 import type { ActiveLineItem } from "@/lib/investment/siteWorkItems";
 import { computeDiscountTotal, createEmptyDiscountState, getDiscountLines, type DiscountState } from "@/lib/investment/discounts";
-import type { FeaturedRental } from "@/lib/store/presentationStore";
+import type { FeaturedRental, ProjectTimeline } from "@/lib/store/presentationStore";
+import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
 
 interface WireInput {
     customerName: string;
@@ -21,6 +22,8 @@ interface WireInput {
     featuredStoryIds: string[];
     featuredRentals: FeaturedRental[];
     slideOrder: number[];
+    projectTimeline: ProjectTimeline | null;
+    proposalPaymentSchedule: ProposalPaymentSchedule | null;
     scenarios: Scenario[];
     rentalComps: RentalListing[];
     rentByUnitId: Record<string, string>;
@@ -39,6 +42,8 @@ export function usePresentationWire({
     featuredStoryIds,
     featuredRentals,
     slideOrder,
+    projectTimeline,
+    proposalPaymentSchedule,
     scenarios,
     rentalComps,
     rentByUnitId,
@@ -118,6 +123,8 @@ export function usePresentationWire({
             featuredStoryIds,
             featuredRentals,
             slideOrder,
+            projectTimeline,
+            proposalPaymentSchedule,
             scenarios: serializableScenarios,
             rentalComps,
             rentByUnitId: rentNums,
@@ -133,7 +140,7 @@ export function usePresentationWire({
         // Directly broadcast to presenter window — bypasses the fragile Zustand
         // subscription chain which breaks under React StrictMode's double-invoke
         broadcastAdminState(data);
-    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId, discountLinesByAduId]);
+    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder, projectTimeline, proposalPaymentSchedule, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId, discountLinesByAduId]);
 }
 
 export type PresenterVariant = "original" | "v2";

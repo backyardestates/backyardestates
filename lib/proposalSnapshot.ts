@@ -9,7 +9,8 @@ import type { Floorplan, PropertyRecord, AvmValue, RentalListing } from "@/lib/r
 import type { Defaults } from "@/lib/investment/types";
 import type { EstimatorState } from "@/lib/investment/siteWorkItems";
 import type { RentcastMarketStats } from "@/hooks/rentcast/useRentcastData";
-import type { CustomerMotivation, FeaturedRental } from "@/lib/store/presentationStore";
+import type { CustomerMotivation, FeaturedRental, ProjectTimeline } from "@/lib/store/presentationStore";
+import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
 
 export const PROPOSAL_SCHEMA_VERSION = 1 as const;
 export const PROPOSALS_STORAGE_KEY = "be_admin_proposals_v1";
@@ -63,6 +64,14 @@ export interface ProposalSnapshot {
 
     // Step 10 — custom slide order for the presenter. Empty = natural 1..N.
     slideOrder: number[];
+
+    // Step 11 — admin-entered project timeline (BE + city days per phase).
+    // null = use CITY_TIMELINES defaults at slide render time.
+    projectTimeline: ProjectTimeline | null;
+
+    // Step 12 — admin-tuned payment schedule for the proposal contract.
+    // null until an ADU is picked and a schedule is generated.
+    proposalPaymentSchedule: ProposalPaymentSchedule | null;
 
     // Step status
     activeStep: number;

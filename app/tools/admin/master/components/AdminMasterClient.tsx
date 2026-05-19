@@ -19,10 +19,14 @@ import { Step7_FeatureBuilds } from "../components/steps/Step7_FeatureBuilds";
 import { Step8_FeatureStories } from "../components/steps/Step8_FeatureStories";
 import { Step9_FeatureRentals } from "../components/steps/Step9_FeatureRentals";
 import { Step10_SlideOrder } from "../components/steps/Step10_SlideOrder";
+import { Step11_Timeline } from "../components/steps/Step11_Timeline";
+import { Step12_PaymentSchedule } from "../components/steps/Step12_PaymentSchedule";
 import { FeaturePropertiesPanel } from "../components/FeaturePropertiesPanel/FeaturePropertiesPanel";
 import { FeatureStoriesPanel } from "../components/FeatureStoriesPanel/FeatureStoriesPanel";
 import { FeatureRentalsPanel } from "../components/FeatureRentalsPanel/FeatureRentalsPanel";
 import { SlideOrderPanel } from "../components/SlideOrderPanel/SlideOrderPanel";
+import { TimelineEditorPanel } from "../components/TimelineEditorPanel/TimelineEditorPanel";
+import { PaymentSchedulePanel } from "../components/PaymentSchedulePanel/PaymentSchedulePanel";
 
 import { InvestmentControls } from "../components/Investment/InvestmentControls";
 import { InvestmentCompareSummary } from "../components/Investment/InvestmentCompareSummary";
@@ -36,7 +40,8 @@ import sectionStyles from "../components/Investment/InvestmentSection.module.css
 import tableStyles from "../components/investmentModel/InvestmentModelTable.module.css";
 
 import type { Floorplan } from "@/lib/rentcast/types";
-import type { SanityProperty, SanityStory, FeaturedRental } from "@/lib/store/presentationStore";
+import type { SanityProperty, SanityStory, FeaturedRental, ProjectTimeline } from "@/lib/store/presentationStore";
+import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
 import {
     getProposal,
     getDraft,
@@ -82,6 +87,8 @@ export default function AdminMasterClient({
     const [featuredStoryIds, setFeaturedStoryIds] = useState<string[]>([]);
     const [featuredRentals, setFeaturedRentals] = useState<FeaturedRental[]>([]);
     const [slideOrder, setSlideOrder] = useState<number[]>([]);
+    const [projectTimeline, setProjectTimeline] = useState<ProjectTimeline | null>(null);
+    const [proposalPaymentSchedule, setProposalPaymentSchedule] = useState<ProposalPaymentSchedule | null>(null);
 
     // ── Save / Saved Proposals ────────────────────────────────────────────────
     const [savedModalOpen, setSavedModalOpen] = useState(false);
@@ -99,7 +106,7 @@ export default function AdminMasterClient({
 
     const [currentFirstPmtMonthly, setCurrentFirstPmtMonthly] = useState("");
     const [siteWorkConfirmed, setSiteWorkConfirmed] = useState(false);
-    const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10>(1);
+    const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(1);
 
     useEffect(() => {
         setFloorplans(initialFloorplans);
@@ -238,13 +245,13 @@ export default function AdminMasterClient({
     // "Complete" = both true (so editing the data invalidates a prior Done).
     const [doneSteps, setDoneSteps] = useState<Set<number>>(new Set());
 
-    function markDone(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) {
+    function markDone(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12) {
         setDoneSteps((prev) => {
             const next = new Set(prev);
             next.add(n);
             return next;
         });
-        if (n < 10) setActiveStep(((n + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10));
+        if (n < 12) setActiveStep(((n + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12));
     }
 
     // Per-step required-data validation
@@ -258,17 +265,19 @@ export default function AdminMasterClient({
     const step8HasData = true; // selection is optional (falls back to featured)
     const step9HasData = true; // selection is optional (falls back to first N rentals)
     const step10HasData = true; // slide order is optional (falls back to natural order)
-    const hasData = [step1HasData, step2HasData, step3HasData, step4HasData, step5HasData, step6HasData, step7HasData, step8HasData, step9HasData, step10HasData];
+    const step11HasData = true; // timeline is optional (falls back to CITY_TIMELINES defaults)
+    const step12HasData = true; // payment schedule is optional (drives the future contract slide)
+    const hasData = [step1HasData, step2HasData, step3HasData, step4HasData, step5HasData, step6HasData, step7HasData, step8HasData, step9HasData, step10HasData, step11HasData, step12HasData];
 
-    const completions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => doneSteps.has(n) && hasData[n - 1]);
+    const completions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => doneSteps.has(n) && hasData[n - 1]);
 
     const completedSteps = completions
         .map((done, i) => (done ? i + 1 : null))
         .filter((n): n is number => n !== null);
 
-    const needsInputSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].filter((n) => !hasData[n - 1]);
+    const needsInputSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].filter((n) => !hasData[n - 1]);
 
-    function stepState(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) {
+    function stepState(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12) {
         const isComplete = completions[n - 1];
         return {
             isActive: activeStep === n,
@@ -290,6 +299,8 @@ export default function AdminMasterClient({
         featuredStoryIds,
         featuredRentals,
         slideOrder,
+        projectTimeline,
+        proposalPaymentSchedule,
         scenarios: adu.scenarios,
         rentalComps: rentals,
         rentByUnitId: adu.rentByAduId,
@@ -335,6 +346,8 @@ export default function AdminMasterClient({
             featuredStoryIds,
             featuredRentals,
             slideOrder,
+            projectTimeline,
+            proposalPaymentSchedule,
 
             activeStep,
             doneSteps: Array.from(doneSteps),
@@ -392,9 +405,11 @@ export default function AdminMasterClient({
         setFeaturedStoryIds(snap.featuredStoryIds ?? []);
         setFeaturedRentals(snap.featuredRentals ?? []);
         setSlideOrder(snap.slideOrder ?? []);
+        setProjectTimeline(snap.projectTimeline ?? null);
+        setProposalPaymentSchedule(snap.proposalPaymentSchedule ?? null);
 
         // Step status
-        setActiveStep((snap.activeStep ?? 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10);
+        setActiveStep((snap.activeStep ?? 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12);
         setDoneSteps(new Set(snap.doneSteps ?? []));
 
         // Seed the autosave fingerprint with the just-loaded content so the
@@ -499,6 +514,8 @@ export default function AdminMasterClient({
         setFeaturedStoryIds([]);
         setFeaturedRentals([]);
         setSlideOrder([]);
+        setProjectTimeline(null);
+        setProposalPaymentSchedule(null);
 
         // Step navigation
         setActiveStep(1);
@@ -590,6 +607,7 @@ export default function AdminMasterClient({
         adu.sqftByAduId, adu.discountAmountByAduId, adu.discountLinesByAduId,
         property, avm, rentals, market,
         featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder,
+        projectTimeline, proposalPaymentSchedule,
         activeStep, doneSteps, siteWorkConfirmed,
         companionVersion,
     ]);
@@ -617,7 +635,7 @@ export default function AdminMasterClient({
                     activeStep={activeStep}
                     completedSteps={completedSteps}
                     needsInputSteps={needsInputSteps}
-                    onStepClick={(n) => setActiveStep(n as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10)}
+                    onStepClick={(n) => setActiveStep(n as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12)}
                 />
 
                 <main className={styles.main}>
@@ -911,6 +929,43 @@ export default function AdminMasterClient({
                             onChange={setSlideOrder}
                         />
                     </Step10_SlideOrder>
+
+                    {/* ── Step 11 · Project Timeline (Slide 7 source) ───────── */}
+                    <Step11_Timeline
+                        {...stepState(11)}
+                        kind="data"
+                        onDone={() => markDone(11)}
+                        completeSummary={
+                            projectTimeline
+                                ? "Custom timeline entered"
+                                : "Using default timeline"
+                        }
+                    >
+                        <TimelineEditorPanel
+                            value={projectTimeline}
+                            onChange={setProjectTimeline}
+                            onReset={() => setProjectTimeline(null)}
+                        />
+                    </Step11_Timeline>
+
+                    {/* ── Step 12 · Payment Schedule (drives the future contract slide) ── */}
+                    <Step12_PaymentSchedule
+                        {...stepState(12)}
+                        kind="data"
+                        onDone={() => markDone(12)}
+                        completeSummary={
+                            proposalPaymentSchedule
+                                ? "Schedule entered"
+                                : "Not yet generated"
+                        }
+                    >
+                        <PaymentSchedulePanel
+                            selectedAdus={adu.selectedAdus}
+                            aduScenarios={adu.aduScenarios}
+                            value={proposalPaymentSchedule}
+                            onChange={setProposalPaymentSchedule}
+                        />
+                    </Step12_PaymentSchedule>
 
                 </main>
             </div>

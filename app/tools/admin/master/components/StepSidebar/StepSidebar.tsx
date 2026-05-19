@@ -14,6 +14,7 @@ const STEPS = [
     { n: 8, label: "Feature Stories",   kind: "data"   as const },
     { n: 9, label: "Feature Rentals",   kind: "data"   as const },
     { n: 10, label: "Slide Order",      kind: "data"   as const },
+    { n: 11, label: "Project Timeline", kind: "data"   as const },
 ];
 
 export function StepSidebar({
