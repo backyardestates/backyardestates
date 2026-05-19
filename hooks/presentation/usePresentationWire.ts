@@ -5,7 +5,8 @@ import { usePresentationStore, type CustomerMotivation } from "@/lib/store/prese
 import { broadcastAdminState } from "@/lib/sync/presentationSync";
 import { calculatePaymentSchedule } from "@/lib/investment/paymentSchedule";
 import type { Scenario } from "@/lib/investment/types";
-import type { RentalListing } from "@/lib/rentcast/types";
+import type { Floorplan, RentalListing } from "@/lib/rentcast/types";
+import type { SanityFloorplan } from "@/lib/store/presentationStore";
 import type { ActiveLineItem } from "@/lib/investment/siteWorkItems";
 import { computeDiscountTotal, createEmptyDiscountState, getDiscountLines, type DiscountState } from "@/lib/investment/discounts";
 import type { FeaturedRental, ProjectTimeline } from "@/lib/store/presentationStore";
@@ -18,6 +19,10 @@ interface WireInput {
     propertyPhotoUrl: string | null;
     customerMotivation: CustomerMotivation;
     comparedUnitIds: string[];
+    // Full admin floorplan list (Sanity + admin-added custom units). The wire
+    // filters out the custom ones and broadcasts them so the presenter can
+    // merge them into its floorplans state.
+    floorplans: Floorplan[];
     featuredPropertyIds: string[];
     featuredStoryIds: string[];
     featuredRentals: FeaturedRental[];
@@ -31,6 +36,21 @@ interface WireInput {
     discountLinesByAduId?: Record<string, { label: string; amount: number }[]>;
 }
 
+// Convert an admin-shape Floorplan into the SanityFloorplan shape the presenter
+// uses. Optional Sanity-only fields (slug, images, videoID, etc.) are
+// synthesized or left undefined.
+function adminFpToSanityFp(fp: Floorplan): SanityFloorplan {
+    return {
+        _id: fp._id,
+        name: fp.name,
+        slug: { current: fp._id },
+        sqft: fp.sqft,
+        bed: fp.beds,
+        bath: fp.baths,
+        price: fp.price,
+    };
+}
+
 export function usePresentationWire({
     customerName,
     propertyAddress,
@@ -38,6 +58,7 @@ export function usePresentationWire({
     propertyPhotoUrl,
     customerMotivation,
     comparedUnitIds,
+    floorplans,
     featuredPropertyIds,
     featuredStoryIds,
     featuredRentals,
@@ -112,6 +133,12 @@ export function usePresentationWire({
             }
         } catch { /* malformed localStorage — leave empty */ }
 
+        // Pluck the admin-added custom units and convert to the presenter's
+        // SanityFloorplan shape; the store merges these into its floorplans list.
+        const customFloorplans = floorplans
+            .filter((fp) => fp._id.startsWith("custom_"))
+            .map(adminFpToSanityFp);
+
         const data = {
             customerName,
             propertyAddress,
@@ -119,6 +146,7 @@ export function usePresentationWire({
             propertyPhotoUrl,
             customerMotivation,
             comparedUnitIds,
+            customFloorplans,
             featuredPropertyIds,
             featuredStoryIds,
             featuredRentals,
@@ -140,7 +168,7 @@ export function usePresentationWire({
         // Directly broadcast to presenter window — bypasses the fragile Zustand
         // subscription chain which breaks under React StrictMode's double-invoke
         broadcastAdminState(data);
-    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder, projectTimeline, proposalPaymentSchedule, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId, discountLinesByAduId]);
+    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, floorplans, featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder, projectTimeline, proposalPaymentSchedule, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId, discountLinesByAduId]);
 }
 
 export type PresenterVariant = "original" | "v2";

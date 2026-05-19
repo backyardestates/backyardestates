@@ -45,6 +45,9 @@ export function startAdminSync(): () => void {
             propertyPhotoUrl: state.propertyPhotoUrl,
             customerMotivation: state.customerMotivation,
             comparedUnitIds: state.comparedUnitIds,
+            // store-subscription path doesn't see admin local-state custom units —
+            // those flow via usePresentationWire which broadcasts them directly.
+            customFloorplans: [],
             featuredPropertyIds: state.featuredPropertyIds,
             featuredStoryIds: state.featuredStoryIds,
             featuredRentals: state.featuredRentals,

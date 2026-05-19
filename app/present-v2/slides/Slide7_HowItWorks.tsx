@@ -147,7 +147,7 @@ export function Slide7_HowItWorks() {
                 <span className="running-header-left">{lastName} · {cityLabel}</span>
                 <span className="running-header-center">How It Works</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">07</span> / 14
+                    <span className="running-header-num">07</span> / 15
                 </span>
             </div>
 

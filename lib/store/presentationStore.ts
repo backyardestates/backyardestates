@@ -4,7 +4,7 @@ import type { RentalListing } from "@/lib/rentcast/types";
 import type { PaymentMilestone } from "@/lib/investment/paymentSchedule";
 import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
 
-export const SLIDE_COUNT = 14;
+export const SLIDE_COUNT = 15;
 
 // ─── Sanity data types ────────────────────────────────────────────────────────
 
@@ -209,6 +209,9 @@ export type AdminBroadcast = {
     propertyPhotoUrl: string | null;
     customerMotivation: CustomerMotivation;
     comparedUnitIds: string[];
+    // Admin-added units (id starts with "custom_") — merged into the presenter's
+    // floorplans list so custom comparisons render alongside Sanity units.
+    customFloorplans: SanityFloorplan[];
     featuredPropertyIds: string[];
     featuredStoryIds: string[];
     featuredRentals: FeaturedRental[];
@@ -286,7 +289,20 @@ export const usePresentationStore = create<PresentationState>()((set, get) => ({
 
     setStoryOverridden: (v) => set({ storyOverridden: v }),
 
-    syncFromAdmin: (data) => set(data as any),
+    syncFromAdmin: (data) => set((state) => {
+        // Strip out customFloorplans before bulk-setting; we merge it manually
+        // into the floorplans list so Sanity units are preserved alongside
+        // admin-added ones.
+        const { customFloorplans, ...rest } = data as Partial<AdminBroadcast>;
+        const next: any = { ...rest };
+        if (customFloorplans !== undefined) {
+            const sanityOnly = state.floorplans.filter(
+                (fp) => !fp._id.startsWith("custom_")
+            );
+            next.floorplans = [...sanityOnly, ...customFloorplans];
+        }
+        return next;
+    }),
 
     setSanityData: ({ floorplans, stories, completedProperties }) =>
         set({

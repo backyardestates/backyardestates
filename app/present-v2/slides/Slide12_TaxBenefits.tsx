@@ -41,7 +41,7 @@ export function Slide12_TaxBenefits() {
                 <span className="running-header-left">{lastName} · {city}</span>
                 <span className="running-header-center">Tax Topics</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">12</span> / 13
+                    <span className="running-header-num">12</span> / 15
                 </span>
             </div>
 

@@ -295,6 +295,7 @@ export default function AdminMasterClient({
         propertyPhotoUrl,
         customerMotivation,
         comparedUnitIds: aduCompareIds,
+        floorplans,
         featuredPropertyIds,
         featuredStoryIds,
         featuredRentals,

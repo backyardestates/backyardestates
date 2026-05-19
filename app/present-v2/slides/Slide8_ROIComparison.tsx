@@ -67,7 +67,7 @@ export function Slide8_ROIComparison() {
                     <span className="running-header-left">{lastName} · {city}</span>
                     <span className="running-header-center">Your Return</span>
                     <span className="running-header-right">
-                        <span className="running-header-num">08</span> / 14
+                        <span className="running-header-num">08</span> / 15
                     </span>
                 </div>
                 <div className={s.placeholder}>Waiting for scenario data…</div>
@@ -82,7 +82,7 @@ export function Slide8_ROIComparison() {
                 <span className="running-header-left">{lastName} · {city}</span>
                 <span className="running-header-center">Your Return</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">08</span> / 14
+                    <span className="running-header-num">08</span> / 15
                 </span>
             </div>
 

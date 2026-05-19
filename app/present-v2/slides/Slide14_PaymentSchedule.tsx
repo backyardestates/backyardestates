@@ -85,7 +85,7 @@ export function Slide14_PaymentSchedule() {
                     <span className="running-header-left">{lastName} · {city}</span>
                     <span className="running-header-center">Payment Schedule</span>
                     <span className="running-header-right">
-                        <span className="running-header-num">11</span> / 14
+                        <span className="running-header-num">11</span> / 15
                     </span>
                 </div>
                 <div className={s.headRow}>
@@ -110,7 +110,7 @@ export function Slide14_PaymentSchedule() {
                 <span className="running-header-left">{lastName} · {city}</span>
                 <span className="running-header-center">Payment Schedule</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">11</span> / 14
+                    <span className="running-header-num">11</span> / 15
                 </span>
             </div>
 

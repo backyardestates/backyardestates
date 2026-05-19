@@ -82,7 +82,7 @@ export function Slide9_ADUvsHouse() {
                     <span className="running-header-left">{lastName} · {city}</span>
                     <span className="running-header-center">ADU vs House</span>
                     <span className="running-header-right">
-                        <span className="running-header-num">09</span> / 14
+                        <span className="running-header-num">09</span> / 15
                     </span>
                 </div>
                 <div className={s.empty}>Waiting for scenario data…</div>
@@ -149,7 +149,7 @@ export function Slide9_ADUvsHouse() {
                 <span className="running-header-left">{lastName} · {city}</span>
                 <span className="running-header-center">ADU vs House</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">09</span> / 14
+                    <span className="running-header-num">09</span> / 15
                 </span>
             </div>
 

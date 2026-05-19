@@ -40,7 +40,7 @@ export function Slide12_OurTeam() {
                 <span className="running-header-left">{lastName} · {city}</span>
                 <span className="running-header-center">Our Team</span>
                 <span className="running-header-right">
-                    <span className="running-header-num">12</span> / 14
+                    <span className="running-header-num">13</span> / 15
                 </span>
             </div>
 
