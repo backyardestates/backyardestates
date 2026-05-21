@@ -50,8 +50,8 @@ function cityFromAddress(addr: string) {
 }
 
 export function Slide9_ADUvsHouse() {
-    const { scenarios, currentSlide, customerName, propertyAddress } = usePresentationStore();
-    const active = currentSlide === 9;
+    const { scenarios, currentSlide, customerName, propertyAddress, isPrintMode } = usePresentationStore();
+    const active = currentSlide === 9 || isPrintMode;
 
     const aduScenarios = scenarios.filter((sc) => sc.kind === "adu");
     const houseSc = scenarios.find((sc) => sc.kind === "house");

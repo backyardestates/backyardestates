@@ -10,16 +10,24 @@ import { buildScenarios } from "@/lib/investment/scenario";
 import {
     type EstimatorState,
     type ActiveLineItem,
+    type SiteWorkCatalogData,
+    type SiteWorkCategory,
+    SITE_WORK_CATEGORIES,
     computeTotal,
     createEmptyState,
     mergeEstimatorStates,
     buildActiveSnapshot,
+    catalogToSiteWorkCategories,
 } from "@/lib/investment/siteWorkItems";
 import {
     computeDiscountTotal,
     createEmptyDiscountState,
     getDiscountLines,
+    catalogToPresets,
+    PRESETS,
     type DiscountState,
+    type PresetLike,
+    type DiscountsCatalogSummary,
 } from "@/lib/investment/discounts";
 import type { RentcastMarketStats } from "@/hooks/rentcast/useRentcastData";
 
@@ -36,6 +44,8 @@ export interface UseAduModelInput {
     selectedFloorplan: Floorplan | null;
     owed: string;
     defaultsProp?: Partial<Defaults>;
+    discountsCatalog?: DiscountsCatalogSummary;
+    siteWorkCatalog?: SiteWorkCatalogData;
 }
 
 export function useAduModel({
@@ -50,7 +60,28 @@ export function useAduModel({
     selectedFloorplan,
     owed,
     defaultsProp,
+    discountsCatalog,
+    siteWorkCatalog,
 }: UseAduModelInput) {
+
+    // Resolve presets from the DB catalog when available; otherwise fall back
+    // to the legacy hardcoded PRESETS. Memoized on the catalog reference.
+    const resolvedPresets: PresetLike[] = useMemo(() => {
+        if (discountsCatalog && discountsCatalog.items.length > 0) {
+            const fromCatalog = catalogToPresets(discountsCatalog.items);
+            if (fromCatalog.length > 0) return fromCatalog;
+        }
+        return PRESETS;
+    }, [discountsCatalog]);
+
+    // Same pattern for site-work categories.
+    const resolvedSiteWorkCategories: SiteWorkCategory[] = useMemo(() => {
+        if (siteWorkCatalog && siteWorkCatalog.categories.length > 0) {
+            const fromCatalog = catalogToSiteWorkCategories(siteWorkCatalog);
+            if (fromCatalog.length > 0) return fromCatalog;
+        }
+        return SITE_WORK_CATEGORIES;
+    }, [siteWorkCatalog]);
 
     const [estimatorByAduId, setEstimatorByAduId] = useState<Record<string, EstimatorState>>({});
     const [baseCostByAduId, setBaseCostByAduId] = useState<Record<string, string>>({});
@@ -71,7 +102,7 @@ export function useAduModel({
     useEffect(() => {
         if (typeof window === "undefined") return;
         try {
-            const swMaster: EstimatorState = JSON.parse(localStorage.getItem("swp_master") ?? "null") ?? createEmptyState();
+            const swMaster: EstimatorState = JSON.parse(localStorage.getItem("swp_master") ?? "null") ?? createEmptyState(resolvedSiteWorkCategories);
             const swCustom: Record<string, EstimatorState | null> = JSON.parse(localStorage.getItem("swp_custom") ?? "null") ?? {};
             setEstimatorByAduId((prev) => {
                 const next = { ...prev };
@@ -89,8 +120,8 @@ export function useAduModel({
             const lines: Record<string, { label: string; amount: number }[]> = {};
             for (const fp of selectedAdus) {
                 const effective = dpCustom[fp._id] ?? dpMaster;
-                amounts[fp._id] = computeDiscountTotal(effective);
-                lines[fp._id] = getDiscountLines(effective);
+                amounts[fp._id] = computeDiscountTotal(effective, resolvedPresets);
+                lines[fp._id] = getDiscountLines(effective, resolvedPresets);
             }
             setDiscountAmountByAduId((prev) => {
                 const next = { ...prev };
@@ -107,7 +138,7 @@ export function useAduModel({
                 return next;
             });
         } catch { /* malformed */ }
-    }, [selectedAdus]);
+    }, [selectedAdus, resolvedPresets, resolvedSiteWorkCategories]);
 
     const subjectSqft = avm?.subjectProperty?.squareFootage ?? property?.squareFootage ?? undefined;
     const housePrice = avm?.price ?? avm?.priceRangeHigh ?? avm?.priceRangeLow ?? property?.lastSalePrice ?? undefined;
@@ -166,7 +197,10 @@ export function useAduModel({
                 siteWorkByAduId: Object.fromEntries(
                     selectedAdus.map((fp) => [
                         fp._id,
-                        computeTotal(estimatorByAduId[fp._id] ?? createEmptyState()),
+                        computeTotal(
+                            estimatorByAduId[fp._id] ?? createEmptyState(resolvedSiteWorkCategories),
+                            resolvedSiteWorkCategories,
+                        ),
                     ])
                 ),
                 rentByAduId: Object.fromEntries(
@@ -235,10 +269,13 @@ export function useAduModel({
     const activeSnapshotByAduId = useMemo<Record<string, ActiveLineItem[]>>(() => {
         const out: Record<string, ActiveLineItem[]> = {};
         for (const fp of selectedAdus) {
-            out[fp._id] = buildActiveSnapshot(estimatorByAduId[fp._id] ?? createEmptyState());
+            out[fp._id] = buildActiveSnapshot(
+                estimatorByAduId[fp._id] ?? createEmptyState(resolvedSiteWorkCategories),
+                resolvedSiteWorkCategories,
+            );
         }
         return out;
-    }, [selectedAdus, estimatorByAduId]);
+    }, [selectedAdus, estimatorByAduId, resolvedSiteWorkCategories]);
 
     function toggleAdu(id: string) {
         setAduCompareIds((prev) => {
@@ -258,7 +295,7 @@ export function useAduModel({
             const next = { ...prev };
             for (const other of selectedAdus) {
                 if (other._id === sourceId) continue;
-                const target = next[other._id] ?? createEmptyState();
+                const target = next[other._id] ?? createEmptyState(resolvedSiteWorkCategories);
                 next[other._id] = mergeEstimatorStates(source, target);
             }
             return next;

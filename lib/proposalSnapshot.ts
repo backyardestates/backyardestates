@@ -73,6 +73,11 @@ export interface ProposalSnapshot {
     // null until an ADU is picked and a schedule is generated.
     proposalPaymentSchedule: ProposalPaymentSchedule | null;
 
+    /** Per-ADU schedules. Old snapshots only stored the singular field above;
+     *  applySnapshot migrates them by keying the old schedule under its
+     *  `aduId` when this field is absent. */
+    proposalPaymentSchedulesByAduId?: Record<string, ProposalPaymentSchedule>;
+
     // Step status
     activeStep: number;
     doneSteps: number[];
@@ -154,12 +159,17 @@ export function saveProposal(snapshot: ProposalSnapshot): void {
     const store = readStore(PROPOSALS_STORAGE_KEY);
     store[snapshot.addressKey] = snapshot;
     writeStore(PROPOSALS_STORAGE_KEY, store);
+    // Shadow-write to the server (fire-and-forget). The UI keeps its
+    // instant-feeling localStorage write path; the server gains durability +
+    // cross-device access without blocking the user.
+    void serverUpsertProposal(snapshot, "SAVED");
 }
 
 export function deleteProposal(addressKey: string): void {
     const store = readStore(PROPOSALS_STORAGE_KEY);
     delete store[addressKey];
     writeStore(PROPOSALS_STORAGE_KEY, store);
+    void serverDeleteProposal(addressKey, "SAVED");
 }
 
 // ── Drafts (autosaved) ───────────────────────────────────────────────────────
@@ -180,12 +190,14 @@ export function saveDraft(snapshot: ProposalSnapshot): void {
     const store = readStore(DRAFTS_STORAGE_KEY);
     store[snapshot.addressKey] = snapshot;
     writeStore(DRAFTS_STORAGE_KEY, store);
+    void serverUpsertProposal(snapshot, "DRAFT");
 }
 
 export function deleteDraft(addressKey: string): void {
     const store = readStore(DRAFTS_STORAGE_KEY);
     delete store[addressKey];
     writeStore(DRAFTS_STORAGE_KEY, store);
+    void serverDeleteProposal(addressKey, "DRAFT");
 }
 
 // ── Companion-key (panel-owned) localStorage helpers ─────────────────────────
@@ -216,4 +228,113 @@ export function restoreCompanionStorage(
 /** Stable JSON of the companion-key snapshot — useful for change detection. */
 export function companionStorageFingerprint(): string {
     return JSON.stringify(captureCompanionStorage());
+}
+
+// ── Server-backed sync (DB-backed, runs alongside the localStorage cache) ────
+
+type ServerStatus = "SAVED" | "DRAFT";
+
+async function serverUpsertProposal(
+    snapshot: ProposalSnapshot,
+    status: ServerStatus
+): Promise<void> {
+    if (typeof window === "undefined") return;
+    try {
+        await fetch(`/api/admin/proposals?status=${status}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(snapshot),
+        });
+    } catch (err) {
+        // Silent — localStorage already has the data. Network failures don't
+        // block the UI; the next save will retry.
+        console.warn(`[proposalSnapshot] server upsert (${status}) failed`, err);
+    }
+}
+
+async function serverDeleteProposal(
+    addressKey: string,
+    status: ServerStatus
+): Promise<void> {
+    if (typeof window === "undefined") return;
+    try {
+        await fetch(
+            `/api/admin/proposals/${encodeURIComponent(addressKey)}?status=${status}`,
+            { method: "DELETE" }
+        );
+    } catch (err) {
+        console.warn(`[proposalSnapshot] server delete (${status}) failed`, err);
+    }
+}
+
+/**
+ * One-shot sync: pull the user's proposals + drafts from the server and merge
+ * into localStorage. Server entries win on conflict (treated as the source of
+ * truth). Call once on admin-tool mount so a new device sees existing work.
+ */
+export async function syncFromServer(): Promise<{
+    pulledProposals: number;
+    pulledDrafts: number;
+    pushedProposals: number;
+    pushedDrafts: number;
+}> {
+    if (typeof window === "undefined") {
+        return { pulledProposals: 0, pulledDrafts: 0, pushedProposals: 0, pushedDrafts: 0 };
+    }
+
+    let pulledProposals = 0;
+    let pulledDrafts = 0;
+    let pushedProposals = 0;
+    let pushedDrafts = 0;
+
+    // ── Pull: fetch server proposals, merge into localStorage ────────────────
+    try {
+        const [proposalsRes, draftsRes] = await Promise.all([
+            fetch("/api/admin/proposals?status=SAVED"),
+            fetch("/api/admin/proposals?status=DRAFT"),
+        ]);
+
+        if (proposalsRes.ok) {
+            const data = (await proposalsRes.json()) as { proposals: ProposalSnapshot[] };
+            const store = readStore(PROPOSALS_STORAGE_KEY);
+            for (const snap of data.proposals ?? []) {
+                if (!snap?.addressKey) continue;
+                store[snap.addressKey] = snap;
+                pulledProposals += 1;
+            }
+            writeStore(PROPOSALS_STORAGE_KEY, store);
+        }
+
+        if (draftsRes.ok) {
+            const data = (await draftsRes.json()) as { proposals: ProposalSnapshot[] };
+            const store = readStore(DRAFTS_STORAGE_KEY);
+            for (const snap of data.proposals ?? []) {
+                if (!snap?.addressKey) continue;
+                store[snap.addressKey] = snap;
+                pulledDrafts += 1;
+            }
+            writeStore(DRAFTS_STORAGE_KEY, store);
+        }
+    } catch (err) {
+        console.warn("[proposalSnapshot] pull failed", err);
+    }
+
+    // ── Push: any localStorage entries that the server didn't have come up ───
+    // This is the migration path for existing offline-only proposals.
+    try {
+        const localProposals = Object.values(readStore(PROPOSALS_STORAGE_KEY));
+        for (const snap of localProposals) {
+            await serverUpsertProposal(snap, "SAVED");
+            pushedProposals += 1;
+        }
+        const localDrafts = Object.values(readStore(DRAFTS_STORAGE_KEY));
+        for (const snap of localDrafts) {
+            await serverUpsertProposal(snap, "DRAFT");
+            pushedDrafts += 1;
+        }
+    } catch (err) {
+        console.warn("[proposalSnapshot] push failed", err);
+    }
+
+    return { pulledProposals, pulledDrafts, pushedProposals, pushedDrafts };
 }

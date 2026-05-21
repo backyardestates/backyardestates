@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireRole } from "@/lib/auth/requireRole";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -7,6 +8,14 @@ export const dynamic = "force-dynamic";
 // Used for hotlink-protected hosts (e.g. Zillow's photos.zillowstatic.com)
 // where direct `<img src>` requests get 403'd.
 export async function GET(req: Request) {
+    // Any signed-in user can use the image proxy (it's invoked from the
+    // presenter view to render rental photos and the presenter view itself
+    // is shown to customers sitting next to the rep). Blocking unauth-d
+    // requests prevents this endpoint from acting as an open image-fetch
+    // proxy for the public internet.
+    const guard = await requireRole(["ADMIN", "ARCHITECT", "CUSTOMER"]);
+    if (guard) return guard;
+
     const { searchParams } = new URL(req.url);
     const target = searchParams.get("url");
 

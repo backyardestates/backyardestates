@@ -45,7 +45,7 @@ export const DEFAULTS: Defaults = {
     remodelCostHouse: 50000,
 
     noiExpenseRatio: 0.2,
-    maxAduComparisons: 3,
+    maxAduComparisons: 5,
 };
 
 export type DebugSource = "input" | "api" | "calc";

@@ -10,6 +10,10 @@ export type Floorplan = {
     beds: number;
     baths: number;
     key: string;
+    /** Optional override for the floorplan image. Used by admin-added custom
+     *  units; when absent on a custom unit, the presenter falls back to the
+     *  nearest-sqft Sanity floorplan's image at broadcast time. */
+    imageUrl?: string;
 };
 
 export type PropertyRecord = {

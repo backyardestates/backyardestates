@@ -56,25 +56,50 @@ function formatDays(d: number): string {
 }
 
 export function Slide7_HowItWorks() {
-    const { customerName, propertyAddress, projectTimeline } = usePresentationStore();
+    const { customerName, propertyAddress, projectTimeline, citiesCatalog } = usePresentationStore();
     const lastName = lastNameFromFull(customerName);
     const cityLabel = propertyAddress ? cityFromAddress(propertyAddress) : "—";
 
-    // Match the address to a city in CITY_TIMELINES; else fall back to default placeholder.
-    const matchedCity = propertyAddress
+    // Match address against the DB catalog first (preferred), then fall back to
+    // the legacy CITY_TIMELINES constants.
+    const dbMatch = propertyAddress && citiesCatalog && citiesCatalog.length > 0
+        ? citiesCatalog.find(
+            (c) => c.active && propertyAddress.toLowerCase().includes(c.name.toLowerCase())
+        )
+        : undefined;
+
+    const legacyMatchKey = propertyAddress
         ? Object.keys(CITY_TIMELINES).find(
             (c) => c !== "default" && propertyAddress.toLowerCase().includes(c.toLowerCase())
         )
         : undefined;
 
-    const timeline = CITY_TIMELINES[matchedCity ?? "default"];
+    const timeline = CITY_TIMELINES[legacyMatchKey ?? "default"];
 
-    // Admin-entered timeline (Step 11) overrides the CITY_TIMELINES lookup when present.
-    const beDesignDays = projectTimeline?.be.plans   ?? parseDays(timeline.plans.be)      ?? 25;
-    const bePermitDays = projectTimeline?.be.permits ?? parseDays(timeline.permitting.be) ?? 130;
-    const beBuildDays  = projectTimeline?.be.build   ?? parseDays(timeline.build.be)      ?? 40;
+    // BE days: admin Step 11 override → DB catalog → legacy constants → hard default.
+    const beDesignDays =
+        projectTimeline?.be.plans   ?? dbMatch?.bePlansDays   ?? parseDays(timeline.plans.be)      ?? 25;
+    const bePermitDays =
+        projectTimeline?.be.permits ?? dbMatch?.bePermitsDays ?? parseDays(timeline.permitting.be) ?? 130;
+    const beBuildDays  =
+        projectTimeline?.be.build   ?? dbMatch?.beBuildDays   ?? parseDays(timeline.build.be)      ?? 40;
     const totalDays    = beDesignDays + bePermitDays + beBuildDays;
     const totalMonths  = daysToMonths(totalDays);
+
+    // Resolve city-side cell text: prefer DB label/days when matched, else
+    // legacy constants, else industry placeholder.
+    function resolvedCityText(
+        dbDays: number | null | undefined,
+        dbLabel: string | null | undefined,
+        legacyText: string,
+        fallback: string
+    ): string {
+        if (dbMatch) {
+            if (dbLabel && dbLabel.trim().length > 0) return dbLabel;
+            if (typeof dbDays === "number") return formatDays(dbDays);
+        }
+        return cityCellValue(legacyText, fallback);
+    }
 
     // 6 rich stations — replaces both the slim timeline + the standalone "what we handle" steps.
     const STATIONS = [
@@ -126,17 +151,26 @@ export function Slide7_HowItWorks() {
         {
             label: "Plans & Design",
             be:   beDisplay(beDesignDays, timeline.plans.be),
-            city: cityDisplay(projectTimeline?.city.plans, cityCellValue(timeline.plans.city, INDUSTRY_AVG.plans)),
+            city: cityDisplay(
+                projectTimeline?.city.plans,
+                resolvedCityText(dbMatch?.cityPlansDays, dbMatch?.cityPlansLabel, timeline.plans.city, INDUSTRY_AVG.plans)
+            ),
         },
         {
             label: "Permits",
             be:   beDisplay(bePermitDays, timeline.permitting.be),
-            city: cityDisplay(projectTimeline?.city.permits, cityCellValue(timeline.permitting.city, INDUSTRY_AVG.permitting)),
+            city: cityDisplay(
+                projectTimeline?.city.permits,
+                resolvedCityText(dbMatch?.cityPermitsDays, dbMatch?.cityPermitsLabel, timeline.permitting.city, INDUSTRY_AVG.permitting)
+            ),
         },
         {
             label: "Construction",
             be:   beDisplay(beBuildDays, timeline.build.be),
-            city: cityDisplay(projectTimeline?.city.build, cityCellValue(timeline.build.city, INDUSTRY_AVG.build)),
+            city: cityDisplay(
+                projectTimeline?.city.build,
+                resolvedCityText(dbMatch?.cityBuildDays, dbMatch?.cityBuildLabel, timeline.build.city, INDUSTRY_AVG.build)
+            ),
         },
     ];
 

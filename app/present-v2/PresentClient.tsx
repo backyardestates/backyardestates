@@ -6,6 +6,10 @@ import {
     type SanityFloorplan,
     type SanityStory,
     type SanityProperty,
+    type InclusionCategoryData,
+    type TaxTopicData,
+    type CityData,
+    type DiscountPresetData,
 } from "@/lib/store/presentationStore";
 import { startPresenterSync } from "@/lib/sync/presentationSync";
 import { selectStory } from "@/lib/investment/storySelector";
@@ -73,15 +77,30 @@ interface Props {
     floorplans: SanityFloorplan[];
     stories: SanityStory[];
     completedProperties: SanityProperty[];
+    inclusionsCatalog?: InclusionCategoryData[];
+    inclusionsSidebar?: { deptPills: string[]; feeBullets: string[] } | null;
+    taxTopicsCatalog?: TaxTopicData[];
+    citiesCatalog?: CityData[];
+    discountsCatalog?: DiscountPresetData[];
 }
 
-export function PresentClient({ floorplans, stories, completedProperties }: Props) {
+export function PresentClient({
+    floorplans,
+    stories,
+    completedProperties,
+    inclusionsCatalog,
+    inclusionsSidebar,
+    taxTopicsCatalog,
+    citiesCatalog,
+    discountsCatalog,
+}: Props) {
     const {
         currentSlide,
         setSlide,
         propertyAddress,
         scenarios,
         setSanityData,
+        setCatalogData,
         toggleGalleryPaused,
         customerMotivation,
         storyOverridden,
@@ -142,6 +161,25 @@ export function PresentClient({ floorplans, stories, completedProperties }: Prop
     useEffect(() => {
         setSanityData({ floorplans, stories, completedProperties });
     }, [floorplans, stories, completedProperties, setSanityData]);
+
+    // Seed DB-backed catalog data (inclusions for Slide 4, tax topics for Slide 12, etc.).
+    useEffect(() => {
+        if (
+            inclusionsCatalog !== undefined ||
+            inclusionsSidebar !== undefined ||
+            taxTopicsCatalog !== undefined ||
+            citiesCatalog !== undefined ||
+            discountsCatalog !== undefined
+        ) {
+            setCatalogData({
+                ...(inclusionsCatalog !== undefined ? { inclusionsCatalog } : {}),
+                ...(inclusionsSidebar !== undefined ? { inclusionsSidebar } : {}),
+                ...(taxTopicsCatalog !== undefined ? { taxTopicsCatalog } : {}),
+                ...(citiesCatalog !== undefined ? { citiesCatalog } : {}),
+                ...(discountsCatalog !== undefined ? { discountsCatalog } : {}),
+            });
+        }
+    }, [inclusionsCatalog, inclusionsSidebar, taxTopicsCatalog, citiesCatalog, discountsCatalog, setCatalogData]);
 
     useEffect(() => {
         if (storyOverridden) return;

@@ -47,11 +47,26 @@ function cityFromAddress(addr: string) {
 }
 
 export function Slide10_RentalAnalysis() {
-    const { comparedUnitIds, floorplans, rentalComps, featuredRentals, rentByUnitId, customerName, propertyAddress, currentSlide } = usePresentationStore();
-    const active = currentSlide === 10;
+    const { comparedUnitIds, floorplans, rentalComps, featuredRentals, rentByUnitId, customerName, propertyAddress, currentSlide, isPrintMode } = usePresentationStore();
+    const active = currentSlide === 10 || isPrintMode;
 
     const comparedUnits = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
-    const displayUnits = comparedUnits.length > 0 ? comparedUnits : floorplans.slice(0, 1);
+
+    // Dedupe duplicates whose rent matches their source — the only number this
+    // slide shows per unit is the monthly rent, so identical rents are visual
+    // noise. Duplicates that the rep adjusted to a different rent (or custom
+    // units with unique base names) survive dedupe naturally.
+    const seenRentSignatures = new Set<string>();
+    const dedupedComparedUnits = comparedUnits.filter((fp) => {
+        const baseName = (fp.name ?? "").replace(/\s*\(\d+\)\s*$/, "").trim();
+        const rent = rentByUnitId[fp._id] ?? 0;
+        const sig = `${baseName}|${rent}`;
+        if (seenRentSignatures.has(sig)) return false;
+        seenRentSignatures.add(sig);
+        return true;
+    });
+
+    const displayUnits = dedupedComparedUnits.length > 0 ? dedupedComparedUnits : floorplans.slice(0, 1);
 
     const hasRentData = displayUnits.some((fp) => (rentByUnitId[fp._id] ?? 0) > 0);
     const hasComps = rentalComps.length > 0 || featuredRentals.length > 0;

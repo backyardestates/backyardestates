@@ -30,7 +30,14 @@ function cityFromAddress(addr: string) {
 }
 
 export function Slide12_TaxBenefits() {
-    const { customerName, propertyAddress } = usePresentationStore();
+    const { customerName, propertyAddress, taxTopicsCatalog } = usePresentationStore();
+
+    // Prefer the DB-backed catalog when populated; fall back to the legacy
+    // hardcoded WRITE_OFFS so dev / pre-seed environments still render.
+    const writeOffsToRender =
+        taxTopicsCatalog && taxTopicsCatalog.length > 0
+            ? taxTopicsCatalog.filter((t) => t.active).map((t) => ({ name: t.name, note: t.note }))
+            : WRITE_OFFS;
     const lastName = lastNameFromFull(customerName);
     const city = propertyAddress ? cityFromAddress(propertyAddress) : "—";
 
@@ -61,7 +68,7 @@ export function Slide12_TaxBenefits() {
 
             {/* Write-off grid */}
             <div className={s.grid}>
-                {WRITE_OFFS.map((item) => (
+                {writeOffsToRender.map((item) => (
                     <div key={item.name} className={s.card}>
                         <p className={s.cardName}>{item.name}</p>
                         <p className={s.cardNote}>{item.note}</p>

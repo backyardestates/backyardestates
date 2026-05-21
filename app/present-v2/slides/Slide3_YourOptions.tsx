@@ -2,7 +2,14 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
-import { getDiscountLines, createEmptyDiscountState, type DiscountState } from "@/lib/investment/discounts";
+import {
+    getDiscountLines,
+    createEmptyDiscountState,
+    catalogToPresets,
+    PRESETS,
+    type DiscountState,
+    type PresetLike,
+} from "@/lib/investment/discounts";
 import s from "./Slide3.module.css";
 
 function fmt$(n: number) {
@@ -84,8 +91,20 @@ export function Slide3_YourOptions() {
         siteWorkTagsByUnitId,
         discountLinesByUnitId,
         currentSlide,
+        isPrintMode,
+        discountsCatalog,
     } = usePresentationStore();
-    const active = currentSlide === 4;
+
+    // Resolve presets from the DB-backed catalog when seeded; fall back to the
+    // legacy hardcoded list so the slide still renders if the catalog is empty.
+    const resolvedPresets: PresetLike[] = useMemo(() => {
+        if (discountsCatalog && discountsCatalog.length > 0) {
+            const fromCatalog = catalogToPresets(discountsCatalog);
+            if (fromCatalog.length > 0) return fromCatalog;
+        }
+        return PRESETS;
+    }, [discountsCatalog]);
+    const active = currentSlide === 4 || isPrintMode;
 
     const units = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
     const displayUnits = units.length > 0 ? units : floorplans.slice(0, 3);
@@ -118,12 +137,12 @@ export function Slide3_YourOptions() {
             const next: Record<string, { label: string; amount: number }[]> = {};
             for (const id of comparedUnitIds) {
                 const effective = dpCustom[id] ?? dpMaster;
-                next[id] = getDiscountLines(effective);
+                next[id] = getDiscountLines(effective, resolvedPresets);
             }
             setLsDiscountLines(next);
         } catch { /* malformed */ }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [comparedKey]);
+    }, [comparedKey, resolvedPresets]);
 
     const discountLines = Object.keys(lsDiscountLines).length > 0 ? lsDiscountLines : discountLinesByUnitId;
     const allDiscountLabels = Array.from(new Set(
@@ -151,8 +170,15 @@ export function Slide3_YourOptions() {
             </div>
 
 
-            {/* Plan columns */}
-            <div className={`${s.planColumns} ${colsClass}`}>
+            {/* Plan columns — dynamic count, but keep the cols1/cols2 layouts
+                because they have special framing (single-card centering, 2-up
+                spacing) that's nicer than a raw repeat(N, 1fr). */}
+            <div
+                className={`${s.planColumns} ${colsClass}`}
+                style={displayUnits.length >= 3
+                    ? { gridTemplateColumns: `repeat(${displayUnits.length}, 1fr)` }
+                    : undefined}
+            >
                 {displayUnits.map((fp, i) => {
                     const sc = getScenario(fp._id);
                     const base = sc?.baseAduPrice ?? fp.price ?? 0;

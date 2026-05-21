@@ -155,6 +155,71 @@ export const SITE_WORK_CATEGORIES: SiteWorkCategory[] = [
     },
 ];
 
+// ─── DB-backed catalog wiring (Pass B2) ───────────────────────────────────────
+//
+// Serializable shape of the SiteWork catalog passed from the admin page →
+// AdminMasterClient → hooks → SiteWorkEstimator. Lives here so hooks can type
+// their props without taking a dependency on the `app/` layer.
+//
+// The DB catalog item slugs are namespaced (e.g. `permits__impact`) for
+// collision safety; we strip the prefix at runtime so the legacy
+// EstimatorState (keyed by bare ids like `impact`) keeps working untouched.
+export type SiteWorkCatalogItemData = {
+    id: string;       // DB row id
+    slug: string;     // namespaced catalog slug (e.g. "permits__impact")
+    label: string;
+    unit: SiteWorkUnit;
+    beCost: number;
+    markup: number;
+    sortOrder?: number;
+    active?: boolean;
+};
+
+export type SiteWorkCatalogCategoryData = {
+    id: string;       // DB row id
+    slug: string;     // catalog slug (matches legacy category id, e.g. "permits")
+    label: string;
+    sortOrder?: number;
+    active?: boolean;
+    items: SiteWorkCatalogItemData[];
+};
+
+export type SiteWorkCatalogData = {
+    categories: SiteWorkCatalogCategoryData[];
+};
+
+/**
+ * Project the DB-backed catalog into the same shape as the legacy
+ * SITE_WORK_CATEGORIES constant so it can drop into helpers and the
+ * SiteWorkEstimator render loop. Item id = trailing segment of slug
+ * (`permits__impact` → `impact`), preserving compatibility with localStorage
+ * state keyed by bare ids. Inactive items/categories are dropped.
+ */
+export function catalogToSiteWorkCategories(catalog: SiteWorkCatalogData): SiteWorkCategory[] {
+    return catalog.categories
+        .filter((c) => c.active !== false)
+        .map((c) => ({
+            id: c.slug,
+            label: c.label,
+            items: c.items
+                .filter((it) => it.active !== false)
+                .map((it) => ({
+                    id: stripCatalogSlug(it.slug),
+                    label: it.label,
+                    unit: it.unit,
+                    beCost: it.beCost,
+                    markup: it.markup,
+                })),
+        }));
+}
+
+/** Return the item id portion of a namespaced slug — the chars after `__`,
+ *  or the whole slug if there is no `__`. */
+export function stripCatalogSlug(slug: string): string {
+    const idx = slug.indexOf("__");
+    return idx >= 0 ? slug.slice(idx + 2) : slug;
+}
+
 // ─── State types ──────────────────────────────────────────────────────────────
 
 export type RowOverride = {
@@ -207,9 +272,9 @@ export function effectiveMarkup(item: SiteWorkPreset, overrides: Record<string, 
 
 // ─── State helpers ────────────────────────────────────────────────────────────
 
-export function createEmptyState(): EstimatorState {
+export function createEmptyState(categories: SiteWorkCategory[] = SITE_WORK_CATEGORIES): EstimatorState {
     const quantities: Record<string, number> = {};
-    for (const cat of SITE_WORK_CATEGORIES) {
+    for (const cat of categories) {
         for (const item of cat.items) {
             quantities[item.id] = 0;
         }
@@ -229,10 +294,13 @@ export function rowCustomerPrice(
     return qty * beCost * markup;
 }
 
-export function computeTotal(state: EstimatorState): number {
+export function computeTotal(
+    state: EstimatorState,
+    categories: SiteWorkCategory[] = SITE_WORK_CATEGORIES,
+): number {
     const overrides = state.overrides ?? {};
     let total = 0;
-    for (const cat of SITE_WORK_CATEGORIES) {
+    for (const cat of categories) {
         for (const item of cat.items) {
             total += rowCustomerPrice(item, state.quantities[item.id] ?? 0, overrides);
         }
@@ -264,11 +332,14 @@ export function mergeEstimatorStates(source: EstimatorState, target: EstimatorSt
 
 // ─── Snapshot builder — call this when estimate is finalized ──────────────────
 
-export function buildActiveSnapshot(state: EstimatorState): ActiveLineItem[] {
+export function buildActiveSnapshot(
+    state: EstimatorState,
+    categories: SiteWorkCategory[] = SITE_WORK_CATEGORIES,
+): ActiveLineItem[] {
     const overrides = state.overrides ?? {};
     const items: ActiveLineItem[] = [];
 
-    for (const cat of SITE_WORK_CATEGORIES) {
+    for (const cat of categories) {
         for (const item of cat.items) {
             const qty = state.quantities[item.id] ?? 0;
             if (qty <= 0) continue;
@@ -300,7 +371,7 @@ export function buildActiveSnapshot(state: EstimatorState): ActiveLineItem[] {
 
     for (const ci of state.customItems) {
         if (ci.qty <= 0 || ci.beCost <= 0) continue;
-        const cat = SITE_WORK_CATEGORIES.find((c) => c.id === ci.catId);
+        const cat = categories.find((c) => c.id === ci.catId);
         const unitPrice = ci.beCost * ci.markup;
         const customerTotal = ci.qty * unitPrice;
         const beTotal = ci.qty * ci.beCost;

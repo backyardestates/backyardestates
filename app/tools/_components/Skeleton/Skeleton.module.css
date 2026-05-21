@@ -1,0 +1,30 @@
+@keyframes skelShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skel {
+    display: inline-block;
+    background: linear-gradient(
+        90deg,
+        #F1ECE3 0%,
+        #FAF7F1 50%,
+        #F1ECE3 100%
+    );
+    background-size: 200% 100%;
+    animation: skelShimmer 1.4s ease-in-out infinite;
+    vertical-align: middle;
+}
+
+.skelText {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skel {
+        animation: none;
+        background: #F1ECE3;
+    }
+}

@@ -1,0 +1,22 @@
+/* Global rules for the /present-v2/print page.
+ * Lives outside the CSS Module because Next.js's CSS Modules loader rejects
+ * non-class selectors (html, body) even inside :global() blocks. */
+
+html,
+body {
+    /* Force the browser to print colors and backgrounds exactly as rendered
+     * on screen instead of stripping them to "save ink". Without this the
+     * dark teal slide backgrounds and gold accents come out white/black. */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+}
+
+@media print {
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+    }
+}

@@ -37,6 +37,60 @@ export type SanityStory = {
     images?: string[];
 };
 
+// Serialized shapes mirroring the Prisma rows. Re-declared here so client code
+// (slides) doesn't pull in `@prisma/client` directly.
+export type InclusionRowData = {
+    id: string;
+    label: string;
+    text: string;
+    sortOrder: number;
+    active: boolean;
+};
+
+export type InclusionCategoryData = {
+    id: string;
+    name: string;
+    slug: string;
+    sortOrder: number;
+    active: boolean;
+    rows: InclusionRowData[];
+};
+
+export type TaxTopicData = {
+    id: string;
+    name: string;
+    note: string;
+    slug: string;
+    sortOrder: number;
+    active: boolean;
+};
+
+export type DiscountPresetData = {
+    id: string;
+    slug: string;
+    label: string;
+    amount: number;
+    sortOrder: number;
+    active: boolean;
+};
+
+export type CityData = {
+    id: string;
+    name: string;
+    slug: string;
+    bePlansDays: number;
+    bePermitsDays: number;
+    beBuildDays: number;
+    cityPlansDays: number | null;
+    cityPermitsDays: number | null;
+    cityBuildDays: number | null;
+    cityPlansLabel: string | null;
+    cityPermitsLabel: string | null;
+    cityBuildLabel: string | null;
+    active: boolean;
+    sortOrder: number;
+};
+
 export type SanityProperty = {
     _id: string;
     name: string;
@@ -100,6 +154,11 @@ export type PresentationState = {
     // Replaces the auto-computed `paymentSchedules` map for the dedicated
     // Payment Schedule slide. `null` until an ADU is selected in Step 12.
     proposalPaymentSchedule: ProposalPaymentSchedule | null;
+    /** Per-ADU payment schedules. The PaymentSchedulePanel renders one column
+     *  per ADU; Slide 14 and the agreement still consume the singular
+     *  `proposalPaymentSchedule` (derived as the primary = first compared
+     *  unit's schedule) so they don't need to know about the Record shape. */
+    proposalPaymentSchedulesByAduId: Record<string, ProposalPaymentSchedule>;
 
     // From buildScenarios()
     scenarios: Scenario[];
@@ -122,6 +181,10 @@ export type PresentationState = {
     isPresenting: boolean;
     galleryPaused: boolean;
 
+    // Print mode — when true, every slide treats itself as "active" so count-up
+    // animations all run simultaneously on the dedicated /print route.
+    isPrintMode: boolean;
+
     // Story selection
     selectedStory: SanityStory | null;
     storyOverridden: boolean;
@@ -131,6 +194,14 @@ export type PresentationState = {
     stories: SanityStory[];
     completedProperties: SanityProperty[];
 
+    // Catalog data (DB-backed; SSR-fetched on /present-v2 load). Slides read
+    // these with fallback to the legacy hardcoded constants when empty.
+    inclusionsCatalog: InclusionCategoryData[];
+    inclusionsSidebar: { deptPills: string[]; feeBullets: string[] } | null;
+    taxTopicsCatalog: TaxTopicData[];
+    citiesCatalog: CityData[];
+    discountsCatalog: DiscountPresetData[];
+
     // Actions
     setSlide: (n: number) => void;
     nextSlide: () => void;
@@ -139,11 +210,19 @@ export type PresentationState = {
     setActiveStoryIndex: (i: number) => void;
     setIsPresenting: (v: boolean) => void;
     setGalleryPaused: (v: boolean) => void;
+    setPrintMode: (v: boolean) => void;
     toggleGalleryPaused: () => void;
     setSelectedStory: (s: SanityStory | null) => void;
     setStoryOverridden: (v: boolean) => void;
     syncFromAdmin: (data: Partial<AdminBroadcast>) => void;
     setSanityData: (data: { floorplans?: SanityFloorplan[]; stories?: SanityStory[]; completedProperties?: SanityProperty[] }) => void;
+    setCatalogData: (data: {
+        inclusionsCatalog?: InclusionCategoryData[];
+        inclusionsSidebar?: { deptPills: string[]; feeBullets: string[] } | null;
+        taxTopicsCatalog?: TaxTopicData[];
+        citiesCatalog?: CityData[];
+        discountsCatalog?: DiscountPresetData[];
+    }) => void;
     reset: () => void;
 };
 
@@ -218,6 +297,11 @@ export type AdminBroadcast = {
     slideOrder: number[];
     projectTimeline: ProjectTimeline | null;
     proposalPaymentSchedule: ProposalPaymentSchedule | null;
+    /** Per-ADU payment schedules. The PaymentSchedulePanel renders one column
+     *  per ADU; Slide 14 and the agreement still consume the singular
+     *  `proposalPaymentSchedule` (derived as the primary = first compared
+     *  unit's schedule) so they don't need to know about the Record shape. */
+    proposalPaymentSchedulesByAduId: Record<string, ProposalPaymentSchedule>;
     scenarios: Scenario[];
     rentalComps: RentalListing[];
     rentByUnitId: Record<string, number>;
@@ -245,6 +329,7 @@ const initialData = {
     slideOrder: [],
     projectTimeline: null as ProjectTimeline | null,
     proposalPaymentSchedule: null as ProposalPaymentSchedule | null,
+    proposalPaymentSchedulesByAduId: {} as Record<string, ProposalPaymentSchedule>,
     scenarios: [],
     rentalComps: [],
     rentByUnitId: {},
@@ -254,11 +339,17 @@ const initialData = {
     discountLinesByUnitId: {},
     isPresenting: false,
     galleryPaused: false,
+    isPrintMode: false,
     selectedStory: null,
     storyOverridden: false,
     floorplans: [],
     stories: [],
     completedProperties: [],
+    inclusionsCatalog: [] as InclusionCategoryData[],
+    inclusionsSidebar: null as { deptPills: string[]; feeBullets: string[] } | null,
+    taxTopicsCatalog: [] as TaxTopicData[],
+    citiesCatalog: [] as CityData[],
+    discountsCatalog: [] as DiscountPresetData[],
 };
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -283,6 +374,8 @@ export const usePresentationStore = create<PresentationState>()((set, get) => ({
 
     setGalleryPaused: (v) => set({ galleryPaused: v }),
 
+    setPrintMode: (v) => set({ isPrintMode: v }),
+
     toggleGalleryPaused: () => set((s) => ({ galleryPaused: !s.galleryPaused })),
 
     setSelectedStory: (s) => set({ selectedStory: s }),
@@ -305,10 +398,28 @@ export const usePresentationStore = create<PresentationState>()((set, get) => ({
     }),
 
     setSanityData: ({ floorplans, stories, completedProperties }) =>
-        set({
-            ...(floorplans !== undefined ? { floorplans } : {}),
+        set((state) => ({
+            // Preserve any custom-prefixed floorplans that arrived from the
+            // admin broadcast — they aren't part of the server-fetched Sanity
+            // list, and bulk-replacing the array would silently drop the
+            // duplicates / manually-added units the rep set up.
+            ...(floorplans !== undefined ? {
+                floorplans: [
+                    ...floorplans,
+                    ...state.floorplans.filter((fp) => fp._id.startsWith("custom_")),
+                ],
+            } : {}),
             ...(stories !== undefined ? { stories } : {}),
             ...(completedProperties !== undefined ? { completedProperties } : {}),
+        })),
+
+    setCatalogData: ({ inclusionsCatalog, inclusionsSidebar, taxTopicsCatalog, citiesCatalog, discountsCatalog }) =>
+        set({
+            ...(inclusionsCatalog !== undefined ? { inclusionsCatalog } : {}),
+            ...(inclusionsSidebar !== undefined ? { inclusionsSidebar } : {}),
+            ...(taxTopicsCatalog !== undefined ? { taxTopicsCatalog } : {}),
+            ...(citiesCatalog !== undefined ? { citiesCatalog } : {}),
+            ...(discountsCatalog !== undefined ? { discountsCatalog } : {}),
         }),
 
     reset: () => set(initialData),

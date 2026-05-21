@@ -7,9 +7,12 @@ import {
     PROPOSAL_FIRST_AMOUNT,
     PROPOSAL_LAST_AMOUNT,
     generateBalloonSchedule,
+    generateBalloonFromCatalogDefs,
+    getFixedEndpointsFromCatalog,
     sumPaymentEntries,
     type ProposalPaymentEntry,
     type ProposalPaymentSchedule,
+    type PaymentMilestoneDefData,
 } from "@/lib/investment/proposalPaymentSchedule";
 import s from "./PaymentSchedulePanel.module.css";
 
@@ -25,13 +28,77 @@ function money(n: number): string {
 interface Props {
     selectedAdus: Floorplan[];
     aduScenarios: Scenario[];
-    value: ProposalPaymentSchedule | null;
-    onChange: (next: ProposalPaymentSchedule | null) => void;
+    /** Per-ADU schedule map. Keys are ADU IDs (`fp._id`). */
+    value: Record<string, ProposalPaymentSchedule>;
+    onChange: (next: Record<string, ProposalPaymentSchedule>) => void;
+    /** Optional DB-backed milestone catalog. */
+    milestoneDefs?: PaymentMilestoneDefData[];
 }
 
-export function PaymentSchedulePanel({ selectedAdus, aduScenarios, value, onChange }: Props) {
-    // Look up the chosen ADU + its scenario (carries finalAduPrice = base + site work − discounts).
-    const aduOptions = useMemo(
+/** Redistribute the rest of the schedule proportionally so the sum stays
+ *  equal to `totalPrice` after `editedIndex` is set to `newAmount`. */
+function rebalanceEntries(
+    entries: ProposalPaymentEntry[],
+    editedIndex: number,
+    newAmount: number,
+    totalPrice: number,
+): ProposalPaymentEntry[] {
+    const capped = Math.min(Math.max(0, newAmount), totalPrice);
+    const others = entries
+        .map((e, i) => ({ e, i }))
+        .filter(({ i }) => i !== editedIndex);
+    const othersCurrentSum = others.reduce((sum, { e }) => sum + e.amount, 0);
+    const othersTarget = Math.max(0, totalPrice - capped);
+
+    const amounts = entries.map((e) => e.amount);
+    amounts[editedIndex] = capped;
+
+    if (others.length > 0) {
+        if (othersCurrentSum <= 0) {
+            const each = Math.floor(othersTarget / others.length);
+            others.forEach(({ i }) => { amounts[i] = each; });
+        } else {
+            const ratio = othersTarget / othersCurrentSum;
+            others.forEach(({ e, i }) => {
+                amounts[i] = Math.max(0, Math.round(e.amount * ratio));
+            });
+        }
+        // Roll rounding into the last non-edited entry so the sum lands on total.
+        const actual = amounts.reduce((s, n) => s + n, 0);
+        const delta = totalPrice - actual;
+        if (delta !== 0) {
+            for (let i = entries.length - 1; i >= 0; i--) {
+                if (i === editedIndex) continue;
+                amounts[i] = Math.max(0, amounts[i] + delta);
+                break;
+            }
+        }
+    }
+
+    return entries.map((e, i) => ({ ...e, amount: amounts[i] }));
+}
+
+export function PaymentSchedulePanel({
+    selectedAdus,
+    aduScenarios,
+    value,
+    onChange,
+    milestoneDefs,
+}: Props) {
+    const hasCatalog = !!(milestoneDefs && milestoneDefs.length > 0);
+    const generate = useMemo(() => {
+        return hasCatalog
+            ? (total: number) => generateBalloonFromCatalogDefs(total, milestoneDefs!)
+            : (total: number) => generateBalloonSchedule(total);
+    }, [hasCatalog, milestoneDefs]);
+
+    const endpoints = hasCatalog
+        ? getFixedEndpointsFromCatalog(milestoneDefs!)
+        : { first: PROPOSAL_FIRST_AMOUNT, last: PROPOSAL_LAST_AMOUNT };
+
+    // Build the canonical list of ADUs to display as columns — one per
+    // selected ADU that has a valid total. Carries name + total for headers.
+    const aduColumns = useMemo(
         () =>
             selectedAdus
                 .map((fp) => {
@@ -39,79 +106,92 @@ export function PaymentSchedulePanel({ selectedAdus, aduScenarios, value, onChan
                     const total = sc?.finalAduPrice ?? sc?.purchasePrice ?? 0;
                     return { id: fp._id, name: fp.name, total };
                 })
-                .filter((o) => o.total > 0),
-        [selectedAdus, aduScenarios]
+                .filter((c) => c.total > 0),
+        [selectedAdus, aduScenarios],
     );
 
-    const selectedAduId = value?.aduId ?? aduOptions[0]?.id ?? "";
-    const selectedTotal =
-        aduOptions.find((o) => o.id === selectedAduId)?.total ?? 0;
-
-    // Seed a default balloon schedule the first time we have an ADU + a price.
+    // Auto-seed a default balloon schedule for any ADU that doesn't already
+    // have one. Generator is stable-keyed on the catalog, so this won't loop.
     useEffect(() => {
-        if (value) return;
-        if (!selectedAduId || selectedTotal <= 0) return;
-        onChange({
-            aduId: selectedAduId,
-            totalPrice: selectedTotal,
-            entries: generateBalloonSchedule(selectedTotal),
-        });
+        if (aduColumns.length === 0) return;
+        const next: Record<string, ProposalPaymentSchedule> = { ...value };
+        let mutated = false;
+        for (const col of aduColumns) {
+            if (!next[col.id]) {
+                next[col.id] = {
+                    aduId: col.id,
+                    totalPrice: col.total,
+                    entries: generate(col.total),
+                };
+                mutated = true;
+            }
+        }
+        if (mutated) onChange(next);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedAduId, selectedTotal]);
+    }, [aduColumns.map((c) => `${c.id}|${c.total}`).join(",")]);
 
-    // If the user switches ADU OR the underlying total changes, regenerate the
-    // default schedule (preserving the user's last selection's edits would
-    // make total-vs-sum drift, which we don't want).
-    function handleAduChange(nextAduId: string) {
-        const opt = aduOptions.find((o) => o.id === nextAduId);
-        if (!opt) return;
-        onChange({
-            aduId: nextAduId,
-            totalPrice: opt.total,
-            entries: generateBalloonSchedule(opt.total),
-        });
-    }
+    // The milestone rows shown in the table — derived from the first ADU
+    // that has a schedule (every schedule uses the same milestone definitions).
+    const firstSchedule = aduColumns.map((c) => value[c.id]).find(Boolean);
+    const milestoneRows = firstSchedule?.entries ?? [];
 
-    function handleAmountChange(index: number, raw: string) {
-        if (!value) return;
+    function handleCellChange(aduId: string, milestoneIndex: number, raw: string) {
+        const sched = value[aduId];
+        if (!sched) return;
         const parsed = parseFloat(raw.replace(/[^0-9.]/g, ""));
-        const next = Number.isFinite(parsed) ? Math.round(parsed) : 0;
-        const entries = value.entries.map((e, i) =>
-            i === index ? { ...e, amount: next } : e
-        );
-        onChange({ ...value, entries });
-    }
+        const newAmount = Number.isFinite(parsed) ? Math.max(0, Math.round(parsed)) : 0;
 
-    function handleResetBalloon() {
-        if (!value) return;
+        const nextEntries = rebalanceEntries(
+            sched.entries,
+            milestoneIndex,
+            newAmount,
+            sched.totalPrice,
+        );
         onChange({
             ...value,
-            entries: generateBalloonSchedule(value.totalPrice),
+            [aduId]: { ...sched, entries: nextEntries },
         });
     }
 
-    function handleResnapToCurrentTotal() {
-        // If finalAduPrice has shifted (more site work, new discount), pull the
-        // fresh total and regenerate around it.
-        const opt = aduOptions.find((o) => o.id === selectedAduId);
-        if (!opt) return;
+    function handleResetAdu(aduId: string) {
+        const col = aduColumns.find((c) => c.id === aduId);
+        if (!col) return;
         onChange({
-            aduId: selectedAduId,
-            totalPrice: opt.total,
-            entries: generateBalloonSchedule(opt.total),
+            ...value,
+            [aduId]: {
+                aduId,
+                totalPrice: col.total,
+                entries: generate(col.total),
+            },
         });
     }
 
-    const entries: ProposalPaymentEntry[] = value?.entries ?? [];
-    const lastIndex = entries.length - 1;
-    const currentSum = sumPaymentEntries(entries);
-    const variance = currentSum - (value?.totalPrice ?? 0);
-    const inSync =
-        value !== null && Math.abs(variance) < 1;
-    const totalDrifted =
-        value !== null && Math.abs((value.totalPrice ?? 0) - selectedTotal) > 1;
+    function handleResetAll() {
+        const next: Record<string, ProposalPaymentSchedule> = {};
+        for (const col of aduColumns) {
+            next[col.id] = {
+                aduId: col.id,
+                totalPrice: col.total,
+                entries: generate(col.total),
+            };
+        }
+        onChange(next);
+    }
 
-    if (aduOptions.length === 0) {
+    function handleResyncAdu(aduId: string) {
+        const col = aduColumns.find((c) => c.id === aduId);
+        if (!col) return;
+        onChange({
+            ...value,
+            [aduId]: {
+                aduId,
+                totalPrice: col.total,
+                entries: generate(col.total),
+            },
+        });
+    }
+
+    if (aduColumns.length === 0) {
         return (
             <div className={s.empty}>
                 Pick at least one ADU in Step 2 and finalize its site work / discounts before
@@ -120,137 +200,124 @@ export function PaymentSchedulePanel({ selectedAdus, aduScenarios, value, onChan
         );
     }
 
+    // Compute drift per column so we can flag any whose total has shifted
+    // (e.g., the rep added more site work after generating the schedule).
+    const drifts = aduColumns.map((col) => {
+        const sched = value[col.id];
+        const drifted = sched && Math.abs(sched.totalPrice - col.total) > 1;
+        return { col, drifted: !!drifted, sched };
+    });
+    const anyDrift = drifts.some((d) => d.drifted);
+
     return (
         <div className={s.panel}>
-            {/* Header row — ADU selector + total */}
-            <div className={s.header}>
-                <label className={s.field}>
-                    <span className={s.fieldLabel}>ADU</span>
-                    <select
-                        className={s.select}
-                        value={selectedAduId}
-                        onChange={(e) => handleAduChange(e.target.value)}
-                    >
-                        {aduOptions.map((o) => (
-                            <option key={o.id} value={o.id}>
-                                {o.name}
-                            </option>
-                        ))}
-                    </select>
-                </label>
-
-                <div className={s.totalBlock}>
-                    <span className={s.totalLabel}>Total ADU price</span>
-                    <span className={s.totalValue}>{money(selectedTotal)}</span>
-                    <span className={s.totalNote}>
-                        Includes site work + discounts applied
-                    </span>
-                </div>
-            </div>
-
-            {/* Drift warning when the model has changed since schedule generation */}
-            {totalDrifted && value && (
+            {/* Drift warnings — one row per column whose model has shifted */}
+            {anyDrift && (
                 <div className={s.warning}>
-                    Schedule total ({money(value.totalPrice)}) differs from the current ADU
-                    price ({money(selectedTotal)}).
-                    <button className={s.linkBtn} onClick={handleResnapToCurrentTotal}>
-                        Re-sync to current total
-                    </button>
+                    <div>Some schedules no longer match their ADU's current total:</div>
+                    <ul className={s.warningList}>
+                        {drifts.filter((d) => d.drifted).map((d) => (
+                            <li key={d.col.id}>
+                                <strong>The {d.col.name}</strong> · schedule total {money(d.sched!.totalPrice)} ·
+                                current price {money(d.col.total)}
+                                <button
+                                    type="button"
+                                    className={s.linkBtn}
+                                    onClick={() => handleResyncAdu(d.col.id)}
+                                >
+                                    Re-sync
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             )}
 
-            {/* Editable milestone table */}
-            <div className={s.tableWrap}>
-                <div className={`${s.row} ${s.headRow}`}>
-                    <div className={s.colNum}>#</div>
-                    <div className={s.colLabel}>Milestone</div>
-                    <div className={s.colTrigger}>Trigger</div>
-                    <div className={s.colAmount}>Amount</div>
-                    <div className={s.colPct}>%</div>
-                </div>
+            {/* Multi-column milestone table — one column per ADU */}
+            <div
+                className={s.tableWrap}
+                style={{
+                    gridTemplateColumns: `36px minmax(180px, 1.4fr) minmax(160px, 1.2fr) repeat(${aduColumns.length}, minmax(140px, 1fr))`,
+                }}
+            >
+                {/* Header row */}
+                <div className={`${s.cell} ${s.headCell}`}>#</div>
+                <div className={`${s.cell} ${s.headCell}`}>Milestone</div>
+                <div className={`${s.cell} ${s.headCell}`}>Trigger</div>
+                {aduColumns.map((col) => (
+                    <div key={col.id} className={`${s.cell} ${s.headCell} ${s.headAmount}`}>
+                        <div className={s.headAduName}>The {col.name}</div>
+                        <div className={s.headAduTotal}>{money(col.total)}</div>
+                    </div>
+                ))}
 
-                {entries.map((entry, i) => {
-                    const isFixed = i === 0 || i === lastIndex;
-                    const pct =
-                        value && value.totalPrice > 0
-                            ? (entry.amount / value.totalPrice) * 100
-                            : 0;
-                    return (
-                        <div
-                            key={entry.id}
-                            className={`${s.row} ${isFixed ? s.rowFixed : ""}`}
-                        >
-                            <div className={s.colNum}>{i + 1}</div>
-                            <div className={s.colLabel}>{entry.label}</div>
-                            <div className={s.colTrigger}>{entry.trigger}</div>
-                            <div className={s.colAmount}>
-                                {isFixed ? (
-                                    <span className={s.lockedAmount}>
-                                        {money(entry.amount)}
-                                        <span className={s.lockTag}>fixed</span>
-                                    </span>
-                                ) : (
+                {/* Milestone rows */}
+                {milestoneRows.map((row, i) => (
+                    <React.Fragment key={row.id}>
+                        <div className={s.cell}>{i + 1}</div>
+                        <div className={s.cell}>{row.label}</div>
+                        <div className={`${s.cell} ${s.triggerCell}`}>{row.trigger}</div>
+                        {aduColumns.map((col) => {
+                            const sched = value[col.id];
+                            const entry = sched?.entries[i];
+                            if (!entry) {
+                                return (
+                                    <div key={col.id} className={`${s.cell} ${s.amountCell} ${s.amountMissing}`}>
+                                        —
+                                    </div>
+                                );
+                            }
+                            const pct =
+                                sched && sched.totalPrice > 0
+                                    ? (entry.amount / sched.totalPrice) * 100
+                                    : 0;
+                            return (
+                                <div key={col.id} className={`${s.cell} ${s.amountCell}`}>
                                     <input
                                         type="number"
                                         min={0}
                                         step={100}
                                         className={s.amountInput}
                                         value={entry.amount}
-                                        onChange={(e) =>
-                                            handleAmountChange(i, e.target.value)
-                                        }
+                                        onChange={(e) => handleCellChange(col.id, i, e.target.value)}
                                     />
-                                )}
-                            </div>
-                            <div className={s.colPct}>{pct.toFixed(2)}%</div>
+                                    <span className={s.amountPct}>{pct.toFixed(2)}%</span>
+                                </div>
+                            );
+                        })}
+                    </React.Fragment>
+                ))}
+
+                {/* Sum row */}
+                <div className={`${s.cell} ${s.sumCell}`} />
+                <div className={`${s.cell} ${s.sumCell}`}>Sum of payments</div>
+                <div className={`${s.cell} ${s.sumCell}`} />
+                {aduColumns.map((col) => {
+                    const sched = value[col.id];
+                    const sum = sched ? sumPaymentEntries(sched.entries) : 0;
+                    const variance = sched ? sum - sched.totalPrice : 0;
+                    const inSync = Math.abs(variance) < 1;
+                    return (
+                        <div key={col.id} className={`${s.cell} ${s.sumCell} ${s.amountCell}`}>
+                            <strong>{money(sum)}</strong>
+                            <span className={inSync ? s.varianceOk : s.varianceOff}>
+                                {inSync ? "in sync" : `${variance >= 0 ? "+" : "−"}${money(Math.abs(variance))}`}
+                            </span>
                         </div>
                     );
                 })}
-
-                {/* Sum + variance footer */}
-                <div className={`${s.row} ${s.sumRow}`}>
-                    <div className={s.colNum} />
-                    <div className={s.colLabel}>Sum of payments</div>
-                    <div className={s.colTrigger} />
-                    <div className={s.colAmount}>
-                        <strong>{money(currentSum)}</strong>
-                    </div>
-                    <div className={s.colPct}>
-                        {value && value.totalPrice > 0
-                            ? `${((currentSum / value.totalPrice) * 100).toFixed(2)}%`
-                            : "—"}
-                    </div>
-                </div>
-
-                <div className={`${s.row} ${s.sumRow}`}>
-                    <div className={s.colNum} />
-                    <div className={s.colLabel}>Variance vs total</div>
-                    <div className={s.colTrigger} />
-                    <div
-                        className={`${s.colAmount} ${
-                            inSync ? s.varianceOk : s.varianceOff
-                        }`}
-                    >
-                        <strong>
-                            {variance >= 0 ? "+" : "−"}
-                            {money(Math.abs(variance))}
-                        </strong>
-                    </div>
-                    <div className={s.colPct}>
-                        {inSync ? "in sync" : "off"}
-                    </div>
-                </div>
             </div>
 
-            {/* Action row */}
+            {/* Actions */}
             <div className={s.actions}>
-                <button className={s.button} onClick={handleResetBalloon}>
-                    Reset to balloon default
+                <button className={s.button} onClick={handleResetAll}>
+                    Reset all to balloon default
                 </button>
                 <div className={s.note}>
-                    First payment is locked to {money(PROPOSAL_FIRST_AMOUNT)} ·
-                    Last payment is locked to {money(PROPOSAL_LAST_AMOUNT)} ·
-                    Edits broadcast live to the presenter.
+                    Every cell is editable · Defaults seed first to {money(endpoints.first)} and
+                    last to {money(endpoints.last)} per column · Editing any cell rebalances the
+                    other rows in that ADU's column proportionally so its total stays the same ·
+                    Slide 14 + the agreement use the first ADU's schedule as the contract version.
                 </div>
             </div>
         </div>

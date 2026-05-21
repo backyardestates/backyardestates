@@ -41,8 +41,8 @@ function AnimVal({ n, active, delay = 0 }: { n: number; active: boolean; delay?:
 }
 
 export function Slide8_TheReturn() {
-    const { scenarios, currentSlide } = usePresentationStore();
-    const active = currentSlide === 8;
+    const { scenarios, currentSlide, isPrintMode } = usePresentationStore();
+    const active = currentSlide === 8 || isPrintMode;
 
     const houseScenario = scenarios.find((sc) => sc.kind === "house");
     const aduScenarios = scenarios.filter((sc) => sc.kind === "adu");

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
 import s from "./Slide14.module.css";
 
 function fmt$(n: number) {
@@ -54,31 +55,73 @@ function cityFromAddress(addr: string) {
     return parts.length >= 2 ? parts[parts.length - 2].trim() : addr;
 }
 
+/** Same title split as Slide 8 — dark prefix + gold number accent + dark
+ *  duplicate suffix. Keeps "The Estate 1200 (1)" reading as one piece. */
+function splitTitle(name: string) {
+    const dupMatch = name.match(/^(.*?)\s*(\(\d+\))\s*$/);
+    const baseName = dupMatch ? dupMatch[1].trim() : name;
+    const dupSuffix = dupMatch ? ` ${dupMatch[2]}` : "";
+    const lastSpace = baseName.lastIndexOf(" ");
+    const titlePrefix = lastSpace > 0 ? baseName.slice(0, lastSpace) : "";
+    const titleAccent = lastSpace > 0 ? baseName.slice(lastSpace + 1) : baseName;
+    return { titlePrefix, titleAccent, dupSuffix };
+}
+
+type AduColumn = {
+    id: string;
+    name: string;
+    schedule: ProposalPaymentSchedule;
+};
+
 export function Slide14_PaymentSchedule() {
     const {
         customerName,
         propertyAddress,
-        proposalPaymentSchedule,
+        proposalPaymentSchedulesByAduId,
+        comparedUnitIds,
         floorplans,
         currentSlide,
+        isPrintMode,
     } = usePresentationStore();
 
-    // Slide is now at position 11 in the deck order — animate when that fires.
-    const active = currentSlide === 11;
+    const active = currentSlide === 11 || isPrintMode;
 
     const lastName = lastNameFromFull(customerName);
     const city = propertyAddress ? cityFromAddress(propertyAddress) : "—";
 
-    const entries = proposalPaymentSchedule?.entries ?? [];
-    const total   = proposalPaymentSchedule?.totalPrice ?? 0;
-    const aduName = proposalPaymentSchedule
-        ? floorplans.find((fp) => fp._id === proposalPaymentSchedule.aduId)?.name ?? "Your ADU"
-        : "Your ADU";
+    // Order columns matching Slide 4 / Slide 8 — iterate floorplans filtered
+    // by comparedUnitIds, then map each one to its schedule.
+    const orderedUnits = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
 
-    // Total animation for the anchor
-    const totalCount = useCountUp(total, active, 800, 1500);
+    const allColumns: AduColumn[] = orderedUnits
+        .map((fp) => ({
+            id: fp._id,
+            name: fp.name,
+            schedule: proposalPaymentSchedulesByAduId[fp._id],
+        }))
+        .filter((c): c is AduColumn => Boolean(c.schedule));
 
-    if (entries.length === 0) {
+    // Dedupe duplicates whose schedules are identical to their source — same
+    // base name + same total + same entry amounts. Diverged duplicates (rep
+    // edited the schedule) and unique custom units keep their own columns.
+    const seenSignatures = new Set<string>();
+    const columns = allColumns.filter((c) => {
+        const baseName = c.name.replace(/\s*\(\d+\)\s*$/, "").trim();
+        const sig = [
+            baseName,
+            Math.round(c.schedule.totalPrice),
+            c.schedule.entries.map((e) => Math.round(e.amount)).join(","),
+        ].join("|");
+        if (seenSignatures.has(sig)) return false;
+        seenSignatures.add(sig);
+        return true;
+    });
+
+    // Milestone definitions come from the first column — all schedules share
+    // the same milestone catalog.
+    const milestoneRows = columns[0]?.schedule.entries ?? [];
+
+    if (columns.length === 0 || milestoneRows.length === 0) {
         return (
             <div className={s.slide}>
                 <div className="running-header rh-light">
@@ -103,17 +146,11 @@ export function Slide14_PaymentSchedule() {
         );
     }
 
+    // Grid template: fixed cols (# / Milestone / Trigger) then 1fr per ADU.
+    const gridTemplate = `60px minmax(220px, 1.4fr) minmax(200px, 1.2fr) repeat(${columns.length}, minmax(160px, 1fr))`;
+
     return (
         <div className={s.slide}>
-            {/* Running header */}
-            <div className="running-header rh-light">
-                <span className="running-header-left">{lastName} · {city}</span>
-                <span className="running-header-center">Payment Schedule</span>
-                <span className="running-header-right">
-                    <span className="running-header-num">11</span> / 15
-                </span>
-            </div>
-
             {/* Headline */}
             <div className={s.headRow}>
                 <div className={s.headLeft}>
@@ -126,61 +163,65 @@ export function Slide14_PaymentSchedule() {
                 </div>
             </div>
 
-            {/* Table + bullets */}
-            <div className={s.tableRow}>
-                <div className={s.tableCard}>
-                    <div className={s.thead}>
-                        <div className={s.thLabel}>#</div>
-                        <div className={s.thCol}>Milestone</div>
-                        <div className={`${s.thCol} ${s.thTrigger}`}>Trigger</div>
-                        <div className={`${s.thCol} ${s.thAmount}`}>Amount</div>
-                    </div>
+            {/* Multi-column schedule grid */}
+            <div className={s.tableWrap}>
+                <div className={s.tableGrid} style={{ gridTemplateColumns: gridTemplate }}>
+                    {/* Header row */}
+                    <div className={`${s.cell} ${s.thLabel}`}>#</div>
+                    <div className={`${s.cell} ${s.thCol}`}>Milestone</div>
+                    <div className={`${s.cell} ${s.thCol} ${s.thTrigger}`}>Trigger</div>
+                    {columns.map((col) => {
+                        const { titlePrefix, titleAccent, dupSuffix } = splitTitle(col.name);
+                        return (
+                            <div key={col.id} className={`${s.cell} ${s.thCol} ${s.thAmount}`}>
+                                <div className={s.thAduName}>
+                                    The {titlePrefix && <>{titlePrefix} </>}
+                                    <span className={s.thAduAccent}>{titleAccent}</span>
+                                    {dupSuffix}
+                                </div>
+                                <div className={s.thAduTotal}>{fmt$(col.schedule.totalPrice)}</div>
+                            </div>
+                        );
+                    })}
 
-                    <div className={s.tbody}>
-                        {entries.map((entry, i) => {
-                            const isFixed = i === 0 || i === entries.length - 1;
-                            return (
-                                <div
-                                    key={entry.id}
-                                    className={`${s.row} ${isFixed ? s.rowFixed : ""}`}
-                                >
-                                    <div className={s.rowNum}>{i + 1}</div>
-                                    <div className={s.rowLabel}>{entry.label}</div>
-                                    <div className={s.rowTrigger}>{entry.trigger}</div>
-                                    <div className={s.rowAmount}>
+                    {/* Milestone rows */}
+                    {milestoneRows.map((row, i) => (
+                        <React.Fragment key={row.id}>
+                            <div className={`${s.cell} ${s.rowNum}`}>{i + 1}</div>
+                            <div className={`${s.cell} ${s.rowLabel}`}>{row.label}</div>
+                            <div className={`${s.cell} ${s.rowTrigger}`}>{row.trigger}</div>
+                            {columns.map((col) => {
+                                const entry = col.schedule.entries[i];
+                                if (!entry) {
+                                    return (
+                                        <div key={col.id} className={`${s.cell} ${s.rowAmount} ${s.rowAmountMissing}`}>
+                                            —
+                                        </div>
+                                    );
+                                }
+                                return (
+                                    <div key={col.id} className={`${s.cell} ${s.rowAmount}`}>
                                         <AnimDollar
                                             n={entry.amount}
                                             active={active}
                                             delay={i * 60}
                                         />
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </React.Fragment>
+                    ))}
 
-                        {/* Total row — visual climax of the table */}
-                        <div className={s.rowTotal}>
-                            <div className={s.rowNum} />
-                            <div className={s.rowLabel}>Total contract</div>
-                            <div className={s.rowTrigger}>{aduName}</div>
-                            <div className={s.rowTotalAmount}>
-                                {fmt$(totalCount)}
-                            </div>
+                    {/* Total row — per column */}
+                    <div className={`${s.cell} ${s.totalCell}`} />
+                    <div className={`${s.cell} ${s.totalCell} ${s.totalLabel}`}>Total contract</div>
+                    <div className={`${s.cell} ${s.totalCell} ${s.totalTrigger}`}>Locked at signing</div>
+                    {columns.map((col) => (
+                        <div key={col.id} className={`${s.cell} ${s.totalCell} ${s.totalAmount}`}>
+                            {fmt$(col.schedule.totalPrice)}
                         </div>
-                    </div>
+                    ))}
                 </div>
-
-            </div>
-
-            {/* Closing anchor — locked total */}
-            <div className={s.anchor}>
-                <div className={s.anchorLeft}>
-                    <span className={s.anchorEyebrow}>Locked at signing</span>
-                    <span className={s.anchorBlurb}>
-                        Total contract for {aduName}
-                    </span>
-                </div>
-                <div className={s.anchorValue}>{fmt$(totalCount)}</div>
             </div>
         </div>
     );

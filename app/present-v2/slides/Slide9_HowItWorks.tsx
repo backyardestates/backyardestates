@@ -69,8 +69,8 @@ const PHASE_BORDER: Record<string, string> = {
 };
 
 export function Slide9_HowItWorks() {
-    const { scenarios, paymentSchedules, comparedUnitIds, floorplans, currentSlide } = usePresentationStore();
-    const active = currentSlide === 9;
+    const { scenarios, paymentSchedules, comparedUnitIds, floorplans, currentSlide, isPrintMode } = usePresentationStore();
+    const active = currentSlide === 9 || isPrintMode;
 
     const aduScenarios = scenarios.filter((sc) => sc.kind === "adu");
     const comparedAdus = comparedUnitIds.length > 0

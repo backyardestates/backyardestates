@@ -1,0 +1,368 @@
+/* My Proposals — editorial light theme, matches the presentation paper slides */
+
+.shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px 96px;
+    font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #14302F;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.18);
+}
+
+.eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: rgba(20, 48, 47, 0.55);
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.eyebrow strong {
+    color: #14302F;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+}
+
+/* Italic serif accent matches the slide section-title pattern */
+.title {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 44px;
+    font-weight: 300;
+    color: #14302F;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+}
+
+.title em {
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #B8954A;
+}
+
+.subtitle {
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 15px;
+    color: rgba(20, 48, 47, 0.55);
+    margin: 0;
+    letter-spacing: -0.005em;
+}
+
+/* ── Primary action button ─────────────────────────────────────────── */
+.primaryAction {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 22px;
+    background: #14302F;
+    color: #F7F2E8;
+    border: 1px solid #14302F;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+    min-height: 44px;
+}
+
+.primaryAction:hover {
+    background: #1F4948;
+    border-color: #1F4948;
+    transform: translateY(-1px);
+}
+
+.primaryAction:focus-visible {
+    outline: 2px solid #B8954A;
+    outline-offset: 2px;
+}
+
+/* ── Filter tabs ───────────────────────────────────────────────────── */
+.filterTabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 24px;
+    padding: 6px;
+    background: rgba(184, 149, 74, 0.06);
+    border: 1px solid rgba(184, 149, 74, 0.14);
+    border-radius: 12px;
+    width: fit-content;
+}
+
+.filterTab {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: transparent;
+    border: 0;
+    color: rgba(20, 48, 47, 0.62);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: background 0.12s ease, color 0.12s ease;
+}
+
+.filterTab:hover {
+    color: #14302F;
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.filterTabActive {
+    background: #FFFFFF;
+    color: #14302F;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.06);
+}
+
+.filterTabActive:hover {
+    background: #FFFFFF;
+    color: #14302F;
+}
+
+.filterTab:focus-visible {
+    outline: 2px solid #B8954A;
+    outline-offset: 2px;
+}
+
+/* ── Table card ────────────────────────────────────────────────────── */
+.tableWrap {
+    position: relative;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.18);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
+    /* overflow:visible so the kebab dropdown can extend past the card edge
+     * without getting clipped by the rounded corners. */
+    overflow: visible;
+}
+
+/* Gold strip across the top — inset 14px so it doesn't extend past the
+ * rounded corners (since the container no longer clips). */
+.tableWrap::before {
+    content: "";
+    position: absolute;
+    inset: 0 14px auto 14px;
+    height: 2px;
+    background: linear-gradient(90deg, #B8954A 0%, #D4B074 50%, rgba(184, 149, 74, 0.40) 100%);
+    z-index: 1;
+    border-radius: 1px;
+}
+
+/* Round the table's first/last row corners directly so they don't leak
+ * past the card edge now that overflow is visible. */
+.table tbody tr:first-child td:first-child {
+    border-top-left-radius: 14px;
+}
+
+.table tbody tr:first-child td:last-child {
+    border-top-right-radius: 14px;
+}
+
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 14px;
+}
+
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 14px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.table thead th {
+    text-align: left;
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: #B8954A;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.18);
+    background: rgba(184, 149, 74, 0.04);
+}
+
+.table tbody tr {
+    border-bottom: 1px solid rgba(184, 149, 74, 0.10);
+    transition: background 0.12s ease;
+}
+
+.table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table tbody tr:hover {
+    background: rgba(184, 149, 74, 0.04);
+}
+
+.table td {
+    padding: 16px 20px;
+    vertical-align: middle;
+}
+
+.customerName {
+    font-weight: 600;
+    color: #14302F;
+    font-size: 14px;
+}
+
+.addrCell {
+    color: rgba(20, 48, 47, 0.70);
+    max-width: 320px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.muted {
+    color: rgba(20, 48, 47, 0.45);
+    font-size: 12px;
+}
+
+.numCol {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+    color: rgba(20, 48, 47, 0.70);
+    font-weight: 500;
+}
+
+/* ── Status pills — match the presentation pill aesthetic ──────────── */
+.statusPill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: rgba(184, 149, 74, 0.08);
+    color: #B8954A;
+    border: 1px solid rgba(184, 149, 74, 0.20);
+}
+
+.status_DRAFT {
+    background: rgba(184, 149, 74, 0.10);
+    color: #8A6B14;
+    border-color: rgba(184, 149, 74, 0.30);
+}
+
+.status_REVIEWED {
+    background: rgba(20, 48, 47, 0.08);
+    color: #14302F;
+    border-color: rgba(20, 48, 47, 0.18);
+}
+
+.status_SENT {
+    background: rgba(40, 80, 140, 0.08);
+    color: #2A4A8A;
+    border-color: rgba(40, 80, 140, 0.20);
+}
+
+.status_SIGNED {
+    background: rgba(30, 100, 60, 0.08);
+    color: #1E5A2E;
+    border-color: rgba(30, 100, 60, 0.22);
+}
+
+.status_ARCHIVED {
+    background: rgba(20, 48, 47, 0.04);
+    color: rgba(20, 48, 47, 0.50);
+    border-color: rgba(20, 48, 47, 0.12);
+}
+
+.actionLink {
+    color: #14302F;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.actionLink:hover {
+    color: #B8954A;
+    text-decoration: underline;
+}
+
+/* ── Empty state ───────────────────────────────────────────────────── */
+.empty {
+    padding: 80px 24px;
+    background: #FFFFFF;
+    border: 1px dashed rgba(184, 149, 74, 0.30);
+    border-radius: 14px;
+    text-align: center;
+    color: rgba(20, 48, 47, 0.62);
+    font-size: 15px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.empty p {
+    margin: 0;
+    max-width: 480px;
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(20, 48, 47, 0.70);
+}
+
+.empty a {
+    color: #B8954A;
+    font-weight: 600;
+}
+
+/* ── Narrow viewports ──────────────────────────────────────────────── */
+@media (max-width: 720px) {
+    .shell {
+        padding: 24px 16px 64px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .title {
+        font-size: 32px;
+    }
+
+    .table thead {
+        display: none;
+    }
+
+    .table tbody tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 6px 12px;
+        padding: 14px 16px;
+    }
+
+    .table td {
+        padding: 0;
+    }
+
+    .addrCell {
+        grid-column: 1 / -1;
+    }
+}

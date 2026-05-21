@@ -46,8 +46,8 @@ function cityFromAddress(addr: string) {
 }
 
 export function Slide1_Cover() {
-    const { customerName, propertyAddress, scenarios, aduType, currentSlide } = usePresentationStore();
-    const active = currentSlide === 1;
+    const { customerName, propertyAddress, scenarios, aduType, currentSlide, isPrintMode } = usePresentationStore();
+    const active = currentSlide === 1 || isPrintMode;
 
     const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
     const year = new Date().getFullYear();

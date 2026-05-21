@@ -4,8 +4,12 @@ import React, { useState, useMemo, useEffect } from "react";
 import type { Floorplan } from "@/lib/rentcast/types";
 import {
     type EstimatorState,
+    type SiteWorkCatalogData,
+    type SiteWorkCategory,
+    SITE_WORK_CATEGORIES,
     computeTotal,
     createEmptyState,
+    catalogToSiteWorkCategories,
 } from "@/lib/investment/siteWorkItems";
 import { money } from "@/lib/investment/format";
 import { SiteWorkEstimator } from "./SiteWorkEstimator";
@@ -28,9 +32,20 @@ interface Props {
     selectedAdus: Floorplan[];
     estimatorByAduId: Record<string, EstimatorState>;
     setEstimatorByAduId: React.Dispatch<React.SetStateAction<Record<string, EstimatorState>>>;
+    catalog?: SiteWorkCatalogData;
 }
 
-export function SiteWorkPanel({ selectedAdus, setEstimatorByAduId }: Props) {
+export function SiteWorkPanel({ selectedAdus, setEstimatorByAduId, catalog }: Props) {
+    // Resolved category list (DB catalog → fallback to legacy const). Item ids
+    // are stripped of their slug prefix so EstimatorState keys still match.
+    const resolvedCategories: SiteWorkCategory[] = useMemo(() => {
+        if (catalog && catalog.categories.length > 0) {
+            const fromCatalog = catalogToSiteWorkCategories(catalog);
+            if (fromCatalog.length > 0) return fromCatalog;
+        }
+        return SITE_WORK_CATEGORIES;
+    }, [catalog]);
+
     const [masterEstimator, setMasterEstimator] = useState<EstimatorState>(() =>
         loadLS<EstimatorState>(LS_MASTER_KEY, createEmptyState())
     );
@@ -119,7 +134,7 @@ export function SiteWorkPanel({ selectedAdus, setEstimatorByAduId }: Props) {
             <div className={s.unitRow}>
                 {selectedAdus.map((fp) => {
                     const custom = isCustom(fp._id);
-                    const total = computeTotal(getEffective(fp._id));
+                    const total = computeTotal(getEffective(fp._id), resolvedCategories);
                     const isExpanded = expandedAduId === fp._id;
 
                     return (
@@ -182,6 +197,7 @@ export function SiteWorkPanel({ selectedAdus, setEstimatorByAduId }: Props) {
                     <SiteWorkEstimator
                         value={getEffective(expandedFp._id)}
                         onChange={(next) => handleUnitChange(expandedFp._id, next)}
+                        catalog={catalog}
                     />
                 </div>
             )}
@@ -201,6 +217,7 @@ export function SiteWorkPanel({ selectedAdus, setEstimatorByAduId }: Props) {
                 <SiteWorkEstimator
                     value={masterEstimator}
                     onChange={setMasterEstimator}
+                    catalog={catalog}
                 />
             </div>
         </div>

@@ -4,13 +4,16 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
     SITE_WORK_CATEGORIES,
     type EstimatorState,
+    type SiteWorkCategory,
     type SiteWorkPreset,
+    type SiteWorkCatalogData,
     type CustomItemData,
     type ActiveLineItem,
     createEmptyState,
     rowCustomerPrice,
     computeTotal,
     buildActiveSnapshot,
+    catalogToSiteWorkCategories,
     effectiveBeCost,
     effectiveMarkup,
 } from "@/lib/investment/siteWorkItems";
@@ -23,6 +26,7 @@ interface Props {
     value: EstimatorState;
     onChange: (next: EstimatorState) => void;
     aduName?: string;
+    catalog?: SiteWorkCatalogData;
 }
 
 interface Snapshot {
@@ -40,26 +44,26 @@ type Tab = "all" | "active";
 function fmt(n: number) { return n === 0 ? "—" : money(n); }
 function pct(n: number) { return `${Math.round(n * 100)}%`; }
 
-function activeItemCount(state: EstimatorState): number {
+function activeItemCount(state: EstimatorState, categories: SiteWorkCategory[]): number {
     let count = 0;
-    for (const cat of SITE_WORK_CATEGORIES)
+    for (const cat of categories)
         for (const item of cat.items)
             if ((state.quantities[item.id] ?? 0) > 0) count++;
     count += state.customItems.filter((ci) => ci.qty > 0 && ci.beCost > 0).length;
     return count;
 }
 
-function catActiveCount(catId: string, state: EstimatorState): number {
+function catActiveCount(catId: string, state: EstimatorState, categories: SiteWorkCategory[]): number {
     let count = 0;
-    const cat = SITE_WORK_CATEGORIES.find((c) => c.id === catId);
+    const cat = categories.find((c) => c.id === catId);
     if (cat) for (const item of cat.items) if ((state.quantities[item.id] ?? 0) > 0) count++;
     count += state.customItems.filter((ci) => ci.catId === catId && ci.qty > 0).length;
     return count;
 }
 
-function catCustomerTotal(catId: string, state: EstimatorState): number {
+function catCustomerTotal(catId: string, state: EstimatorState, categories: SiteWorkCategory[]): number {
     let total = 0;
-    const cat = SITE_WORK_CATEGORIES.find((c) => c.id === catId);
+    const cat = categories.find((c) => c.id === catId);
     const overrides = state.overrides ?? {};
     if (cat)
         for (const item of cat.items)
@@ -348,7 +352,19 @@ function ActiveList({ snapshot }: { snapshot: ActiveLineItem[] }) {
 
 // ─── Main component ────────────────────────────────────────────────────────────
 
-export function SiteWorkEstimator({ value, onChange, aduName }: Props) {
+export function SiteWorkEstimator({ value, onChange, aduName, catalog }: Props) {
+    // Resolve the runtime category list: DB-backed catalog when supplied,
+    // legacy SITE_WORK_CATEGORIES otherwise. Item ids are stripped of their
+    // `cat__` slug prefix inside catalogToSiteWorkCategories so existing
+    // EstimatorState keys (e.g. "impact") continue to match.
+    const resolvedCategories: SiteWorkCategory[] = useMemo(() => {
+        if (catalog && catalog.categories.length > 0) {
+            const fromCatalog = catalogToSiteWorkCategories(catalog);
+            if (fromCatalog.length > 0) return fromCatalog;
+        }
+        return SITE_WORK_CATEGORIES;
+    }, [catalog]);
+
     const [openCats, setOpenCats] = useState<Set<string>>(new Set());
     const [tab, setTab] = useState<Tab>("all");
     const [history, setHistory] = useState<Snapshot[]>([]);
@@ -358,8 +374,8 @@ export function SiteWorkEstimator({ value, onChange, aduName }: Props) {
     useEffect(() => {
         setOpenCats((prev) => {
             const next = new Set(prev);
-            for (const cat of SITE_WORK_CATEGORIES) {
-                if (catActiveCount(cat.id, value) > 0) next.add(cat.id);
+            for (const cat of resolvedCategories) {
+                if (catActiveCount(cat.id, value, resolvedCategories) > 0) next.add(cat.id);
             }
             return next;
         });
@@ -448,11 +464,11 @@ export function SiteWorkEstimator({ value, onChange, aduName }: Props) {
         const snap: Snapshot = {
             state: value,
             ts: Date.now(),
-            total: computeTotal(value),
-            activeCount: activeItemCount(value),
+            total: computeTotal(value, resolvedCategories),
+            activeCount: activeItemCount(value, resolvedCategories),
         };
         setHistory((prev) => [snap, ...prev].slice(0, 10));
-        onChange(createEmptyState());
+        onChange(createEmptyState(resolvedCategories));
         setOpenCats(new Set());
     }
 
@@ -460,17 +476,17 @@ export function SiteWorkEstimator({ value, onChange, aduName }: Props) {
         onChange(snap.state);
         // Re-open active categories
         const activeCats = new Set<string>();
-        for (const cat of SITE_WORK_CATEGORIES)
-            if (catActiveCount(cat.id, snap.state) > 0) activeCats.add(cat.id);
+        for (const cat of resolvedCategories)
+            if (catActiveCount(cat.id, snap.state, resolvedCategories) > 0) activeCats.add(cat.id);
         setOpenCats(activeCats);
         setHistoryOpen(false);
     }
 
     // ── Computed ────────────────────────────────────────────────────────────────
 
-    const total = useMemo(() => computeTotal(value), [value]);
-    const activeCount = useMemo(() => activeItemCount(value), [value]);
-    const snapshot = useMemo(() => buildActiveSnapshot(value), [value]);
+    const total = useMemo(() => computeTotal(value, resolvedCategories), [value, resolvedCategories]);
+    const activeCount = useMemo(() => activeItemCount(value, resolvedCategories), [value, resolvedCategories]);
+    const snapshot = useMemo(() => buildActiveSnapshot(value, resolvedCategories), [value, resolvedCategories]);
     const overrides = value.overrides ?? {};
 
     return (
@@ -524,10 +540,10 @@ export function SiteWorkEstimator({ value, onChange, aduName }: Props) {
                         <div />
                     </div>
 
-                    {SITE_WORK_CATEGORIES.map((cat) => {
+                    {resolvedCategories.map((cat) => {
                         const isOpen = openCats.has(cat.id);
-                        const catTotal = catCustomerTotal(cat.id, value);
-                        const catActive = catActiveCount(cat.id, value);
+                        const catTotal = catCustomerTotal(cat.id, value, resolvedCategories);
+                        const catActive = catActiveCount(cat.id, value, resolvedCategories);
                         const catCustomItems = value.customItems.filter((ci) => ci.catId === cat.id);
 
                         return (

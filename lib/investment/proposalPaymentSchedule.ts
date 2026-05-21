@@ -69,3 +69,88 @@ export function generateBalloonSchedule(totalPrice: number): ProposalPaymentEntr
 export function sumPaymentEntries(entries: ProposalPaymentEntry[]): number {
     return entries.reduce((acc, e) => acc + (Number.isFinite(e.amount) ? e.amount : 0), 0);
 }
+
+// ─── DB-backed catalog generator (pure — usable on client + server) ──────────
+
+/**
+ * Serializable shape of a payment milestone definition from the DB catalog.
+ * Mirrors `PaymentMilestoneDef` from Prisma but without DB-only audit columns,
+ * so it can cross the server/client boundary safely.
+ */
+export type PaymentMilestoneDefData = {
+    id: string;
+    slug: string;
+    label: string;
+    trigger: string;
+    sortOrder: number;
+    weight: number;
+    fixedAmount: number | null;
+};
+
+/**
+ * Catalog-driven balloon schedule. Same algorithm as `generateBalloonSchedule`
+ * but reads the milestone shape + weights + fixed-amount endpoints from a
+ * caller-supplied catalog array (typically SSR-fetched from the DB).
+ *
+ * - Fixed-amount milestones receive their `fixedAmount` directly
+ * - Remaining = totalPrice - sum(fixedAmount)
+ * - Flex milestones split the remainder proportional to their `weight`
+ * - Rounding diff is added to the highest-weight flex milestone (the peak)
+ *   so the sum equals totalPrice exactly
+ */
+export function generateBalloonFromCatalogDefs(
+    totalPrice: number,
+    defs: PaymentMilestoneDefData[]
+): ProposalPaymentEntry[] {
+    if (defs.length === 0) return [];
+
+    const fixedSum = defs.reduce((s, d) => s + (d.fixedAmount ?? 0), 0);
+    const remaining = Math.max(0, totalPrice - fixedSum);
+    const flexWeights = defs
+        .filter((d) => d.fixedAmount == null)
+        .reduce((s, d) => s + d.weight, 0) || 1;
+
+    let peakIdx = 0;
+    let peakWeight = -1;
+
+    const amounts = defs.map((d, i) => {
+        const amount =
+            d.fixedAmount ??
+            Math.round((remaining * d.weight) / flexWeights);
+        if (d.fixedAmount == null && d.weight > peakWeight) {
+            peakWeight = d.weight;
+            peakIdx = i;
+        }
+        return amount;
+    });
+
+    // Settle rounding diff on the peak flex milestone.
+    const sum = amounts.reduce((s, a) => s + a, 0);
+    const diff = totalPrice - sum;
+    if (diff !== 0 && defs[peakIdx]?.fixedAmount == null) {
+        amounts[peakIdx] = Math.max(0, amounts[peakIdx] + diff);
+    }
+
+    return defs.map((d, i) => ({
+        id: d.slug, // use slug as the entry id so it's stable across regenerations
+        label: d.label,
+        trigger: d.trigger,
+        amount: amounts[i],
+    }));
+}
+
+/** Fixed-amount endpoints derived from a catalog. Returns the FIRST and LAST
+ *  fixed-amount milestones in sort order, or the legacy constants when no
+ *  fixed-amount milestones exist. Used for the "first locked to $X" copy. */
+export function getFixedEndpointsFromCatalog(
+    defs: PaymentMilestoneDefData[]
+): { first: number; last: number } {
+    const fixed = defs.filter((d) => d.fixedAmount != null);
+    if (fixed.length === 0) {
+        return { first: PROPOSAL_FIRST_AMOUNT, last: PROPOSAL_LAST_AMOUNT };
+    }
+    return {
+        first: fixed[0]!.fixedAmount!,
+        last: fixed[fixed.length - 1]!.fixedAmount!,
+    };
+}

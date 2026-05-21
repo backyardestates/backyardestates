@@ -71,8 +71,8 @@ function EquityBar({ pct, active, delay = 0 }: { pct: number; active: boolean; d
 }
 
 export function Slide6_YourInvestment() {
-    const { scenarios, currentSlide, comparedUnitIds, floorplans } = usePresentationStore();
-    const active = currentSlide === 6;
+    const { scenarios, currentSlide, comparedUnitIds, floorplans, isPrintMode } = usePresentationStore();
+    const active = currentSlide === 6 || isPrintMode;
 
     const aduScenarios = scenarios.filter((sc) => sc.kind === "adu");
     const comparedAdus = comparedUnitIds.length > 0

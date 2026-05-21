@@ -1,22 +1,7 @@
-import {
-    SignOutButton,
-    SignedIn,
-} from '@clerk/nextjs'
-
-
-export default function Layout({
+// Auth gating is handled by middleware + the top-level /tools/layout.tsx nav.
+// Pass-through; left in place for future per-route chrome.
+export default function ProposalLayout({
     children,
-}: Readonly<{
-    children: React.ReactNode
-}>) {
-    return (
-        <>
-            {/* Show the sign-in and sign-up buttons when the user is signed out */}
-            <SignOutButton />
-            {/* Show the user button when the user is signed in */}
-            <SignedIn>
-                {children}
-            </SignedIn>
-        </>
-    )
+}: Readonly<{ children: React.ReactNode }>) {
+    return <>{children}</>;
 }

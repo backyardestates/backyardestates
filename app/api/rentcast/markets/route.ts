@@ -1,7 +1,12 @@
 // app/api/rentcast/markets/route.ts
 import { NextResponse } from "next/server";
+import { requireRole } from "@/lib/auth/requireRole";
 
 export async function GET(req: Request) {
+    // RentCast bills per call — keep this admin/architect only.
+    const guard = await requireRole(["ADMIN", "ARCHITECT"]);
+    if (guard) return guard;
+
     const { searchParams } = new URL(req.url);
     const zipCode = searchParams.get("zipCode")?.trim();
     const dataType = searchParams.get("dataType") ?? "Rental";

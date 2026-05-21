@@ -1,16 +1,59 @@
+import { NextResponse } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { normalizeRole } from "./types/roles";
 
-const isPublicRoute = createRouteMatcher(["/present", "/present/(.*)"]);
-const isCustomerRoute = createRouteMatcher(["/tools/feasibility(.*)"]);
-const isArchitectRoute = createRouteMatcher(["/tools/fpa(.*)", "/api/architect(.*)"]);
+const isPublicRoute = createRouteMatcher([
+    "/present",
+    "/present/(.*)",
+    "/access-denied",
+    // Signed magic-link endpoint used by the new-signup notification email
+    // to let edgar@ click a button and assign a role from his inbox. Auth
+    // is via HMAC inside the route handler, not Clerk session.
+    "/api/admin/users/role-link",
+]);
+
+// Any-signed-in routes: feasibility flow + personal user dashboard +
+// the smart post-sign-in landing.
+const isAnySignedInRoute = createRouteMatcher([
+    "/tools/feasibility(.*)",
+    "/tools/dashboard(.*)",
+    "/after-signin",
+]);
+
+// Architect carve-out — checked BEFORE the admin catch-all so /tools/admin/master
+// and /api/admin/proposals stay available to ARCHITECTs even though they live
+// under the /tools/admin/* and /api/admin/* trees.
+const isArchitectRoute = createRouteMatcher([
+    "/tools/fpa(.*)",
+    "/api/architect(.*)",
+    "/tools/admin/master(.*)",
+    "/api/admin/proposals(.*)",
+]);
+
+// Admin catch-all — everything under /tools/admin/* and /api/admin/* that the
+// architect carve-out didn't claim (dashboard, settings, users, dev tools).
 const isAdminRoute = createRouteMatcher(["/tools/admin(.*)", "/api/admin(.*)"]);
 
-// helper: safely read role from possible claim locations
 function getRoleFromClaims(sessionClaims: any) {
-    // common locations across Clerk versions / templates
-    const role = sessionClaims.role
+    const role = sessionClaims?.role;
     return normalizeRole(role);
+}
+
+/** Build the friendly /access-denied URL for a middleware-level role miss.
+ *  API routes get a JSON 403 instead — redirecting an API response is
+ *  hostile to fetch callers. */
+function denyForUser(req: Request, neededRoles: string[]) {
+    const url = new URL(req.url);
+    if (url.pathname.startsWith("/api/")) {
+        return new Response(
+            JSON.stringify({ error: "Forbidden", need: neededRoles }),
+            { status: 403, headers: { "Content-Type": "application/json" } },
+        );
+    }
+    url.searchParams.set("need", neededRoles.join(","));
+    url.searchParams.set("from", url.pathname);
+    url.pathname = "/access-denied";
+    return NextResponse.redirect(url);
 }
 
 export default clerkMiddleware(async (auth, req) => {
@@ -19,28 +62,33 @@ export default clerkMiddleware(async (auth, req) => {
     // Public routes — never require auth
     if (isPublicRoute(req)) return;
 
-    // Require sign-in for protected routes
-    if ((isAdminRoute(req) || isArchitectRoute(req) || isCustomerRoute(req)) && !userId) {
+    // Require sign-in for any of our gated trees
+    if (
+        (isAdminRoute(req) || isArchitectRoute(req) || isAnySignedInRoute(req)) &&
+        !userId
+    ) {
         return redirectToSignIn({ returnBackUrl: req.url });
     }
 
     // If not logged in and not protected, do nothing
     if (!userId) return;
 
-    // IMPORTANT: sessionClaims may not include metadata unless token template includes it
     const role = getRoleFromClaims(sessionClaims);
 
-    // Admin-only
+    // Architect carve-out wins over the admin catch-all — check first.
+    if (isArchitectRoute(req)) {
+        if (role !== "ARCHITECT" && role !== "ADMIN") {
+            return denyForUser(req, ["ARCHITECT", "ADMIN"]);
+        }
+        return;
+    }
+
+    // Admin-only (everything else under /tools/admin and /api/admin)
     if (isAdminRoute(req) && role !== "ADMIN") {
-        return new Response("Forbidden", { status: 403 });
+        return denyForUser(req, ["ADMIN"]);
     }
 
-    // Architect or Admin
-    if (isArchitectRoute(req) && role !== "ARCHITECT" && role !== "ADMIN") {
-        return new Response("Forbidden", { status: 403 });
-    }
-
-    // Customer route: any signed-in role is fine
+    // /tools/dashboard and /tools/feasibility need only sign-in (handled above).
 });
 
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireRole } from "@/lib/auth/requireRole";
 
 const BASE = "https://api.rentcast.io/v1";
 
@@ -102,6 +103,10 @@ async function fetchBand(args: {
 }
 
 export async function GET(req: Request) {
+    // RentCast bills per call — keep this admin/architect only.
+    const guard = await requireRole(["ADMIN", "ARCHITECT"]);
+    if (guard) return guard;
+
     const { searchParams } = new URL(req.url);
     const city = searchParams.get("city");
     const state = searchParams.get("state");

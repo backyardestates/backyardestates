@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireRole } from "@/lib/auth/requireRole";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -39,6 +40,10 @@ function extractZestimate(payload: any): number | null {
 }
 
 export async function GET(req: Request) {
+    // HasData bills per call — keep this admin/architect only.
+    const guard = await requireRole(["ADMIN", "ARCHITECT"]);
+    if (guard) return guard;
+
     const { searchParams } = new URL(req.url);
     const address = searchParams.get("address");
     const directUrl = searchParams.get("url");

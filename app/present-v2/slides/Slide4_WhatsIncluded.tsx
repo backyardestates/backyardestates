@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { usePresentationStore } from "@/lib/store/presentationStore";
 import s from "./Slide4.module.css";
 
 /* ── Inclusions: 6 categories mirroring the proposal PDF ── */
@@ -83,6 +84,32 @@ const FEE_BULLETS = [
 ];
 
 export function Slide4_WhatsIncluded() {
+    const { inclusionsCatalog, inclusionsSidebar } = usePresentationStore();
+
+    // Prefer the DB-backed catalog when populated; otherwise fall back to the
+    // legacy hardcoded constants (so dev / pre-seed environments still render).
+    const inclusionsToRender =
+        inclusionsCatalog && inclusionsCatalog.length > 0
+            ? inclusionsCatalog
+                  .filter((c) => c.active)
+                  .map((c) => ({
+                      name: c.name,
+                      rows: c.rows
+                          .filter((r) => r.active)
+                          .map((r) => ({ label: r.label, text: r.text })),
+                  }))
+            : INCLUSIONS;
+
+    const deptPillsToRender =
+        inclusionsSidebar && inclusionsSidebar.deptPills.length > 0
+            ? inclusionsSidebar.deptPills
+            : DEPT_PILLS;
+
+    const feeBulletsToRender =
+        inclusionsSidebar && inclusionsSidebar.feeBullets.length > 0
+            ? inclusionsSidebar.feeBullets
+            : FEE_BULLETS;
+
     return (
         <div className={s.slide}>
             {/* Title */}
@@ -93,7 +120,7 @@ export function Slide4_WhatsIncluded() {
 
             {/* 6-category inclusions grid */}
             <div className={s.grid}>
-                {INCLUSIONS.map((cat) => (
+                {inclusionsToRender.map((cat) => (
                     <div key={cat.name} className={s.card}>
                         <div className={s.cardHead}>
                             <span className={s.cardName}>{cat.name}</span>
@@ -124,7 +151,7 @@ export function Slide4_WhatsIncluded() {
                     <div className={s.deptCol}>
                         <span className={s.deptColLabel}>City departments we manage</span>
                         <div className={s.pillWrap}>
-                            {DEPT_PILLS.map((p) => (
+                            {deptPillsToRender.map((p) => (
                                 <span key={p} className={s.deptPill}>{p}</span>
                             ))}
                         </div>
@@ -132,7 +159,7 @@ export function Slide4_WhatsIncluded() {
                     </div>
                     <div className={s.deptCol}>
                         <span className={s.deptColLabel}>City fees — all included</span>
-                        {FEE_BULLETS.map((b, i) => (
+                        {feeBulletsToRender.map((b, i) => (
                             <div key={i} className={s.feeBullet}>
                                 <span className={s.feeDot} />
                                 <span className={s.feeText}>{b}</span>

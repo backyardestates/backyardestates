@@ -6,12 +6,15 @@ import {
     type DiscountState,
     type CustomDiscount,
     type PresetKey,
+    type PresetLike,
     PRESETS,
+    catalogToPresets,
     createEmptyDiscountState,
     computeDiscountTotal,
     countDiscounts,
     getDiscountLines,
 } from "@/lib/investment/discounts";
+import type { DiscountsCatalogSummary } from "../../page";
 import { money } from "@/lib/investment/format";
 import s from "./DiscountsPanel.module.css";
 
@@ -36,6 +39,9 @@ interface Props {
     selectedAdus: Floorplan[];
     setDiscountAmountByAduId: React.Dispatch<React.SetStateAction<Record<string, number>>>;
     setDiscountLinesByAduId: React.Dispatch<React.SetStateAction<Record<string, { label: string; amount: number }[]>>>;
+    /** DB-backed discount catalog. When provided + non-empty, drives the preset
+     *  list, amounts, and total math. Falls back to legacy PRESETS otherwise. */
+    discountsCatalog?: DiscountsCatalogSummary;
 }
 
 // ─── Preset toggle list ───────────────────────────────────────────────────────
@@ -43,23 +49,25 @@ interface Props {
 function PresetList({
     state,
     onChange,
+    presets,
 }: {
     state: DiscountState;
     onChange: (next: DiscountState) => void;
+    presets: PresetLike[];
 }) {
-    const allOn = PRESETS.every((p) => state.presets.includes(p.key));
-    const anyOn = PRESETS.some((p) => state.presets.includes(p.key));
+    const allOn = presets.every((p) => state.presets.includes(p.key));
+    const anyOn = presets.some((p) => state.presets.includes(p.key));
 
     function toggle(key: PresetKey) {
         const has = state.presets.includes(key);
-        const presets = has
+        const next = has
             ? state.presets.filter((k) => k !== key)
             : [...state.presets, key];
-        onChange({ ...state, presets });
+        onChange({ ...state, presets: next });
     }
 
     function selectAll() {
-        onChange({ ...state, presets: PRESETS.map((p) => p.key) });
+        onChange({ ...state, presets: presets.map((p) => p.key) });
     }
 
     function clearAll() {
@@ -89,12 +97,12 @@ function PresetList({
                 </div>
             </div>
             <div className={s.presetList}>
-                {PRESETS.map((p, i) => {
+                {presets.map((p, i) => {
                     const on = state.presets.includes(p.key);
                     return (
                         <button
                             key={p.key}
-                            className={`${s.presetRow} ${on ? s.presetRowOn : ""} ${i === 0 ? s.presetRowFirst : ""} ${i === PRESETS.length - 1 ? s.presetRowLast : ""}`}
+                            className={`${s.presetRow} ${on ? s.presetRowOn : ""} ${i === 0 ? s.presetRowFirst : ""} ${i === presets.length - 1 ? s.presetRowLast : ""}`}
                             onClick={() => toggle(p.key)}
                             type="button"
                         >
@@ -212,11 +220,13 @@ function CustomList({
 function DiscountEditor({
     state,
     onChange,
+    presets,
 }: {
     state: DiscountState;
     onChange: (next: DiscountState) => void;
+    presets: PresetLike[];
 }) {
-    const total = computeDiscountTotal(state);
+    const total = computeDiscountTotal(state, presets);
     const count = countDiscounts(state);
 
     return (
@@ -227,7 +237,7 @@ function DiscountEditor({
                     <span className={s.totalBarAmount}>−{money(total)}</span>
                 </div>
             )}
-            <PresetList state={state} onChange={onChange} />
+            <PresetList state={state} onChange={onChange} presets={presets} />
             <CustomList state={state} onChange={onChange} />
         </div>
     );
@@ -235,7 +245,17 @@ function DiscountEditor({
 
 // ─── Main panel ────────────────────────────────────────────────────────────────
 
-export function DiscountsPanel({ selectedAdus, setDiscountAmountByAduId, setDiscountLinesByAduId }: Props) {
+export function DiscountsPanel({ selectedAdus, setDiscountAmountByAduId, setDiscountLinesByAduId, discountsCatalog }: Props) {
+    // Resolve the active preset list: DB catalog (active items only) when
+    // supplied, falling back to the legacy PRESETS constants.
+    const resolvedPresets: PresetLike[] = React.useMemo(() => {
+        if (discountsCatalog && discountsCatalog.items.length > 0) {
+            const fromCatalog = catalogToPresets(discountsCatalog.items);
+            if (fromCatalog.length > 0) return fromCatalog;
+        }
+        return PRESETS;
+    }, [discountsCatalog]);
+
     const [master, setMaster] = useState<DiscountState>(() =>
         loadLS<DiscountState>(LS_MASTER, createEmptyDiscountState())
     );
@@ -256,12 +276,12 @@ export function DiscountsPanel({ selectedAdus, setDiscountAmountByAduId, setDisc
         const lines: Record<string, { label: string; amount: number }[]> = {};
         for (const fp of selectedAdus) {
             const effective = customByAduId[fp._id] ?? master;
-            amounts[fp._id] = computeDiscountTotal(effective);
-            lines[fp._id] = getDiscountLines(effective);
+            amounts[fp._id] = computeDiscountTotal(effective, resolvedPresets);
+            lines[fp._id] = getDiscountLines(effective, resolvedPresets);
         }
         setDiscountAmountByAduId(amounts);
         setDiscountLinesByAduId(lines);
-    }, [master, customByAduId, selectedAdus, setDiscountAmountByAduId, setDiscountLinesByAduId]);
+    }, [master, customByAduId, selectedAdus, resolvedPresets, setDiscountAmountByAduId, setDiscountLinesByAduId]);
 
     function getEffective(aduId: string) { return customByAduId[aduId] ?? master; }
     function isCustom(aduId: string) { return customByAduId[aduId] != null; }
@@ -307,7 +327,7 @@ export function DiscountsPanel({ selectedAdus, setDiscountAmountByAduId, setDisc
             <div className={s.unitRow}>
                 {selectedAdus.map((fp) => {
                     const effective = getEffective(fp._id);
-                    const total = computeDiscountTotal(effective);
+                    const total = computeDiscountTotal(effective, resolvedPresets);
                     const count = countDiscounts(effective);
                     const custom = isCustom(fp._id);
                     const isExpanded = expandedAduId === fp._id;
@@ -366,6 +386,7 @@ export function DiscountsPanel({ selectedAdus, setDiscountAmountByAduId, setDisc
                     <DiscountEditor
                         state={getEffective(expandedFp._id)}
                         onChange={(next) => setCustomByAduId((prev) => ({ ...prev, [expandedFp._id]: next }))}
+                        presets={resolvedPresets}
                     />
                 </div>
             )}
@@ -381,7 +402,7 @@ export function DiscountsPanel({ selectedAdus, setDiscountAmountByAduId, setDisc
                         </div>
                     </div>
                 </div>
-                <DiscountEditor state={master} onChange={setMaster} />
+                <DiscountEditor state={master} onChange={setMaster} presets={resolvedPresets} />
             </div>
         </div>
     );

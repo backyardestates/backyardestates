@@ -50,8 +50,9 @@ export function Slide5_CompletedBuilds() {
         currentSlide,
         customerName,
         propertyAddress,
+        isPrintMode,
     } = usePresentationStore();
-    const active = currentSlide === 5;
+    const active = currentSlide === 5 || isPrintMode;
 
     // Admin-curated order takes precedence; otherwise fall back to Sanity `featured`.
     let visibleProperties: SanityProperty[];

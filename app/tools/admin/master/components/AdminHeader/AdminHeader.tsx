@@ -16,7 +16,11 @@ interface AdminHeaderProps {
     onSave?: () => void;
     onOpenSaved?: () => void;
     onNew?: () => void;
+    onExportPdf?: () => void;
+    onGenerateAgreement?: () => void;
     saveDisabled?: boolean;
+    exportDisabled?: boolean;
+    agreementDisabled?: boolean;
     /** Briefly switches the Save button to a "Saved ✓" affordance. */
     justSaved?: boolean;
     draftStatus?: DraftStatus;
@@ -78,7 +82,11 @@ export function AdminHeader({
     onSave,
     onOpenSaved,
     onNew,
+    onExportPdf,
+    onGenerateAgreement,
     saveDisabled = false,
+    exportDisabled = false,
+    agreementDisabled = false,
     justSaved = false,
     draftStatus,
 }: AdminHeaderProps) {
@@ -153,6 +161,28 @@ export function AdminHeader({
                         title={saveDisabled ? "Enter an address to save" : "Save proposal to this browser"}
                     >
                         {justSaved ? "Saved ✓" : "Save"}
+                    </button>
+                )}
+                {onExportPdf && (
+                    <button
+                        type="button"
+                        className={styles.ghostBtn}
+                        onClick={onExportPdf}
+                        disabled={exportDisabled}
+                        title={exportDisabled ? "Enter an address to export" : "Open the deck and save as PDF"}
+                    >
+                        Export PDF
+                    </button>
+                )}
+                {onGenerateAgreement && (
+                    <button
+                        type="button"
+                        className={styles.ghostBtn}
+                        onClick={onGenerateAgreement}
+                        disabled={agreementDisabled}
+                        title={agreementDisabled ? "Complete the proposal first" : "Generate the contract .docx from this proposal"}
+                    >
+                        Edit Agreement
                     </button>
                 )}
                 {onOpenPresenter && (

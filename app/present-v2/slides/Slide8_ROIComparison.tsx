@@ -47,10 +47,45 @@ export function Slide8_ROIComparison() {
     const { scenarios, comparedUnitIds, floorplans, customerName, propertyAddress } = usePresentationStore();
 
     const aduScenarios = scenarios.filter((sc) => sc.kind === "adu");
-    const comparedAdus = comparedUnitIds.length > 0
-        ? aduScenarios.filter((sc) => comparedUnitIds.includes(sc.key.replace(/^adu_/, "")))
-        : aduScenarios.slice(0, 3);
-    const displayAdus = comparedAdus.length > 0 ? comparedAdus : aduScenarios.slice(0, 3);
+
+    // Order matches Slide 4 (Your Options): iterate `floorplans` filtered by
+    // comparedUnitIds, then map each one to its scenario. This guarantees
+    // both slides render the units in the same sequence, regardless of how
+    // `scenarios` happens to be ordered internally.
+    const orderedUnits = comparedUnitIds.length > 0
+        ? floorplans.filter((fp) => comparedUnitIds.includes(fp._id))
+        : floorplans.slice(0, 3);
+
+    const mappedAdus = orderedUnits
+        .map((fp) => ({
+            fp,
+            sc: aduScenarios.find((s) => s.key === `adu_${fp._id}`),
+        }))
+        .filter((row): row is { fp: typeof orderedUnits[number]; sc: NonNullable<typeof row.sc> } => Boolean(row.sc));
+
+    // Dedupe duplicates whose financials match their source — if the rep
+    // hasn't given a duplicate different site work / discounts / rent, its
+    // numbers come out identical to the original and the second card is
+    // redundant. Custom units (with unique base names) survive dedupe.
+    const seenSignatures = new Set<string>();
+    const displayAdus = mappedAdus
+        .filter(({ fp, sc }) => {
+            const baseName = (fp.name ?? "").replace(/\s*\(\d+\)\s*$/, "").trim();
+            const sig = [
+                baseName,
+                Math.round(sc.cashflowMonthly ?? 0),
+                Math.round((sc.roi ?? 0) * 10000) / 10000,
+                Math.round(sc.monthlyCost ?? 0),
+                Math.round(sc.rentMonthly ?? 0),
+                Math.round(sc.year1EquityBoost ?? 0),
+                Math.round(sc.year5EquityBoost ?? 0),
+                Math.round(sc.year10EquityBoost ?? 0),
+            ].join("|");
+            if (seenSignatures.has(sig)) return false;
+            seenSignatures.add(sig);
+            return true;
+        })
+        .map(({ sc }) => sc);
 
     function fpId(key: string) { return key.replace(/^adu_/, ""); }
     function getFpName(key: string) {
@@ -105,15 +140,23 @@ export function Slide8_ROIComparison() {
                     const cf = sc.cashflowMonthly ?? 0;
                     const roiPct = (sc.roi ?? 0) * 100;
                     const fpName = getFpName(sc.key);
-                    const lastSpace = fpName.lastIndexOf(" ");
-                    const titlePrefix = lastSpace > 0 ? fpName.slice(0, lastSpace) : "";
-                    const titleAccent = lastSpace > 0 ? fpName.slice(lastSpace + 1) : fpName;
+
+                    // Pull off a trailing "(N)" duplicate suffix so the gold
+                    // accent stays on the floorplan number, not the "(2)".
+                    const dupMatch = fpName.match(/^(.*?)\s*(\(\d+\))\s*$/);
+                    const baseName = dupMatch ? dupMatch[1].trim() : fpName;
+                    const dupSuffix = dupMatch ? ` ${dupMatch[2]}` : "";
+
+                    const lastSpace = baseName.lastIndexOf(" ");
+                    const titlePrefix = lastSpace > 0 ? baseName.slice(0, lastSpace) : "";
+                    const titleAccent = lastSpace > 0 ? baseName.slice(lastSpace + 1) : baseName;
 
                     return (
                         <div key={sc.key} className={s.card}>
                             <div className={s.cardTitle}>
                                 The {titlePrefix && <>{titlePrefix} </>}
                                 <span className={s.cardTitleNum}>{titleAccent}</span>
+                                {dupSuffix}
                             </div>
 
                             <Section title="Investment">

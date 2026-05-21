@@ -13,73 +13,7 @@
     font-style: italic;
 }
 
-/* ── Header row ── */
-.header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-}
-
-.field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 240px;
-}
-
-.fieldLabel {
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #8a8278;
-    font-weight: 600;
-}
-
-.select {
-    padding: 10px 14px;
-    border: 1px solid #d4c4a0;
-    border-radius: 8px;
-    background: #fff;
-    font-size: 14px;
-    color: #14302f;
-    cursor: pointer;
-}
-
-.totalBlock {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
-    padding: 10px 18px;
-    background: linear-gradient(135deg, rgba(184, 149, 74, 0.10) 0%, rgba(184, 149, 74, 0.04) 100%);
-    border: 1px solid rgba(184, 149, 74, 0.30);
-    border-radius: 10px;
-}
-
-.totalLabel {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #b8954a;
-    font-weight: 700;
-}
-
-.totalValue {
-    font-size: 24px;
-    font-weight: 300;
-    color: #14302f;
-    font-variant-numeric: tabular-nums;
-}
-
-.totalNote {
-    font-size: 11px;
-    color: #8a8278;
-    font-style: italic;
-}
-
-/* ── Warning ── */
+/* ── Warning band ── */
 .warning {
     padding: 12px 16px;
     background: #fff7e6;
@@ -88,9 +22,16 @@
     color: #7a5a1f;
     font-size: 13px;
     display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.warningList {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .linkBtn {
@@ -100,73 +41,81 @@
     font-weight: 700;
     cursor: pointer;
     text-decoration: underline;
-    padding: 0;
+    padding: 0 0 0 8px;
     font-size: 13px;
 }
 
-/* ── Table ── */
+/* ── Multi-column grid table ──
+ * Columns are set inline via gridTemplateColumns since the count varies
+ * with the number of ADUs. Each table cell is a separate grid child. */
 .tableWrap {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     background: #fff;
     border: 1px solid #e5e1d8;
     border-radius: 10px;
     overflow: hidden;
-}
-
-.row {
-    display: grid;
-    grid-template-columns: 40px 1.6fr 1.6fr 1fr 70px;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 16px;
-    border-bottom: 1px solid #f0ede7;
     font-size: 14px;
+    align-items: stretch;
 }
 
-.row:last-child {
-    border-bottom: none;
+.cell {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0ede7;
+    color: #14302f;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    word-break: break-word;
 }
 
-.headRow {
+/* Header band — first row across all columns. */
+.headCell {
     background: #f7f5f0;
+    color: #8a8278;
     font-size: 11px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #8a8278;
     font-weight: 700;
+    border-bottom: 1px solid #e5e1d8;
 }
 
-.rowFixed {
-    background: rgba(184, 149, 74, 0.04);
+.headAmount {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    text-align: right;
 }
 
-.colNum {
-    color: #8a8278;
+.headAduName {
+    font-size: 12px;
+    color: #14302f;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+}
+
+.headAduTotal {
+    font-size: 10px;
+    color: #b8954a;
+    letter-spacing: 0.18em;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 
-.colLabel {
-    color: #14302f;
-    font-weight: 500;
-}
-
-.colTrigger {
+.triggerCell {
     color: #5a5550;
     font-size: 13px;
     font-style: italic;
 }
 
-.colAmount {
+/* Amount cells host the editable input + the % readout. */
+.amountCell {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
     text-align: right;
-    font-variant-numeric: tabular-nums;
-    color: #14302f;
-}
-
-.colPct {
-    text-align: right;
-    color: #8a8278;
-    font-size: 12px;
     font-variant-numeric: tabular-nums;
 }
 
@@ -187,33 +136,42 @@
     outline-offset: -1px;
 }
 
-.lockedAmount {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 8px;
-    color: #14302f;
-    font-weight: 700;
+.amountPct {
+    text-align: right;
+    color: #8a8278;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
 }
 
-.lockTag {
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #b8954a;
-    font-weight: 600;
+.amountMissing {
+    color: #c8c0b0;
+    justify-content: flex-end;
 }
 
-.sumRow {
+/* Bottom sum row. */
+.sumCell {
     background: #f7f5f0;
     font-weight: 600;
+    border-bottom: none;
+}
+
+.sumCell strong {
+    color: #14302f;
+    font-variant-numeric: tabular-nums;
 }
 
 .varianceOk {
     color: #1f7a4f;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 2px;
 }
 
 .varianceOff {
     color: #b8503e;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 2px;
 }
 
 /* ── Actions ── */
@@ -247,4 +205,5 @@
     color: #8a8278;
     font-style: italic;
     line-height: 1.5;
+    max-width: 60ch;
 }

@@ -83,6 +83,7 @@ export function InvestmentControls({
     view = "all",
     onAddCustomFloorplan,
     onRemoveFloorplan,
+    onDuplicateFloorplan,
 }: {
     styles?: any;
     defaults: Defaults;
@@ -93,14 +94,26 @@ export function InvestmentControls({
     aduCompareIds: string[];
     toggleAdu: (id: string) => void;
     view?: "picker" | "assumptions" | "all";
-    onAddCustomFloorplan?: (sqft: number, price: number, extraBath: boolean) => void;
+    onAddCustomFloorplan?: (input: {
+        name?: string;
+        sqft: number;
+        price: number;
+        bedrooms?: number;
+        bathrooms?: number;
+        imageUrl?: string;
+    }) => void;
     onRemoveFloorplan?: (id: string) => void;
+    onDuplicateFloorplan?: (sourceId: string) => void;
 }) {
     const showPicker = view !== "assumptions";
     const showAssumptions = view !== "picker";
 
     const [customSqftRaw, setCustomSqftRaw] = useState("");
+    const [customName, setCustomName] = useState("");
+    const [customBedrooms, setCustomBedrooms] = useState<string>("");
+    const [customBathrooms, setCustomBathrooms] = useState<string>("");
     const [extraBath, setExtraBath] = useState(false);
+    const [customImageUrl, setCustomImageUrl] = useState("");
 
     const customSqft = useMemo(() => {
         const n = parseInt(customSqftRaw, 10);
@@ -118,11 +131,30 @@ export function InvestmentControls({
 
     const atMax = aduCompareIds.length >= defaults.maxAduComparisons;
 
+    function parseOptionalNumber(raw: string): number | undefined {
+        if (!raw.trim()) return undefined;
+        const n = Number(raw);
+        return Number.isFinite(n) && n >= 0 ? n : undefined;
+    }
+
     function handleAdd() {
         if (customSqft == null || finalPrice <= 0 || !onAddCustomFloorplan) return;
-        onAddCustomFloorplan(customSqft, finalPrice, extraBath);
+        const beds = parseOptionalNumber(customBedrooms);
+        const baths = parseOptionalNumber(customBathrooms) ?? (extraBath ? 2 : undefined);
+        onAddCustomFloorplan({
+            name: customName.trim() || undefined,
+            sqft: customSqft,
+            price: finalPrice,
+            bedrooms: beds,
+            bathrooms: baths,
+            imageUrl: customImageUrl.trim() || undefined,
+        });
         setCustomSqftRaw("");
+        setCustomName("");
+        setCustomBedrooms("");
+        setCustomBathrooms("");
         setExtraBath(false);
+        setCustomImageUrl("");
     }
 
     // Describe the interpolation anchor to the user
@@ -181,19 +213,37 @@ export function InvestmentControls({
                                             {num(fp.sqft)} SF • {money(fp.price)}
                                         </div>
                                     </div>
-                                    {isCustomUnit && onRemoveFloorplan && (
-                                        <button
-                                            className={styles.fpRemoveBtn}
-                                            type="button"
-                                            title="Remove custom unit"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                onRemoveFloorplan(fp._id);
-                                            }}
-                                        >
-                                            ×
-                                        </button>
+                                    {(onDuplicateFloorplan || (isCustomUnit && onRemoveFloorplan)) && (
+                                        <div className={styles.fpRowActions}>
+                                            {onDuplicateFloorplan && (
+                                                <button
+                                                    className={styles.fpDuplicateBtn}
+                                                    type="button"
+                                                    title="Duplicate this unit (copies site work & discounts)"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        onDuplicateFloorplan(fp._id);
+                                                    }}
+                                                >
+                                                    Duplicate
+                                                </button>
+                                            )}
+                                            {isCustomUnit && onRemoveFloorplan && (
+                                                <button
+                                                    className={styles.fpRemoveBtn}
+                                                    type="button"
+                                                    title="Remove custom unit"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        onRemoveFloorplan(fp._id);
+                                                    }}
+                                                >
+                                                    ×
+                                                </button>
+                                            )}
+                                        </div>
                                     )}
                                 </label>
                             );
@@ -243,24 +293,72 @@ export function InvestmentControls({
                                 </button>
                             </div>
 
-                            {/* Anchor info + extra bath toggle */}
+                            {/* Anchor info + optional fields */}
                             {proration && proration.price > 0 && (
                                 <div className={styles.prorateInfo}>
                                     <div className={styles.prorateAnchor}>{anchorLabel}</div>
 
-                                    <label className={styles.extraBathToggle}>
-                                        <input
-                                            type="checkbox"
-                                            checked={extraBath}
-                                            onChange={(e) => setExtraBath(e.target.checked)}
-                                        />
-                                        <span className={styles.extraBathLabel}>
-                                            Extra bathroom
-                                            <span className={styles.extraBathAmount}>+{money(EXTRA_BATH_PREMIUM)}</span>
-                                        </span>
-                                    </label>
+                                    {/* Optional name override */}
+                                    <input
+                                        type="text"
+                                        className={styles.sqftInput}
+                                        placeholder={`Name (default: Custom ${customSqft ?? ""} SF)`}
+                                        value={customName}
+                                        onChange={(e) => setCustomName(e.target.value)}
+                                        style={{ marginTop: 8, width: "100%" }}
+                                    />
 
-                                    {extraBath && (
+                                    {/* Bedrooms / bathrooms inputs */}
+                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 8 }}>
+                                        <input
+                                            type="number"
+                                            className={styles.sqftInput}
+                                            placeholder="Bedrooms"
+                                            min={0}
+                                            step={1}
+                                            value={customBedrooms}
+                                            onChange={(e) => setCustomBedrooms(e.target.value)}
+                                        />
+                                        <input
+                                            type="number"
+                                            className={styles.sqftInput}
+                                            placeholder="Bathrooms"
+                                            min={0}
+                                            step={0.5}
+                                            value={customBathrooms}
+                                            onChange={(e) => setCustomBathrooms(e.target.value)}
+                                        />
+                                    </div>
+
+                                    {/* Optional image URL */}
+                                    <input
+                                        type="url"
+                                        className={styles.sqftInput}
+                                        placeholder="Floorplan image URL (optional)"
+                                        value={customImageUrl}
+                                        onChange={(e) => setCustomImageUrl(e.target.value)}
+                                        style={{ marginTop: 8, width: "100%" }}
+                                    />
+                                    <div style={{ fontSize: 11, color: "#8A8278", fontStyle: "italic", marginTop: 4 }}>
+                                        Leave blank to inherit the nearest matching floorplan&apos;s image.
+                                    </div>
+
+                                    {/* Legacy quick-toggle: only auto-bumps the price if bathrooms input is empty */}
+                                    {customBathrooms.trim() === "" && (
+                                        <label className={styles.extraBathToggle} style={{ marginTop: 8 }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={extraBath}
+                                                onChange={(e) => setExtraBath(e.target.checked)}
+                                            />
+                                            <span className={styles.extraBathLabel}>
+                                                Extra bathroom
+                                                <span className={styles.extraBathAmount}>+{money(EXTRA_BATH_PREMIUM)}</span>
+                                            </span>
+                                        </label>
+                                    )}
+
+                                    {extraBath && customBathrooms.trim() === "" && (
                                         <div className={styles.prorateBreakdown}>
                                             <span>Base {money(proration.price)}</span>
                                             <span className={styles.breakdownPlus}>+</span>

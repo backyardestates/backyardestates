@@ -11,7 +11,18 @@ export function Slide2_YourProperty() {
         ? ({ detached: "Detached ADU", attached: "Attached ADU", garage: "Garage Conversion" }[aduType] ?? aduType)
         : "ADU";
 
-    const comparedUnits = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
+    // Dedupe "(N)" duplicates — they share the same drawing, bed/bath, and
+    // sqft as their original, so showing them here would just repeat the same
+    // card. Other custom units (unique names) survive dedupe naturally.
+    const seenBaseNames = new Set<string>();
+    const comparedUnits = floorplans
+        .filter((fp) => comparedUnitIds.includes(fp._id))
+        .filter((fp) => {
+            const baseName = (fp.name ?? "").replace(/\s*\(\d+\)\s*$/, "").trim();
+            if (seenBaseNames.has(baseName)) return false;
+            seenBaseNames.add(baseName);
+            return true;
+        });
 
     return (
         <div className={s.slide}>
