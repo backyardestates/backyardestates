@@ -25,7 +25,7 @@ export default async function DiscountsAdminPage() {
                 <p style={{ fontSize: 14, color: "#5A5550", marginTop: 8, maxWidth: 720 }}>
                     Preset discounts that show up in Step 4 of the proposal tool. One-off
                     discounts created on a specific proposal stay on that proposal —
-                    they don't write back here automatically. New proposals only see
+                    they don&apos;t write back here automatically. New proposals only see
                     discounts marked <em>active</em>.
                 </p>
             </header>

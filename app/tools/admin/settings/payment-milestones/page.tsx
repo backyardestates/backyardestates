@@ -26,7 +26,7 @@ export default async function PaymentMilestonesAdminPage() {
                     Each row is one contract milestone. <strong>Fixed-amount</strong> milestones
                     (typically signing + final inspection) are locked to a dollar value;
                     the rest receive a share of the remaining balance proportional to their <strong>weight</strong>.
-                    Weights don't need to sum to anything — they're normalized at calc time.
+                    Weights don&apos;t need to sum to anything — they&apos;re normalized at calc time.
                 </p>
             </header>
 

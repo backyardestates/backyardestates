@@ -56,7 +56,7 @@ export function RequestAccessButton({ from, need }: Props) {
             </button>
             {phase === "error" && (
                 <p className={s.requestError}>
-                    Couldn't send your request: {error}. You can also email{" "}
+                    Couldn&apos;t send your request: {error}. You can also email{" "}
                     <a href="mailto:edgar@backyardestates.com" className={s.helpLink}>edgar@backyardestates.com</a>.
                 </p>
             )}

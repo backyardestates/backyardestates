@@ -25,7 +25,7 @@ export default async function FinancialDefaultsPage() {
                 <p style={{ fontSize: 14, color: "#5A5550", marginTop: 8, maxWidth: 640 }}>
                     These values seed every <em>new</em> proposal at creation time.
                     Existing proposals keep their own frozen copy, so changes here
-                    won't disturb anything already saved.
+                    won&apos;t disturb anything already saved.
                 </p>
             </header>
 

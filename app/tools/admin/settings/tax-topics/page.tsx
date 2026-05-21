@@ -23,7 +23,7 @@ export default async function TaxTopicsAdminPage() {
                     Tax Topics (Slide 12)
                 </h1>
                 <p style={{ fontSize: 14, color: "#5A5550", marginTop: 8, maxWidth: 720 }}>
-                    The 11 write-off items shown to customers as "things to verify with your CPA."
+                    The 11 write-off items shown to customers as &ldquo;things to verify with your CPA.&rdquo;
                     Only items marked <em>active</em> appear on the slide. Order is controlled by
                     the sort field.
                 </p>

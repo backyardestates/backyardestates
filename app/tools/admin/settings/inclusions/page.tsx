@@ -20,7 +20,7 @@ export default async function InclusionsAdminPage() {
         <main style={{ padding: "32px 40px", maxWidth: 1180, margin: "0 auto" }}>
             <header style={{ marginBottom: 28 }}>
                 <h1 style={{ fontSize: 28, fontWeight: 300, color: "#14302F", margin: 0 }}>
-                    What's Included (Slide 4)
+                    What&apos;s Included (Slide 4)
                 </h1>
                 <p style={{ fontSize: 14, color: "#5A5550", marginTop: 8, maxWidth: 760 }}>
                     Two pieces of content live here: the <strong>inclusion categories</strong> (the

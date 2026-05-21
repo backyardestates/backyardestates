@@ -24,9 +24,9 @@ export default async function CitiesAdminPage() {
                 </h1>
                 <p style={{ fontSize: 14, color: "#5A5550", marginTop: 8, maxWidth: 720 }}>
                     Each row holds the Backyard Estates timeline (always known, days)
-                    and the local city's average (numeric when known, or a free-text
-                    label when it isn't). Slide 7 picks the row whose name appears in
-                    the proposal's address; new proposals freeze that row's values onto
+                    and the local city&apos;s average (numeric when known, or a free-text
+                    label when it isn&apos;t). Slide 7 picks the row whose name appears in
+                    the proposal&apos;s address; new proposals freeze that row&apos;s values onto
                     their snapshot at save time.
                 </p>
             </header>

@@ -214,7 +214,7 @@ export function PaymentSchedulePanel({
             {/* Drift warnings — one row per column whose model has shifted */}
             {anyDrift && (
                 <div className={s.warning}>
-                    <div>Some schedules no longer match their ADU's current total:</div>
+                    <div>Some schedules no longer match their ADU&apos;s current total:</div>
                     <ul className={s.warningList}>
                         {drifts.filter((d) => d.drifted).map((d) => (
                             <li key={d.col.id}>
@@ -316,8 +316,8 @@ export function PaymentSchedulePanel({
                 <div className={s.note}>
                     Every cell is editable · Defaults seed first to {money(endpoints.first)} and
                     last to {money(endpoints.last)} per column · Editing any cell rebalances the
-                    other rows in that ADU's column proportionally so its total stays the same ·
-                    Slide 14 + the agreement use the first ADU's schedule as the contract version.
+                    other rows in that ADU&apos;s column proportionally so its total stays the same ·
+                    Slide 14 + the agreement use the first ADU&apos;s schedule as the contract version.
                 </div>
             </div>
         </div>
