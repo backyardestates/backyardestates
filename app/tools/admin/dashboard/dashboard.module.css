@@ -1,0 +1,509 @@
+/* Admin Landing — editorial dashboard matching the presentation aesthetic */
+
+.shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px 96px;
+    font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #14302F;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.18);
+}
+
+.title {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 44px;
+    font-weight: 300;
+    color: #14302F;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+}
+
+.title em {
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #B8954A;
+}
+
+.subtitle {
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 15px;
+    color: rgba(20, 48, 47, 0.55);
+    margin: 0;
+    letter-spacing: -0.005em;
+}
+
+.primaryAction {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 22px;
+    background: #14302F;
+    color: #F7F2E8;
+    border: 1px solid #14302F;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s ease, transform 0.12s ease;
+    min-height: 44px;
+}
+
+.primaryAction:hover {
+    background: #1F4948;
+    transform: translateY(-1px);
+}
+
+.primaryAction:focus-visible {
+    outline: 2px solid #B8954A;
+    outline-offset: 2px;
+}
+
+/* ── Stats grid ─────────────────────────────────────────────────────── */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+}
+
+@media (max-width: 1000px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.statCard {
+    position: relative;
+    display: block;
+    padding: 24px 24px 22px;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.18);
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    overflow: hidden;
+}
+
+.statCard::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: #B8954A;
+    opacity: 0.85;
+}
+
+.statCard:hover {
+    border-color: rgba(184, 149, 74, 0.40);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(20, 48, 47, 0.06);
+}
+
+.statCard:focus-visible {
+    outline: 2px solid #B8954A;
+    outline-offset: 2px;
+}
+
+.statLabel {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    color: #B8954A;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.statValue {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1;
+    color: #14302F;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.statBreakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(184, 149, 74, 0.14);
+}
+
+.statBreakItem {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(20, 48, 47, 0.55);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.statBreakItem strong {
+    font-size: 16px;
+    font-weight: 600;
+    color: #14302F;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Sections ──────────────────────────────────────────────────────── */
+.section {
+    margin-bottom: 48px;
+}
+
+.sectionHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.14);
+}
+
+.sectionTitle {
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 22px;
+    color: #14302F;
+    margin: 0 0 18px 0;
+    letter-spacing: -0.01em;
+}
+
+.sectionHead .sectionTitle {
+    margin-bottom: 0;
+}
+
+.sectionLink {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: #B8954A;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.12s ease;
+}
+
+.sectionLink:hover {
+    color: #14302F;
+}
+
+/* ── Catalog tiles ─────────────────────────────────────────────────── */
+.tileGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+@media (max-width: 1000px) {
+    .tileGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .tileGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tile {
+    position: relative;
+    padding: 20px 22px;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.18);
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
+    transition: border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    overflow: hidden;
+}
+
+.tile:hover {
+    border-color: rgba(184, 149, 74, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(20, 48, 47, 0.06);
+}
+
+.tile:focus-visible {
+    outline: 2px solid #B8954A;
+    outline-offset: 2px;
+}
+
+.tileLabel {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #14302F;
+    margin-bottom: 6px;
+    letter-spacing: -0.005em;
+}
+
+.tileDesc {
+    font-size: 12px;
+    color: rgba(20, 48, 47, 0.62);
+    line-height: 1.45;
+}
+
+.tileBadge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(184, 149, 74, 0.12);
+    color: #B8954A;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(184, 149, 74, 0.25);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Lists (Recent proposals, Recent users) ────────────────────────── */
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.18);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
+    /* overflow:visible so the kebab dropdown can extend past the card edge
+     * without getting clipped. Row backgrounds are bounded by their own rect
+     * so nothing leaks outside the rounded corners visually. */
+    overflow: visible;
+    position: relative;
+}
+
+/* Strip is inset 14px from each side so the rounded card corners stay
+ * clean without needing overflow:hidden on the container. */
+.list::before {
+    content: "";
+    position: absolute;
+    inset: 0 14px auto 14px;
+    height: 2px;
+    background: linear-gradient(90deg, #B8954A 0%, #D4B074 50%, rgba(184, 149, 74, 0.40) 100%);
+    z-index: 1;
+    border-radius: 1px;
+}
+
+/* First/last rows still need to clip their hover background against the
+ * outer border-radius — apply matching radii directly. */
+.listRow:first-child {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+}
+
+.listRow:last-child {
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+}
+
+.listRow {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.10);
+    gap: 16px;
+}
+
+.listRow:last-child {
+    border-bottom: none;
+}
+
+/* Per-row kebab menu floats over the right edge of the row so the click-
+ * absorbing Link wrapper can still cover the full row body. */
+.listRowMenu {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    z-index: 5;
+}
+
+.listRow:has(.listRowMenu) {
+    padding-right: 64px;
+}
+
+/* When a row wraps its content in a Link, the Link becomes the flex
+ * container so the whole row is a single click target. */
+.listLink {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin: -16px -20px;
+    padding: 16px 20px;
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.12s ease;
+}
+
+.listLink:hover {
+    background: rgba(184, 149, 74, 0.05);
+}
+
+.listMain {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.listMain strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #14302F;
+    letter-spacing: -0.005em;
+}
+
+.listMuted {
+    font-size: 12px;
+    color: rgba(20, 48, 47, 0.55);
+}
+
+.listMeta {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.empty {
+    padding: 32px 20px;
+    background: #FFFFFF;
+    border: 1px dashed rgba(184, 149, 74, 0.30);
+    border-radius: 14px;
+    text-align: center;
+    color: rgba(20, 48, 47, 0.62);
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+    font-size: 14px;
+}
+
+.empty a {
+    color: #B8954A;
+    font-weight: 600;
+    font-style: normal;
+    font-family: 'Roboto', system-ui, sans-serif;
+}
+
+/* ── Status + role pills (same vocabulary as the proposals list) ───── */
+.statusPill,
+.rolePill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: rgba(184, 149, 74, 0.08);
+    color: #B8954A;
+    border: 1px solid rgba(184, 149, 74, 0.20);
+}
+
+.status_DRAFT {
+    background: rgba(184, 149, 74, 0.10);
+    color: #8A6B14;
+    border-color: rgba(184, 149, 74, 0.30);
+}
+
+.status_REVIEWED {
+    background: rgba(20, 48, 47, 0.08);
+    color: #14302F;
+    border-color: rgba(20, 48, 47, 0.18);
+}
+
+.status_SENT {
+    background: rgba(40, 80, 140, 0.08);
+    color: #2A4A8A;
+    border-color: rgba(40, 80, 140, 0.20);
+}
+
+.status_SIGNED {
+    background: rgba(30, 100, 60, 0.08);
+    color: #1E5A2E;
+    border-color: rgba(30, 100, 60, 0.22);
+}
+
+.status_ARCHIVED {
+    background: rgba(20, 48, 47, 0.04);
+    color: rgba(20, 48, 47, 0.50);
+    border-color: rgba(20, 48, 47, 0.12);
+}
+
+.role_ADMIN {
+    background: rgba(184, 149, 74, 0.12);
+    color: #8A4A14;
+    border-color: rgba(184, 149, 74, 0.30);
+}
+
+.role_ARCHITECT {
+    background: rgba(40, 80, 100, 0.08);
+    color: #2A4F6A;
+    border-color: rgba(40, 80, 100, 0.22);
+}
+
+.role_CUSTOMER {
+    background: rgba(20, 48, 47, 0.04);
+    color: rgba(20, 48, 47, 0.55);
+    border-color: rgba(20, 48, 47, 0.12);
+}
+
+/* ── Narrow viewports ──────────────────────────────────────────────── */
+@media (max-width: 720px) {
+    .shell {
+        padding: 24px 16px 64px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .title {
+        font-size: 32px;
+    }
+
+    .statValue {
+        font-size: 36px;
+    }
+}

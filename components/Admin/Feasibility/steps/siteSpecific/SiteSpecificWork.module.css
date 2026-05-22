@@ -1,0 +1,313 @@
+/* =========================================
+   SiteSpecificWork.module.css
+   Apple-grade “Step + Tabs + Body” shell
+   ========================================= */
+
+/* -----------------------------
+   Step wrapper
+------------------------------ */
+.step {
+    --max: 72rem;
+    --padX: clamp(1rem, 3vw, 1.5rem);
+    --gap: clamp(0.85rem, 1.6vw, 1.25rem);
+
+    --radiusLg: 1.35rem;
+    --radiusMd: 1rem;
+    --radiusSm: 0.85rem;
+
+    --text: rgba(0, 0, 0, 0.88);
+    --muted: rgba(0, 0, 0, 0.58);
+    --muted2: rgba(0, 0, 0, 0.46);
+
+    --hairline: rgba(0, 0, 0, 0.08);
+    --hairlineStrong: rgba(0, 0, 0, 0.12);
+
+    --shadowA: 0 12px 34px rgba(0, 0, 0, 0.08);
+    --shadowB: 0 3px 14px rgba(0, 0, 0, 0.05);
+    --shadowInset: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+    --focusRing: 0 0 0 5px rgba(50, 110, 255, 0.18);
+    --focusOutline: rgba(50, 110, 255, 0.55);
+
+    width: 100%;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 1.25rem var(--padX) 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    color: var(--text);
+}
+
+/* -----------------------------
+   Hero Card
+------------------------------ */
+.heroCard {
+    position: relative;
+    border-radius: var(--radiusLg);
+    padding: clamp(1rem, 2.4vw, 1.5rem);
+    background: var(--color-brand-beige-subtle, rgba(250, 245, 235, 0.72));
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadowA), var(--shadowB), var(--shadowInset);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    overflow: hidden;
+}
+
+.heroCard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background:
+        radial-gradient(1200px 380px at 12% 0%,
+            rgba(255, 255, 255, 0.62),
+            rgba(255, 255, 255, 0) 60%),
+        radial-gradient(900px 320px at 92% 8%,
+            rgba(255, 255, 255, 0.28),
+            rgba(255, 255, 255, 0) 55%);
+    opacity: 0.92;
+}
+
+/* Top layout */
+.heroTop {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+/* Left content */
+.heroLeft {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* Placeholder for future right-side cards */
+.heroRight {
+    flex: 0 0 0;
+    width: 0;
+    height: 0;
+}
+
+/* Eyebrow */
+.heroEyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+    font-weight: 650;
+
+    margin-bottom: 0.35rem;
+}
+
+/* Headline */
+.heroHeadline {
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 1.85vw, 1.8rem);
+    letter-spacing: -0.02em;
+    font-weight: 820;
+    color: var(--color-brand-dark-blue, rgba(0, 0, 0, 0.82));
+    margin: 0 0 0.35rem 0;
+}
+
+/* Subhead */
+.heroSubhead {
+    font-family: var(--font-sans);
+    font-size: 1.02rem;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+    max-width: 70ch;
+}
+
+/* -----------------------------
+   Progress Tabs (Premium)
+------------------------------ */
+.progressBar {
+    position: relative;
+    margin-bottom: 1.05rem;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+
+    /* subtle baseline divider feel */
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 920px) {
+    .progressBar {
+        padding-top: 0.9rem;
+    }
+}
+
+/* Each progress “tab” is a button */
+.progressItem {
+    position: relative;
+    width: 100%;
+    text-align: left;
+    border: 0;
+    cursor: pointer;
+    padding: 0.85rem 0.9rem;
+    border-radius: 1.05rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.34));
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06), var(--shadowInset);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background 200ms ease;
+}
+
+@media (hover: hover) {
+    .progressItem:hover {
+        transform: translateY(-2px);
+        border-color: rgba(0, 0, 0, 0.14);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.08), var(--shadowInset);
+        background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.72),
+                rgba(255, 255, 255, 0.40));
+    }
+}
+
+.progressItem:active {
+    transform: translateY(-1px);
+}
+
+.progressItem:focus {
+    outline: none;
+}
+
+.progressItem:focus-visible {
+    box-shadow: var(--focusRing), 0 14px 28px rgba(0, 0, 0, 0.08), var(--shadowInset);
+    border-color: var(--focusOutline);
+}
+
+/* Title row */
+.progressTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-serif);
+    font-size: 1.02rem;
+    letter-spacing: -0.01em;
+    font-weight: 800;
+    color: rgba(0, 0, 0, 0.82);
+}
+
+/* Little number badge */
+.progressNum {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+
+    background: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.78);
+
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+/* Meta text */
+.progressMeta {
+    display: block;
+    margin-top: 0.35rem;
+
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: rgba(0, 0, 0, 0.56);
+}
+
+/* Active tab: confident, calm */
+.progressItemActive {
+    border-color: rgba(0, 0, 0, 0.18);
+    background: linear-gradient(135deg,
+            rgba(250, 240, 220, 0.82),
+            rgba(255, 255, 255, 0.52));
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.10),
+        0 6px 18px rgba(0, 0, 0, 0.06),
+        var(--shadowInset);
+}
+
+/* Active indicator line (super subtle, Apple-ish) */
+.progressItemActive::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: -1px;
+    height: 2px;
+    border-radius: 999px;
+
+    background: linear-gradient(90deg,
+            rgba(185, 151, 100, 0.0),
+            rgba(185, 151, 100, 0.70),
+            rgba(229, 194, 136, 0.55),
+            rgba(185, 151, 100, 0.0));
+    opacity: 0.9;
+}
+
+/* Active num badge becomes “gold glass” */
+.progressItemActive .progressNum {
+    background: linear-gradient(135deg, rgba(185, 151, 100, 0.95), rgba(229, 194, 136, 0.85));
+    border-color: rgba(185, 151, 100, 0.55);
+    color: rgba(255, 255, 255, 0.98);
+    box-shadow:
+        0 0 0 4px rgba(185, 151, 100, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+/* -----------------------------
+   Body wrapper for IncludedPills
+------------------------------ */
+.questionGrid {
+    margin-top: 0.25rem;
+
+    border-radius: var(--radiusLg);
+    padding: clamp(0.95rem, 2vw, 1.25rem);
+
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.62),
+            rgba(255, 255, 255, 0.34));
+    border: 1px solid var(--hairline);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06), var(--shadowInset);
+}
+
+/* Optional: tighten spacing if IncludedPills already adds its own padding */
+.questionGrid>*:first-child {
+    margin-top: 0;
+}
+
+/* -----------------------------
+   Reduced motion
+------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+
+    .heroCard,
+    .progressItem,
+    .progressNum,
+    .questionGrid {
+        transition: none !important;
+    }
+
+    .progressItem:hover {
+        transform: none;
+    }
+}

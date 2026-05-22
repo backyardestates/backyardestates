@@ -1,0 +1,422 @@
+/* Slide 7 — How It Works · light slide, dark timeline island, hero total in compHead */
+
+.slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto auto auto;
+  height: 100%;
+  background: var(--p-paper);
+  overflow: hidden;
+  padding: 90px 64px 32px;
+  gap: 24px;
+  color: var(--p-teal-ink);
+  font-family: var(--p-font);
+}
+
+/* ── HEADLINE ──────────────────────────────────────────────── */
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-bold);
+}
+
+.headTitle {
+  font-family: var(--p-font);
+  font-weight: var(--p-light);
+  font-size: var(--p-text-2xl);
+  color: var(--p-teal-ink);
+  line-height: 1;
+  letter-spacing: var(--p-track-tight);
+  margin: 0;
+}
+
+.headTitle em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--p-gold);
+}
+
+/* ── DARK TIMELINE STRIP ───────────────────────────────────── */
+.timeline {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 28px 28px 32px;
+  background: linear-gradient(180deg, var(--p-teal-deep) 0%, var(--p-teal-ink) 100%);
+  border: 1px solid var(--p-border-dark);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 28px;
+  right: 28px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--p-gold) 0%, var(--p-gold-bright) 100%);
+  opacity: 0.9;
+}
+
+.timeline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 100% 50%, rgba(184, 149, 74, 0.10) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.station {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 0 12px;
+  min-width: 0;
+  position: relative;
+}
+
+.stationDot {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--p-gold) 0%, var(--p-gold-soft) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--p-gold-bright);
+  box-shadow: 0 4px 16px rgba(184, 149, 74, 0.30);
+  flex-shrink: 0;
+}
+
+.stationNum {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-base);
+  color: var(--p-teal-ink);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stationTitle {
+  font-family: var(--p-font);
+  font-size: var(--p-text-base);
+  font-weight: var(--p-bold);
+  color: var(--p-cream);
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  margin-top: 4px;
+}
+
+.stationDayChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  background: var(--p-gold-bg);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+  color: var(--p-gold-bright);
+  font-weight: var(--p-bold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.stationDesc {
+  font-size: var(--p-text-xs);
+  color: rgba(247, 245, 240, 0.82);
+  font-weight: var(--p-medium);
+  line-height: 1.5;
+  letter-spacing: var(--p-track-wide);
+  margin-top: 2px;
+}
+
+.stationConnector {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 22px; /* visually center on the dot row */
+  padding: 0 4px;
+}
+
+.stationConnectorLine {
+  width: 36px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--p-gold-border) 0%, var(--p-gold) 50%, var(--p-gold-border) 100%);
+}
+
+.stationConnectorArrow {
+  color: var(--p-gold-soft);
+  font-size: 16px;
+  line-height: 1;
+  margin-top: -2px;
+}
+
+/* ── COMPARISON PANEL (light) ──────────────────────────────── */
+.compPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--p-white);
+  border: 1px solid rgba(20, 48, 47, 0.14);
+  border-radius: var(--p-radius-lg);
+  padding: 24px 32px 24px;
+  box-shadow: var(--p-shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.compPanel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 32px;
+  right: 32px;
+  height: 2px;
+  background: var(--p-gold);
+  opacity: 0.85;
+}
+
+/* Header row — hero BE total (left, content-width) + phase title (right, fills remaining) */
+.compHead {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 32px;
+  padding-bottom: 4px;
+}
+
+.compHeadLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.compEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-bold);
+}
+
+.compTitle {
+  font-family: var(--p-font);
+  font-weight: var(--p-light);
+  font-size: var(--p-text-lg);
+  color: var(--p-teal-ink);
+  line-height: 1.1;
+  letter-spacing: var(--p-track-tight);
+  margin: 0;
+}
+
+.compTitle em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--p-gold);
+}
+
+/* Hero BE total — sits on the compHead row, left side, content-width only */
+.compHeadTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  padding: 14px 22px;
+  background: linear-gradient(135deg, rgba(184, 149, 74, 0.10) 0%, rgba(184, 149, 74, 0.04) 100%);
+  border: 2px solid var(--p-gold);
+  border-radius: var(--p-radius-md);
+  box-shadow: 0 4px 16px rgba(184, 149, 74, 0.14);
+}
+
+.compHeadTotalLabel {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-bold);
+}
+
+.compHeadTotalValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.compHeadTotalValue {
+  font-family: var(--p-font);
+  font-size: var(--p-text-2xl);
+  font-weight: var(--p-light);
+  color: var(--p-teal-ink);
+  line-height: 0.9;
+  letter-spacing: var(--p-track-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+.compHeadTotalUnit {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-lg);
+  color: var(--p-gold);
+  letter-spacing: -0.01em;
+}
+
+.compHeadTotalNote {
+  font-size: var(--p-text-xs);
+  color: rgba(20, 48, 47, 0.78);
+  font-weight: var(--p-medium);
+  letter-spacing: var(--p-track-wide);
+  margin-top: 2px;
+}
+
+/* 3 metric columns, side by side */
+.compCols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.compCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  background: var(--p-cream-2);
+  border: 1px solid rgba(20, 48, 47, 0.12);
+  border-radius: var(--p-radius-md);
+}
+
+.compColLabel {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-md);
+  color: var(--p-teal-ink);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/* Horizontal pair: Backyard Estates (gold) + City average (white) side by side */
+.compChipsStack {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.compBE,
+.compCity {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: var(--p-radius-sm);
+  min-width: 0;
+}
+
+/* Premium gold metallic — lighter gold gradient for crisp dark-on-light text */
+.compBE {
+  background: linear-gradient(135deg, #f4dca6 0%, var(--p-gold-bright) 55%, var(--p-gold-soft) 100%);
+  border: 1px solid var(--p-gold-soft);
+  box-shadow: 0 2px 10px rgba(184, 149, 74, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.compCity {
+  background: var(--p-white);
+  border: 1px solid rgba(20, 48, 47, 0.18);
+}
+
+.compChipKicker {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+  font-weight: var(--p-bold);
+  line-height: 1;
+}
+
+.compBE .compChipKicker {
+  color: var(--p-teal-ink);
+}
+
+.compCity .compChipKicker {
+  color: var(--p-teal);
+}
+
+.compChipValue {
+  font-family: var(--p-font);
+  font-size: var(--p-text-base);
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+  font-variant-numeric: tabular-nums;
+}
+
+.compBE .compChipValue {
+  color: var(--p-teal-ink);
+  font-weight: var(--p-bold);
+}
+
+.compCity .compChipValue {
+  color: var(--p-teal-ink);
+  font-weight: var(--p-medium);
+}
+
+/* ── FOOTER ────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(20, 48, 47, 0.14);
+}
+
+.footerLeft {
+  font-size: var(--p-text-sm);
+  color: var(--p-teal-ink);
+  font-weight: var(--p-medium);
+  letter-spacing: var(--p-track-wide);
+}
+
+.footerRight {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-base);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}

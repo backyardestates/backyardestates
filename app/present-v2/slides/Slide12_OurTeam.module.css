@@ -1,0 +1,158 @@
+/* Slide 12 — Our Team · editorial team grid */
+
+.slide {
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  height: 100%;
+  background: radial-gradient(ellipse at 25% 0%, var(--p-teal-deep) 0%, var(--p-dark) 60%, var(--p-dark-2) 100%);
+  overflow: hidden;
+  padding: 96px 72px 44px;
+  gap: 28px;
+  color: var(--p-cream);
+  font-family: var(--p-font);
+}
+
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: rgba(247, 245, 240, 0.50);
+  letter-spacing: 0.04em;
+}
+
+.eyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  background: var(--p-gold-bg);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  padding: 8px 18px;
+  font-weight: var(--p-semi);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px 32px;
+  align-content: center;
+  align-items: stretch;
+  min-height: 0;
+}
+
+/* When there are 4 or fewer people, lay them out in one row. */
+.gridCols4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+.gridCols2 {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 920px;
+  margin: 0 auto;
+}
+.gridCols1 {
+  grid-template-columns: minmax(0, 360px);
+  justify-content: center;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid var(--p-border-dark);
+  border-radius: var(--p-radius-lg);
+  padding: 26px 22px 22px;
+  gap: 14px;
+}
+
+.portraitFrame {
+  width: 168px;
+  height: 168px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--p-dark-3);
+  border: 2px solid var(--p-gold-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.portraitImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.name {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-xl);
+  color: var(--p-gold-bright);
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+}
+
+.title {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.62);
+  font-weight: var(--p-semi);
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-lg);
+  color: rgba(247, 245, 240, 0.32);
+  text-align: center;
+  padding: 32px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 22px;
+  border-top: 1px solid rgba(184, 149, 74, 0.18);
+  gap: 24px;
+}
+
+.footerNote {
+  font-size: var(--p-text-micro);
+  color: rgba(247, 245, 240, 0.42);
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
+.tagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}

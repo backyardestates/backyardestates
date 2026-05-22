@@ -1,0 +1,223 @@
+/* Slide 14 — Payment Schedule · multi-column, one ADU per column */
+
+.slide {
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--p-paper);
+  font-family: var(--p-font);
+  overflow: hidden;
+  padding: 16px 44px 40px;
+  gap: 24px;
+}
+
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-faint);
+  letter-spacing: 0.04em;
+}
+
+.empty {
+  align-self: center;
+  margin-top: 80px;
+  padding: 32px 48px;
+  background: var(--p-white);
+  border: 1px dashed rgba(20, 48, 47, 0.20);
+  border-radius: var(--p-radius-lg);
+  color: var(--p-ink-muted);
+  font-style: italic;
+  font-family: var(--p-font-display);
+  font-size: var(--p-text-base);
+}
+
+/* ── TABLE WRAP ── */
+.tableWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Each cell is a direct child — grid template set inline so column count
+ * tracks the number of ADUs at runtime. */
+.tableGrid {
+  display: grid;
+  align-content: start;
+  width: 100%;
+  max-width: 1820px;
+  background: var(--p-white);
+  border: 1px solid rgba(20, 48, 47, 0.12);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  overflow: hidden;
+}
+
+.cell {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--p-border-light);
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* ── HEADER CELLS ── */
+.thLabel,
+.thCol {
+  background: var(--p-teal-ink);
+  color: var(--p-gold-soft);
+  font-size: var(--p-text-micro);
+  font-weight: var(--p-bold);
+  padding: 22px 18px;
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--p-gold-border);
+}
+
+.thLabel {
+  justify-content: center;
+}
+
+.thCol {
+  color: rgba(247, 245, 240, 0.78);
+}
+
+.thTrigger {
+  justify-content: flex-start;
+}
+
+/* Header cells over each ADU column — stack the name + total +
+   ADU-type badge in normal flow (right-aligned column). */
+.thAmount {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  background: linear-gradient(180deg, var(--p-teal-deep) 0%, var(--p-teal-ink) 100%);
+  text-align: right;
+  padding: 18px 18px;
+}
+
+.thAduName {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-base);
+  color: var(--p-cream);
+  letter-spacing: -0.005em;
+  line-height: 1.05;
+  text-transform: none;
+}
+
+.thAduAccent {
+  color: var(--p-gold-bright);
+  font-weight: 400;
+}
+
+.thAduTotal {
+  font-family: var(--p-font);
+  font-size: var(--p-text-micro);
+  color: var(--p-gold);
+  font-weight: var(--p-bold);
+  letter-spacing: var(--p-track-widest);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── MILESTONE ROWS ── */
+.rowNum {
+  font-size: var(--p-text-sm);
+  font-weight: var(--p-bold);
+  color: var(--p-teal);
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.rowLabel {
+  font-size: var(--p-text-sm);
+  color: var(--p-teal-ink);
+  font-weight: var(--p-semi);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+.rowTrigger {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-muted);
+  font-style: italic;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+.rowAmount {
+  font-family: var(--p-font);
+  font-size: var(--p-text-base);
+  color: var(--p-teal-ink);
+  font-weight: var(--p-bold);
+  justify-content: flex-end;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.rowAmountMissing {
+  color: var(--p-ink-faint);
+  font-weight: var(--p-light);
+}
+
+/* Subtle zebra on milestone rows (every other row across all columns).
+ * Use nth-of-type on .cell would be unreliable in a flat grid — apply via
+ * inline alternating shading isn't trivial without rows. Instead leave
+ * cells solid white for clarity at presentation scale. */
+
+/* ── TOTAL ROW ── */
+.totalCell {
+  background: var(--p-teal-ink);
+  color: var(--p-cream);
+  border-top: 2px solid var(--p-gold);
+  border-bottom: none;
+  padding: 22px 18px;
+}
+
+.totalLabel {
+  font-size: var(--p-text-sm);
+  color: var(--p-gold-bright);
+  font-weight: var(--p-bold);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+}
+
+.totalTrigger {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold-soft);
+}
+
+.totalAmount {
+  font-family: var(--p-font);
+  font-size: var(--p-text-md);
+  font-weight: var(--p-light);
+  color: var(--p-gold-bright);
+  justify-content: flex-end;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+}

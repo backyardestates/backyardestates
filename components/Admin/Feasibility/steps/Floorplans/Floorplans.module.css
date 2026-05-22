@@ -1,0 +1,581 @@
+/* =========================================
+   Floorplans Step — Apple-grade multi-step
+   ========================================= */
+
+.step {
+    --max: 72rem;
+    --padX: clamp(1rem, 3vw, 1.5rem);
+    --gap: clamp(0.85rem, 1.6vw, 1.25rem);
+
+    --radiusLg: 1.35rem;
+    --radiusMd: 1rem;
+    --radiusSm: 0.85rem;
+
+    --text: rgba(0, 0, 0, 0.88);
+    --muted: rgba(0, 0, 0, 0.58);
+    --muted2: rgba(0, 0, 0, 0.46);
+
+    --hairline: rgba(0, 0, 0, 0.08);
+    --hairlineStrong: rgba(0, 0, 0, 0.12);
+
+    --shadowA: 0 12px 34px rgba(0, 0, 0, 0.08);
+    --shadowB: 0 3px 14px rgba(0, 0, 0, 0.05);
+    --shadowInset: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+    --focusRing: 0 0 0 5px rgba(50, 110, 255, 0.18);
+    --focusOutline: rgba(50, 110, 255, 0.55);
+
+    width: 100%;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 1.25rem var(--padX) 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    color: var(--text);
+}
+
+/* -----------------------------------------
+   Hero shell (Step header / intro)
+------------------------------------------ */
+.heroCard {
+    position: relative;
+    border-radius: var(--radiusLg);
+    padding: clamp(1rem, 2.4vw, 1.5rem);
+    background: var(--color-brand-beige-subtle, rgba(250, 245, 235, 0.72));
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadowA), var(--shadowB), var(--shadowInset);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    overflow: hidden;
+}
+
+.heroCard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background:
+        radial-gradient(1200px 380px at 12% 0%,
+            rgba(255, 255, 255, 0.62),
+            rgba(255, 255, 255, 0) 60%),
+        radial-gradient(900px 320px at 92% 8%,
+            rgba(255, 255, 255, 0.28),
+            rgba(255, 255, 255, 0) 55%);
+    opacity: 0.9;
+}
+
+/* Eyebrow */
+.heroEyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+    font-weight: 650;
+
+    margin-bottom: 0.35rem;
+}
+
+/* Hero headline */
+.heroHeadline {
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 1.85vw, 1.8rem);
+    letter-spacing: -0.02em;
+    font-weight: 820;
+    color: var(--color-brand-dark-blue, rgba(0, 0, 0, 0.82));
+    margin: 0 0 0.35rem 0;
+}
+
+/* Hero subhead */
+.heroSubhead {
+    font-family: var(--font-sans);
+    font-size: 1.02rem;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+    max-width: 78ch;
+}
+
+/* -----------------------------------------
+   Shared card surface
+------------------------------------------ */
+.card {
+    position: relative;
+    border-radius: var(--radiusLg);
+    padding: clamp(0.95rem, 2vw, 1.25rem);
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.62),
+            rgba(255, 255, 255, 0.34));
+    border: 1px solid var(--hairline);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06), var(--shadowInset);
+}
+
+/* Titles / helper */
+.sectionTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(1.05rem, 1.25vw, 1.25rem);
+    letter-spacing: -0.01em;
+    font-weight: 780;
+    color: var(--color-brand-dark-blue, rgba(0, 0, 0, 0.82));
+    margin: 0 0 0.25rem 0;
+}
+
+.helperText {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0;
+}
+
+/* -----------------------------------------
+   Input layout
+------------------------------------------ */
+.inputGrid2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.95rem 1rem;
+    margin-top: 0.9rem;
+}
+
+@media (max-width: 860px) {
+    .inputGrid2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.label {
+    display: inline-block;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-serif);
+    font-size: 0.92rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    font-weight: 650;
+}
+
+/* -----------------------------------------
+   Stepper: “system control” vibe
+------------------------------------------ */
+.stepper {
+    height: 48px;
+    border-radius: var(--radiusMd);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.66);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    align-items: center;
+    overflow: hidden;
+
+    transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.stepper:focus-within {
+    border-color: var(--focusOutline);
+    box-shadow: var(--focusRing), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.84);
+}
+
+/* buttons */
+.stepperBtn {
+    height: 100%;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.78);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+
+    display: grid;
+    place-items: center;
+
+    transition: background 160ms ease, transform 160ms ease, opacity 160ms ease;
+}
+
+@media (hover: hover) {
+    .stepperBtn:hover {
+        background: rgba(0, 0, 0, 0.06);
+    }
+}
+
+.stepperBtn:active {
+    transform: scale(0.98);
+}
+
+.stepperBtn:focus {
+    outline: none;
+}
+
+.stepperBtn:focus-visible {
+    box-shadow: inset 0 0 0 2px rgba(50, 110, 255, 0.35);
+}
+
+/* center value */
+.stepperValue {
+    height: 100%;
+    display: grid;
+    place-items: center;
+
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: rgba(0, 0, 0, 0.82);
+
+    border-left: 1px solid rgba(0, 0, 0, 0.07);
+    border-right: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+/* -----------------------------------------
+   Select: premium, consistent with inputs
+------------------------------------------ */
+.select {
+    width: 100%;
+    height: 48px;
+    padding: 0.75rem 2.6rem 0.75rem 0.9rem;
+
+    border-radius: var(--radiusMd);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.66);
+
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: rgba(0, 0, 0, 0.82);
+    letter-spacing: -0.01em;
+
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease,
+        transform 180ms ease;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* chevron */
+    background-image:
+        linear-gradient(45deg, transparent 50%, rgba(0, 0, 0, 0.55) 50%),
+        linear-gradient(135deg, rgba(0, 0, 0, 0.55) 50%, transparent 50%),
+        linear-gradient(to right, rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.10));
+    background-position:
+        calc(100% - 18px) 20px,
+        calc(100% - 12px) 20px,
+        calc(100% - 42px) 50%;
+    background-size: 6px 6px, 6px 6px, 1px 22px;
+    background-repeat: no-repeat;
+}
+
+.select:hover {
+    border-color: rgba(0, 0, 0, 0.18);
+    background-color: rgba(255, 255, 255, 0.78);
+}
+
+.select:focus {
+    outline: none;
+    border-color: var(--focusOutline);
+    box-shadow: var(--focusRing), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    background-color: rgba(255, 255, 255, 0.86);
+    transform: translateY(-1px);
+}
+
+/* -----------------------------------------
+   Results header
+------------------------------------------ */
+.resultsHeader {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+/* -----------------------------------------
+   Floorplan grid
+------------------------------------------ */
+.floorplanGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+    .floorplanGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .floorplanGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* -----------------------------------------
+   Floorplan card button (the big one)
+------------------------------------------ */
+.stepCardButton {
+    text-align: left;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+
+    border-radius: var(--radiusLg);
+
+    /* use an inner “surface” to keep clean corners */
+    box-shadow: none;
+    transition: transform 220ms ease;
+}
+
+.stepCardButton:focus {
+    outline: none;
+}
+
+.stepCardButton:focus-visible {
+    box-shadow: var(--focusRing);
+}
+
+/* Inner surface */
+.stepCardTop,
+.stepCardBody {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.68),
+            rgba(255, 255, 255, 0.36));
+    border: 1px solid rgba(0, 0, 0, 0.10);
+}
+
+.stepCardTop {
+    border-radius: var(--radiusLg) var(--radiusLg) 0 0;
+    padding: 0.95rem 0.95rem 0.85rem;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06), var(--shadowInset);
+    border-bottom: 0;
+}
+
+.stepCardBody {
+    border-radius: 0 0 var(--radiusLg) var(--radiusLg);
+    padding: 0.85rem 0.95rem 0.95rem;
+
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.07), var(--shadowInset);
+}
+
+@media (hover: hover) {
+    .stepCardButton:hover {
+        transform: translateY(-3px);
+    }
+
+    .stepCardButton:hover .stepCardTop,
+    .stepCardButton:hover .stepCardBody {
+        border-color: rgba(0, 0, 0, 0.14);
+    }
+}
+
+/* Selected card = calm confidence */
+.stepCardButtonActive .stepCardTop,
+.stepCardButtonActive .stepCardBody {
+    border-color: rgba(0, 0, 0, 0.18);
+    background: linear-gradient(135deg,
+            rgba(250, 240, 220, 0.82),
+            rgba(255, 255, 255, 0.52));
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.10),
+        0 6px 18px rgba(0, 0, 0, 0.06),
+        var(--shadowInset);
+}
+
+/* Name + meta */
+.stepCardName {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+    font-weight: 820;
+    color: rgba(0, 0, 0, 0.82);
+    margin: 0 0 0.2rem 0;
+}
+
+.stepCardMeta {
+    font-family: var(--font-sans);
+    font-size: 0.98rem;
+    line-height: 1.4;
+    color: rgba(0, 0, 0, 0.58);
+}
+
+/* Right: pill area */
+.stepCardRight {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 86px;
+}
+
+/* Select/Selected pill */
+.pill {
+    border-radius: 999px;
+    padding: 0.42rem 0.7rem;
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+
+    background: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    color: rgba(0, 0, 0, 0.72);
+
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.pillActive {
+    background: linear-gradient(135deg, rgba(185, 151, 100, 0.95), rgba(229, 194, 136, 0.85));
+    border-color: rgba(185, 151, 100, 0.55);
+    color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 0 0 4px rgba(185, 151, 100, 0.14);
+}
+
+/* -----------------------------------------
+   Image section
+------------------------------------------ */
+.imageWrap {
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.floorplanImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    aspect-ratio: 16 / 11;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+/* Fallback */
+.imageFallback {
+    aspect-ratio: 16 / 11;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    font-family: var(--font-sans);
+    color: rgba(0, 0, 0, 0.5);
+}
+
+/* Footer row inside card */
+.stepCardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+/* Match tag */
+.matchTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    border-radius: 999px;
+    padding: 0.4rem 0.65rem;
+
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.10);
+
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    font-weight: 650;
+    color: rgba(0, 0, 0, 0.68);
+}
+
+/* Price */
+.price {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+    font-weight: 850;
+    color: rgba(0, 0, 0, 0.80);
+}
+
+/* -----------------------------------------
+   Loading skeletons (real shimmer)
+------------------------------------------ */
+.skeletonRow {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 0.85rem;
+}
+
+@media (max-width: 1024px) {
+    .skeletonRow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .skeletonRow {
+        grid-template-columns: 1fr;
+    }
+}
+
+.skeletonCard {
+    border-radius: var(--radiusLg);
+    height: 320px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background:
+        linear-gradient(90deg,
+            rgba(255, 255, 255, 0.35),
+            rgba(255, 255, 255, 0.72),
+            rgba(255, 255, 255, 0.35));
+    background-size: 240% 100%;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    animation: shimmer 1.25s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 120% 0;
+    }
+
+    100% {
+        background-position: -120% 0;
+    }
+}
+
+/* -----------------------------------------
+   Reduced motion
+------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+
+    .select,
+    .stepper,
+    .stepperBtn,
+    .stepCardButton,
+    .skeletonCard {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .stepCardButton:hover {
+        transform: none;
+    }
+}

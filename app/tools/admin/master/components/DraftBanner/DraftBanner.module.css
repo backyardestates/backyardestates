@@ -1,0 +1,171 @@
+.banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 13px;
+    color: #14302F;
+    border: 1px solid;
+}
+
+.bannerDraft {
+    background: rgba(184, 149, 74, 0.06);
+    border-color: rgba(184, 149, 74, 0.30);
+}
+
+.bannerCanonical {
+    background: rgba(30, 100, 60, 0.06);
+    border-color: rgba(30, 100, 60, 0.28);
+}
+
+.bannerOther {
+    background: rgba(40, 80, 140, 0.06);
+    border-color: rgba(40, 80, 140, 0.28);
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.viewPill {
+    font-weight: 500;
+    color: #14302F;
+}
+
+.viewPill strong {
+    font-weight: 700;
+}
+
+.savedAt {
+    font-size: 12px;
+    color: rgba(20, 48, 47, 0.55);
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+}
+
+.ownerNote {
+    font-size: 12px;
+    color: rgba(20, 48, 47, 0.55);
+}
+
+.btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(20, 48, 47, 0.20);
+    background: #fff;
+    color: #14302F;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.btn:hover {
+    border-color: #B8954A;
+    background: rgba(184, 149, 74, 0.05);
+}
+
+.chipsWrap {
+    position: relative;
+}
+
+.chipsToggle {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(20, 48, 47, 0.20);
+    background: #fff;
+    color: #14302F;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.chipsToggle:hover {
+    border-color: #B8954A;
+}
+
+.chipsList {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 240px;
+    background: #fff;
+    border: 1px solid rgba(184, 149, 74, 0.30);
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(20, 48, 47, 0.12);
+    padding: 6px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+
+.chip:hover {
+    background: rgba(184, 149, 74, 0.08);
+}
+
+.chipAvatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #B8954A 0%, #D4B074 100%);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+}
+
+.chipLabel {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.chipLabel strong {
+    font-size: 12px;
+    font-weight: 600;
+    color: #14302F;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chipMeta {
+    font-size: 11px;
+    color: rgba(20, 48, 47, 0.55);
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+}

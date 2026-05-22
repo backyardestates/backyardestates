@@ -1,0 +1,956 @@
+/* ═══════════════════════════════════════════════════════
+   BACKYARD ESTATES — PRESENTER DESIGN SYSTEM (v.2)
+   Slides render inside a fixed 1920×1080 canvas that scales
+   to fit any viewport, so token values are absolute px.
+   Aligned with the v1 deck so both versions render at the
+   same scale across the same tier names.
+═══════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════
+   FONT SCALE
+═══════════════════════════════════════ */
+:root {
+  --p-text-micro: 10px;
+  /* stat labels, license, footnotes */
+  --p-text-xs: 12px;
+  /* captions, muted, pill text */
+  --p-text-sm: 16px;
+  /* body text, descriptions */
+  --p-text-base: 22px;
+  /* supporting labels, table values */
+  --p-text-md: 30px;
+  /* category names, card labels */
+  --p-text-lg: 36px;
+  /* card titles, zone headings */
+  --p-text-xl: 48px;
+  /* section headings */
+  --p-text-2xl: 56px;
+  /* slide subheadings */
+  --p-text-3xl: 76px;
+  /* slide headings (between 2xl and hero) */
+  --p-text-hero: 99px;
+  /* cashflow, ROI hero numbers */
+  --p-text-display: 120px;
+  /* customer name on cover */
+}
+
+/* ═══════════════════════════════════════
+   BRAND COLORS
+═══════════════════════════════════════ */
+:root {
+  --p-dark: #0d1f1f;
+  --p-dark-2: #111e1e;
+  --p-dark-3: #1a2e2e;
+  --p-dark-4: #1a3535;
+  --p-teal: #2D5F5F;
+  --p-teal-light: #3a7070;
+  --p-teal-deep: #1F4444;
+  --p-teal-ink: #14302F;
+  --p-gold: #B8954A;
+  --p-gold-soft: #D4B074;
+  --p-gold-bright: #E8C57E;
+  --p-gold-dim: rgba(184, 149, 74, 0.15);
+  --p-gold-border: rgba(184, 149, 74, 0.40);
+  --p-gold-bg: rgba(184, 149, 74, 0.10);
+  --p-cream: #f7f5f0;
+  --p-cream-2: #f0ede7;
+  --p-cream-3: #e8e4da;
+  --p-paper: #FAF6EC;
+  --p-white: #ffffff;
+  --p-ink: #1A1A1A;
+  --p-ink-muted: #5A5550;
+  --p-ink-faint: #8A8278;
+  --p-positive: #2E7D5B;
+  --p-positive-bright: #9FD9B8;
+  --p-negative: #B85440;
+  --p-negative-coral: #E2A284;
+  --p-coral-tint: rgba(226, 162, 132, 0.10);
+  --p-coral-tint-2: rgba(226, 162, 132, 0.02);
+  --p-coral-border: rgba(226, 162, 132, 0.30);
+  --p-coral-soft: rgba(226, 162, 132, 0.85);
+  --p-border-light: #e5e1d8;
+  --p-border-dark: rgba(255, 255, 255, 0.08);
+  --p-border-gold: rgba(184, 149, 74, 0.25);
+}
+
+/* ═══════════════════════════════════════
+   TYPOGRAPHY
+═══════════════════════════════════════ */
+:root {
+  --p-font: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont,
+    "SF Pro Display", "Segoe UI", sans-serif;
+  --p-font-display: var(--font-fraunces), 'Fraunces', 'Cormorant Garamond',
+    'Iowan Old Style', Georgia, serif;
+
+  --p-thin: 200;
+  --p-light: 300;
+  --p-normal: 400;
+  --p-medium: 500;
+  --p-semi: 600;
+  --p-bold: 700;
+
+  --p-track-tight: -1.5px;
+  --p-track-normal: -0.5px;
+  --p-track-wide: 0.5px;
+  --p-track-wider: 1.2px;
+  --p-track-widest: 3px;
+}
+
+/* ═══════════════════════════════════════
+   SPACING
+═══════════════════════════════════════ */
+:root {
+  --p-pad-slide: 5%;
+  --p-pad-panel: 32px;
+  --p-pad-card: 28px;
+  --p-gap-sm: 12px;
+  --p-gap-md: 20px;
+  --p-gap-lg: 32px;
+}
+
+/* ═══════════════════════════════════════
+   SHAPES
+═══════════════════════════════════════ */
+:root {
+  --p-radius-sm: 8px;
+  --p-radius-md: 14px;
+  --p-radius-lg: 20px;
+  --p-radius-pill: 40px;
+}
+
+/* ═══════════════════════════════════════
+   SHADOWS  (editorial scale)
+═══════════════════════════════════════ */
+:root {
+  --p-shadow-card: 0 2px 16px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+  --p-shadow-sm: 0 1px 2px rgba(20, 48, 47, 0.06), 0 1px 1px rgba(20, 48, 47, 0.04);
+  --p-shadow-md: 0 8px 24px rgba(20, 48, 47, 0.08), 0 2px 6px rgba(20, 48, 47, 0.05);
+  --p-shadow-lg: 0 24px 60px rgba(20, 48, 47, 0.16), 0 6px 16px rgba(20, 48, 47, 0.08);
+  --p-shadow-float: 0 32px 80px rgba(0, 0, 0, 0.32), 0 12px 32px rgba(0, 0, 0, 0.20);
+  --p-shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.24);
+  --p-glow-gold: 0 0 0 1px rgba(184, 149, 74, 0.30), 0 20px 60px rgba(184, 149, 74, 0.18);
+}
+
+/* ═══════════════════════════════════════
+   TRANSITIONS
+═══════════════════════════════════════ */
+:root {
+  --p-ease: all 0.2s ease;
+  --p-fade: opacity 0.3s ease;
+}
+
+/* ═══════════════════════════════════════
+   GLOBAL RESET
+═══════════════════════════════════════ */
+html,
+body {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background: var(--p-dark);
+}
+
+/* ═══════════════════════════════════════
+   SLIDE SHELL
+═══════════════════════════════════════ */
+.slide-root {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--p-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════
+   SLIDE SURFACE TYPES
+═══════════════════════════════════════ */
+.slide-dark {
+  background: var(--p-dark);
+}
+
+.slide-light {
+  background: var(--p-cream);
+}
+
+.slide-black {
+  background: #000000;
+}
+
+/* ═══════════════════════════════════════
+   HEADER BAR  (height 72px)
+═══════════════════════════════════════ */
+.slide-header {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  flex-shrink: 0;
+  background: var(--p-teal);
+}
+
+.slide-header-dark {
+  background: var(--p-dark-4);
+}
+
+.slide-header-title {
+  color: var(--p-white);
+  font-size: var(--p-text-md);
+  font-weight: var(--p-medium);
+  letter-spacing: var(--p-track-wide);
+}
+
+.slide-header-sub {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: var(--p-text-xs);
+  font-weight: var(--p-light);
+  letter-spacing: var(--p-track-wide);
+  margin-top: 4px;
+}
+
+.slide-header-pill {
+  background: var(--p-gold-dim);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  padding: 8px 24px;
+  font-size: var(--p-text-xs);
+  color: var(--p-gold);
+  font-weight: var(--p-medium);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════
+   EYEBROW LABEL
+═══════════════════════════════════════ */
+.eyebrow {
+  font-size: var(--p-text-xs);
+  font-weight: var(--p-semi);
+  letter-spacing: var(--p-track-widest);
+  color: var(--p-gold);
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════
+   GOLD RULE
+═══════════════════════════════════════ */
+.gold-rule {
+  width: 80px;
+  height: 2px;
+  background: var(--p-gold);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════
+   TAGLINE
+═══════════════════════════════════════ */
+.tagline {
+  font-size: var(--p-text-sm);
+  font-style: italic;
+  color: var(--p-gold);
+  font-weight: var(--p-light);
+  letter-spacing: var(--p-track-wide);
+}
+
+/* ═══════════════════════════════════════
+   CARDS
+═══════════════════════════════════════ */
+.p-card {
+  background: var(--p-white);
+  border-radius: var(--p-radius-md);
+  overflow: hidden;
+  box-shadow: var(--p-shadow-card);
+}
+
+/* ═══════════════════════════════════════
+   PILLS / TAGS
+═══════════════════════════════════════ */
+.p-tag {
+  font-size: var(--p-text-micro);
+  color: #666;
+  background: var(--p-cream-2);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--p-radius-pill);
+  padding: 8px 20px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.p-tag-teal {
+  font-size: var(--p-text-micro);
+  color: var(--p-teal);
+  background: rgba(45, 95, 95, 0.08);
+  border: 1px solid rgba(45, 95, 95, 0.20);
+  border-radius: var(--p-radius-pill);
+  padding: 8px 20px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.p-tag-gold {
+  font-size: var(--p-text-micro);
+  color: var(--p-gold);
+  background: var(--p-gold-bg);
+  border: 1px solid var(--p-gold-border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* ═══════════════════════════════════════
+   META ROW  (cover slide)
+═══════════════════════════════════════ */
+.meta-row {
+  display: flex;
+  align-items: center;
+}
+
+.meta-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0 28px;
+}
+
+.meta-label {
+  font-size: var(--p-text-micro);
+  color: rgba(255, 255, 255, 0.28);
+  text-transform: uppercase;
+  letter-spacing: var(--p-track-wider);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.meta-val {
+  font-size: var(--p-text-xs);
+  color: rgba(255, 255, 255, 0.50);
+  font-weight: var(--p-light);
+}
+
+/* ═══════════════════════════════════════
+   OVERLAYS
+═══════════════════════════════════════ */
+.overlay-left {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg,
+      var(--p-dark) 0%,
+      var(--p-dark) 28%,
+      rgba(13, 31, 31, 0.85) 52%,
+      rgba(13, 31, 31, 0.30) 72%,
+      transparent 100%);
+}
+
+.overlay-story {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right,
+      transparent 60%,
+      var(--p-dark-3) 100%);
+}
+
+/* ═══════════════════════════════════════
+   STAT BAR  (height 64px)
+═══════════════════════════════════════ */
+.stat-bar {
+  height: 64px;
+  background: var(--p-dark-4);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.stat-bar-light {
+  background: var(--p-cream-3);
+  border-top: 1px solid var(--p-border-light);
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-item:last-child {
+  border-right: none;
+}
+
+.stat-val {
+  font-size: var(--p-text-md);
+  font-weight: var(--p-thin);
+  color: var(--p-gold);
+  letter-spacing: var(--p-track-normal);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: var(--p-text-micro);
+  color: rgba(255, 255, 255, 0.25);
+  text-transform: uppercase;
+  letter-spacing: var(--p-track-wider);
+}
+
+/* ═══════════════════════════════════════
+   DEPT LABEL
+═══════════════════════════════════════ */
+.dept-label {
+  font-size: var(--p-text-micro);
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: var(--p-track-wider);
+  font-weight: var(--p-semi);
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* ═══════════════════════════════════════
+   TABNUM
+═══════════════════════════════════════ */
+.tabnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ═══════════════════════════════════════
+   COUNT-UP
+═══════════════════════════════════════ */
+.counting {
+  transition: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ────────────  EDITORIAL PRIMITIVES (v2)  ────────────
+   New design system for the redesigned deck. Each piece
+   below is a reusable visual capability. Slide modules
+   compose these with their own internal layout CSS.
+═══════════════════════════════════════════════════════ */
+
+/* ── DISPLAY ITALIC ── (Fraunces, for editorial accents only) */
+.disp-italic {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  letter-spacing: -0.005em;
+}
+
+.disp {
+  font-family: var(--p-font-display);
+  font-weight: 300;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+
+/* ── RUNNING HEADER ── (every slide, at top) */
+.running-header {
+  position: absolute;
+  top: 22px;
+  left: 40px;
+  right: 40px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.running-header-left,
+.running-header-center,
+.running-header-right {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: var(--p-medium);
+}
+
+.running-header-left {
+  justify-self: start;
+}
+
+.running-header-center {
+  justify-self: center;
+}
+
+.running-header-right {
+  justify-self: end;
+}
+
+.running-header-num {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.rh-dark {
+  color: var(--p-gold-soft);
+}
+
+.rh-light {
+  color: var(--p-teal);
+}
+
+.rh-dark .running-header-center,
+.rh-dark .running-header-right {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.rh-light .running-header-center,
+.rh-light .running-header-right {
+  color: var(--p-ink-faint);
+}
+
+/* ── GOLD RULE ── (separator) */
+.gold-rule-h {
+  height: 1px;
+  background: var(--p-gold);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.gold-rule-v {
+  width: 1px;
+  background: var(--p-gold);
+  opacity: 0.35;
+  flex-shrink: 0;
+}
+
+/* ── PLATE NUMBER ── (editorial roman numeral / serial) */
+.plate {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-base);
+  color: var(--p-gold);
+  letter-spacing: 0.02em;
+}
+
+.plate-small {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-micro);
+  color: var(--p-gold-soft);
+  letter-spacing: 0.04em;
+}
+
+/* ── HERO STAT BLOCK ── (eyebrow + big number + sub-label)
+   The single most-used component on data slides. */
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hero-stat-eyebrow {
+  font-size: var(--p-text-micro);
+  font-weight: var(--p-semi);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold);
+  line-height: 1;
+}
+
+.hero-stat-val {
+  font-family: var(--p-font);
+  font-size: var(--p-text-hero);
+  font-weight: var(--p-light);
+  line-height: 1;
+  letter-spacing: var(--p-track-tight);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.hero-stat-sub {
+  font-size: var(--p-text-xs);
+  font-weight: var(--p-normal);
+  color: var(--p-ink-muted);
+  letter-spacing: var(--p-track-wide);
+  line-height: 1.2;
+}
+
+.hero-stat.on-dark .hero-stat-sub {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.hero-stat.on-dark .hero-stat-val {
+  color: var(--p-gold-bright);
+}
+
+/* color variants for hero values */
+.hero-stat-val.pos {
+  color: var(--p-positive);
+}
+
+.hero-stat-val.pos-bright {
+  color: var(--p-positive-bright);
+}
+
+.hero-stat-val.neg {
+  color: var(--p-negative);
+}
+
+.hero-stat-val.neg-coral {
+  color: var(--p-negative-coral);
+}
+
+.hero-stat-val.gold {
+  color: var(--p-gold);
+}
+
+.hero-stat-val.gold-bright {
+  color: var(--p-gold-bright);
+}
+
+.hero-stat-val.ink {
+  color: var(--p-teal-ink);
+}
+
+/* ── SECTION TITLE ── "Your <em>property</em>" Fraunces accent */
+.section-title {
+  font-family: var(--p-font);
+  font-weight: var(--p-light);
+  font-size: var(--p-text-2xl);
+  letter-spacing: var(--p-track-tight);
+  line-height: 1.05;
+  color: var(--p-teal-ink);
+}
+
+.section-title em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  color: var(--p-gold);
+}
+
+.section-title.on-dark {
+  color: var(--p-cream);
+}
+
+.section-title.on-dark em {
+  color: var(--p-gold-bright);
+}
+
+/* ── ELEVATED CARD ── (modern card with subtle depth) */
+.elevated-card {
+  background: var(--p-paper);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  overflow: hidden;
+}
+
+.elevated-card-dark {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 100%), var(--p-teal-deep);
+  border: 1px solid var(--p-border-dark);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-lg);
+  overflow: hidden;
+}
+
+.elevated-card-featured {
+  background: var(--p-paper);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-glow-gold), var(--p-shadow-lg);
+  overflow: hidden;
+}
+
+/* ── RECOMMENDED BADGE ── (hangs off top of featured card) */
+.rec-badge {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--p-gold);
+  color: var(--p-dark);
+  font-size: var(--p-text-xs);
+  font-weight: var(--p-bold);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 10px 26px;
+  border-radius: var(--p-radius-pill);
+  white-space: nowrap;
+  box-shadow: var(--p-shadow-md), 0 0 0 4px var(--p-paper);
+  z-index: 3;
+}
+
+.rec-badge::before {
+  content: "★";
+  margin-right: 10px;
+  color: var(--p-dark);
+  letter-spacing: 0;
+}
+
+/* ── DISCOUNT CALLOUT ── (positive green left border) */
+.callout-positive {
+  background: rgba(46, 125, 91, 0.06);
+  border-left: 3px solid var(--p-positive);
+  border-radius: 0 var(--p-radius-sm) var(--p-radius-sm) 0;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.callout-positive .callout-label {
+  font-size: var(--p-text-xs);
+  font-weight: var(--p-semi);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+  color: var(--p-positive);
+}
+
+.callout-positive .callout-val {
+  font-size: var(--p-text-sm);
+  font-weight: var(--p-medium);
+  color: var(--p-positive);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── COMPARISON ROW ── (label · house-val · adu-val) */
+.compare-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  align-items: center;
+  padding: 18px 32px;
+  border-bottom: 1px solid var(--p-border-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.compare-row:last-child {
+  border-bottom: none;
+}
+
+.compare-row.zebra {
+  background: rgba(20, 48, 47, 0.025);
+}
+
+.compare-row .compare-label {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-muted);
+  letter-spacing: var(--p-track-wide);
+}
+
+.compare-row .compare-val {
+  font-size: var(--p-text-base);
+  text-align: center;
+  font-weight: var(--p-medium);
+  color: var(--p-teal-ink);
+}
+
+.compare-row.summary .compare-label {
+  font-weight: var(--p-semi);
+  color: var(--p-teal-ink);
+}
+
+.compare-row.hero {
+  background: var(--p-teal-ink);
+  color: var(--p-cream);
+  padding: 26px 32px;
+}
+
+.compare-row.hero .compare-label,
+.compare-row.hero .compare-val {
+  color: var(--p-cream);
+}
+
+.compare-row.hero .compare-val.pos {
+  color: var(--p-positive-bright);
+  font-size: var(--p-text-2xl);
+  font-weight: var(--p-light);
+}
+
+.compare-row.hero .compare-val.neg {
+  color: var(--p-negative-coral);
+  font-size: var(--p-text-2xl);
+  font-weight: var(--p-light);
+}
+
+/* ── ARROW GLYPHS ── */
+.arrow-up::before {
+  content: "↑";
+  margin-right: 6px;
+}
+
+.arrow-down::before {
+  content: "↓";
+  margin-right: 6px;
+}
+
+/* ── KEYVALUE ROW (small data) ── */
+.kv-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(20, 48, 47, 0.06);
+}
+
+.kv-row:last-child {
+  border-bottom: none;
+}
+
+.kv-row .kv-label {
+  font-size: var(--p-text-xs);
+  color: var(--p-ink-muted);
+  letter-spacing: var(--p-track-wide);
+}
+
+.kv-row .kv-val {
+  font-size: var(--p-text-sm);
+  font-weight: var(--p-medium);
+  color: var(--p-teal-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.kv-row.on-dark .kv-label {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.kv-row.on-dark .kv-val {
+  color: var(--p-cream);
+}
+
+.kv-row.on-dark {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ── ROMAN NUMERAL BADGE ── (for process / next-steps) */
+.roman-badge {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-2xl);
+  color: var(--p-gold);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.roman-badge.on-dark {
+  color: var(--p-gold-soft);
+}
+
+/* ── EYEBROW (v2 — small caps + tracked) ── */
+.eyebrow-2 {
+  font-size: var(--p-text-micro);
+  font-weight: var(--p-semi);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  line-height: 1;
+}
+
+.eyebrow-2.on-dark {
+  color: var(--p-gold-soft);
+}
+
+.eyebrow-2.muted {
+  color: var(--p-ink-faint);
+}
+
+/* ── PULL QUOTE ── */
+.pullquote {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-xl);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--p-teal-ink);
+  position: relative;
+  padding-left: 0;
+}
+
+.pullquote.on-dark {
+  color: var(--p-cream);
+}
+
+.pullquote::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.45em;
+  left: -0.45em;
+  font-size: 2.4em;
+  color: var(--p-gold);
+  opacity: 0.32;
+  line-height: 1;
+  font-family: var(--p-font-display);
+  font-style: italic;
+}
+
+.pullquote.on-dark::before {
+  color: var(--p-gold-soft);
+  opacity: 0.40;
+}
+
+/* ── INNER BORDER ── (gold hairline frame on dark slides) */
+.inner-border-dark {
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(184, 149, 74, 0.30);
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── SVG ICON BASE ── */
+.icon-svg {
+  width: 28px;
+  height: 28px;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  fill: none;
+  flex-shrink: 0;
+}
+
+.icon-svg-lg {
+  width: 40px;
+  height: 40px;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  fill: none;
+  flex-shrink: 0;
+}
+
+/* ── DATA TABLE (modern) ── */
+.data-table-card {
+  background: var(--p-paper);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  overflow: hidden;
+}
+
+.data-table-head {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  padding: 18px 32px;
+  background: var(--p-teal-ink);
+  color: var(--p-cream);
+}
+
+.data-table-head .th {
+  font-size: var(--p-text-xs);
+  font-weight: var(--p-semi);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.data-table-head .th:first-child {
+  text-align: left;
+  color: var(--p-gold-soft);
+}

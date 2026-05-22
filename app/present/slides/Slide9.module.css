@@ -1,0 +1,136 @@
+.slide {
+    width: 100%;
+    height: 100%;
+    background: var(--p-slate);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--p-cream);
+}
+
+.banner {
+    background: var(--p-tan);
+    padding: 56px 96px;
+    flex-shrink: 0;
+}
+
+.bannerTitle {
+    margin: 0;
+    font-family: var(--p-font-display);
+    font-weight: 700;
+    font-size: 72px;
+    color: var(--p-cream);
+    line-height: 1;
+    letter-spacing: -1.5px;
+}
+
+.body {
+    flex: 1;
+    padding: 80px 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 56px;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.intro {
+    max-width: 1280px;
+}
+
+.introText {
+    margin: 0;
+    font-family: var(--p-font);
+    font-weight: 600;
+    font-size: 27px;
+    color: var(--p-cream);
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+}
+
+.stepsBlock {
+    max-width: 1280px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.stepsTitle {
+    margin: 0;
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 27px;
+    color: var(--p-cream);
+    letter-spacing: 0.12em;
+    text-decoration: underline;
+    text-underline-offset: 10px;
+    text-decoration-thickness: 3px;
+}
+
+.stepsList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.stepsList li {
+    display: flex;
+    gap: 20px;
+    align-items: baseline;
+    font-family: var(--p-font);
+    font-weight: 500;
+    font-size: 24px;
+    color: var(--p-cream);
+    line-height: 1.35;
+}
+
+.stepNum {
+    font-weight: 700;
+    color: var(--p-cream);
+    font-size: 24px;
+    min-width: 44px;
+}
+
+.stepText {
+    flex: 1;
+}
+
+.congrats {
+    background: var(--p-tan);
+    padding: 36px 96px;
+    flex-shrink: 0;
+}
+
+.congratsText {
+    margin: 0;
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 23px;
+    color: var(--p-cream);
+    line-height: 1.3;
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.footerStrip {
+    background: var(--p-tan);
+    padding: 14px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 18px;
+    flex-shrink: 0;
+    color: var(--p-cream);
+    border-top: 1px solid rgba(245, 237, 218, 0.15);
+}
+
+.footerPage {
+    font-family: var(--p-font);
+    font-size: 14px;
+    color: var(--p-cream);
+    font-weight: 500;
+}

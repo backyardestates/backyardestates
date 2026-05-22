@@ -1,0 +1,494 @@
+/* ═══════════════════════════════════════════════════════
+   BACKYARD ESTATES — PROPOSAL-STYLE DESIGN SYSTEM
+   Mirrors the printed ADU Proposal: dark-teal banners,
+   tan secondary bands, cream paper, slate accents.
+═══════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Palette (matched to printed proposal) ── */
+  --p-teal-dark: #34555B;
+  --p-teal-ink: #1F3A40;
+  --p-tan: #B89A66;
+  --p-tan-deep: #A78656;
+  --p-tan-soft: rgba(184, 154, 102, 0.20);
+  --p-cream: #F5EDDA;
+  --p-paper: #FBF5E6;
+  --p-paper-2: #EEE5CC;
+  --p-slate: #93A8B0;
+  --p-slate-deep: #7B939C;
+  --p-ink: #1A2A2E;
+  --p-ink-soft: #2F4448;
+  --p-ink-muted: #5A6B6F;
+  --p-white: #ffffff;
+  --p-border: rgba(26, 42, 46, 0.12);
+  --p-border-strong: rgba(26, 42, 46, 0.30);
+  --p-positive: #2E7D5B;
+  --p-negative: #B85440;
+
+  /* ── Typography ── */
+  --p-font: var(--font-inter), 'Inter', -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --p-font-display: var(--font-fraunces), 'Fraunces', 'Playfair Display',
+    Georgia, serif;
+
+  /* ── Scale (16:9 full-screen presentation, readable at distance) ── */
+  --p-text-micro: 17px;
+  --p-text-xs: 20px;
+  --p-text-sm: 23px;
+  --p-text-base: 27px;
+  --p-text-md: 33px;
+  --p-text-lg: 41px;
+  --p-text-xl: 54px;
+  --p-text-2xl: 72px;
+  --p-text-hero: 99px;
+
+  /* ── Spacing ── */
+  --p-pad-slide: 0;
+  /* slides bleed edge-to-edge */
+  --p-pad-band: 40px 64px;
+  /* banner padding */
+  --p-pad-body: 48px 72px;
+  /* body padding */
+  --p-gap-sm: 12px;
+  --p-gap-md: 24px;
+  --p-gap-lg: 40px;
+
+  /* ── Shapes ── */
+  --p-band-h: 108px;
+  /* dark teal banner height */
+  --p-band-h-sm: 72px;
+  /* tan secondary band */
+  --p-metadata-h: 56px;
+  --p-radius: 2px;
+  /* sharp corners — print style */
+  --p-rule: 2px solid var(--p-ink);
+}
+
+/* ═══════════════════════════════════════
+   GLOBAL — slide-level baseline
+═══════════════════════════════════════ */
+html,
+body {
+  font-family: var(--p-font);
+  color: var(--p-ink);
+  background: var(--p-teal-dark);
+}
+
+/* Tabular figures for any money/numeric value (consistent column alignment) */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* ═══════════════════════════════════════
+   PAGE FRAME — recurring header / footer
+═══════════════════════════════════════ */
+
+/* Dark teal banner — slide title (page-style: serif, centered) */
+.proposal-band {
+  background: var(--p-teal-dark);
+  height: var(--p-band-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0 64px;
+  position: relative;
+}
+
+.proposal-band-title {
+  font-family: var(--p-font-display);
+  font-weight: 600;
+  font-size: var(--p-text-xl);
+  color: var(--p-cream);
+  letter-spacing: -0.5px;
+  text-align: center;
+  line-height: 1;
+}
+
+.proposal-band-title em {
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Tan secondary band — used as inset header on certain pages */
+.proposal-tan {
+  background: var(--p-tan);
+  height: var(--p-band-h-sm);
+  display: flex;
+  align-items: center;
+  padding: 0 64px;
+  flex-shrink: 0;
+}
+
+.proposal-tan-title {
+  font-family: var(--p-font-display);
+  font-weight: 600;
+  font-size: var(--p-text-lg);
+  color: var(--p-cream);
+  letter-spacing: -0.3px;
+}
+
+/* Hero photo banner — used on pages with property/build photo on top */
+.proposal-hero {
+  position: relative;
+  height: 280px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--p-teal-ink);
+}
+
+.proposal-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.65);
+}
+
+.proposal-hero-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 64px;
+  z-index: 2;
+}
+
+.proposal-hero-eyebrow {
+  font-family: var(--p-font);
+  font-weight: 600;
+  font-size: var(--p-text-sm);
+  color: var(--p-cream);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.proposal-hero-title {
+  font-family: var(--p-font-display);
+  font-weight: 700;
+  font-size: var(--p-text-2xl);
+  color: var(--p-cream);
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+/* Metadata strip — "ADU Proposal | Date | CL# | DL#" */
+.proposal-meta {
+  background: var(--p-paper);
+  height: var(--p-metadata-h);
+  display: flex;
+  align-items: center;
+  padding: 0 64px;
+  gap: 28px;
+  font-family: var(--p-font);
+  font-size: var(--p-text-xs);
+  color: var(--p-ink);
+  font-weight: 500;
+  border-bottom: 1px solid var(--p-border);
+  flex-shrink: 0;
+}
+
+.proposal-meta-sep {
+  color: var(--p-border-strong);
+}
+
+/* Footer strip — disclaimer + page number + logo */
+.proposal-footer {
+  background: var(--p-tan);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 48px;
+  flex-shrink: 0;
+  min-height: 64px;
+}
+
+.proposal-footer-disclaimer {
+  font-family: var(--p-font);
+  font-size: var(--p-text-micro);
+  color: var(--p-teal-ink);
+  font-weight: 500;
+  line-height: 1.4;
+  max-width: 70%;
+}
+
+.proposal-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--p-cream);
+  font-family: var(--p-font);
+  font-size: var(--p-text-xs);
+  font-weight: 500;
+}
+
+.proposal-footer-page {
+  font-family: var(--p-font);
+  font-size: var(--p-text-sm);
+  color: var(--p-cream);
+  font-weight: 500;
+}
+
+.proposal-footer-logo {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cream/teal slide base — most proposal pages are tan-on-paper */
+.proposal-slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--p-tan);
+  color: var(--p-ink);
+  font-family: var(--p-font);
+  overflow: hidden;
+  position: relative;
+}
+
+.proposal-slide-paper {
+  background: var(--p-paper);
+}
+
+.proposal-slide-cream {
+  background: var(--p-cream);
+}
+
+.proposal-slide-slate {
+  background: var(--p-slate);
+}
+
+/* Slide body — common content area */
+.proposal-body {
+  flex: 1;
+  padding: 48px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ═══════════════════════════════════════
+   PROPOSAL CARD — cream paper with optional banner header
+═══════════════════════════════════════ */
+.proposal-card {
+  background: var(--p-paper);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(26, 42, 46, 0.06);
+}
+
+.proposal-card-header {
+  background: var(--p-teal-dark);
+  color: var(--p-cream);
+  padding: 18px 28px;
+  font-family: var(--p-font);
+  font-size: var(--p-text-base);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.proposal-card-header-tan {
+  background: var(--p-tan);
+}
+
+.proposal-card-body {
+  padding: 24px 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ═══════════════════════════════════════
+   PROPOSAL TABLE — clean print-style grid
+═══════════════════════════════════════ */
+.proposal-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--p-paper);
+  font-family: var(--p-font);
+}
+
+.proposal-table thead th {
+  background: var(--p-teal-dark);
+  color: var(--p-cream);
+  font-weight: 600;
+  font-size: var(--p-text-base);
+  padding: 18px 24px;
+  text-align: center;
+  letter-spacing: 0.3px;
+  border: 1px solid var(--p-teal-ink);
+}
+
+.proposal-table tbody td {
+  padding: 18px 24px;
+  font-size: var(--p-text-sm);
+  font-weight: 500;
+  color: var(--p-ink);
+  border: 1px solid var(--p-border);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.proposal-table tbody td:first-child {
+  font-weight: 700;
+  background: var(--p-paper);
+}
+
+.proposal-table tr.proposal-row-accent td {
+  background: var(--p-slate);
+  color: var(--p-cream);
+  font-weight: 700;
+}
+
+.proposal-table tr.proposal-row-cap td {
+  background: var(--p-teal-dark);
+  color: var(--p-cream);
+  height: 28px;
+  padding: 4px;
+}
+
+/* ═══════════════════════════════════════
+   BULLETS — proposal-style square markers
+═══════════════════════════════════════ */
+.proposal-bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 32px;
+  row-gap: 14px;
+}
+
+.proposal-bullets-1col {
+  grid-template-columns: 1fr;
+}
+
+.proposal-bullets li {
+  position: relative;
+  padding-left: 24px;
+  font-size: var(--p-text-sm);
+  color: var(--p-ink);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.proposal-bullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 9px;
+  height: 9px;
+  background: var(--p-ink);
+}
+
+/* ═══════════════════════════════════════
+   ESTIMATED BOX — slate accent (used on rental + ROI pages)
+═══════════════════════════════════════ */
+.proposal-estimate {
+  background: var(--p-slate);
+  border: 2px solid var(--p-ink-soft);
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  min-height: 140px;
+}
+
+.proposal-estimate-label {
+  font-family: var(--p-font);
+  font-size: var(--p-text-md);
+  font-weight: 700;
+  color: var(--p-cream);
+  letter-spacing: 0.3px;
+}
+
+.proposal-estimate-value {
+  font-family: var(--p-font-display);
+  font-size: var(--p-text-xl);
+  font-weight: 700;
+  color: var(--p-cream);
+  line-height: 1;
+}
+
+/* ═══════════════════════════════════════
+   TIMELINE PROGRESS — used on slides 2 and 3
+═══════════════════════════════════════ */
+.proposal-timeline {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.proposal-timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+}
+
+.proposal-timeline-step-num {
+  font-family: var(--p-font);
+  font-weight: 700;
+  font-size: var(--p-text-sm);
+  color: var(--p-tan);
+}
+
+.proposal-timeline-step-title {
+  font-family: var(--p-font);
+  font-weight: 600;
+  font-size: var(--p-text-xs);
+  color: var(--p-ink);
+  line-height: 1.3;
+}
+
+.proposal-timeline-step-active .proposal-timeline-step-title {
+  color: var(--p-tan-deep);
+}
+
+/* ═══════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════ */
+.proposal-eyebrow {
+  font-family: var(--p-font);
+  font-size: var(--p-text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--p-tan-deep);
+}
+
+.proposal-divider {
+  height: 2px;
+  background: var(--p-ink-soft);
+  margin: 16px 0;
+}
+
+.proposal-italic {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 500;
+}

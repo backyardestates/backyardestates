@@ -1,0 +1,111 @@
+.optional {
+    font-weight: 400;
+    color: rgba(26, 58, 58, 0.45);
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+/* ── Photo upload ── */
+
+.photoUpload {
+    border: 1.5px dashed rgba(45, 95, 95, 0.35);
+    border-radius: 8px;
+    height: 80px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: border-color 0.15s;
+    overflow: hidden;
+}
+
+.photoUpload:hover {
+    border-color: #2D5F5F;
+}
+
+.photoPlaceholder {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    color: rgba(26, 58, 58, 0.4);
+}
+
+.photoIcon {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.photoHint {
+    font-size: 13px;
+}
+
+.photoPreview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px;
+    width: 100%;
+}
+
+.photoThumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.photoMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.photoLabel {
+    font-size: 13px;
+    color: #1a3a3a;
+    font-weight: 500;
+}
+
+.removeBtn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: #a32d2d;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    text-align: left;
+}
+
+/* ── Motivation pills ── */
+
+.motivPills {
+    display: flex;
+    gap: 10px;
+}
+
+.motivPill {
+    flex: 1;
+    padding: 9px 0;
+    border-radius: 8px;
+    border: 1.5px solid rgba(45, 95, 95, 0.25);
+    background: #ffffff;
+    color: rgba(26, 58, 58, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    font-family: inherit;
+}
+
+.motivPill:hover {
+    border-color: #2D5F5F;
+    color: #2D5F5F;
+}
+
+.motivPillActive {
+    background: #2D5F5F;
+    border-color: #2D5F5F;
+    color: #ffffff;
+}

@@ -1,0 +1,392 @@
+/* Slide 9 — ADU vs House · light editorial comparison */
+
+.slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--p-paper);
+  font-family: var(--p-font);
+  overflow: hidden;
+  padding: 90px 64px 36px;
+  gap: 24px;
+}
+
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-faint);
+  letter-spacing: 0.04em;
+}
+
+/* ── TABLE ROW — table on the left, tax-detail bullets on the right ───── */
+.tableRow {
+  align-self: center;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+/* ── COMPARISON TABLE — content-sized via subgrid ─────────── */
+.tableCard {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: minmax(293px, auto) minmax(200px, auto) minmax(200px, auto);
+  background: var(--p-white);
+  border: 1px solid rgba(20, 48, 47, 0.12);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  overflow: hidden;
+}
+
+/* Header row */
+.thead {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  background: var(--p-teal-ink);
+}
+
+.thLabel {
+  font-size: var(--p-text-micro);
+  color: var(--p-gold-soft);
+  font-weight: var(--p-bold);
+  padding: 22px 32px;
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+}
+
+.thCol {
+  font-family: var(--p-font);
+  font-size: var(--p-text-sm);
+  font-weight: var(--p-bold);
+  padding: 22px 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+}
+
+.thHouse {
+  color: rgba(247, 245, 240, 0.65);
+}
+
+.thAdu {
+  color: var(--p-gold-bright);
+  background: linear-gradient(180deg, var(--p-teal-deep) 0%, var(--p-teal-ink) 100%);
+}
+
+/* Tbody passes through so rows participate in the table's grid */
+.tbody {
+  display: contents;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--p-border-light);
+}
+
+.row:nth-child(even) {
+  background: rgba(20, 48, 47, 0.025);
+}
+
+/* Summary rows — same sizes as regular rows, just stronger emphasis */
+.rowSummary {
+  background: rgba(184, 149, 74, 0.08) !important;
+  border-top: 1px solid var(--p-gold-border);
+  border-bottom: 1px solid var(--p-gold-border);
+}
+
+/* Labels — uniform size + font everywhere */
+.rowLabel {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-muted);
+  padding: 0 32px 0 32px;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+.rowSummary .rowLabel {
+  color: var(--p-teal-ink);
+  font-weight: var(--p-bold);
+}
+
+/* Values — uniform size + font + alignment */
+.rowVal {
+  font-family: var(--p-font);
+  font-size: var(--p-text-base);
+  color: var(--p-teal-ink);
+  font-weight: var(--p-medium);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  padding: 0 16px;
+}
+
+.rowSummary .rowVal {
+  font-weight: var(--p-bold);
+}
+
+.rowAdu {
+  background: rgba(45, 95, 95, 0.04);
+}
+
+.rowPos {
+  color: var(--p-positive);
+  font-weight: var(--p-bold);
+}
+
+.rowNeg {
+  color: var(--p-negative);
+  font-weight: var(--p-bold);
+}
+
+.rowMuted {
+  color: var(--p-ink-faint);
+}
+
+/* Cashflow row — same font family, one tier larger, color-coded */
+.rowCashflow {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: center;
+  background: var(--p-teal-ink);
+  padding: 24px 0;
+  border-top: 2px solid var(--p-gold);
+}
+
+.rowCashflow .rowLabel {
+  font-size: var(--p-text-sm);
+  font-family: var(--p-font);
+  font-style: normal;
+  color: var(--p-gold-bright);
+  font-weight: var(--p-bold);
+  letter-spacing: 0.01em;
+}
+
+.rowCfVal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--p-font);
+  font-size: var(--p-text-md);
+  font-weight: var(--p-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.005em;
+  padding: 0 16px;
+}
+
+.cfArrow {
+  font-size: var(--p-text-base);
+  font-weight: var(--p-medium);
+}
+
+.cfArrow.down { color: var(--p-negative-coral); }
+.cfArrow.up   { color: var(--p-positive-bright); }
+
+.cfValNeg { color: var(--p-negative-coral); }
+.cfValPos { color: var(--p-positive-bright); }
+
+/* ── TAX-DETAIL BULLETS — sits to the right of the table ─── */
+.bulletsCol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.bulletsEyebrow {
+  font-size: var(--p-text-sm);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-bold);
+}
+
+.bulletsTitle {
+  font-family: var(--p-font);
+  font-weight: var(--p-light);
+  font-size: var(--p-text-xl);
+  color: var(--p-teal-ink);
+  line-height: 1.1;
+  letter-spacing: var(--p-track-tight);
+  margin: 0;
+}
+
+.bulletsTitle em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--p-gold);
+}
+
+.bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--p-white);
+  border: 1px solid rgba(20, 48, 47, 0.10);
+  border-radius: var(--p-radius-md);
+  box-shadow: var(--p-shadow-sm);
+}
+
+.bulletIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p-gold-bright) 0%, var(--p-gold-soft) 100%);
+  color: var(--p-teal-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: var(--p-bold);
+  flex-shrink: 0;
+  margin-top: 1px;
+  box-shadow: 0 1px 3px rgba(184, 149, 74, 0.30);
+}
+
+.bulletText {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-muted);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.bulletText strong {
+  color: var(--p-teal-ink);
+  font-weight: var(--p-bold);
+}
+
+/* ── 10-YEAR ADVANTAGE — anchored to bottom, matched width to tableRow ── */
+.anchor {
+  margin-top: auto;
+  align-self: center;
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 26px 36px;
+  background: linear-gradient(90deg, var(--p-teal-ink) 0%, var(--p-teal-deep) 100%);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  gap: 36px;
+  color: var(--p-cream);
+}
+
+.anchorLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.anchorEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-bold);
+}
+
+.anchorBlurb {
+  font-family: var(--p-font);
+  font-weight: var(--p-medium);
+  font-size: var(--p-text-md);
+  color: var(--p-cream);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+
+.anchorValue {
+  font-family: var(--p-font);
+  font-size: var(--p-text-3xl);
+  font-weight: var(--p-light);
+  color: var(--p-positive-bright);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-track-tight);
+  line-height: 1;
+}
+
+/* ── EMPTY STATE ───────────────────────────────────────────── */
+.empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--p-text-lg);
+  color: var(--p-ink-faint);
+}
+
+/* ── FOOTER ────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid rgba(20, 48, 47, 0.12);
+  gap: 24px;
+}
+
+.disclaimer {
+  font-size: var(--p-text-micro);
+  color: var(--p-ink-faint);
+  font-style: italic;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  max-width: 70%;
+}
+
+.tagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}

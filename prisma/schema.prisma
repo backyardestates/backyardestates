@@ -1,0 +1,922 @@
+generator client {
+    provider   = "prisma-client-js"
+    engineType = "binary"
+}
+
+datasource db {
+    // Prisma 7 forbids url/directUrl here — they live in prisma.config.ts.
+    // Runtime URL is resolved in lib/prisma.ts (adapter for postgres://, or
+    // accelerateUrl for prisma+postgres://).
+    provider = "postgresql"
+}
+
+/**
+ * =========================
+ * EXISTING ENUMS (kept)
+ * =========================
+ */
+
+enum Role {
+    CUSTOMER
+    ARCHITECT
+    ADMIN
+}
+
+enum WorkStatus {
+    DRAFT
+    ACTIVE
+    DEPRECATED
+}
+
+enum CalcMethod {
+    LINEAR_FT
+    SQ_FT
+    QUANTITY
+    MANUAL
+    ALLOWANCE
+    UNIT_RATE
+}
+
+enum MarkupType {
+    PERCENT
+    FIXED
+    TIERED
+    NONE
+}
+
+enum ImpactArea {
+    PLANS
+    PERMITTING
+    CONSTRUCTION
+    TIMELINE
+}
+
+enum Severity {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+enum FeasibilityAnswerValue {
+    YES
+    NO
+    UNSURE
+}
+
+enum AnalysisStatus {
+    PENDING
+    IN_PROGRESS
+    COMPLETE
+}
+
+enum ProposalStatus {
+    DRAFT
+    REVIEWED
+    SENT
+    SIGNED
+    ARCHIVED
+}
+
+enum AssessStage {
+    LEAD_STAGE
+    OFFICE_VISIT
+    FORMAL_ANALYSIS
+    PRE_PERMIT
+    PRE_CONSTRUCTION
+}
+
+/**
+ * =========================
+ * NEW ENUMS (recommended)
+ * =========================
+ */
+
+enum ProposalStage {
+    LEAD_STAGE
+    OFFICE_VISIT
+    FORMAL_ANALYSIS
+    PRE_PERMIT
+    PRE_CONSTRUCTION
+}
+
+enum LeadChannel {
+    WEBSITE
+    INSTAGRAM
+    FACEBOOK
+    TIKTOK
+    YOUTUBE
+    GOOGLE
+    OPEN_HOUSE
+    REFERRAL
+    OTHER
+}
+
+enum AduType {
+    ATTACHED
+    DETACHED
+}
+
+enum LineItemKind {
+    SITE_WORK
+    UPGRADE
+    CUSTOM
+}
+
+enum DiscountType {
+    FIXED
+    PERCENT
+    PROMO
+}
+
+enum ProposalEventType {
+    CREATED
+    UPDATED
+    SUBMITTED
+    PDF_GENERATION_STARTED
+    PDF_GENERATED
+    SENT
+    VIEWED
+    SIGNED
+    ARCHIVED
+}
+
+enum WorkItemKind {
+    SITE_WORK
+    UPGRADE
+}
+
+/**
+ * =========================
+ * MULTI-TENANT
+ * =========================
+ */
+
+model Organization {
+    id        String   @id @default(cuid())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    memberships Membership[]
+    proposals   Proposal[]
+}
+
+model Membership {
+    id             String @id @default(cuid())
+    organizationId String
+    userId         String
+
+    organization Organization @relation(fields: [organizationId], references: [id])
+    user         User         @relation(fields: [userId], references: [id])
+
+    role Role @default(ADMIN)
+
+    createdAt DateTime @default(now())
+
+    @@unique([organizationId, userId])
+    @@index([userId])
+    @@index([organizationId])
+}
+
+/**
+ * =========================
+ * CORE USERS
+ * =========================
+ */
+
+model User {
+    id   String @id // Supabase auth user id (uuid as string)
+    role Role   @default(CUSTOMER)
+
+    phone String?
+    email String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    feasibilityReports FeasibilityReport[]
+    formalAnalyses     FormalAnalysis[]    @relation("ArchitectAssignments")
+    evidenceFiles      EvidenceFile[]
+
+    proposalsCreated  Proposal[] @relation("ProposalCreatedBy")
+    proposalsAssigned Proposal[] @relation("ProposalAssignedTo")
+
+    memberships    Membership[]
+    proposalEvents ProposalEvent[]
+}
+
+/**
+ * =========================
+ * WORK ITEM CATALOG (SITE WORK + UPGRADES)
+ * =========================
+ */
+
+model Category {
+    id        String @id @default(cuid())
+    name      String @unique
+    sortOrder Int    @default(0)
+
+    workItems WorkItem[]
+}
+
+model WorkItem {
+    id           String     @id @default(cuid())
+    slug         String     @unique
+    title        String
+    overview     String?
+    description  String?
+    whyItMatters String?
+    status       WorkStatus @default(ACTIVE)
+
+    // ✅ NEW: differentiate Site Work vs Upgrade
+    kind WorkItemKind @default(SITE_WORK)
+
+    categoryId String
+    category   Category @relation(fields: [categoryId], references: [id])
+
+    // Typical CUSTOMER exposure for the feasibility (ranges shown to clients)
+    typicalMin Int?
+    typicalMax Int?
+
+    // Optional INTERNAL ranges (used later for job cost)
+    internalMin Int?
+    internalMax Int?
+
+    // flags for easy filtering
+    affectsPlans        Boolean @default(false)
+    affectsPermitting   Boolean @default(false)
+    affectsConstruction Boolean @default(false)
+
+    // Human guidance
+    assessmentSummary String?
+    avoidanceSummary  String?
+    confidenceScore   Int?
+
+    pricingModels PricingModel[]
+    impacts       ImpactDetail[]
+
+    triggersFrom TriggerRule[] @relation("TriggersFrom")
+    triggersTo   TriggerRule[] @relation("TriggersTo")
+
+    feasibilityAnswers FeasibilityAnswer[]
+    formalAnswers      FormalAnswer[]
+    evidenceFiles      EvidenceFile[]
+
+    // catalog usage in proposals
+    proposalLineItems ProposalLineItem[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([kind, status])
+    @@index([categoryId, kind])
+}
+
+model PricingModel {
+    id         String   @id @default(cuid())
+    workItemId String
+    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+
+    calcMethod CalcMethod
+    unitLabel  String?
+
+    // Optional: you can fill these later for real proposal math
+    baseInternal Int?
+    baseCustomer Int?
+    internalUnit Int?
+    customerUnit Int?
+
+    markupType  MarkupType @default(NONE)
+    markupValue Float?
+
+    notes     String?
+    isDefault Boolean @default(true)
+}
+
+model ImpactDetail {
+    id         String   @id @default(cuid())
+    workItemId String
+    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+
+    area     ImpactArea
+    severity Severity   @default(MEDIUM)
+    detail   String?
+
+    durationMinDays Int?
+    durationMaxDays Int?
+}
+
+model TriggerRule {
+    id                  String @id @default(cuid())
+    sourceWorkItemId    String
+    triggeredWorkItemId String
+
+    source    WorkItem @relation("TriggersFrom", fields: [sourceWorkItemId], references: [id])
+    triggered WorkItem @relation("TriggersTo", fields: [triggeredWorkItemId], references: [id])
+
+    condition   String?
+    probability Float?
+    notes       String?
+}
+
+/**
+ * =========================
+ * FEASIBILITY / FORMAL ANALYSIS (kept)
+ * =========================
+ */
+
+model FeasibilityReport {
+    id     String @id @default(cuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+
+    address    String?
+    city       String?
+    aduType    String? // detached/attached/jadus/etc (string for now)
+    timeframe  String?
+    priority   String?
+    motivation String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    answers        FeasibilityAnswer[]
+    formalAnalyses FormalAnalysis[]
+}
+
+model FeasibilityAnswer {
+    id       String            @id @default(cuid())
+    reportId String
+    report   FeasibilityReport @relation(fields: [reportId], references: [id])
+
+    workItemId String
+    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+
+    answer FeasibilityAnswerValue
+
+    // freeze what you displayed at time of report
+    shownMin Int?
+    shownMax Int?
+
+    createdAt DateTime @default(now())
+
+    @@unique([reportId, workItemId])
+}
+
+model FormalAnalysis {
+    id       String            @id @default(cuid())
+    reportId String
+    report   FeasibilityReport @relation(fields: [reportId], references: [id])
+
+    architectId String?
+    architect   User?   @relation("ArchitectAssignments", fields: [architectId], references: [id])
+
+    status      AnalysisStatus @default(PENDING)
+    scheduledAt DateTime?
+    startedAt   DateTime?
+    completedAt DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    answers  FormalAnswer[]
+    files    EvidenceFile[]
+    proposal Proposal?
+}
+
+model FormalAnswer {
+    id               String         @id @default(cuid())
+    formalAnalysisId String
+    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id])
+
+    workItemId String
+    workItem   WorkItem @relation(fields: [workItemId], references: [id])
+
+    // flexible payload (store structured answer details)
+    valueJson Json?
+    notes     String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([formalAnalysisId, workItemId])
+}
+
+model EvidenceFile {
+    id               String         @id @default(cuid())
+    formalAnalysisId String
+    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id])
+
+    workItemId String?
+    workItem   WorkItem? @relation(fields: [workItemId], references: [id])
+
+    storagePath  String // Supabase Storage path
+    fileName     String?
+    fileType     String?
+    uploadedById String?
+    uploadedBy   User?   @relation(fields: [uploadedById], references: [id])
+
+    createdAt DateTime @default(now())
+}
+
+/**
+ * =========================
+ * ADMIN CATALOGS (Phase 2+)
+ * =========================
+ */
+
+/**
+ * Slide 12 "Tax Topics" catalog. Flat list of write-off items (name + one-line
+ * descriptive note). Admin-editable; updates reach the slide on the next load.
+ */
+model TaxTopic {
+    id        String  @id @default(cuid())
+    slug      String  @unique
+    name      String
+    note      String
+    sortOrder Int     @default(0)
+    active    Boolean @default(true)
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    updatedById String?
+
+    @@index([active, sortOrder])
+}
+
+/**
+ * Slide 4 "What's Included" inclusion catalog. Each category (Kitchen,
+ * Bathroom, etc.) has a list of label/text rows. Admin-editable; the slide
+ * renders this content directly so updates ship without a deploy.
+ */
+model InclusionCategory {
+    id        String  @id @default(cuid())
+    slug      String  @unique
+    name      String
+    sortOrder Int     @default(0)
+    active    Boolean @default(true)
+
+    rows InclusionRow[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([active, sortOrder])
+}
+
+model InclusionRow {
+    id         String @id @default(cuid())
+    categoryId String
+    category   InclusionCategory @relation(fields: [categoryId], references: [id])
+
+    slug      String  @unique
+    label     String
+    text      String
+    sortOrder Int     @default(0)
+    active    Boolean @default(true)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([categoryId, sortOrder])
+}
+
+/**
+ * Slide 4 sidebar config — the smaller "we coordinate every department + city
+ * fee" content. Singleton row keyed by id = "default". Stored as Postgres
+ * arrays since both lists are short and rarely change shape.
+ */
+model Slide4SidebarConfig {
+    id String @id // singleton "default"
+
+    deptPills  String[]
+    feeBullets String[]
+
+    updatedAt   DateTime @updatedAt
+    updatedById String?
+}
+
+/**
+ * Payment milestone definitions catalog. Replaces the hardcoded
+ * PROPOSAL_MILESTONE_DEFS + MIDDLE_WEIGHTS in `lib/investment/proposalPaymentSchedule.ts`.
+ *
+ * Pattern A: at proposal-creation time, the balloon generator reads these defs
+ * + their weights, computes the per-milestone dollar amounts, and freezes them
+ * onto the proposal snapshot. Admin edits here only affect NEW proposals.
+ *
+ * Fixed-amount milestones (signing = $7,500, final = $7,854) carry their dollar
+ * amount in `fixedAmount`; the balloon middle has `fixedAmount: null` and
+ * `weight > 0`. Sum-of-weights is normalized at calc time, so weights are
+ * relative magnitudes, not percentages.
+ */
+model PaymentMilestoneDef {
+    id          String  @id @default(cuid())
+    slug        String  @unique
+    label       String
+    trigger     String
+    sortOrder   Int     @default(0)
+    weight      Int     @default(0) // 0 when fixedAmount is set
+    fixedAmount Int? // when non-null, milestone is locked to this $
+    active      Boolean @default(true)
+    notes       String?
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    updatedById String?
+
+    @@index([active, sortOrder])
+}
+
+/**
+ * Default slide order — singleton row. Admins set the presentation order in
+ * the dashboard; each NEW proposal inherits this `order` at creation time and
+ * freezes its own copy on the snapshot (Pattern A). Existing proposals carry
+ * whatever order they had at the time they were saved.
+ */
+model SlideOrderDefault {
+    id    String @id // singleton — always "default"
+    order Int[]      // PostgreSQL native array of slide numbers (1..SLIDE_COUNT)
+
+    updatedAt   DateTime @updatedAt
+    updatedById String?
+}
+
+/**
+ * Discount catalog — flat list of pre-named discounts (e.g. Solar Panels,
+ * Educators, First Responders, Open House). Admin-editable. Each proposal
+ * stores selected preset slugs + any one-off discounts on its snapshot.
+ */
+model DiscountPreset {
+    id        String  @id @default(cuid())
+    slug      String  @unique
+    label     String
+    amount    Int     // dollar amount
+    sortOrder Int     @default(0)
+    active    Boolean @default(true)
+    notes     String?
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    updatedById String?
+
+    @@index([active, sortOrder])
+}
+
+/**
+ * Site work catalog — dedicated tables for the admin tool's Step 3 estimator.
+ * Pattern B: proposals reference these presets via id; per-proposal qty +
+ * cost/markup overrides + one-off items live on the proposal's snapshot.
+ *
+ * Distinct from `WorkItem` (which is shaped for the feasibility tool — questions,
+ * evidence, impact areas). Site-work items are pure pricing primitives.
+ */
+model SiteWorkCategory {
+    id        String  @id @default(cuid())
+    slug      String  @unique
+    label     String
+    sortOrder Int     @default(0)
+    active    Boolean @default(true)
+
+    items SiteWorkPreset[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([active, sortOrder])
+}
+
+model SiteWorkPreset {
+    id         String @id @default(cuid())
+    categoryId String
+    category   SiteWorkCategory @relation(fields: [categoryId], references: [id])
+
+    slug      String  @unique
+    label     String
+    unit      String  // "flat" | "sqft" | "lft" | "quote"
+    beCost    Int     // internal cost (dollars); 0 for "quote" items where qty IS the dollar amount
+    markup    Float   // multiplier (1.0 = no markup, 1.2 = 20% markup, etc.)
+    sortOrder Int     @default(0)
+    active    Boolean @default(true)
+    notes     String?
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    updatedById String?
+
+    @@index([categoryId, sortOrder])
+    @@index([active])
+}
+
+/**
+ * Per-city timeline catalog. Replaces the hardcoded CITY_TIMELINES map in
+ * `lib/config/cityTimelines.ts`. Slide 7 + Step 11 (Project Timeline) look up
+ * by matching the proposal address to a city; new proposals seed their
+ * `projectTimeline` from the matched city (Pattern A: inherit + freeze).
+ */
+model City {
+    id   String @id @default(cuid())
+    name String @unique
+    slug String @unique
+
+    // BE timeline (days) — admin-tunable. Always known.
+    bePlansDays   Int
+    bePermitsDays Int
+    beBuildDays   Int
+
+    // City average — numeric (preferred) and/or label (fallback display).
+    cityPlansDays   Int?
+    cityPermitsDays Int?
+    cityBuildDays   Int?
+
+    cityPlansLabel   String?
+    cityPermitsLabel String?
+    cityBuildLabel   String?
+
+    notes     String?
+    active    Boolean @default(true)
+    sortOrder Int     @default(0)
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    updatedById String?
+
+    @@index([slug])
+    @@index([active, sortOrder])
+}
+
+/**
+ * Single-row catalog of the financial model defaults. Admins edit this in
+ * the dashboard; new proposals seed their `defaults` from this row at creation
+ * time (Pattern A: inherit + freeze). Existing proposals are unaffected by
+ * later edits because each proposal stores its own copy in `snapshotJson`.
+ */
+model FinancialDefaults {
+    // Singleton — we always look this up by id = "default".
+    id String @id
+
+    // Loan terms
+    downPaymentRateHouse Float
+    downPaymentRateAdu   Float
+    interestRate         Float
+    termYears            Int
+
+    // Taxes
+    effectiveTaxRate       Float
+    propertyTaxDiscountAdu Float
+
+    // Maintenance + insurance
+    maintenanceAnnualHouse Int
+    maintenanceAnnualAdu   Int
+    insuranceAnnualHouse   Int
+    insuranceAnnualAdu     Int
+
+    // Growth + premium
+    rentGrowthYoY      Float
+    equityPremium      Float
+    capRateHouse       Float
+    capRateAdu         Float
+    equityGrowthAnnual Float
+
+    // Other
+    remodelCostHouse  Int
+    noiExpenseRatio   Float
+    maxAduComparisons Int
+
+    updatedAt   DateTime @updatedAt
+    updatedById String?
+}
+
+/**
+ * =========================
+ * PROPOSALS (NEW: ANALYTICS + SNAPSHOT)
+ * =========================
+ */
+
+model Proposal {
+    id String @id @default(cuid())
+
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id])
+
+    // Optional link to FormalAnalysis
+    formalAnalysisId String?         @unique
+    formalAnalysis   FormalAnalysis? @relation(fields: [formalAnalysisId], references: [id])
+
+    status ProposalStatus @default(DRAFT)
+
+    // Choose ONE: keep AssessStage OR use ProposalStage (keeping both is OK)
+    stage ProposalStage?
+
+    channel LeadChannel?
+
+    createdById String
+    createdBy   User   @relation("ProposalCreatedBy", fields: [createdById], references: [id])
+
+    assignedToId String?
+    assignedTo   User?   @relation("ProposalAssignedTo", fields: [assignedToId], references: [id])
+
+    // Customer snapshot
+    customerName  String
+    customerEmail String?
+    customerPhone String?
+
+    // Address snapshot (queryable)
+    addressLine1 String
+    addressLine2 String?
+    city         String
+    county       String?
+    state        String
+    zip          String
+
+    // Normalized address key (lowercase, single-spaced) — used by the admin tool
+    // as the natural lookup/dedupe key per (createdById, addressKey, status).
+    addressKey String?
+
+    // Totals
+    totalPrice     Int?
+    totalSiteWork  Int?
+    totalUpgrades  Int?
+    totalDiscounts Int?
+    internalTotal  Int?
+    profit         Int?
+
+    // Snapshot + versioning
+    snapshotVersion Int   @default(1)
+    pricingVersion  Int   @default(1)
+    snapshotJson    Json?
+
+    // PDF lifecycle
+    pdfStatus String?
+    pdfUrl    String?
+
+    notes String?
+
+    // Pipedrive link — populated when the rep links this proposal to a
+    // Pipedrive person and/or deal from Step 1. Used to auto-post a note
+    // back to that person/deal whenever the proposal is saved.
+    pipedrivePersonId String?
+    pipedriveDealId   String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    lineItems  ProposalLineItem[]
+    floorplans ProposalFloorplanSelection[]
+    discounts  ProposalDiscount[]
+    outputs    ProposalComputedOutput?
+    events     ProposalEvent[]
+    uploads    ProposalUpload[]
+
+    @@index([organizationId, createdAt])
+    @@index([status, createdAt])
+    @@index([city, zip])
+    @@index([createdById, createdAt])
+    @@index([assignedToId, status])
+    @@index([totalPrice])
+    @@index([createdById, addressKey, status])
+    @@index([addressKey])
+}
+
+model ProposalFloorplanSelection {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    aduType AduType
+
+    // Sanity floorplan document id
+    floorplanRef String
+
+    // Snapshotted fields
+    name      String?
+    sqft      Int?
+    bed       Int?
+    bath      Int?
+    basePrice Int?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId])
+    @@index([floorplanRef, aduType])
+    @@index([sqft])
+}
+
+model ProposalLineItem {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    kind LineItemKind @default(SITE_WORK)
+
+    // optional catalog reference (null for CUSTOM)
+    workItemId String?
+    workItem   WorkItem? @relation(fields: [workItemId], references: [id])
+
+    // snapshot fields (catalog edits should not change old proposals)
+    title     String
+    category  String?
+    unitLabel String?
+    quantity  Float?
+
+    // internal/private
+    internalCost Int?
+    markupType   MarkupType @default(NONE)
+    markupValue  Float?
+
+    // customer-facing pricing
+    unitPrice     Int?
+    computedPrice Int?
+    overridePrice Int?
+    finalPrice    Int?
+
+    // applicability mapping
+    appliesTo Json?
+
+    notes String?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId])
+    @@index([workItemId, kind])
+    @@index([category])
+}
+
+model ProposalDiscount {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    discountType DiscountType
+
+    // optional Sanity discount doc id
+    discountRef String?
+    name        String?
+
+    amountOff  Int?
+    percentOff Float?
+
+    appliesTo Json?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId])
+    @@index([discountRef])
+}
+
+model ProposalComputedOutput {
+    id         String   @id @default(cuid())
+    proposalId String   @unique
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    rentEstimateMonthly    Int?
+    paymentEstimateMonthly Int?
+    cashflowMonthly        Int?
+
+    roiYear1  Float?
+    roiYear5  Float?
+    roiYear10 Float?
+
+    equityBoostYear1  Int?
+    equityBoostYear5  Int?
+    equityBoostYear10 Int?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([rentEstimateMonthly])
+    @@index([cashflowMonthly])
+}
+
+model ProposalEvent {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    type    ProposalEventType
+    actorId String?
+    actor   User?             @relation(fields: [actorId], references: [id])
+
+    metadata Json?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId, createdAt])
+    @@index([type, createdAt])
+}
+
+model ProposalUpload {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id])
+
+    kind String // e.g. "CAN_I_BUILD_SCREENSHOT"
+    url  String
+
+    publicId String?
+    width    Int?
+    height   Int?
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId])
+}

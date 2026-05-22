@@ -1,0 +1,210 @@
+.panel {
+    --tep-bg: #ffffff;
+    --tep-bg2: var(--color-brand-beige-subtle);
+    --tep-text: var(--color-brand-dark-blue);
+    --tep-text2: rgba(54, 72, 75, 0.65);
+    --tep-text3: rgba(54, 72, 75, 0.42);
+    --tep-border: var(--color-brand-beige-A040);
+    --tep-border2: var(--color-brand-beige-A020);
+    --tep-gold: var(--color-brand-beige, #c9a96e);
+    --tep-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--tep-border2);
+    border-radius: 14px;
+    background: var(--tep-bg2);
+}
+
+/* ── header row ── */
+.tableHead {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    align-items: end;
+    gap: 12px;
+    padding: 6px 14px 10px;
+}
+
+.headPhase {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--tep-text3);
+    font-weight: 600;
+}
+
+.headCol {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: center;
+}
+
+.headColTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tep-text);
+    letter-spacing: 0.01em;
+}
+
+.headColSub {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--tep-text3);
+    font-weight: 600;
+}
+
+/* ── phase rows ── */
+.row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--tep-bg);
+    border: 1.5px solid var(--tep-border2);
+    border-radius: var(--tep-radius);
+}
+
+.phaseCell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.phaseLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--tep-text);
+    line-height: 1.2;
+}
+
+.phaseHelper {
+    font-size: 11px;
+    color: var(--tep-text2);
+    line-height: 1.3;
+}
+
+.inputCell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.input {
+    width: 84px;
+    padding: 8px 10px;
+    border: 1.5px solid var(--tep-border);
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: right;
+    color: var(--tep-text);
+    background: #ffffff;
+    font-variant-numeric: tabular-nums;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--tep-gold);
+    box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.18);
+}
+
+/* hide the up/down number spinners for a cleaner look */
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.unit {
+    font-size: 11px;
+    color: var(--tep-text2);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+}
+
+/* ── totals row ── */
+.totalsRow {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 14px;
+    background: var(--tep-bg);
+    border: 1.5px solid var(--tep-gold);
+    border-radius: var(--tep-radius);
+    margin-top: 4px;
+}
+
+.totalsLabel {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--tep-text3);
+    font-weight: 700;
+}
+
+.totalCell {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+    font-variant-numeric: tabular-nums;
+}
+
+.totalNum {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--tep-text);
+    letter-spacing: -0.01em;
+}
+
+.totalUnit {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--tep-text2);
+    font-weight: 600;
+}
+
+.totalDays {
+    font-size: 11px;
+    color: var(--tep-text3);
+    margin-left: 4px;
+}
+
+/* ── actions ── */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 4px 4px 0;
+}
+
+.resetBtn {
+    background: transparent;
+    border: 1px solid var(--tep-border);
+    color: var(--tep-text2);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.resetBtn:hover {
+    border-color: var(--tep-gold);
+    color: var(--tep-text);
+    background: rgba(201, 169, 110, 0.06);
+}

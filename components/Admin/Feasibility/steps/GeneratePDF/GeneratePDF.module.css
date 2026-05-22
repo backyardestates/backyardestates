@@ -1,0 +1,826 @@
+/* FeasibilitySteps.module.css */
+
+/* =========================
+   SHARED LAYOUT / TYPO
+========================= */
+.step {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.helperText {
+    color: var(--color-neutral-600);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+.helperTextStrong {
+    font-weight: 700;
+    color: var(--color-brand-dark-blue);
+}
+
+.sectionTitle {
+    color: var(--color-brand-dark-blue);
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+}
+
+/* =========================
+   LABELS / INPUTS
+========================= */
+.label {
+    display: block;
+    margin: 0 0 0.5rem 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+}
+
+.labelWithSpacing {
+    margin-top: 1rem;
+}
+
+.input {
+    width: 100%;
+    height: 3rem;
+    border-radius: var(--radius);
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--color-neutral-200);
+
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-brand-dark-blue);
+
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 0 0 2px var(--color-brand-beige-A020);
+}
+
+.select {
+    width: 100%;
+    height: 3rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--color-neutral-200);
+    padding: 0.5rem 0.75rem;
+
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-brand-dark-blue);
+    background: #fff;
+
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.select:focus {
+    outline: none;
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 0 0 2px var(--color-brand-beige-A020);
+}
+
+/* grid utilities */
+.inputGrid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.mt1 {
+    margin-top: 1rem;
+}
+
+/* =========================
+   BUTTON GROUPS / BUTTONS
+========================= */
+.buttonGroup {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+}
+
+.optionButton {
+    width: 100%;
+    height: 3rem;
+    padding: 0.75rem 1rem;
+    border-radius: 3rem;
+    border: none;
+
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+
+    cursor: pointer;
+    background-color: var(--color-brand-dark-blue);
+    color: white;
+
+    transition: background-color 150ms ease, transform 100ms ease, box-shadow 120ms ease;
+}
+
+.optionButton:hover {
+    background-color: var(--color-brand-dark-blue-hover);
+}
+
+.optionButton:active {
+    transform: translateY(1px);
+}
+
+.optionButtonActive {
+    background-color: var(--color-brand-beige);
+    color: white;
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+/* “secondary” action inside white cards (Step 3) */
+.optionButtonAlt {
+    background-color: var(--color-brand-beige);
+}
+
+.optionButtonAlt:hover {
+    background-color: var(--color-brand-beige-hover);
+}
+
+/* =========================
+   CARDS / PANELS
+========================= */
+.card {
+    padding: 1rem;
+    border: 2px solid var(--color-neutral-100);
+    border-radius: var(--radius);
+    background: #fff;
+}
+
+.cardShadow {
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+.cardBeige {
+    background: var(--color-brand-beige-subtle);
+}
+
+.cardTitle {
+    font-weight: 900;
+    color: var(--color-brand-dark-blue);
+    margin-bottom: 0.25rem;
+}
+
+.cardBigNumber {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--color-brand-dark-blue);
+}
+
+.cardSubtext {
+    color: var(--color-neutral-600);
+    margin-top: 0.25rem;
+}
+
+/* =========================
+   BADGES / CHIPS (Step 3)
+========================= */
+.badgeRow {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid var(--color-neutral-100);
+    color: var(--color-brand-dark-blue);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.badgeSignal {
+    border: none;
+    color: #fff;
+    font-weight: 800;
+}
+
+/* if you want explicit colors as classes (optional) */
+.badgeHigh {
+    background: var(--color-brand-beige);
+}
+
+.badgeMedium {
+    background: var(--color-blue);
+}
+
+.badgeLow {
+    background: var(--color-brand-dark-blue);
+}
+
+.badgeUnknown {
+    background: var(--color-neutral-400);
+}
+
+/* =========================
+   ACCORDION (Step 3)
+========================= */
+.accordionGrid {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.accordionItem {
+    border: 2px solid var(--color-neutral-100);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #fff;
+}
+
+.accordionHeader {
+    width: 100%;
+    text-align: left;
+    padding: 1rem 1.25rem;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+}
+
+.accordionHeaderOpen {
+    background: var(--color-neutral-0);
+}
+
+.accordionHeaderInner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.accordionTitle {
+    font-weight: 900;
+    color: var(--color-brand-dark-blue);
+    margin-bottom: 0.25rem;
+}
+
+.accordionWhy {
+    color: var(--color-neutral-600);
+    font-weight: 600;
+}
+
+.accordionMeta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.pill {
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    border: 2px solid var(--color-neutral-100);
+    background: var(--color-neutral-0);
+    color: var(--color-brand-dark-blue);
+    font-weight: 800;
+    font-size: 0.9rem;
+}
+
+.pillActive {
+    background: var(--color-brand-beige);
+    color: #fff;
+    border-color: var(--color-brand-beige);
+}
+
+.plusMinus {
+    color: var(--color-neutral-500);
+    font-weight: 900;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.accordionBody {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+}
+
+/* ===== Step 6: floorplan option cards ===== */
+.stepCardButton {
+    width: 100%;
+    text-align: left;
+    height: auto;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+
+    border: 2px solid var(--color-neutral-100);
+    background: var(--color-neutral-0);
+    color: var(--color-brand-dark-blue);
+
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease,
+        border-color 120ms ease, color 120ms ease, opacity 120ms ease;
+}
+
+.stepCardButton:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--drop-shadow-on-beige);
+    border-color: var(--color-neutral-200);
+}
+
+.stepCardButton:active {
+    transform: translateY(0px);
+}
+
+.stepCardButton:focus-visible {
+    outline: 3px solid var(--color-brand-beige-A040);
+    outline-offset: 2px;
+}
+
+.stepCardButtonActive {
+    background: var(--color-brand-beige);
+    color: #fff;
+    border-color: var(--color-brand-beige);
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+.stepCardTitleRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.35rem;
+}
+
+.stepCardName {
+    font-weight: 900;
+    line-height: 1.25rem;
+}
+
+.stepCardMeta {
+    opacity: 0.92;
+    font-weight: 600;
+    color: inherit;
+}
+
+.floorplanGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.floorplanImage {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+}
+
+
+
+/* page.module.css */
+/* This file assumes you already have many shared classes (step, card, helperText, etc.).
+   Below adds UI/UX improvements specifically for Step3RealityGap.
+   Merge/keep what you already have and add these new classes. */
+
+.step {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.helperText {
+    color: var(--color-neutral-600);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+.sectionTitle {
+    color: var(--color-brand-dark-blue);
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    padding: 1rem;
+    border: 2px solid var(--color-neutral-100);
+    border-radius: var(--radius);
+    background: #fff;
+}
+
+.cardShadow {
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+/* ===== Hero / top framing ===== */
+.heroCard {
+    padding: 1.25rem;
+    border: 2px solid var(--color-neutral-100);
+    border-radius: var(--radius);
+    background: var(--color-brand-beige-subtle);
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+.heroTop {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.heroEyebrow {
+    color: var(--color-neutral-600);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-variant: all-small-caps;
+    margin-bottom: 0.35rem;
+}
+
+.heroHeadline {
+    color: var(--color-brand-dark-blue);
+    font-family: var(--font-sans);
+    font-weight: 900;
+    font-size: 1.2rem;
+    line-height: 1.35rem;
+    margin-bottom: 0.5rem;
+}
+
+.heroSubhead {
+    color: var(--color-neutral-600);
+    font-family: var(--font-sans);
+    line-height: 1.55rem;
+}
+
+.heroRight {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.metricStack {
+    display: grid;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.metricCard {
+    background: #fff;
+    border: 2px solid var(--color-neutral-100);
+    border-radius: var(--radius);
+    padding: 0.9rem;
+}
+
+.metricLabel {
+    color: var(--color-neutral-600);
+    font-weight: 800;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.metricValue {
+    color: var(--color-brand-dark-blue);
+    font-weight: 900;
+    font-size: 1.6rem;
+    line-height: 1.75rem;
+}
+
+.progressWrap {
+    margin-top: 0.5rem;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--color-neutral-100);
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--color-brand-beige);
+    transition: width 200ms ease;
+}
+
+.metricHint {
+    margin-top: 0.5rem;
+    color: var(--color-neutral-600);
+    font-size: 0.95rem;
+    line-height: 1.35rem;
+}
+
+.heroDivider {
+    height: 1px;
+    background: var(--color-neutral-100);
+    margin: 1rem 0;
+}
+
+.quickActions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* ===== Badges ===== */
+.badgeRow {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid var(--color-neutral-100);
+    color: var(--color-brand-dark-blue);
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+
+.badgeSignal {
+    border: none;
+    color: #fff;
+}
+
+.badgeHigh {
+    background: var(--color-brand-beige);
+}
+
+.badgeMedium {
+    background: var(--color-blue);
+}
+
+.badgeLow {
+    background: var(--color-brand-dark-blue);
+}
+
+.badgeUnknown {
+    background: var(--color-neutral-400);
+}
+
+/* ===== Accordion ===== */
+.accordionGrid {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.accordionItem {
+    border: 2px solid var(--color-neutral-100);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #fff;
+    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.accordionItem:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--drop-shadow-on-beige);
+    border-color: var(--color-neutral-200);
+}
+
+.accordionItemActive {
+    border-color: var(--color-brand-beige-A040);
+}
+
+.accordionHeader {
+    width: 100%;
+    text-align: left;
+    padding: 1rem 1.25rem;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+}
+
+.accordionHeaderOpen {
+    background: var(--color-neutral-0);
+}
+
+.accordionHeaderInner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.accordionLeft {
+    width: 100%;
+}
+
+.accordionTitleRow {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.accordionTitle {
+    font-weight: 900;
+    color: var(--color-brand-dark-blue);
+}
+
+.accordionWhy {
+    color: var(--color-neutral-600);
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+.accordionMeta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.plusMinus {
+    color: var(--color-neutral-500);
+    font-weight: 900;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.accordionBody {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+}
+
+/* ===== Pills ===== */
+.pill {
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    border: 2px solid var(--color-neutral-100);
+    background: var(--color-neutral-0);
+    color: var(--color-brand-dark-blue);
+    font-weight: 900;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.pill:hover {
+    border-color: var(--color-neutral-200);
+}
+
+.pillActive {
+    background: var(--color-brand-beige);
+    color: #fff;
+    border-color: var(--color-brand-beige);
+}
+
+/* ===== Questions ===== */
+.questionList {
+    margin-top: 0.5rem;
+}
+
+.questionItem {
+    margin-bottom: 0.75rem;
+}
+
+/* ===== Actions ===== */
+.actionsRow {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.optionButton {
+    width: 100%;
+    height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 3rem;
+    border: none;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: #fff;
+    transition: transform 100ms ease, box-shadow 120ms ease, background-color 150ms ease;
+}
+
+.optionButton:active {
+    transform: translateY(1px);
+}
+
+.optionButtonAlt {
+    background: var(--color-brand-beige);
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+.optionButtonAlt:hover {
+    background: var(--color-brand-beige-hover);
+}
+
+.optionButtonDark {
+    background: var(--color-brand-dark-blue);
+}
+
+.optionButtonDark:hover {
+    background: var(--color-brand-dark-blue-hover);
+}
+
+.smallButton {
+    height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    border: 2px solid var(--color-neutral-100);
+    font-family: var(--font-sans);
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.smallButtonGhost {
+    background: #fff;
+    color: var(--color-brand-dark-blue);
+}
+
+.smallButtonGhost:hover {
+    border-color: var(--color-neutral-200);
+    box-shadow: var(--drop-shadow-on-beige);
+}
+
+/* ===== Close / Compare ===== */
+.closeTop {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.closeBadge {
+    min-width: 220px;
+    padding: 0.9rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--color-neutral-100);
+    background: var(--color-neutral-0);
+}
+
+.closeBadgeTitle {
+    color: var(--color-neutral-600);
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+}
+
+.closeBadgeValue {
+    color: var(--color-brand-dark-blue);
+    font-weight: 900;
+    font-size: 1.6rem;
+}
+
+.compareGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.compareCard {
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--color-neutral-100);
+    background: #fff;
+}
+
+.cardTitle {
+    font-weight: 900;
+    color: var(--color-brand-dark-blue);
+    margin-bottom: 0.5rem;
+}
+
+.bulletList {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--color-neutral-600);
+}
+
+.callout {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--color-neutral-100);
+    background: var(--color-neutral-0);
+}
+
+.calloutText {
+    color: var(--color-brand-dark-blue);
+    font-weight: 900;
+    margin-bottom: 0.25rem;
+}
+
+/* ===== Responsive ===== */
+@media only screen and (max-width: 900px) {
+    .heroTop {
+        grid-template-columns: 1fr;
+    }
+
+    .compareGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media only screen and (max-width: 600px) {
+    .inputGrid2 {
+        grid-template-columns: 1fr;
+    }
+}

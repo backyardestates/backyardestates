@@ -1,0 +1,275 @@
+/* PDF export canvas.
+ *
+ * We render every slide at native 1920×1080 in the DOM (visually scaled down
+ * via transform for the preview), then use html2canvas to snapshot each frame
+ * and stitch them into a multi-page PDF via jsPDF. No browser print dialog,
+ * no @page rules, no transform-vs-pagination tradeoffs. */
+
+.shell {
+    /* The /present-v2 layout wraps everything in a 100vw × 100dvh container
+     * with overflow:hidden (good for the live deck, bad for the print page).
+     * Take ourselves out of that constraint by becoming our own absolutely-
+     * positioned scroll container that fills the viewport. */
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #1a1a1a 0%, #2b2b2b 100%);
+    padding: 24px 24px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    color: #fff;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.toolbar {
+    position: sticky;
+    top: 16px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(20, 20, 20, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-family: var(--be-font, system-ui), sans-serif;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.toolbar > strong {
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.toolbarSep {
+    width: 1px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.16);
+    flex-shrink: 0;
+}
+
+.toolbarRight {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-left: auto;
+}
+
+.toolbarBtn {
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: rgba(247, 245, 240, 0.78);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+
+.toolbarBtn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.42);
+}
+
+.toolbarBtn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(184, 149, 74, 0.16);
+    border: 1px solid rgba(184, 149, 74, 0.42);
+    color: #f5dca0;
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.counterNum {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffe9b8;
+}
+
+.toolbar strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.printBtn {
+    height: 34px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(180deg, #c9a96e 0%, #a98948 100%);
+    color: #1a1a1a;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.12s;
+    box-shadow: 0 4px 14px rgba(184, 149, 74, 0.45);
+    white-space: nowrap;
+}
+
+.printBtn:hover:not(:disabled) {
+    filter: brightness(1.07);
+    transform: translateY(-1px);
+}
+
+.printBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.status {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Slide stack — slides rendered at native 1920×1080, displayed scaled down
+ * for preview. html2canvas reads the original 1920×1080 dimensions regardless
+ * of the visual transform, so the captured screenshots are full resolution. */
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+    --preview-scale: 0.5;
+}
+
+/* Each row pairs a sidebar selection-badge (on the left) with the slide
+ * thumbnail (on the right). The badge is OUTSIDE the captured area so
+ * nothing it draws ends up in the exported PDF. */
+.slideRow {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* SideBadge — sized for readability, never overlaps slide content. */
+.sideBadge {
+    flex-shrink: 0;
+    width: 150px;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    user-select: none;
+    border: 2px solid transparent;
+    transition: background 0.15s, border-color 0.15s, transform 0.12s;
+    font-family: var(--be-font, system-ui), sans-serif;
+}
+
+.sideBadgeIncluded {
+    background: rgba(184, 149, 74, 0.16);
+    border-color: rgba(184, 149, 74, 0.55);
+    color: #f5dca0;
+}
+
+.sideBadgeIncluded:hover {
+    background: rgba(184, 149, 74, 0.26);
+}
+
+.sideBadgeExcluded {
+    background: rgba(70, 30, 30, 0.35);
+    border-color: rgba(255, 100, 100, 0.4);
+    color: rgba(255, 180, 180, 0.92);
+}
+
+.sideBadgeExcluded:hover {
+    background: rgba(90, 40, 40, 0.5);
+}
+
+.sideBadgeCheckbox {
+    width: 22px;
+    height: 22px;
+    accent-color: currentColor;
+    cursor: pointer;
+    margin: 0 0 2px;
+}
+
+.sideBadgeNum {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: #ffffff;
+}
+
+.sideBadgeLabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+/* slideWrap takes the SCALED (visible) layout space so the row flexes
+ * cleanly — the slideFrame inside is at native 1920×1080 but transformed,
+ * so it would otherwise occupy 1920px in flow. */
+.slideWrap {
+    position: relative;
+    width: calc(1920px * var(--preview-scale));
+    height: calc(1080px * var(--preview-scale));
+    flex-shrink: 0;
+}
+
+.slideFrame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    background: #0d1f1f;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+    transform: scale(var(--preview-scale));
+    transform-origin: top left;
+    /* Gold ring marks SELECTED state. Drawn as outline so it doesn't affect
+     * layout. Excluded slides lose the ring entirely. */
+    outline: 6px solid #c9a96e;
+    outline-offset: -6px;
+    cursor: pointer;
+    transition: filter 0.2s, opacity 0.2s, outline-color 0.2s, box-shadow 0.2s;
+}
+
+.slideFrame:hover {
+    box-shadow: 0 14px 44px rgba(0, 0, 0, 0.7);
+}
+
+.slideFrame > * {
+    width: 100%;
+    height: 100%;
+}
+
+/* EXCLUDED state — subtle dim + greyscale so the slide stays READABLE.
+ * No more diagonal overlay; the side badge already communicates the state. */
+.slideFrameDeselected {
+    filter: grayscale(0.55) brightness(0.85);
+    opacity: 0.85;
+    outline-color: rgba(255, 100, 100, 0.5);
+}

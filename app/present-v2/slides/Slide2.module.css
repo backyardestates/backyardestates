@@ -1,0 +1,274 @@
+/* Slide 2 — Your Property · dark editorial */
+
+.slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  background: radial-gradient(ellipse at 70% 30%, var(--p-teal-deep) 0%, var(--p-dark) 60%, var(--p-dark-2) 100%);
+  overflow: hidden;
+  font-family: var(--p-font);
+  padding: 28px 56px 30px;
+  gap: 22px;
+  color: var(--p-cream);
+}
+
+/* Headline row */
+.headRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: rgba(247, 245, 240, 0.50);
+  letter-spacing: 0.04em;
+}
+
+/* Body: photo / options grid — photo gets the room, cards are slim */
+.body {
+  display: grid;
+  grid-template-columns: 1.7fr 0.85fr;
+  gap: 28px;
+  min-height: 0;
+}
+
+/* Photo panel */
+.photoPanel {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--p-radius-lg);
+  border: 1px solid var(--p-gold-border);
+  box-shadow: var(--p-shadow-lg);
+}
+
+.photoPanel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(13, 31, 31, 0.45) 100%);
+  pointer-events: none;
+}
+
+.photoBadge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 2;
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: var(--p-semi);
+  color: var(--p-gold-bright);
+  background: rgba(13, 31, 31, 0.86);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  padding: 8px 18px;
+  backdrop-filter: blur(8px);
+}
+
+.photoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.photoPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--p-teal-deep) 0%, var(--p-dark-3) 100%);
+}
+
+/* ADU badge — now in the header row */
+.aduBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 22px;
+  background: var(--p-gold-bg);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  font-size: var(--p-text-micro);
+  color: var(--p-gold-bright);
+  font-weight: var(--p-semi);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+/* Options panel */
+.optionsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+}
+
+.optionsEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-semi);
+}
+
+.unitGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.unitCard {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 0;
+  min-height: 0;
+  background: var(--p-teal-deep);
+  border: 1px solid rgba(184, 149, 74, 0.16);
+  border-radius: var(--p-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 12px 36px -18px rgba(0, 0, 0, 0.55);
+}
+
+/* META (left) */
+.unitMeta {
+  flex: 0 0 46%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 22px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 60%);
+  min-width: 0;
+}
+
+.unitIndex {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-semi);
+}
+
+.unitName {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(22px, 1.8vw, 30px);
+  color: var(--p-gold-bright);
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+  margin: 0;
+}
+
+.unitStats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(184, 149, 74, 0.18);
+  font-variant-numeric: tabular-nums;
+}
+
+.unitStat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.unitStatNum {
+  flex: 0 0 auto;
+  min-width: 32px;
+  font-size: clamp(18px, 1.4vw, 22px);
+  font-weight: var(--p-light);
+  color: var(--p-cream);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.unitStatLabel {
+  font-size: 9px;
+  color: var(--p-gold-soft);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* DRAWING (right) */
+.unitDrawing {
+  flex: 1 1 auto;
+  position: relative;
+  background: var(--p-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.unitDrawingImg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.unitDrawingPlaceholder {
+  font-size: var(--p-text-xs);
+  color: rgba(13, 31, 31, 0.4);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.noUnits {
+  font-size: var(--p-text-xs);
+  color: rgba(247, 245, 240, 0.32);
+  grid-column: 1 / -1;
+  align-self: center;
+  justify-self: center;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid rgba(184, 149, 74, 0.18);
+  gap: 24px;
+}
+
+.footerNote {
+  font-size: var(--p-text-micro);
+  color: rgba(247, 245, 240, 0.42);
+  letter-spacing: 0.04em;
+}
+
+.tagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  white-space: nowrap;
+}

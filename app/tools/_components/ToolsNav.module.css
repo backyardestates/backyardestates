@@ -1,0 +1,235 @@
+/* ToolsNav — slim editorial header matching presentation slide chrome */
+
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 12px 28px;
+    background:
+        linear-gradient(180deg, rgba(184, 149, 74, 0.05) 0%, transparent 100%),
+        #14302F;
+    color: #F7F2E8;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.30);
+    font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+}
+
+/* Keep the nav out of printed pages + html2canvas PDF captures. */
+@media print {
+    .nav {
+        display: none;
+    }
+}
+
+/* ── Brand ── */
+.brandWrap {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-shrink: 0;
+    padding-right: 20px;
+    border-right: 1px solid rgba(184, 149, 74, 0.20);
+    margin-right: 4px;
+}
+
+.brand {
+    color: #F7F2E8;
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    font-size: 14px;
+    transition: color 0.12s ease;
+}
+
+.brand:hover {
+    color: #D4B074;
+}
+
+.brandSub {
+    font-family: 'Roboto Slab', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    color: #D4B074;
+    letter-spacing: -0.005em;
+    text-transform: none;
+}
+
+/* ── Nav links ── */
+.links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+}
+
+.link {
+    color: rgba(247, 242, 232, 0.72);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    transition: background 0.12s ease, color 0.12s ease;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.link:hover {
+    color: #F7F2E8;
+    background: rgba(212, 176, 116, 0.10);
+}
+
+.link:focus-visible {
+    outline: 2px solid #D4B074;
+    outline-offset: 2px;
+}
+
+.linkActive {
+    color: #14302F;
+    background: #D4B074;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.18);
+}
+
+.linkActive:hover {
+    color: #14302F;
+    background: #D4B074;
+}
+
+/* ── Right side (user + auth) ── */
+.right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.userChip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 12px 5px 14px;
+    background: rgba(247, 242, 232, 0.06);
+    border: 1px solid rgba(212, 176, 116, 0.22);
+    border-radius: 999px;
+    font-size: 12px;
+}
+
+.userEmail {
+    color: rgba(247, 242, 232, 0.86);
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.rolePill {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(212, 176, 116, 0.22);
+    color: #D4B074;
+}
+
+.role_ADMIN {
+    background: rgba(220, 195, 130, 0.28);
+    color: #F0DCB0;
+}
+
+.role_ARCHITECT {
+    background: rgba(155, 200, 215, 0.20);
+    color: #C8E4EC;
+}
+
+.role_CUSTOMER {
+    background: rgba(247, 242, 232, 0.10);
+    color: rgba(247, 242, 232, 0.70);
+}
+
+/* ── Buttons ── */
+.btnPrimary,
+.btnSecondary {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-family: inherit;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+    min-height: 36px;
+}
+
+.btnPrimary {
+    background: #D4B074;
+    color: #14302F;
+    border-color: #D4B074;
+}
+
+.btnPrimary:hover {
+    background: #E0BE85;
+    border-color: #E0BE85;
+}
+
+.btnSecondary {
+    background: transparent;
+    color: rgba(247, 242, 232, 0.85);
+    border-color: rgba(212, 176, 116, 0.40);
+}
+
+.btnSecondary:hover {
+    background: rgba(212, 176, 116, 0.12);
+    border-color: #D4B074;
+    color: #F7F2E8;
+}
+
+.btnPrimary:focus-visible,
+.btnSecondary:focus-visible {
+    outline: 2px solid #D4B074;
+    outline-offset: 2px;
+}
+
+/* ── Responsive collapse ── */
+@media (max-width: 820px) {
+    .nav {
+        gap: 16px;
+        padding: 10px 16px;
+    }
+
+    .brandWrap {
+        padding-right: 14px;
+        margin-right: 0;
+    }
+
+    .userEmail {
+        max-width: 140px;
+    }
+}
+
+@media (max-width: 640px) {
+    .nav {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .links {
+        order: 3;
+        flex-basis: 100%;
+        gap: 4px;
+    }
+
+    .userEmail {
+        display: none;
+    }
+}

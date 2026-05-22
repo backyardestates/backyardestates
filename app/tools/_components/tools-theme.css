@@ -1,0 +1,10 @@
+/* Tools-wide theme — applied via /tools/layout.tsx import. Sets the paper
+ * background so every dashboard sits on the same editorial cream the
+ * presentation uses on light slides (Slide 4 "What's Included", Slide 8
+ * "Your Return", etc.). The agreement print page (/tools/admin/master/
+ * agreement) gets its own white print background — that route excludes
+ * the ToolsNav and is fine on top of this default. */
+
+body {
+    background: #F6F1E6;
+}

@@ -1,0 +1,746 @@
+/* Unified ADU picker + per-unit customizer.
+ *
+ * Two-zone layout: Selected (rich, customizable cards) + Available (compact
+ * add buttons). The custom-size creator collapses to a one-line affordance
+ * until the user enters a sqft, at which point it discloses the pricing
+ * preview and optional name/beds/baths/image fields. */
+
+.root {
+    --u-bg: #ffffff;
+    --u-surface: rgba(20, 48, 47, 0.025);
+    --u-surface-strong: rgba(20, 48, 47, 0.06);
+    --u-text: var(--color-brand-dark-blue, #14302f);
+    --u-text-mute: rgba(20, 48, 47, 0.65);
+    --u-text-faint: rgba(20, 48, 47, 0.45);
+    --u-border: rgba(20, 48, 47, 0.14);
+    --u-border-soft: rgba(20, 48, 47, 0.08);
+    --u-accent: #2a7a52;
+    --u-accent-soft: rgba(42, 122, 82, 0.10);
+    --u-accent-soft-strong: rgba(42, 122, 82, 0.18);
+    --u-danger: #7a1f1f;
+    --u-radius: 12px;
+    --u-radius-field: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    color: var(--u-text);
+    font-family: 'Roboto', system-ui, sans-serif;
+}
+
+/* ── Zone heading ───────────────────────────────────────────────────── */
+
+.zoneHead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.zoneLabel {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--u-text-mute);
+}
+
+.zoneCount {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--u-text-faint);
+    font-variant-numeric: tabular-nums;
+}
+
+.zoneSubLabel {
+    margin-left: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--u-text-faint);
+    text-transform: none;
+    letter-spacing: normal;
+    font-style: italic;
+}
+
+.zoneAction {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--u-accent);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.zoneAction:hover {
+    color: #1e5b3d;
+}
+
+/* ── Selected cards ──────────────────────────────────────────────────── */
+
+.selectedList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.selectedCard {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 14px;
+    padding: 12px 14px;
+    background: var(--u-bg);
+    border: 1.5px solid var(--u-accent-soft-strong);
+    border-radius: var(--u-radius);
+    align-items: center;
+}
+
+.selectedThumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--u-surface-strong);
+    border: 1px solid var(--u-border-soft);
+}
+
+.selectedThumbFallback {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background: var(--u-surface-strong);
+    border: 1px dashed var(--u-border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--u-text-faint);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.selectedBody {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+}
+
+.selectedMeta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 12px;
+    min-width: 0;
+}
+
+.selectedName {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--u-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.selectedSub {
+    font-size: 12px;
+    color: var(--u-text-mute);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.customBadge {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 4px;
+    background: var(--u-accent-soft);
+    color: var(--u-accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: minmax(120px, 1.4fr) repeat(2, minmax(70px, 0.8fr));
+    gap: 8px;
+}
+
+.controlField {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.controlLabel {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--u-text-faint);
+}
+
+.controlInput {
+    height: 32px;
+    padding: 0 8px;
+    background: var(--u-bg);
+    border: 1.5px solid var(--u-border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--u-text);
+    transition: border-color 0.12s, box-shadow 0.12s;
+    min-width: 0;
+}
+
+.controlInput:focus {
+    outline: none;
+    border-color: var(--u-accent);
+    box-shadow: 0 0 0 3px var(--u-accent-soft);
+}
+
+/* ── Bathroom upcharge confirm banner ────────────────────────────────── */
+
+.upcharge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px 12px;
+    background: rgba(201, 169, 110, 0.16);
+    border: 1px solid rgba(201, 169, 110, 0.55);
+    border-radius: 8px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.upchargeBody {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.upchargeTitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--u-text);
+}
+
+.upchargeMeta {
+    font-size: 12px;
+    color: var(--u-text-mute);
+    line-height: 1.4;
+}
+
+.upchargeActions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.upchargeNo,
+.upchargeYes {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: background 0.12s, border-color 0.12s;
+    white-space: nowrap;
+}
+
+.upchargeNo {
+    background: transparent;
+    border-color: var(--u-border);
+    color: var(--u-text-mute);
+}
+
+.upchargeNo:hover {
+    background: var(--u-bg);
+    color: var(--u-text);
+}
+
+.upchargeYes {
+    background: var(--u-accent);
+    color: white;
+}
+
+.upchargeYes:hover {
+    background: #1e5b3d;
+}
+
+.selectedActions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+}
+
+.actionBtn {
+    background: transparent;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--u-text-mute);
+    white-space: nowrap;
+}
+
+.actionBtn:hover {
+    background: var(--u-surface);
+    color: var(--u-text);
+}
+
+.actionRemove:hover {
+    background: rgba(176, 59, 59, 0.10);
+    color: var(--u-danger);
+}
+
+/* ── Available chips ─────────────────────────────────────────────────── */
+
+.availableList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.availableChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    background: var(--u-bg);
+    border: 1.5px solid var(--u-border);
+    border-radius: 999px;
+    color: var(--u-text);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.availableChip:hover:not(:disabled) {
+    background: var(--u-accent-soft);
+    border-color: var(--u-accent);
+    color: var(--u-accent);
+}
+
+.availableChip:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.availableChipName {
+    font-weight: 700;
+}
+
+.availableChipSub {
+    color: var(--u-text-faint);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.availableChip:hover:not(:disabled) .availableChipSub {
+    color: var(--u-accent);
+    opacity: 0.85;
+}
+
+.availableEmpty {
+    font-size: 12px;
+    color: var(--u-text-faint);
+    font-style: italic;
+}
+
+.plus {
+    font-weight: 700;
+    color: var(--u-text-mute);
+}
+
+.availableChip:hover:not(:disabled) .plus {
+    color: var(--u-accent);
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────── */
+
+.emptyState {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--u-surface);
+    border: 1px dashed var(--u-border-soft);
+    border-radius: var(--u-radius);
+    font-size: 13px;
+    color: var(--u-text-mute);
+}
+
+.emptyArrow {
+    color: var(--u-text-faint);
+}
+
+/* ── Custom unit creator ─────────────────────────────────────────────── */
+
+.customSection {
+    border: 1px dashed var(--u-border);
+    border-radius: var(--u-radius);
+    padding: 14px;
+    background: var(--u-surface);
+}
+
+.customHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.customLabel {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: var(--u-text-mute);
+}
+
+.customHint {
+    font-size: 11px;
+    color: var(--u-text-faint);
+    font-style: italic;
+}
+
+.customRow {
+    display: grid;
+    grid-template-columns: 130px 1fr auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.customSqftWrap {
+    position: relative;
+}
+
+.customSqftInput {
+    width: 100%;
+    height: 36px;
+    padding: 0 38px 0 12px;
+    background: var(--u-bg);
+    border: 1.5px solid var(--u-border);
+    border-radius: var(--u-radius-field);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--u-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.customSqftInput:focus {
+    outline: none;
+    border-color: var(--u-accent);
+    box-shadow: 0 0 0 3px var(--u-accent-soft);
+}
+
+.customSqftSuffix {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--u-text-faint);
+    pointer-events: none;
+}
+
+.customPrice {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--u-accent);
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+}
+
+.customPriceEmpty {
+    font-size: 12px;
+    color: var(--u-text-faint);
+    font-style: italic;
+}
+
+.customAddBtn {
+    height: 36px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: none;
+    background: var(--u-accent);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.12s;
+}
+
+.customAddBtn:hover:not(:disabled) {
+    background: #1e5b3d;
+}
+
+.customAddBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.customDetails {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--u-border-soft);
+    display: grid;
+    gap: 8px;
+}
+
+.customAnchor {
+    font-size: 11px;
+    color: var(--u-text-faint);
+    font-style: italic;
+}
+
+.customDetailsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.customField {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.customFieldLabel {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--u-text-faint);
+}
+
+.customInput {
+    height: 32px;
+    padding: 0 10px;
+    background: var(--u-bg);
+    border: 1.5px solid var(--u-border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--u-text);
+}
+
+.customInput:focus {
+    outline: none;
+    border-color: var(--u-accent);
+    box-shadow: 0 0 0 3px var(--u-accent-soft);
+}
+
+.customFullField {
+    grid-column: 1 / -1;
+}
+
+/* ── Floorplan drawing picker (custom-unit creator) ──────────────────── */
+
+.imagePicker {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.imagePickerBody {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 14px;
+    padding: 12px;
+    background: var(--u-bg);
+    border: 1px solid var(--u-border-soft);
+    border-radius: 10px;
+}
+
+.imagePreviewWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    text-align: center;
+}
+
+.imagePreview {
+    width: 140px;
+    height: 100px;
+    object-fit: contain;
+    background: var(--u-surface);
+    border: 1px solid var(--u-border-soft);
+    border-radius: 8px;
+}
+
+.imagePreviewEmpty {
+    width: 140px;
+    height: 100px;
+    background: var(--u-surface);
+    border: 1px dashed var(--u-border-soft);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--u-text-faint);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.imageCaption {
+    font-size: 11px;
+    color: var(--u-text-faint);
+    font-style: italic;
+    line-height: 1.3;
+}
+
+.imagePickerControls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.dropZone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding: 0 14px;
+    border: 1.5px dashed var(--u-border);
+    border-radius: 8px;
+    background: var(--u-surface);
+    color: var(--u-text-mute);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    text-align: center;
+}
+
+.dropZone:hover {
+    border-color: var(--u-accent);
+    color: var(--u-accent);
+    background: var(--u-accent-soft);
+}
+
+.dropZoneActive {
+    border-color: var(--u-accent);
+    color: var(--u-accent);
+    background: var(--u-accent-soft-strong);
+}
+
+.dropZoneLabel strong {
+    color: var(--u-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.clearImageBtn {
+    background: transparent;
+    border: none;
+    padding: 4px 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--u-text-mute);
+    cursor: pointer;
+    text-align: left;
+    align-self: flex-start;
+}
+
+.clearImageBtn:hover {
+    color: var(--u-text);
+    text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+    .imagePickerBody {
+        grid-template-columns: 1fr;
+    }
+    .imagePreviewWrap {
+        align-items: flex-start;
+    }
+}
+
+.warn {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #7a4d1f;
+    font-style: italic;
+}
+
+/* ── Max-comparisons hint ────────────────────────────────────────────── */
+
+.maxHint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--u-text-faint);
+}
+
+.maxHint input {
+    width: 44px;
+    height: 24px;
+    padding: 0 6px;
+    border-radius: 4px;
+    border: 1px solid var(--u-border);
+    background: var(--u-bg);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--u-text);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.maxHint input:focus {
+    outline: none;
+    border-color: var(--u-accent);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+    .selectedCard {
+        grid-template-columns: 1fr;
+    }
+    .selectedActions {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    .controls {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .customRow {
+        grid-template-columns: 1fr 1fr;
+    }
+    .customAddBtn {
+        grid-column: 1 / -1;
+    }
+}

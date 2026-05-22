@@ -1,0 +1,390 @@
+/* Slide 3 — Your Options · light editorial surface */
+
+.slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--p-paper);
+  overflow: hidden;
+  font-family: var(--p-font);
+  padding: 16px 44px 40px;
+  gap: 32px;
+}
+
+/* ── HEADLINE ROW ── */
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  flex-shrink: 0;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-faint);
+  letter-spacing: var(--p-track-wide);
+  margin-top: 6px;
+}
+
+/* ── INCLUSIONS STRIP — refined editorial band ── */
+.inclusionsStrip {
+  display: grid;
+  grid-template-columns: auto repeat(5, 1fr);
+  gap: 28px;
+  align-items: stretch;
+  padding: 24px 28px;
+  background: var(--p-cream-2);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--p-radius-lg);
+  flex-shrink: 0;
+}
+
+.inclusionsLabel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding-right: 24px;
+  border-right: 1px solid var(--p-border-light);
+  min-width: 220px;
+}
+
+.inclusionsLabelTitle {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-md);
+  color: var(--p-teal-ink);
+  letter-spacing: -0.005em;
+  line-height: 1.1;
+}
+
+.inclusionsLabelSub {
+  font-size: var(--p-text-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-semi);
+}
+
+.inclusionCol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.inclusionColTitle {
+  font-size: var(--p-text-micro);
+  font-weight: var(--p-semi);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--p-teal);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--p-gold);
+  margin-bottom: 4px;
+}
+
+.inclusionItem {
+  font-size: var(--p-text-xs);
+  color: var(--p-ink-muted);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+}
+
+/* ── PLAN COLUMNS ── */
+.planColumns {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  min-height: 0;
+}
+
+.planCol {
+  position: relative;
+  background: var(--p-white);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.planCol.featured {
+  border: 1px solid var(--p-gold-border);
+  box-shadow: var(--p-glow-gold), var(--p-shadow-lg);
+  transform: translateY(-6px);
+}
+
+/* Plan header */
+.planColHeader {
+  background: linear-gradient(180deg, var(--p-teal-ink) 0%, var(--p-teal-deep) 100%);
+  padding: 32px 32px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.featured .planColHeader {
+  background: linear-gradient(180deg, #173838 0%, var(--p-teal-ink) 100%);
+}
+
+.planEyebrow {
+  font-size: var(--p-text-micro);
+  font-weight: var(--p-semi);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+}
+
+.planName {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-xl);
+  color: var(--p-gold-bright);
+  line-height: 1;
+  letter-spacing: -0.005em;
+}
+
+.planSqft {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: var(--p-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.planSqftLabel {
+  font-size: var(--p-text-xs);
+  color: rgba(255, 255, 255, 0.42);
+  letter-spacing: var(--p-track-wide);
+}
+
+/* Per-unit ADU type badge is rendered as a corner overlay
+ * (position: absolute) so it doesn't push card content downward. All
+ * visual styling lives in AduTypeBadge.module.css. */
+
+/* ── MIDDLE — flexes between header and pinned total. Anything that
+   doesn't fit is clipped, so the total never gets pushed off-card. ── */
+.planMiddle {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── TOTAL FOOTER — pinned to the bottom of each plan column ── */
+.heroTotal {
+  padding: 26px 32px 24px;
+  background: var(--p-cream-2);
+  border-top: 1px solid var(--p-border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.heroTotalEyebrow {
+  font-size: var(--p-text-micro);
+  font-weight: var(--p-semi);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+}
+
+.heroTotalVal {
+  font-size: var(--p-text-xl);
+  font-weight: var(--p-light);
+  color: var(--p-teal-ink);
+  line-height: 0.95;
+  letter-spacing: var(--p-track-tight);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.heroTotalSub {
+  font-size: var(--p-text-xs);
+  color: var(--p-ink-faint);
+  letter-spacing: var(--p-track-wide);
+}
+
+/* Breakdown rows */
+.planBreakdown {
+  padding: 22px 32px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.breakdownRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(20, 48, 47, 0.05);
+}
+
+.breakdownRow:last-child {
+  border-bottom: none;
+}
+
+.breakdownLabel {
+  font-size: var(--p-text-sm);
+  color: var(--p-ink-muted);
+  letter-spacing: var(--p-track-wide);
+  flex: 1;
+  min-width: 0;
+}
+
+.breakdownVal {
+  font-size: var(--p-text-sm);
+  font-weight: var(--p-medium);
+  color: var(--p-teal-ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.valIncluded {
+  color: var(--p-gold);
+  font-style: italic;
+  font-family: var(--p-font-display);
+  font-weight: 400;
+}
+
+.valNone {
+  color: var(--p-ink-faint);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 0 4px;
+  min-height: 0;
+  overflow: hidden;
+  align-content: flex-start;
+}
+
+.siteTag {
+  font-size: var(--p-text-xs);
+  color: var(--p-teal);
+  background: rgba(45, 95, 95, 0.06);
+  border: 1px solid rgba(45, 95, 95, 0.18);
+  border-radius: var(--p-radius-pill);
+  padding: 5px 14px;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+/* Discount callouts — pinned, never clipped. Auto-compacts when many. */
+.discounts {
+  padding: 0 32px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.discountCallout {
+  background: rgba(46, 125, 91, 0.06);
+  border-left: 3px solid var(--p-positive);
+  border-radius: 0 var(--p-radius-sm) var(--p-radius-sm) 0;
+  padding: 11px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.discountLabel {
+  font-size: var(--p-text-xs);
+  font-weight: var(--p-semi);
+  letter-spacing: var(--p-track-wider);
+  text-transform: uppercase;
+  color: var(--p-positive);
+}
+
+.discountAmt {
+  font-size: var(--p-text-sm);
+  font-weight: var(--p-medium);
+  color: var(--p-positive);
+  font-variant-numeric: tabular-nums;
+}
+
+/* When a column has 5+ discounts, compact the callouts so they fit
+   alongside the tag row without overlap. */
+.planCol[data-disc="5"] .discounts,
+.planCol[data-disc="6"] .discounts,
+.planCol[data-disc="7"] .discounts,
+.planCol[data-disc="8"] .discounts {
+  gap: 6px;
+}
+
+.planCol[data-disc="5"] .discountCallout,
+.planCol[data-disc="6"] .discountCallout,
+.planCol[data-disc="7"] .discountCallout,
+.planCol[data-disc="8"] .discountCallout {
+  padding: 8px 14px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid var(--p-border-light);
+  flex-shrink: 0;
+  gap: 24px;
+}
+
+.footerDisclaimer {
+  font-size: var(--p-text-micro);
+  color: var(--p-ink-faint);
+  font-style: italic;
+  letter-spacing: var(--p-track-wide);
+  line-height: 1.4;
+  max-width: 70%;
+}
+
+.footerTagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+
+/* ── ADAPTIVE GRID (1 or 2 plans) ── */
+.planColumns.cols1 {
+  grid-template-columns: minmax(0, 560px);
+  justify-content: center;
+}
+
+.planColumns.cols2 {
+  grid-template-columns: repeat(2, 1fr);
+}

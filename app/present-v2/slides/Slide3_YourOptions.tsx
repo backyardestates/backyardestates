@@ -1,0 +1,295 @@
+"use client";
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { usePresentationStore } from "@/lib/store/presentationStore";
+import { AduTypeBadge } from "../_components/AduTypeBadge";
+import {
+    getDiscountLines,
+    createEmptyDiscountState,
+    catalogToPresets,
+    PRESETS,
+    type DiscountState,
+    type PresetLike,
+} from "@/lib/investment/discounts";
+import s from "./Slide3.module.css";
+
+function fmt$(n: number) {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+}
+
+function useCountUp(target: number, active: boolean, delay = 0, duration = 1400) {
+    const [value, setValue] = useState(0);
+    const rafRef = useRef<number | null>(null);
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    useEffect(() => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        if (timerRef.current) clearTimeout(timerRef.current);
+        if (!active) { setValue(0); return; }
+        timerRef.current = setTimeout(() => {
+            const start = performance.now();
+            const tick = (now: number) => {
+                const t = Math.min((now - start) / duration, 1);
+                setValue(Math.round((1 - Math.pow(1 - t, 3)) * target));
+                if (t < 1) rafRef.current = requestAnimationFrame(tick);
+            };
+            rafRef.current = requestAnimationFrame(tick);
+        }, delay);
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
+    }, [target, active, delay, duration]);
+    return value;
+}
+
+function AnimDollar({ n, active, delay = 0, duration = 1400 }: { n: number; active: boolean; delay?: number; duration?: number }) {
+    const v = useCountUp(n, active, delay, duration);
+    return <>{fmt$(v)}</>;
+}
+
+function cityFromAddress(addr: string) {
+    const parts = addr.split(",");
+    return parts.length >= 2 ? parts[parts.length - 2].trim() : addr;
+}
+
+function lastNameFromFull(full?: string) {
+    if (!full) return "";
+    const parts = full.trim().split(/\s+/);
+    return parts[parts.length - 1] ?? "";
+}
+
+const INCLUDED_COLS = [
+    {
+        label: "Services",
+        items: ["Custom plans", "Engineering", "Title 24", "Permit expediting", "Project manager"],
+    },
+    {
+        label: "Construction",
+        items: ["Slab-on-grade", "2×4 framing", "R19/R30 insulation", "Heat pump water"],
+    },
+    {
+        label: "Interior",
+        items: ["LVP flooring", "Vaulted ceilings", "Mini-split HVAC", "LED lighting"],
+    },
+    {
+        label: "Kitchen & Bath",
+        items: ["Shaker cabinets", "Quartz counters", "Samsung appliances", "Undermount sinks"],
+    },
+    {
+        label: "Exterior",
+        items: ["Stucco siding", "30-yr shingle roof", "Low-E windows", "Solar PV (2+ bed)"],
+    },
+];
+
+export function Slide3_YourOptions() {
+    const {
+        comparedUnitIds,
+        floorplans,
+        scenarios,
+        aduType,
+        aduTypeByUnitId,
+        propertyAddress,
+        customerName,
+        siteWorkTagsByUnitId,
+        discountLinesByUnitId,
+        currentSlide,
+        isPrintMode,
+        discountsCatalog,
+    } = usePresentationStore();
+
+    // Resolve presets from the DB-backed catalog when seeded; fall back to the
+    // legacy hardcoded list so the slide still renders if the catalog is empty.
+    const resolvedPresets: PresetLike[] = useMemo(() => {
+        if (discountsCatalog && discountsCatalog.length > 0) {
+            const fromCatalog = catalogToPresets(discountsCatalog);
+            if (fromCatalog.length > 0) return fromCatalog;
+        }
+        return PRESETS;
+    }, [discountsCatalog]);
+    const active = currentSlide === 4 || isPrintMode;
+
+    const units = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
+    const displayUnits = units.length > 0 ? units : floorplans.slice(0, 3);
+
+    const aduLabel = aduType
+        ? ({ detached: "Detached ADU", attached: "Attached ADU", garage: "Garage Conversion" }[aduType] ?? aduType)
+        : "";
+    const city = propertyAddress ? cityFromAddress(propertyAddress) : "";
+    const lastName = lastNameFromFull(customerName);
+    const subheadParts = [aduLabel, city].filter(Boolean);
+    const subhead = subheadParts.join(" · ");
+
+    function getScenario(unitId: string) {
+        return scenarios.find((sc) => sc.kind === "adu" && sc.key === `adu_${unitId}`);
+    }
+
+    // Featured plan = middle plan by sqft (when 3 plans). When ≤2 plans, no featured.
+    const featuredId = useMemo(() => {
+        if (displayUnits.length < 3) return null;
+        const bySqft = [...displayUnits].sort((a, b) => (a.sqft ?? 0) - (b.sqft ?? 0));
+        return bySqft[Math.floor(bySqft.length / 2)]?._id ?? null;
+    }, [displayUnits]);
+
+    const [lsDiscountLines, setLsDiscountLines] = useState<Record<string, { label: string; amount: number }[]>>({});
+    const comparedKey = comparedUnitIds.join(",");
+    useEffect(() => {
+        try {
+            const dpMaster: DiscountState = JSON.parse(localStorage.getItem("dp_master") ?? "null") ?? createEmptyDiscountState();
+            const dpCustom: Record<string, DiscountState | null> = JSON.parse(localStorage.getItem("dp_custom") ?? "null") ?? {};
+            const next: Record<string, { label: string; amount: number }[]> = {};
+            for (const id of comparedUnitIds) {
+                const effective = dpCustom[id] ?? dpMaster;
+                next[id] = getDiscountLines(effective, resolvedPresets);
+            }
+            setLsDiscountLines(next);
+        } catch { /* malformed */ }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [comparedKey, resolvedPresets]);
+
+    const discountLines = Object.keys(lsDiscountLines).length > 0 ? lsDiscountLines : discountLinesByUnitId;
+    const allDiscountLabels = Array.from(new Set(
+        displayUnits.flatMap((fp) => (discountLines[fp._id] ?? []).map((d) => d.label))
+    ));
+    const anyDiscount = displayUnits.some((fp) => (getScenario(fp._id)?.discountApplied ?? 0) > 0);
+    const useNamedRows = allDiscountLabels.length > 0;
+    const showFallbackDiscount = !useNamedRows && anyDiscount;
+
+    const colsClass = displayUnits.length === 1 ? s.cols1
+        : displayUnits.length === 2 ? s.cols2
+            : "";
+
+    return (
+        <div className={s.slide}>
+
+            {/* Headline row */}
+            <div className={s.headRow}>
+                <div className={s.headLeft}>
+                    <h2 className="section-title">
+                        Your <em>options</em>
+                    </h2>
+                    {subhead && <span className={s.headSubhead}>{subhead}</span>}
+                </div>
+            </div>
+
+
+            {/* Plan columns — dynamic count, but keep the cols1/cols2 layouts
+                because they have special framing (single-card centering, 2-up
+                spacing) that's nicer than a raw repeat(N, 1fr). */}
+            <div
+                className={`${s.planColumns} ${colsClass}`}
+                style={displayUnits.length >= 3
+                    ? { gridTemplateColumns: `repeat(${displayUnits.length}, 1fr)` }
+                    : undefined}
+            >
+                {displayUnits.map((fp, i) => {
+                    const sc = getScenario(fp._id);
+                    const base = sc?.baseAduPrice ?? fp.price ?? 0;
+                    const sw = sc?.siteWorkApplied ?? 0;
+                    const total = sc?.finalAduPrice ?? sc?.purchasePrice ?? 0;
+                    const perUnitTags = siteWorkTagsByUnitId[fp._id] ?? [];
+                    const isFeatured = fp._id === featuredId;
+
+                    const unitDiscounts: { label: string; amount: number }[] = useNamedRows
+                        ? allDiscountLabels.map((label) => {
+                            const line = (discountLines[fp._id] ?? []).find((d) => d.label === label);
+                            return line ? { label, amount: line.amount } : { label, amount: 0 };
+                        }).filter((d) => d.amount > 0)
+                        : showFallbackDiscount
+                            ? (() => { const disc = sc?.discountApplied ?? 0; return disc > 0 ? [{ label: "Discount", amount: disc }] : []; })()
+                            : [];
+
+                    return (
+                        <div
+                            key={fp._id}
+                            className={`${s.planCol}`}
+                            data-disc={unitDiscounts.length}
+                        >
+
+                            {/* ADU-type badge — corner overlay so it doesn't
+                                push the breakdown rows down. */}
+                            <AduTypeBadge
+                                type={aduTypeByUnitId?.[fp._id] ?? aduType}
+                                variant="dark"
+                                corner="top-right"
+                            />
+
+                            {/* Plan header */}
+                            <div className={s.planColHeader}>
+                                <div className={s.planEyebrow}>The Plan</div>
+                                <div className={s.planName}>{fp.name}</div>
+                                <div className={s.planSqft}>
+                                    {fp.sqft ? fp.sqft.toLocaleString() : "—"}
+                                    <span className={s.planSqftLabel}>sqft</span>
+                                </div>
+                            </div>
+
+                            {/* Middle: line-items, tags, then discounts. This block flexes
+                                so the total stays pinned to the bottom regardless of how
+                                many tags or discount rows render. */}
+                            <div className={s.planMiddle}>
+                                <div className={s.planBreakdown}>
+                                    <div className={s.breakdownRow}>
+                                        <span className={s.breakdownLabel}>Base unit</span>
+                                        <span className={s.breakdownVal}>
+                                            {base ? <AnimDollar n={base} active={active} delay={400 + i * 60} /> : "—"}
+                                        </span>
+                                    </div>
+                                    <div className={s.breakdownRow}>
+                                        <span className={s.breakdownLabel}>Pre-permit &amp; build</span>
+                                        <span className={`${s.breakdownVal} ${s.valIncluded}`}>Included</span>
+                                    </div>
+                                    {sw > 0 && (
+                                        <div className={s.breakdownRow}>
+                                            <span className={s.breakdownLabel}>Site work</span>
+                                            <span className={s.breakdownVal}>
+                                                <AnimDollar n={sw} active={active} delay={460 + i * 60} />
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {perUnitTags.length > 0 && (
+                                        <div className={s.tagRow}>
+                                            {perUnitTags.map((label, j) => (
+                                                <span key={j} className={s.siteTag}>{label}</span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {unitDiscounts.length > 0 && (
+                                    <div className={s.discounts}>
+                                        {unitDiscounts.map((d, j) => (
+                                            <div key={j} className={s.discountCallout}>
+                                                <span className={s.discountLabel}>{d.label}</span>
+                                                <span className={s.discountAmt}>
+                                                    −<AnimDollar n={d.amount} active={active} delay={600 + i * 60 + j * 40} />
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Total — pinned footer strip */}
+                            <div className={s.heroTotal}>
+                                <div className={s.heroTotalEyebrow}>Total · After Discounts</div>
+                                <div className={s.heroTotalVal}>
+                                    {total ? <AnimDollar n={total} active={active} delay={i * 80} /> : "—"}
+                                </div>
+                                <div className={s.heroTotalSub}>Turnkey · nothing due until each milestone is completed</div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* Footer */}
+            <div className={s.footer}>
+                <span className={s.footerDisclaimer}>
+                    Offer valid 15 days
+                </span>
+                <span className={s.footerTagline}>We build for you.</span>
+            </div>
+        </div>
+    );
+}

@@ -1,0 +1,182 @@
+/* Slide 12 — Tax Topics for your CPA · dark editorial */
+
+.slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  background: radial-gradient(ellipse at 80% 0%, var(--p-teal-deep) 0%, var(--p-dark) 60%, var(--p-dark-2) 100%);
+  font-family: var(--p-font);
+  overflow: hidden;
+  padding: 96px 72px 40px;
+  gap: 28px;
+  color: var(--p-cream);
+}
+
+/* ── HEADLINE ──────────────────────────────────────────────── */
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 70%;
+}
+
+.headEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold);
+  font-weight: var(--p-bold);
+}
+
+.headTitle {
+  font-family: var(--p-font);
+  font-size: var(--p-text-2xl);
+  font-weight: var(--p-light);
+  color: var(--p-cream);
+  letter-spacing: var(--p-track-tight);
+  line-height: 1;
+  margin: 0;
+}
+
+.headTitle em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--p-gold-bright);
+}
+
+.headSubhead {
+  font-size: var(--p-text-sm);
+  color: rgba(247, 245, 240, 0.62);
+  letter-spacing: var(--p-track-wide);
+  margin-top: 2px;
+}
+
+.headChip {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold-bright);
+  background: var(--p-gold-bg);
+  border: 1px solid var(--p-gold-border);
+  border-radius: var(--p-radius-pill);
+  padding: 10px 20px;
+  font-weight: var(--p-bold);
+  white-space: nowrap;
+}
+
+/* ── WRITE-OFF GRID — 4 × 3 (11 items + 1 CPA closer) ─────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 18px;
+  min-height: 0;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 22px 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 100%);
+  border: 1px solid var(--p-border-dark);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--p-gold) 0%, transparent 100%);
+  opacity: 0.75;
+}
+
+.cardName {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-md);
+  color: var(--p-cream);
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  margin: 4px 0 0;
+}
+
+.cardNote {
+  font-size: var(--p-text-xs);
+  color: rgba(247, 245, 240, 0.62);
+  font-weight: var(--p-medium);
+  line-height: 1.45;
+  letter-spacing: var(--p-track-wide);
+  margin: 0;
+  margin-top: auto;
+}
+
+/* Closer card — gold-tinted to mark the "talk to your CPA" wrap-up */
+.cardClose {
+  background: linear-gradient(180deg, rgba(184, 149, 74, 0.18) 0%, rgba(184, 149, 74, 0.06) 100%);
+  border: 1px solid var(--p-gold-border);
+  box-shadow: var(--p-shadow-md), 0 0 0 1px rgba(184, 149, 74, 0.12) inset;
+}
+
+.cardClose::before {
+  background: linear-gradient(90deg, var(--p-gold) 0%, var(--p-gold-bright) 100%);
+  opacity: 1;
+  height: 3px;
+}
+
+.cardClose .cardName {
+  color: var(--p-gold-bright);
+}
+
+.cardClose .cardNote {
+  color: rgba(247, 245, 240, 0.75);
+}
+
+/* ── FOOTER ────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid rgba(184, 149, 74, 0.18);
+  gap: 24px;
+}
+
+.disclaimer {
+  font-size: var(--p-text-micro);
+  color: rgba(247, 245, 240, 0.55);
+  font-style: italic;
+  letter-spacing: var(--p-track-wide);
+  line-height: 1.5;
+  max-width: 70%;
+}
+
+.tagline {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-sm);
+  color: var(--p-gold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}

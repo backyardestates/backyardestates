@@ -1,0 +1,262 @@
+/* Slide 4 — What's Included · editorial proposal layout */
+
+.slide {
+  /* Match main website fonts (Roboto / Roboto Slab) — scoped to this slide only */
+  --p-font: var(--font-sans), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-display: var(--font-serif), 'Roboto Slab', Georgia, 'Times New Roman', serif;
+
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  background: var(--p-paper);
+  font-family: var(--p-font);
+  overflow: hidden;
+  padding: 28px 72px 36px;
+  gap: 20px;
+}
+
+/* ── TITLE ─────────────────────────────────────────────────── */
+.titleBar {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  padding: 0 4px;
+}
+
+.title {
+  font-family: var(--p-font);
+  font-weight: var(--p-light);
+  font-size: var(--p-text-2xl);
+  color: var(--p-teal-ink);
+  line-height: 0.95;
+  letter-spacing: var(--p-track-tight);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.title em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--p-gold);
+}
+
+.titleRule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--p-gold) 0%, transparent 100%);
+  opacity: 0.5;
+  align-self: center;
+}
+
+/* ── INCLUSIONS GRID ───────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 16px;
+  min-height: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--p-white);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--p-radius-md);
+  box-shadow: var(--p-shadow-sm);
+  padding: 18px 22px 18px;
+  overflow: hidden;
+  position: relative;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--p-gold);
+  opacity: 0.9;
+}
+
+.cardHead {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.cardName {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--p-text-lg);
+  color: var(--p-teal-ink);
+  letter-spacing: var(--p-track-normal);
+  line-height: 1;
+}
+
+.cardRule {
+  height: 1px;
+  background: var(--p-border-light);
+  width: 100%;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rowLabel {
+  font-size: var(--p-text-micro);
+  font-weight: var(--p-semi);
+  color: var(--p-teal);
+  text-transform: uppercase;
+  letter-spacing: var(--p-track-wider);
+  line-height: 1.2;
+}
+
+.rowText {
+  font-size: var(--p-text-xs);
+  color: var(--p-ink-muted);
+  line-height: 1.45;
+  letter-spacing: 0.005em;
+}
+
+/* ── DEPARTMENTS + CITY FEES BAND ──────────────────────────── */
+.deptBand {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--p-teal-deep) 0%, var(--p-teal-ink) 100%);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-shadow-md);
+  padding: 28px 44px 30px;
+  gap: 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.deptBand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 0% 100%, rgba(184, 149, 74, 0.12) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+.deptHead {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.deptEyebrow {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-semi);
+}
+
+.deptTitle {
+  font-family: var(--p-font);
+  font-weight: var(--p-light);
+  font-size: var(--p-text-lg);
+  color: var(--p-cream);
+  line-height: 1.05;
+  letter-spacing: var(--p-track-tight);
+  margin: 0;
+}
+
+.deptTitle em {
+  font-family: var(--p-font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--p-gold-bright);
+}
+
+.deptBody {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+  position: relative;
+}
+
+.deptCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.deptCol + .deptCol {
+  padding-left: 48px;
+  border-left: 1px solid rgba(184, 149, 74, 0.22);
+  margin-left: -24px;
+}
+
+.deptColLabel {
+  font-size: var(--p-text-micro);
+  letter-spacing: var(--p-track-widest);
+  text-transform: uppercase;
+  color: var(--p-gold-soft);
+  font-weight: var(--p-semi);
+}
+
+/* Pills column — left */
+.pillWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.deptPill {
+  font-size: var(--p-text-xs);
+  color: var(--p-cream);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  padding: 9px 14px;
+  letter-spacing: var(--p-track-wide);
+  line-height: 1.1;
+  font-weight: var(--p-medium);
+}
+
+/* Fees column — right */
+.feeBullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 2px 0;
+}
+
+.feeDot {
+  width: 6px;
+  height: 6px;
+  background: var(--p-gold-bright);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 10px;
+}
+
+.feeText {
+  font-size: var(--p-text-sm);
+  color: var(--p-cream);
+  opacity: 0.88;
+  line-height: 1.5;
+  letter-spacing: var(--p-track-wide);
+}

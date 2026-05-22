@@ -1,0 +1,995 @@
+/* ----- Controls panel ----- */
+.topActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--be-gray-700);
+    user-select: none;
+    font-family: var(--be-font);
+    border: 1px solid var(--be-gray-200);
+    background: var(--be-gray-50);
+    border-radius: 999px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.toggle:hover {
+    background: var(--be-gray-100);
+}
+
+.toggle input[type="checkbox"] {
+    accent-color: var(--be-teal-800);
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.controlsSingle {
+    display: grid;
+    grid-template-columns: minmax(0, 480px);
+    gap: 12px;
+}
+
+@media (max-width: 980px) {
+    .controls {
+        grid-template-columns: 1fr;
+    }
+}
+
+.controlCard {
+    border: 1px solid var(--be-gray-200);
+    background: var(--be-gray-50);
+    border-radius: var(--be-radius-lg);
+    padding: 16px;
+}
+
+.controlTitle {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--be-gray-400);
+    font-family: var(--be-font);
+}
+
+.controlSub {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--be-gray-600);
+    line-height: 1.4;
+    font-family: var(--be-font);
+}
+
+.warn {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #a32d2d;
+    background: #fff0f0;
+    border: 1px solid rgba(163, 45, 45, 0.2);
+    padding: 8px 12px;
+    border-radius: var(--be-radius-sm);
+    font-family: var(--be-font);
+}
+
+/* ----- Floorplan picker ----- */
+.fpList {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.fpItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border: 1px solid var(--be-gray-200);
+    border-radius: var(--be-radius-md);
+    padding: 16px;
+    cursor: pointer;
+    background: #fff;
+    box-shadow: var(--be-shadow-sm);
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.fpItem:has(input:checked) {
+    border: 2px solid var(--be-teal-800);
+    background: var(--be-teal-50);
+}
+
+.fpItem input {
+    margin-top: 2px;
+    accent-color: var(--be-teal-800);
+    flex-shrink: 0;
+}
+
+.fpDisabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.fpMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.fpName {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--be-gray-900);
+    font-family: var(--be-font);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fpSub {
+    font-size: 12px;
+    color: var(--be-gray-400);
+    font-family: var(--be-font);
+}
+
+/* ----- Custom floorplan unit ------------------------------------------ */
+
+.fpItemCustom {
+    border-style: dashed;
+}
+
+.fpItem:has(input:checked).fpItemCustom {
+    border-style: solid;
+    border-color: var(--be-teal-800);
+}
+
+.fpCustomBadge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--be-teal-800);
+    background: var(--be-teal-50);
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.fpRemoveBtn {
+    margin-left: auto;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--be-gray-400);
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s;
+}
+
+.fpRemoveBtn:hover {
+    background: #fff0f0;
+    border-color: #f09595;
+    color: #a32d2d;
+}
+
+/* Wrapper that right-aligns the trailing action buttons (Duplicate, Remove). */
+.fpRowActions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+/* When the actions live inside .fpRowActions, the remove button's own
+ * ml:auto would push it inside the wrapper. Reset that so the two buttons
+ * sit flush next to each other. */
+.fpRowActions .fpRemoveBtn {
+    margin-left: 0;
+}
+
+.fpDuplicateBtn {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--be-gray-200, #e3e3e3);
+    background: transparent;
+    color: var(--be-teal-700, #36484b);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.fpDuplicateBtn:hover {
+    background: var(--be-teal-50, #eef5f4);
+    border-color: var(--be-teal-300, #97b6b8);
+    color: var(--be-teal-800, #24383b);
+}
+
+/* ----- Custom unit creator form --------------------------------------- */
+
+.customUnitForm {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--be-gray-200);
+}
+
+.customUnitLabel {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--be-gray-900);
+    font-family: var(--be-font);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.customUnitHint {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--be-gray-400);
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.customUnitRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sqftInputWrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--be-gray-200);
+    border-radius: 8px;
+    background: #fff;
+    padding: 0 10px;
+    gap: 4px;
+    height: 38px;
+    transition: border-color 0.12s;
+}
+
+.sqftInputWrap:focus-within {
+    border-color: var(--be-teal-800);
+    box-shadow: 0 0 0 2px rgba(0, 117, 143, 0.12);
+}
+
+.sqftInput {
+    width: 70px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--be-gray-900);
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--be-font);
+    text-align: right;
+    -moz-appearance: textfield;
+}
+
+.sqftInput::-webkit-outer-spin-button,
+.sqftInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.sqftSuffix {
+    font-size: 12px;
+    color: var(--be-gray-400);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.proratedPreview {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    padding: 4px 10px;
+    background: var(--be-teal-50);
+    border: 1px solid rgba(0, 117, 143, 0.2);
+    border-radius: 8px;
+}
+
+.proratedLabel {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--be-teal-800);
+    opacity: 0.7;
+    font-family: var(--be-font);
+}
+
+.proratedValue {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--be-teal-800);
+    font-family: var(--be-font);
+    letter-spacing: -0.2px;
+}
+
+.addCustomBtn {
+    height: 38px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--be-teal-800);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--be-font);
+    transition: opacity 0.1s;
+    white-space: nowrap;
+}
+
+.addCustomBtn:hover:not(:disabled) {
+    opacity: 0.88;
+}
+
+.addCustomBtn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.customUnitWarn {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #a05c00;
+    font-family: var(--be-font);
+}
+
+/* Proration info block */
+.prorateInfo {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.prorateAnchor {
+    font-size: 11px;
+    color: var(--be-gray-400);
+    font-family: var(--be-font);
+    font-style: italic;
+}
+
+/* Extra bath checkbox */
+.extraBathToggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.extraBathToggle input {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--be-teal-800);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.extraBathLabel {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--be-gray-900);
+    font-family: var(--be-font);
+}
+
+.extraBathAmount {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--be-teal-800);
+    background: var(--be-teal-50);
+    border-radius: 4px;
+    padding: 1px 6px;
+}
+
+/* Price breakdown when extra bath is on */
+.prorateBreakdown {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--be-gray-400);
+    font-family: var(--be-font);
+    flex-wrap: wrap;
+}
+
+.breakdownPlus {
+    color: var(--be-gray-300);
+    font-weight: 700;
+}
+
+.breakdownTotal {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--be-teal-800);
+}
+
+/* ----- Assumptions grid ----- */
+.assumptionGrid {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 560px) {
+    .assumptionGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.assumptionField {
+    display: grid;
+    gap: 6px;
+}
+
+.assumptionLabel {
+    font-size: 0.8rem;
+    font-weight: 650;
+    color: var(--color-brand-dark-blue);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-family: var(--font-sans);
+}
+
+.assumptionHint {
+    font-size: 0.6rem;
+    font-weight: 500;
+    color: rgba(11, 15, 26, 0.42);
+}
+
+.assumptionInput {
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    padding: 0 10px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.assumptionInput:focus {
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 0 0 3px var(--color-brand-beige-A020);
+}
+
+.assumptionActions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.reset {
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: rgba(255, 255, 255, 0.96);
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(11, 15, 26, 0.72);
+    cursor: pointer;
+}
+
+/* ----- Debug inside each cell ----- */
+.cellValue {
+    font-size: 12px;
+    font-weight: 750;
+    color: rgba(11, 15, 26, 0.88);
+}
+
+.debug {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(15, 23, 42, 0.14);
+}
+
+.debugFormula {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(11, 15, 26, 0.58);
+}
+
+.debugParts {
+    margin-top: 6px;
+    display: grid;
+    gap: 4px;
+}
+
+.debugPart {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 11px;
+    width: 100%;
+    max-width: 260px;
+}
+
+.debugKey {
+    color: rgba(11, 15, 26, 0.52);
+}
+
+.debugVal {
+    color: rgba(11, 15, 26, 0.84);
+    font-weight: 700;
+    text-align: right;
+}
+
+/* Footer hint */
+.footerNote {
+    margin-top: 10px;
+    font-size: 12px;
+    color: rgba(11, 15, 26, 0.56);
+}
+
+.footerLabel {
+    font-weight: 800;
+    color: rgba(11, 15, 26, 0.68);
+}
+
+/* ============================
+   Source highlighting system
+   Inputs = yellow
+   API    = blue
+   Calc   = orange
+   (high contrast, soft tints)
+============================ */
+
+.legend {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.legendItem {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+/* Neutral fallback */
+.srcNeutral {
+    background: rgba(11, 15, 26, 0.04);
+    border-color: rgba(15, 23, 42, 0.10);
+    color: rgba(11, 15, 26, 0.78);
+}
+
+.srcInput {
+    background: rgba(245, 204, 72, 0.22);
+    border-color: rgba(245, 204, 72, 0.45);
+    color: rgba(68, 46, 0, 0.92);
+}
+
+.srcApi {
+    background: rgba(62, 141, 255, 0.16);
+    border-color: rgba(62, 141, 255, 0.38);
+    color: rgba(8, 35, 88, 0.92);
+}
+
+.srcCalc {
+    background: rgba(255, 140, 60, 0.18);
+    border-color: rgba(255, 140, 60, 0.42);
+    color: rgba(88, 34, 0, 0.92);
+}
+
+/* ============================
+   Cell value badge
+============================ */
+
+.badgeValue {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    line-height: 1.2;
+    background-color: rgba(180, 245, 169, 0.374);
+}
+
+/* Make the main number “pop” a bit more */
+.cellValue {
+    font-size: 12px;
+    font-weight: 850;
+}
+
+/* ============================
+   Debug area: make it scannable
+============================ */
+
+.debug {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(15, 23, 42, 0.14);
+}
+
+.debugFormula {
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(11, 15, 26, 0.58);
+}
+
+/* Each debug line becomes a pill row */
+.debugPartPill {
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 12px;
+    padding: 7px 9px;
+}
+
+/* keep your existing structure but improve readability */
+.debugParts {
+    margin-top: 8px;
+    display: grid;
+    gap: 6px;
+}
+
+.debugPart {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 11px;
+}
+
+.debugKey {
+    color: rgba(11, 15, 26, 0.62);
+    font-weight: 800;
+}
+
+.debugVal {
+    color: rgba(11, 15, 26, 0.90);
+    font-weight: 850;
+    text-align: right;
+}
+
+/* ============================
+   Table readability upgrades
+============================ */
+
+.td {
+    vertical-align: top;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+tr:nth-child(even) .td {
+    background: rgba(11, 15, 26, 0.015);
+}
+
+/* slightly more padding so pills breathe */
+.td,
+.tdLeft {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* section rows stand out */
+.section {
+    background: rgba(11, 15, 26, 0.04);
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+
+/* ============================
+   TABLE: finance-grade readability
+============================ */
+
+.tableWrap {
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 18px;
+    overflow: auto;
+    background: #fff;
+    box-shadow:
+        0 1px 0 rgba(11, 15, 26, 0.03),
+        0 14px 34px rgba(11, 15, 26, 0.06);
+}
+
+/* make horizontal scrolling feel nice */
+.tableWrap::-webkit-scrollbar {
+    height: 10px;
+}
+
+.tableWrap::-webkit-scrollbar-thumb {
+    background: rgba(11, 15, 26, 0.18);
+    border-radius: 999px;
+}
+
+.tableWrap::-webkit-scrollbar-track {
+    background: rgba(11, 15, 26, 0.05);
+}
+
+.table {
+    width: 100%;
+    min-width: 920px;
+    /* helps when you have multiple scenarios */
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12px;
+}
+
+/* ----- Header (sticky) ----- */
+
+.thLeft,
+.th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.thLeft {
+    left: 0;
+    z-index: 7;
+    /* above other sticky items */
+    width: 220px;
+    min-width: 220px;
+    text-align: left;
+}
+
+.th,
+.thLeft {
+    padding: 12px 12px;
+}
+
+.colTitle {
+    font-size: 12px;
+    font-weight: 850;
+    color: rgba(11, 15, 26, 0.88);
+    line-height: 1.2;
+    max-width: 260px;
+}
+
+.th {
+    text-align: left;
+    border-left: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* ----- Left label column (sticky) ----- */
+
+.tdLeft {
+    position: sticky;
+    left: 0;
+    z-index: 4;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    width: 220px;
+    min-width: 220px;
+
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(11, 15, 26, 0.74);
+    letter-spacing: -0.01em;
+
+    padding: 12px 12px;
+    border-right: 1px solid rgba(15, 23, 42, 0.10);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* ----- Data cells ----- */
+
+.td {
+    vertical-align: top;
+    padding: 12px 12px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    border-left: 1px solid rgba(15, 23, 42, 0.06);
+    background: #fff;
+}
+
+/* zebra striping that works with sticky left col */
+tbody tr:nth-child(even) .td {
+    background: rgba(11, 15, 26, 0.015);
+}
+
+tbody tr:nth-child(even) .tdLeft {
+    background: rgba(11, 15, 26, 0.02);
+}
+
+/* hover highlight (huge readability win) */
+tbody tr:hover .td,
+tbody tr:hover .tdLeft {
+    background: var(--color-brand-beige-A010);
+}
+
+/* ----- Section rows ----- */
+
+.section {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+
+    background: var(--color-brand-beige-subtle);
+    color: var(--color-brand-dark-blue);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+
+    padding: 10px 12px;
+    border-top: 1px solid var(--color-brand-beige-A020);
+    border-bottom: 1px solid var(--color-brand-beige-A020);
+}
+
+/* spacer row */
+.spacer {
+    height: 8px;
+    background: transparent;
+    border-bottom: 1px solid var(--color-brand-beige-A020);
+}
+
+/* ============================
+   CELL CONTENT: consistent stack
+============================ */
+
+/* main value chip */
+.badgeValue {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.cellValue {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+}
+
+/* debug container becomes “sub-card” */
+.debug {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(11, 15, 26, 0.02);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+/* formula line */
+.debugFormula {
+    font-size: 11px;
+    font-weight: 850;
+    color: rgba(11, 15, 26, 0.62);
+    line-height: 1.25;
+}
+
+/* debug part pills: tighter + clearer */
+.debugParts {
+    margin-top: 8px;
+    display: grid;
+    gap: 6px;
+}
+
+.debugPartPill {
+    border-radius: 12px;
+    padding: 7px 9px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+.debugPart {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 11px;
+}
+
+.debugKey {
+    color: rgba(11, 15, 26, 0.64);
+    font-weight: 900;
+    max-width: 55%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.debugVal {
+    color: rgba(11, 15, 26, 0.90);
+    font-weight: 900;
+    text-align: right;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ============================
+   Assumptions collapsible
+============================ */
+
+.assumptionsDetails {
+    border: 1px solid var(--be-gray-200);
+    border-radius: var(--be-radius-lg);
+    overflow: hidden;
+    background: var(--be-gray-50);
+}
+
+.assumptionsSummary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--be-gray-700);
+    font-family: var(--be-font);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+}
+
+.assumptionsSummary::-webkit-details-marker {
+    display: none;
+}
+
+.assumptionsSummary::after {
+    content: "▾";
+    font-size: 13px;
+    color: var(--be-gray-400);
+    transition: transform 140ms ease;
+}
+
+.assumptionsDetails[open] .assumptionsSummary::after {
+    transform: rotate(180deg);
+}
+
+.assumptionsDetails[open] .assumptionsSummary {
+    border-bottom: 1px solid var(--be-gray-200);
+}
+
+.assumptionsDetails > :not(summary) {
+    padding: 16px;
+}

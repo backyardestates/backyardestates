@@ -1,4 +1,7 @@
-export const FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){name,slug}`
+import { groq } from "next-sanity";
+
+export const FLOORPLANS_QUERY = `*[_type == "floorplan" && isClickable != false && name != "Custom Estate"]|order(orderID asc){_id, bed, bath, sqft, price, name, body, publishedAt, drawing, "floorPlanUrl": drawing.secure_url, slug}`
+
 export const PRICING_FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){orderID, isClickable, slug, name, bed, bath, length, width, price}`
 export const CUSTOMER_STORIES_QUERY = `
   *[_type == "story" && featured] | order(publishedAt asc) {
@@ -487,6 +490,96 @@ export const PROPERTIES_QUERY = `
   }
 `
 
+export const FLOORPLANS_MATCH_QUERY = `
+*[
+  _type == "floorplan" &&
+  isClickable == true &&
+  defined(price) &&
+  defined(sqft) &&
+  defined(bed) &&
+  defined(bath) &&
+  lower(name) != "custom estate" &&
+  bed >= $bedMin && bed <= $bedMax &&
+  bath >= $bathMin && bath <= $bathMax
+]{
+  _id,
+  name,
+  bed,
+  bath,
+  sqft,
+  price,
+  "slug": slug.current,
+
+  // Drawing: always return a usable URL (or null)
+  drawing,
+
+  images,
+  
+}
+`;
+
+
+export const FLOORPLAN_BY_ID = `
+*[_type=="floorplan" && _id==$id][0]{
+  _id, name, bed, bath, sqft, price,
+  drawing
+}
+`;
+
+export const REPORT_ASSETS_QUERY = `
+*[_type=="pdfReportAssets"][0]{
+  brand{
+    "logoUrl": logo.asset->url,
+    "coverUrl": coverPhoto.asset->url
+  },
+  gallery[]{
+    title,
+    "imageUrl": image.asset->url
+  }
+}
+`;
+
+export const FEATURED_STORIES_QUERY = `
+*[_type == "story" && featured] | order(publishedAt desc)[0...2]{
+  wistiaId,
+  names,
+  quote,
+  portrait,
+  "slug": slug.current,
+  property->{
+    bed, bath, sqft,
+    floorplan->{ name },
+    "propertySlug": slug.current
+  }
+}
+`;
+
+// Comparable builds (use near-match by bed/bath/sqft if you want; here: latest 6 with photos)
+export const COMPARABLE_PROPERTIES_QUERY = `
+*[
+  _type == "property" &&
+  defined(photos) &&
+  count(photos) > 0
+]
+| order(coalesce(publishedAt, _createdAt) desc)[0...6]{
+  _id,
+  name,
+  "slug": slug.current,
+  aduType,
+  sqft,
+  bed,
+  bath,
+  photos[0]{
+    "url": url,
+    "publicId": public_id
+  },
+  floorplan->{
+    name,
+    bed, bath, sqft,
+    "slug": slug.current
+  }
+}
+`;
 
 export const FEATURED_PROPERTIES_QUERY = `
   *[
@@ -511,5 +604,62 @@ export const FEATURED_PROPERTIES_QUERY = `
       sqft,
       "slug": slug.current
     }
+  }
+`
+
+
+
+
+// ─── Presenter View — correct Cloudinary field names ─────────────────────────
+
+
+export const PRESENTER_FLOORPLANS_QUERY = groq`
+  *[_type == "floorplan"
+    && !(_id in path("drafts.**"))
+    && isClickable == true
+    && _id in $ids]
+  | order(orderID asc) {
+    _id, name, slug, sqft, bed, bath, price,
+    length, width, orderID, videoID,
+    "floorPlanUrl": drawing.secure_url,
+    "images": images[].secure_url,
+    "inclusions": body
+  }
+`
+
+export const PRESENTER_ALL_FLOORPLANS_QUERY = groq`
+  *[_type == "floorplan"
+    && !(_id in path("drafts.**"))
+    && isClickable == true
+    && price > 0]
+  | order(orderID asc) {
+    _id, name, slug, sqft, bed, bath, price,
+    length, width, orderID, videoID,
+    "floorPlanUrl": drawing.secure_url,
+    "images": images[].secure_url,
+  }
+`
+
+export const PRESENTER_STORIES_QUERY = groq`
+  *[_type == "story"]
+  | order(_createdAt desc) {
+    _id, names, quote, purpose, wistiaId, slug, featured,
+    "portraitUrl": portrait.secure_url,
+    "images": images[].secure_url,
+  }
+`
+
+export const PRESENTER_COMPLETED_PROPERTIES_QUERY = groq`
+  *[_type == "property"
+    && !(_id in path("drafts.**"))
+    && defined(photos)
+    && count(photos) > 0]
+  | order(_createdAt desc) [0...50] {
+    _id, name, slug, sqft, bed, bath,
+    videoID, featured,
+    "thumbnailUrl": photos[0].url,
+    "images": photos[].url,
+    "floorplanName": floorplan->name,
+    "floorplanSqft": floorplan->sqft,
   }
 `

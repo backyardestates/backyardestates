@@ -1,0 +1,242 @@
+.slide {
+    width: 100%;
+    height: 100%;
+    background: var(--p-tan);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--p-ink);
+}
+
+.hero {
+    position: relative;
+    height: 240px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--p-teal-ink);
+}
+
+.heroImg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.5);
+}
+
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 80px;
+    z-index: 2;
+}
+
+.heroEyebrow {
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--p-cream);
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 8px;
+}
+
+.heroTitle {
+    font-family: var(--p-font-display);
+    font-weight: 700;
+    font-size: 63px;
+    color: var(--p-cream);
+    letter-spacing: -1.4px;
+    line-height: 0.95;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.meta {
+    background: var(--p-paper);
+    padding: 16px 80px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--p-border);
+    font-family: var(--p-font);
+    font-size: 12px;
+    color: var(--p-ink);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.metaSep {
+    color: var(--p-border-strong);
+    font-weight: 300;
+}
+
+.body {
+    flex: 1;
+    padding: 40px 80px 32px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.contentGrid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 1.3fr;
+    gap: 32px;
+    min-height: 0;
+}
+
+.photoPanel,
+.overviewPanel {
+    background: var(--p-paper);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--p-border-strong);
+}
+
+.panelHeader {
+    background: var(--p-teal-dark);
+    padding: 14px 28px;
+    color: var(--p-cream);
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 15px;
+    text-align: center;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.photoArea {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.sitePhoto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.sitePlaceholder {
+    flex: 1;
+    background: var(--p-cream);
+    border: 1px dashed var(--p-border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+}
+
+.sitePlaceholderText {
+    font-family: var(--p-font-display);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--p-ink-muted);
+}
+
+.findings {
+    padding: 16px 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.findingsLabel {
+    font-family: var(--p-font);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--p-tan-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+}
+
+.findingsRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.findingTag {
+    background: var(--p-cream);
+    border: 1px solid var(--p-border-strong);
+    padding: 6px 12px;
+    font-family: var(--p-font);
+    font-size: 10px;
+    color: var(--p-ink);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.overviewBody {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.overviewCol {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.overviewDivider {
+    background: var(--p-border-strong);
+}
+
+.colTitle {
+    font-family: var(--p-font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--p-ink);
+    margin: 0 0 4px;
+    text-align: center;
+}
+
+.bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bullets li {
+    position: relative;
+    padding-left: 22px;
+    font-family: var(--p-font);
+    font-size: 12px;
+    color: var(--p-ink);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    background: var(--p-ink);
+}

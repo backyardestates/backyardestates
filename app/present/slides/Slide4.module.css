@@ -1,0 +1,190 @@
+.slide {
+    width: 100%;
+    height: 100%;
+    background: var(--p-tan);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--p-ink);
+}
+
+.banner {
+    background: var(--p-tan);
+    padding: 36px 80px 16px;
+    flex-shrink: 0;
+}
+
+.bannerTitle {
+    margin: 0;
+    font-family: var(--p-font-display);
+    font-weight: 700;
+    font-size: 57px;
+    color: var(--p-cream);
+    text-align: center;
+    line-height: 1;
+    letter-spacing: -1.2px;
+}
+
+.body {
+    flex: 1;
+    padding: 16px 96px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--p-paper);
+    border: 2px solid var(--p-ink-soft);
+    font-variant-numeric: tabular-nums;
+    table-layout: fixed;
+}
+
+.thBreak {
+    background: var(--p-teal-dark);
+    color: var(--p-cream);
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 12px 24px;
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 2px solid var(--p-teal-ink);
+}
+
+.thItem,
+.thPlan {
+    background: var(--p-teal-dark);
+    color: var(--p-cream);
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 22px;
+    text-align: center;
+    border: 2px solid var(--p-teal-ink);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.thItem {
+    width: 52%;
+    text-align: left;
+}
+
+.thPlan {
+    vertical-align: middle;
+}
+
+.thPlanName {
+    display: block;
+    font-weight: 700;
+}
+
+.thPlanSqft {
+    display: block;
+    font-weight: 400;
+    font-size: 10px;
+    opacity: 0.85;
+    margin-top: 2px;
+    text-transform: none;
+    letter-spacing: 0.02em;
+}
+
+.tdItem {
+    padding: 16px 22px;
+    border: 1px solid var(--p-border);
+    font-family: var(--p-font);
+    color: var(--p-ink);
+    vertical-align: middle;
+    background: var(--p-paper);
+}
+
+.itemName {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+}
+
+.itemDesc {
+    display: block;
+    font-size: 10px;
+    color: var(--p-ink-muted);
+    font-weight: 400;
+    line-height: 1.45;
+    margin-top: 5px;
+}
+
+.tdValue {
+    padding: 16px 22px;
+    border: 1px solid var(--p-border);
+    font-family: var(--p-font);
+    color: var(--p-ink);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    background: var(--p-paper);
+    vertical-align: middle;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+}
+
+.included {
+    font-family: var(--p-font-display);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--p-teal-dark);
+    font-size: 14px;
+}
+
+.discount {
+    color: var(--p-negative);
+}
+
+.rowSubtotal td {
+    background: var(--p-cream);
+}
+
+.rowSubtotal .itemName,
+.rowSubtotal .tdValue {
+    font-size: 14px;
+}
+
+.rowTotal td {
+    background: var(--p-teal-dark);
+    color: var(--p-cream);
+    padding: 18px 22px;
+    border: 2px solid var(--p-teal-ink);
+}
+
+.rowTotal .tdItem,
+.rowTotal .tdValue {
+    background: var(--p-teal-dark);
+    color: var(--p-cream);
+    font-weight: 700;
+}
+
+.rowTotal .itemName {
+    font-size: 17px;
+    color: var(--p-cream);
+}
+
+.rowTotal .tdValue {
+    font-size: 17px;
+}
+
+.disclaimer {
+    margin: 0;
+    font-family: var(--p-font);
+    font-size: 10px;
+    color: var(--p-cream);
+    font-weight: 500;
+    font-style: italic;
+    text-align: right;
+}

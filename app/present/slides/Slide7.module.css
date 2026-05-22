@@ -1,0 +1,137 @@
+.slide {
+    width: 100%;
+    height: 100%;
+    background: var(--p-tan);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--p-ink);
+}
+
+.banner {
+    background: var(--p-teal-dark);
+    padding: 36px 80px;
+    flex-shrink: 0;
+}
+
+.bannerTitle {
+    margin: 0;
+    font-family: var(--p-font-display);
+    font-weight: 700;
+    font-size: 54px;
+    color: var(--p-cream);
+    text-align: center;
+    line-height: 1;
+    letter-spacing: -1.3px;
+}
+
+.body {
+    flex: 1;
+    padding: 28px 64px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.tableWrap {
+    width: 100%;
+    max-width: 1500px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--p-paper);
+    border: 3px solid var(--p-ink-soft);
+    font-variant-numeric: tabular-nums;
+    table-layout: fixed;
+}
+
+.thHead {
+    background: var(--p-teal-dark);
+    color: var(--p-cream);
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 12px 18px;
+    text-align: center;
+    border: 2px solid var(--p-teal-ink);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.thAduLabel {
+    display: block;
+    font-size: 11px;
+    opacity: 0.8;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    margin-bottom: 2px;
+}
+
+.thAduName {
+    display: block;
+    font-family: var(--p-font-display);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    text-transform: none;
+}
+
+.tdLabel {
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--p-ink);
+    padding: 11px 20px;
+    background: var(--p-paper);
+    border: 1px solid var(--p-border);
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.tdValue {
+    font-family: var(--p-font);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--p-ink);
+    padding: 11px 18px;
+    background: var(--p-paper);
+    border: 1px solid var(--p-border);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.rowAccent .tdLabel,
+.rowAccent .tdValue {
+    background: var(--p-slate);
+    color: var(--p-cream);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.pos {
+    color: var(--p-positive);
+    font-weight: 700;
+}
+
+.neg {
+    color: var(--p-negative);
+    font-weight: 700;
+}
+
+.rowAccent .pos,
+.rowAccent .neg {
+    color: var(--p-cream);
+}
+
+.rowCap td {
+    background: var(--p-teal-dark);
+    height: 20px;
+    padding: 4px;
+    border: 2px solid var(--p-teal-ink);
+}

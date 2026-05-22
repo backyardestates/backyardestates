@@ -1,26 +1,20 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from "next/server";
+import { pipedriveFetch, PipedriveApiError, PipedriveConfigError } from "@/lib/pipedrive/client";
+
+export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-    const body = await req.json()
-
-    if (req.method === 'POST') {
-        try {
-            const res = await fetch(
-                `https://${process.env.NEXT_PUBLIC_PIPEDRIVE_DOMAIN}.pipedrive.com/v1/persons?&api_token=${process.env.NEXT_PUBLIC_PIPEDRIVE_API_TOKEN}`,
-                {
-                    method: 'POST',
-                    body: JSON.stringify(body.person),
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            )
-            const data = await res.json()
-            return NextResponse.json({ success: true, data }, { status: 200 })
-        } catch (error) {
-            return NextResponse.json({ error }, { status: 500 })
+    try {
+        const body = await req.json();
+        const data = await pipedriveFetch("persons", { method: "POST", body: body.person });
+        return NextResponse.json({ success: true, data }, { status: 200 });
+    } catch (err) {
+        if (err instanceof PipedriveConfigError) {
+            return NextResponse.json({ error: err.message }, { status: 500 });
         }
-    } else {
-        console.log('Not a POST request')
+        if (err instanceof PipedriveApiError) {
+            return NextResponse.json({ error: err.message, details: err.body }, { status: err.status });
+        }
+        return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
     }
 }

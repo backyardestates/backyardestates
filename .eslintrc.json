@@ -1,4 +1,5 @@
 {
+    "root": true,
     "extends": "next/core-web-vitals",
     "rules": {
         "import/no-anonymous-default-export": [
@@ -8,11 +9,19 @@
                 "allowArrowFunction": true,
                 "allowAnonymousClass": false,
                 "allowAnonymousFunction": false,
-                "allowCallExpression": true, // The true value here is for backward compatibility
+                "allowCallExpression": true,
                 "allowNew": false,
                 "allowLiteral": false,
                 "allowObject": false
             }
         ]
-    }
+    },
+    "overrides": [
+        {
+            "files": ["app/present-v2/**/*.{ts,tsx}"],
+            "rules": {
+                "react/no-unescaped-entities": "off"
+            }
+        }
+    ]
 }

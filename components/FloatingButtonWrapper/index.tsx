@@ -5,7 +5,7 @@ import FloatingScheduleButton from '../FloatingScheduleButton'
 
 export default function FloatingButtonWrapper() {
     const pathname = usePathname()
-    const shouldShow = !pathname.startsWith('/events/checkin')
+    const shouldShow = !pathname.startsWith('/events/checkin') && !pathname.startsWith('/present')
 
     if (!shouldShow) return null
     return <FloatingScheduleButton />

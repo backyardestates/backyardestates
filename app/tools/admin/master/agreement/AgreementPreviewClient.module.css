@@ -1,0 +1,398 @@
+/* Agreement preview — match the original Mustang .docx as closely as possible.
+ *
+ * From the source styles.xml:
+ *   • Default font: Arial 11pt
+ *   • Page: US Letter portrait, 0.75" margins on all sides
+ *   • Heading 1: ~16pt, color #2E74B5
+ *   • Heading 2: ~13pt, color #2E74B5
+ *   • Heading 3: ~12pt, color #1F4D78
+ *   • Title: ~28pt
+ *
+ * Word's defaults also use ~8pt space-after and ~1.08 line height. */
+
+.root {
+    position: absolute;
+    inset: 0;
+    background: #e9e7e0;
+    color: #000000;
+    overflow-y: auto;
+    font-family: var(--font-sans, system-ui), sans-serif;
+}
+
+.toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(13, 31, 31, 0.97);
+    backdrop-filter: blur(6px);
+    color: #f7f5f0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.toolbarLeft {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+}
+
+.title {
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+}
+
+.subtitle {
+    font-size: 12px;
+    color: rgba(247, 245, 240, 0.55);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.btn {
+    /* Tall enough to host a two-line label (primary action + helper text). */
+    min-height: 36px;
+    padding: 4px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: transparent;
+    color: #f7f5f0;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btnLabel {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.15;
+    gap: 1px;
+}
+
+.btnHint {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: rgba(247, 245, 240, 0.65);
+    text-transform: none;
+}
+
+.btnPrimary .btnHint {
+    color: rgba(255, 247, 214, 0.75);
+}
+
+.btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btnPrimary {
+    background: rgba(184, 149, 74, 0.18);
+    border-color: rgba(184, 149, 74, 0.55);
+    color: #f5dca0;
+}
+
+.btnPrimary:hover:not(:disabled) {
+    background: rgba(184, 149, 74, 0.32);
+    color: #fff7d6;
+}
+
+.btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.status {
+    font-style: italic;
+    font-size: 12px;
+    color: rgba(247, 245, 240, 0.6);
+}
+
+.page {
+    /* US Letter portrait paper. */
+    margin: 32px auto;
+    width: 8.5in;
+    min-height: 11in;
+    background: #ffffff;
+    /* 1" margins on all sides for a more spacious, formal look. */
+    padding: 1in;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+    /* Word-style body text. */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    line-height: 1.15;
+    color: #000000;
+}
+
+.editor {
+    outline: none;
+    transition: background 0.2s;
+}
+
+.editor:focus-within {
+    background: rgba(184, 149, 74, 0.03);
+}
+
+.empty {
+    padding: 64px 16px;
+    text-align: center;
+    color: rgba(31, 36, 36, 0.55);
+    font-style: italic;
+    font-size: 14px;
+}
+
+.errorBox {
+    margin: 16px 0;
+    padding: 14px 16px;
+    background: #ffefef;
+    border: 1px solid #f3c2c2;
+    border-radius: 8px;
+    color: #7a1f1f;
+    font-size: 13px;
+    white-space: pre-wrap;
+}
+
+/* ── Editor content — exact Word spacing from the source .docx ──────────
+ *
+ * Values extracted from the original document's XML:
+ *   • Paragraph spacing: w:after="120" twips = 6pt after each <p>
+ *   • Section headers:   w:before="240" w:after="120" = 12pt above, 6pt below
+ *   • Table cell margins (w:tcMar):
+ *       top/bottom = 80 twips = 4pt
+ *       left/right = 120 twips = 6pt
+ *   • Body font: Arial 11pt, line-height 1.15
+ *   • Page margins: 1080 twips = 0.75in on all sides
+ */
+
+.editor :global(p) {
+    margin: 0 0 6pt;          /* 120 twips = 6pt */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    line-height: 1.15;
+    color: #000000;
+}
+
+/* Title block — first 1–2 bold paragraphs, centered. */
+.editor :global(.agreement-title) {
+    text-align: center;
+    font-size: 14pt;
+    font-weight: 700;
+    margin: 0 0 6pt;
+    color: #000000;
+}
+
+/* Numbered section headings: "1. Project Description", "12. Warranties", etc.
+ * Match the source exactly: 12pt above, 6pt below, otherwise body-styled. */
+.editor :global(.agreement-section) {
+    margin: 12pt 0 6pt;
+    font-weight: 700;
+    color: #000000;
+}
+
+/* Attachment dividers — start each on a new page like the original. */
+.editor :global(.agreement-attachment-header) {
+    text-align: center;
+    font-size: 13pt;
+    font-weight: 700;
+    margin: 18pt 0 6pt;
+    color: #000000;
+    page-break-before: always;
+}
+
+/* Lettered sub-items (a., b., c.) — hanging indent so wrap-lines align under
+ * the body text, not under the "a.". 0.5in matches Word's default tab stop. */
+.editor :global(.agreement-subitem) {
+    margin: 0 0 6pt;
+    padding-left: 0.5in;
+    text-indent: -0.5in;
+}
+
+.editor :global(strong),
+.editor :global(b) {
+    font-weight: 700;
+    color: inherit;
+}
+
+.editor :global(em),
+.editor :global(i) {
+    font-style: italic;
+    color: inherit;
+}
+
+.editor :global(u) {
+    text-decoration: underline;
+}
+
+/* Tables — Word's default 11pt body in cells, tight padding, full width.
+ * The original Mustang payment table is full-width with simple grey borders
+ * and a plain bold header row (not a colored header). */
+.editor :global(table) {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 6pt 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    color: #000000;
+}
+
+.editor :global(table) :global(td),
+.editor :global(table) :global(th) {
+    border: 1px solid #000000;
+    /* Tightened cell padding — less than the .docx tcMar value, looks
+     * cleaner in the preview. */
+    padding: 2pt 4pt;
+    vertical-align: top;
+    text-align: left;
+    line-height: 1.15;
+}
+
+/* Mammoth converts the bold header row to <td><p><strong>…</strong></p></td>
+ * (not <th>), so we don't apply special background styling — Word's header
+ * looks like just bold cells. The <strong> styling carries through. */
+
+/* Cells in mammoth's output wrap their content in <p>, which gets the default
+ * 8pt margin-bottom. That makes cells visually taller than Word's. Strip it. */
+.editor :global(table) :global(td) :global(p),
+.editor :global(table) :global(th) :global(p) {
+    margin: 0;
+}
+
+/* Lists — match the document's paragraph spacing of 6pt after, 0.5" indent. */
+.editor :global(ul),
+.editor :global(ol) {
+    margin: 0 0 6pt 0.5in;
+    padding: 0;
+}
+
+.editor :global(li) {
+    margin-bottom: 4pt;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    line-height: 1.15;
+}
+
+/* Hyperlinks — keep the Word blue underline. */
+.editor :global(a) {
+    color: #0563C1;
+    text-decoration: underline;
+}
+
+/* ── Unit switcher (toolbar) ──────────────────────────────────────────────
+ * Toolbar background is near-black teal (rgba(13,31,31,0.97)), so the
+ * switcher uses light-on-dark contrast to match the rest of the toolbar
+ * (matches .btn and .btnPrimary). All foreground colors are chosen to
+ * exceed WCAG AA (4.5:1) on that background. */
+
+.unitSwitch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 30px;
+    padding: 0 4px 0 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    font-family: inherit;
+    color: #f7f5f0;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.unitSwitch:hover,
+.unitSwitch:focus-within {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(245, 220, 160, 0.6);
+}
+
+.unitSwitchLabel {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: rgba(247, 245, 240, 0.7);
+    white-space: nowrap;
+}
+
+.unitSwitchSelect {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    /* Inline chevron so the dropdown affordance is visible against the dark toolbar. */
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23f5dca0' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px 6px;
+    padding: 0 26px 0 4px;
+    border: none;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f7f5f0;
+    cursor: pointer;
+    min-width: 180px;
+    height: 28px;
+}
+
+.unitSwitchSelect:focus {
+    outline: none;
+    color: #fff7d6;
+}
+
+.unitSwitchSelect:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+/* Browser-rendered <option> elements use OS defaults so they stay legible
+ * against the OS native popup. We set explicit values so dark-themed browsers
+ * don't render cream-on-cream when the menu opens. */
+.unitSwitchSelect option {
+    color: #14302f;
+    background: #f7f5f0;
+}
+
+/* ── Print rules ────────────────────────────────────────────────────────── */
+
+@media print {
+    .root {
+        background: #fff;
+        overflow: visible;
+        position: static;
+    }
+    .toolbar {
+        display: none;
+    }
+    .page {
+        margin: 0;
+        width: auto;
+        min-height: 0;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 1in;
+    }
+    .editor {
+        outline: none;
+    }
+    /* Match the .docx page size exactly. */
+    @page {
+        size: letter portrait;
+        margin: 0;
+    }
+}

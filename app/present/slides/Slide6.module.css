@@ -1,0 +1,183 @@
+.slide {
+    width: 100%;
+    height: 100%;
+    background: var(--p-tan);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--p-ink);
+}
+
+.banner {
+    background: var(--p-teal-dark);
+    padding: 44px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.bannerTitle {
+    margin: 0;
+    font-family: var(--p-font-display);
+    font-weight: 700;
+    font-size: 72px;
+    color: var(--p-cream);
+    text-align: center;
+    line-height: 1;
+    letter-spacing: -1.5px;
+}
+
+.bannerSubtitle {
+    position: absolute;
+    right: 80px;
+    bottom: 20px;
+    font-family: var(--p-font);
+    font-size: 14px;
+    color: var(--p-cream);
+    font-weight: 500;
+    opacity: 0.85;
+    letter-spacing: 0.02em;
+}
+
+.body {
+    flex: 1;
+    padding: 48px 96px 32px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.roiGrid {
+    flex: 1;
+    display: grid;
+    gap: 32px;
+    min-height: 0;
+}
+
+.roiCol {
+    background: var(--p-paper);
+    border: 3px solid var(--p-ink-soft);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+}
+
+.planHeader {
+    background: var(--p-teal-dark);
+    color: var(--p-cream);
+    padding: 20px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.planEyebrow {
+    font-family: var(--p-font);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--p-tan);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.planName {
+    font-family: var(--p-font-display);
+    font-weight: 600;
+    font-size: 23px;
+    color: var(--p-cream);
+    line-height: 1;
+    letter-spacing: -0.3px;
+}
+
+.section {
+    padding: 22px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-bottom: 2px solid var(--p-ink-soft);
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+.sectionFinal {
+    background: var(--p-cream);
+}
+
+.kvRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.k {
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--p-ink);
+    letter-spacing: 0.01em;
+}
+
+.kIndent {
+    font-family: var(--p-font);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--p-ink);
+    padding-left: 32px;
+    letter-spacing: 0.01em;
+}
+
+.v {
+    font-family: var(--p-font);
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--p-ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.posVal {
+    color: var(--p-positive);
+    font-weight: 700;
+}
+
+.negVal {
+    color: var(--p-negative);
+    font-weight: 700;
+}
+
+.infinite {
+    font-family: var(--p-font-display);
+    font-style: italic;
+    font-weight: 600;
+    color: var(--p-teal-dark);
+    font-size: 18px;
+}
+
+.sectionNote {
+    font-family: var(--p-font);
+    font-size: 10px;
+    font-style: italic;
+    color: var(--p-ink-muted);
+    margin-left: 4px;
+    margin-top: -2px;
+}
+
+.empty {
+    flex: 1;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--p-font-display);
+    font-style: italic;
+    color: var(--p-cream);
+    font-size: 21px;
+    opacity: 0.85;
+}
