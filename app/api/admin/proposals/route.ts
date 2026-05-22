@@ -80,37 +80,80 @@ export async function POST(req: Request) {
             status,
         });
 
-        // Look up an existing proposal at this (addressKey, status). For
-        // ARCHITECTs we additionally scope by createdById so they can never
-        // overwrite someone else's row. ADMINs match against any row for
-        // this addressKey so they can edit anyone's proposal — but we
-        // preserve the original creator when updating (no ownership transfer
-        // just because an admin saved it).
-        const existing = await prisma.proposal.findFirst({
-            where: {
-                ...(role === Role.ADMIN ? {} : { createdById: userId }),
-                addressKey: snapshot.addressKey,
-                status,
-            },
-            select: { id: true, createdById: true },
-        });
-
-        const saved = existing
-            ? await prisma.proposal.update({
-                where: { id: existing.id },
-                data: {
-                    customerName: payload.customerName,
-                    addressLine1: payload.addressLine1,
-                    city: payload.city,
-                    state: payload.state,
-                    zip: payload.zip,
-                    snapshotJson: payload.snapshotJson,
-                    snapshotVersion: payload.snapshotVersion,
-                    // Intentionally NOT updating createdById — preserves the
-                    // original owner even when an admin edits.
+        // Two distinct upsert shapes:
+        //
+        //   DRAFT  — per-user. Each user can have their own draft on the same
+        //            addressKey. Look up by (createdById, addressKey, DRAFT).
+        //
+        //   REVIEWED — ONE canonical per addressKey across the whole org.
+        //              When a user clicks Save, their draft is "promoted":
+        //              the canonical for this address is updated in place
+        //              (replacing whoever owned it before), the saver becomes
+        //              the new createdById, and their own DRAFT row is
+        //              deleted. Other users' DRAFTs on this address are left
+        //              alone — they can still resume / admin can still review.
+        let saved;
+        if (status === ProposalStatus.DRAFT) {
+            const existing = await prisma.proposal.findFirst({
+                where: {
+                    createdById: userId,
+                    addressKey: snapshot.addressKey,
+                    status: ProposalStatus.DRAFT,
                 },
-            })
-            : await prisma.proposal.create({ data: payload });
+                select: { id: true },
+            });
+            saved = existing
+                ? await prisma.proposal.update({
+                    where: { id: existing.id },
+                    data: {
+                        customerName: payload.customerName,
+                        addressLine1: payload.addressLine1,
+                        city: payload.city,
+                        state: payload.state,
+                        zip: payload.zip,
+                        snapshotJson: payload.snapshotJson,
+                        snapshotVersion: payload.snapshotVersion,
+                    },
+                })
+                : await prisma.proposal.create({ data: payload });
+        } else {
+            // REVIEWED save = promotion. Architects can promote (their middleware
+            // role check has already passed); admins can promote anyone's draft.
+            const existingCanonical = await prisma.proposal.findFirst({
+                where: { addressKey: snapshot.addressKey, status: ProposalStatus.REVIEWED },
+                select: { id: true, createdById: true },
+            });
+            saved = existingCanonical
+                ? await prisma.proposal.update({
+                    where: { id: existingCanonical.id },
+                    data: {
+                        customerName: payload.customerName,
+                        addressLine1: payload.addressLine1,
+                        city: payload.city,
+                        state: payload.state,
+                        zip: payload.zip,
+                        snapshotJson: payload.snapshotJson,
+                        snapshotVersion: payload.snapshotVersion,
+                        // Promoter becomes the new canonical owner. This makes
+                        // "last save wins" the visible ownership rule.
+                        createdById: userId,
+                    },
+                })
+                : await prisma.proposal.create({ data: payload });
+
+            // Delete only the promoter's own DRAFT — other users' drafts on
+            // this address survive so they can resume their own work.
+            await prisma.proposal.deleteMany({
+                where: {
+                    createdById: userId,
+                    addressKey: snapshot.addressKey,
+                    status: ProposalStatus.DRAFT,
+                },
+            });
+        }
+        // Reference the role variable to keep TS happy even though we no
+        // longer branch on it here; the role gate is enforced by middleware.
+        void role;
 
         // Materialize the structured tables for downstream reporting/exports.
         // Drafts skip this — DRAFT autosaves fire on every keystroke and the

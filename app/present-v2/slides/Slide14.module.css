@@ -105,11 +105,12 @@
   justify-content: flex-start;
 }
 
-/* Header cells over each ADU column — stack the name + total */
+/* Header cells over each ADU column — stack the name + total +
+   ADU-type badge in normal flow (right-aligned column). */
 .thAmount {
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: 6px;
   background: linear-gradient(180deg, var(--p-teal-deep) 0%, var(--p-teal-ink) 100%);
   text-align: right;
   padding: 18px 18px;

@@ -281,7 +281,11 @@ export function useAduModel({
         setAduCompareIds((prev) => {
             const exists = prev.includes(id);
             if (exists) return prev.filter((x) => x !== id);
-            if (prev.length >= maxAduComparisons) return prev;
+            // Use the live `defaults.maxAduComparisons` (which the UnitsPanel's
+            // "Max" input edits via updateDefault) rather than the prop, which
+            // is only an initial-mount value. Without this, raising the Max
+            // input would have no effect on the add-blocker.
+            if (prev.length >= defaults.maxAduComparisons) return prev;
             return [...prev, id];
         });
     }

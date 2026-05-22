@@ -1,0 +1,101 @@
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: var(--p-text-xs);
+    font-weight: 700;
+    letter-spacing: var(--p-track-wide);
+    text-transform: uppercase;
+    width: fit-content;
+    white-space: nowrap;
+    line-height: 1.4;
+    /* A whisper of shadow so the solid pill lifts off the card surface,
+     * giving it a deliberate, deliberate-element feel rather than a flat
+     * decal. Tiny — doesn't compete with card-level shadows. */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
+}
+
+/* ── Color tokens ──────────────────────────────────────────────────────
+   Each ADU type carries a consistent hue across both variants so the
+   audience builds intuition (green = detached, gold = attached, blue =
+   garage). Pills are solid — low-opacity tints don't survive the
+   contrast budget on the teal / cream slide backgrounds. */
+
+/* Default (no type) — falls back to a neutral chip per variant. */
+.light {
+    background: rgba(255, 255, 255, 0.92);
+    color: #14302F;
+    border-color: transparent;
+}
+
+.dark {
+    background: rgba(20, 48, 47, 0.92);
+    color: #FFFFFF;
+    border-color: transparent;
+}
+
+/* ── Light variant: bright pills with dark text on dark cards ────────
+   The card backgrounds are #1F4444 / #14302F — light pills with dark
+   text give ~9-12:1 text contrast AND a clear pill-vs-card edge. */
+
+.light.type_detached {
+    background: #C9E7CE;
+    color: #0F4030;
+    border-color: transparent;
+}
+
+.light.type_attached {
+    background: #F3DBA1;
+    color: #5A3F0E;
+    border-color: transparent;
+}
+
+.light.type_garage {
+    background: #C8E0F0;
+    color: #1A3370;
+    border-color: transparent;
+}
+
+/* ── Dark variant: solid colored pills with white text on light cards ─
+   White cards (#FFF) — solid mid-dark fills give ~5-7:1 white-text
+   contrast AND a strong pill-vs-card edge so the chip reads as a
+   deliberate label, not a faint tint. */
+
+.dark.type_detached {
+    background: #2C7A55;
+    color: #FFFFFF;
+    border-color: transparent;
+}
+
+.dark.type_attached {
+    background: #A07A2E;
+    color: #FFFFFF;
+    border-color: transparent;
+}
+
+.dark.type_garage {
+    background: #3A5F94;
+    color: #FFFFFF;
+    border-color: transparent;
+}
+
+/* ── Corner placement (absolute) ───────────────────────────────────────
+   Pulls the badge out of the document flow so it doesn't push card
+   content downward. The parent card must have `position: relative` for
+   the offsets to anchor correctly. */
+
+.corner_top_right,
+.corner_top_left,
+.corner_bottom_right,
+.corner_bottom_left {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none; /* Decorative — never blocks underlying clicks. */
+}
+
+.corner_top_right    { top: 14px;    right: 14px; }
+.corner_top_left     { top: 14px;    left: 14px; }
+.corner_bottom_right { bottom: 14px; right: 14px; }
+.corner_bottom_left  { bottom: 14px; left: 14px; }

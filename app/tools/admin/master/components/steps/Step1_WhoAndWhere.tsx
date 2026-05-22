@@ -19,7 +19,7 @@ export interface Step1Props {
 
 export function Step1_WhoAndWhere(props: Step1Props) {
     return (
-        <StepCard stepNumber={1} title="Who & Where" {...props}>
+        <StepCard stepNumber={1} title="Who, Where & Units" {...props}>
             {props.children}
         </StepCard>
     );

@@ -36,9 +36,14 @@ export interface ProposalSnapshot {
     floorplanId: string;
     currentFirstPmtMonthly: string;
 
-    // Step 2 — only persist custom (admin-added) floorplans; Sanity ones reload from server
+    // Step 1 (merged unit picker) — only persist custom (admin-added) floorplans;
+    // Sanity ones reload from server.
     customFloorplans: Floorplan[];
     aduCompareIds: string[];
+    // Per-unit overrides for ADU type / beds / baths, keyed by floorplan id.
+    aduTypeByUnitId?: Record<string, "detached" | "attached" | "garage">;
+    bedsByUnitId?: Record<string, number>;
+    bathsByUnitId?: Record<string, number>;
 
     // Investment model (Step 3, 4, 6)
     defaults: Defaults;
@@ -78,6 +83,19 @@ export interface ProposalSnapshot {
      *  `aduId` when this field is absent. */
     proposalPaymentSchedulesByAduId?: Record<string, ProposalPaymentSchedule>;
 
+    /** Pipedrive linkage — populated when the rep links this proposal to a
+     *  Pipedrive person/deal from Step 1. Used to auto-post a note back to
+     *  the CRM whenever the proposal is saved. Both nullable; either can
+     *  be present without the other. */
+    pipedrivePersonId?: string | null;
+    pipedriveDealId?: string | null;
+
+    /** Manual agreement exclusions — one per line. Stored per-proposal so the
+     *  same line doesn't ghost across every agreement (the previous design
+     *  kept this in browser-global localStorage). Optional for back-compat
+     *  with snapshots saved before this field existed. */
+    agreementExclusions?: string;
+
     // Step status
     activeStep: number;
     doneSteps: number[];
@@ -111,6 +129,11 @@ export function normalizeAddress(raw: string): string {
 
 // ── Storage CRUD ─────────────────────────────────────────────────────────────
 
+/** Cap the number of proposals we keep in the localStorage mirror. The DB is
+ *  the source of truth; LS is just a fast-path cache for the most-recently
+ *  edited entries. Past this cap, oldest entries are evicted on every write. */
+const MAX_LS_PROPOSALS = 10;
+
 function readStore(storageKey: string): Record<string, ProposalSnapshot> {
     if (typeof window === "undefined") return {};
     try {
@@ -124,9 +147,49 @@ function readStore(storageKey: string): Record<string, ProposalSnapshot> {
     }
 }
 
-function writeStore(storageKey: string, store: Record<string, ProposalSnapshot>): void {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(storageKey, JSON.stringify(store));
+/** Quota-safe write. Trims the store to MAX_LS_PROPOSALS by oldest-first
+ *  eviction, and if the resulting payload still won't fit (large rentcast
+ *  blob etc.), evicts further until it succeeds. Returns true on success.
+ *
+ *  Returns false (instead of throwing) when the cache is fundamentally
+ *  unwritable — the DB is the source of truth, so a missed LS write is
+ *  not a data-loss event. */
+function writeStore(storageKey: string, store: Record<string, ProposalSnapshot>): boolean {
+    if (typeof window === "undefined") return false;
+
+    // Hard cap: trim by ascending savedAt (oldest first).
+    let entries = Object.entries(store);
+    if (entries.length > MAX_LS_PROPOSALS) {
+        entries.sort((a, b) => (a[1].savedAt < b[1].savedAt ? -1 : 1));
+        entries = entries.slice(entries.length - MAX_LS_PROPOSALS);
+    }
+    // Always order newest-first so the next eviction loop pops the oldest.
+    entries.sort((a, b) => (a[1].savedAt < b[1].savedAt ? 1 : -1));
+
+    // Try to write; on QuotaExceededError, drop the oldest entry and retry.
+    // Bail after a handful of attempts to avoid an infinite loop on a totally
+    // saturated origin.
+    let attempts = 0;
+    while (attempts < MAX_LS_PROPOSALS + 2) {
+        const payload: Record<string, ProposalSnapshot> = {};
+        for (const [k, v] of entries) payload[k] = v;
+        try {
+            window.localStorage.setItem(storageKey, JSON.stringify(payload));
+            return true;
+        } catch (err) {
+            // Best-effort detect quota errors across browsers — DOMException
+            // with .name === "QuotaExceededError" (or code 22 / 1014). Any
+            // other failure is also treated as "give up on LS for this write".
+            attempts++;
+            if (entries.length === 0) {
+                console.warn(`[proposalSnapshot] writeStore gave up after quota errors`, err);
+                return false;
+            }
+            // Drop the oldest entry (last in the newest-first array).
+            entries.pop();
+        }
+    }
+    return false;
 }
 
 function listFrom(storageKey: string): ProposalIndexEntry[] {
@@ -155,21 +218,24 @@ export function hasProposal(addressKey: string): boolean {
     return getProposal(addressKey) !== null;
 }
 
-export function saveProposal(snapshot: ProposalSnapshot): void {
+/** Save a proposal. The DB is the source of truth — the server upsert kicks
+ *  off first so a localStorage quota error can never prevent persistence.
+ *  Returns the awaitable server promise so callers can show "saving… → saved"
+ *  based on server reality. The LS write is best-effort + quota-safe. */
+export function saveProposal(snapshot: ProposalSnapshot): Promise<void> {
+    const serverPromise = serverUpsertProposal(snapshot, "SAVED");
     const store = readStore(PROPOSALS_STORAGE_KEY);
     store[snapshot.addressKey] = snapshot;
     writeStore(PROPOSALS_STORAGE_KEY, store);
-    // Shadow-write to the server (fire-and-forget). The UI keeps its
-    // instant-feeling localStorage write path; the server gains durability +
-    // cross-device access without blocking the user.
-    void serverUpsertProposal(snapshot, "SAVED");
+    return serverPromise;
 }
 
-export function deleteProposal(addressKey: string): void {
+export function deleteProposal(addressKey: string): Promise<void> {
+    const serverPromise = serverDeleteProposal(addressKey, "SAVED");
     const store = readStore(PROPOSALS_STORAGE_KEY);
     delete store[addressKey];
     writeStore(PROPOSALS_STORAGE_KEY, store);
-    void serverDeleteProposal(addressKey, "SAVED");
+    return serverPromise;
 }
 
 // ── Drafts (autosaved) ───────────────────────────────────────────────────────
@@ -186,18 +252,22 @@ export function hasDraft(addressKey: string): boolean {
     return getDraft(addressKey) !== null;
 }
 
-export function saveDraft(snapshot: ProposalSnapshot): void {
+/** Same shape as saveProposal — server-first, LS-best-effort. Returns the
+ *  server promise so the autosave UI can show real persistence status. */
+export function saveDraft(snapshot: ProposalSnapshot): Promise<void> {
+    const serverPromise = serverUpsertProposal(snapshot, "DRAFT");
     const store = readStore(DRAFTS_STORAGE_KEY);
     store[snapshot.addressKey] = snapshot;
     writeStore(DRAFTS_STORAGE_KEY, store);
-    void serverUpsertProposal(snapshot, "DRAFT");
+    return serverPromise;
 }
 
-export function deleteDraft(addressKey: string): void {
+export function deleteDraft(addressKey: string): Promise<void> {
+    const serverPromise = serverDeleteProposal(addressKey, "DRAFT");
     const store = readStore(DRAFTS_STORAGE_KEY);
     delete store[addressKey];
     writeStore(DRAFTS_STORAGE_KEY, store);
-    void serverDeleteProposal(addressKey, "DRAFT");
+    return serverPromise;
 }
 
 // ── Companion-key (panel-owned) localStorage helpers ─────────────────────────
@@ -239,16 +309,17 @@ async function serverUpsertProposal(
     status: ServerStatus
 ): Promise<void> {
     if (typeof window === "undefined") return;
-    try {
-        await fetch(`/api/admin/proposals?status=${status}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(snapshot),
-        });
-    } catch (err) {
-        // Silent — localStorage already has the data. Network failures don't
-        // block the UI; the next save will retry.
-        console.warn(`[proposalSnapshot] server upsert (${status}) failed`, err);
+    // Throws on network errors AND on non-2xx server responses so callers
+    // can surface "saving… → saved/error". Callers that don't care can
+    // .catch() the promise — see `void saveDraft(snap).catch(...)` callsites.
+    const res = await fetch(`/api/admin/proposals?status=${status}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(snapshot),
+    });
+    if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Server save failed (${res.status})${text ? `: ${text}` : ""}`);
     }
 }
 

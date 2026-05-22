@@ -19,7 +19,7 @@ export interface Step4Props {
 
 export function Step4_Discounts(props: Step4Props) {
     return (
-        <StepCard stepNumber={4} title="Discounts" {...props}>
+        <StepCard stepNumber={3} title="Discounts" {...props}>
             {props.children}
         </StepCard>
     );

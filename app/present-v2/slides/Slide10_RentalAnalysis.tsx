@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { AduTypeBadge } from "../_components/AduTypeBadge";
 import { proxiedImage } from "@/lib/cloudinary";
 import s from "./Slide10.module.css";
 
@@ -47,7 +48,7 @@ function cityFromAddress(addr: string) {
 }
 
 export function Slide10_RentalAnalysis() {
-    const { comparedUnitIds, floorplans, rentalComps, featuredRentals, rentByUnitId, customerName, propertyAddress, currentSlide, isPrintMode } = usePresentationStore();
+    const { comparedUnitIds, floorplans, rentalComps, featuredRentals, rentByUnitId, customerName, propertyAddress, currentSlide, isPrintMode, aduType, aduTypeByUnitId } = usePresentationStore();
     const active = currentSlide === 10 || isPrintMode;
 
     const comparedUnits = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
@@ -172,6 +173,11 @@ export function Slide10_RentalAnalysis() {
                             const rent = rentByUnitId[fp._id] ?? 0;
                             return (
                                 <div key={fp._id} className={s.rentHeroCard}>
+                                    <AduTypeBadge
+                                        type={aduTypeByUnitId?.[fp._id] ?? aduType}
+                                        variant="light"
+                                        corner="top-right"
+                                    />
                                     <span className={s.rentEyebrow}>The Plan</span>
                                     <div className={s.rentUnitName}>{fp.name}</div>
                                     {fp.sqft && <div className={s.rentSqft}>{fp.sqft.toLocaleString()} sqft</div>}

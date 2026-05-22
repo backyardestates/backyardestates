@@ -1,12 +1,19 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import mammoth from "mammoth";
 import { generateAgreement, triggerDownload } from "@/lib/agreement/generateAgreement";
-import type { AgreementTemplateData } from "@/lib/agreement/buildAgreementData";
+import {
+    buildAgreementData,
+    type AgreementBuildInput,
+    type AgreementTemplateData,
+} from "@/lib/agreement/buildAgreementData";
 import s from "./AgreementPreviewClient.module.css";
 
-const HANDOFF_KEY = "be_agreement_preview_data_v1";
+const HANDOFF_KEY = "be_agreement_preview_input_v2";
+// Legacy v1 handoff was the resolved AgreementTemplateData. Read it for
+// backward compatibility if a stale handoff exists in localStorage.
+const LEGACY_HANDOFF_KEY = "be_agreement_preview_data_v1";
 
 // ── Post-process mammoth's HTML to match the original document's layout ───
 //
@@ -62,11 +69,9 @@ function postProcessHtml(html: string): string {
         const subitem = trimmed.match(/^([a-z])\.\s/i);
         if (subitem) {
             p.classList.add("agreement-subitem");
-            // Replace the tab character with two non-breaking spaces so the
-            // letter and text are separated visually even after editing.
             const first = p.firstChild;
             if (first && first.nodeType === Node.TEXT_NODE) {
-                first.textContent = (first.textContent ?? "").replace(/^([a-z])\.\t+/i, "$1.  ");
+                first.textContent = (first.textContent ?? "").replace(/^([a-z])\.\t+/i, "$1.  ");
             }
             continue;
         }
@@ -76,9 +81,6 @@ function postProcessHtml(html: string): string {
 }
 
 function isAllBold(p: HTMLParagraphElement): boolean {
-    // The paragraph is "fully bold" if every visible text node lives inside a
-    // <strong>/<b> ancestor — i.e. removing all <strong>/<b> elements would
-    // leave only whitespace.
     const clone = p.cloneNode(true) as HTMLElement;
     clone.querySelectorAll("strong, b").forEach((n) => n.remove());
     return clone.textContent?.trim().length === 0;
@@ -98,32 +100,69 @@ export function AgreementPreviewClient() {
     const docxBlobRef = useRef<Blob | null>(null);
     const editorRef = useRef<HTMLDivElement | null>(null);
 
+    /** The full rebuild inputs handed off by the admin tab. Null when running
+     *  on the legacy v1 handoff (no rebuild possible — switcher hidden). */
+    const [input, setInput] = useState<AgreementBuildInput | null>(null);
+    /** Currently-active compared unit. Defaults to the admin's `selectedAduId`
+     *  in the handoff, falls back to the first compared unit with a schedule. */
+    const [selectedAduId, setSelectedAduId] = useState<string | null>(null);
+
+    // Snapshot the comparable-unit options for the dropdown. Only units that
+    // actually have a payment schedule are eligible — otherwise the agreement
+    // would have no contract total to base itself on.
+    const switchableUnits = useMemo(() => {
+        if (!input) return [];
+        const schedules = input.proposalPaymentSchedulesByAduId ?? {};
+        return (input.comparedUnitIds ?? [])
+            .map((id) => {
+                const fp = input.floorplans.find((f) => f._id === id);
+                const sched = schedules[id];
+                if (!fp || !sched) return null;
+                return { id, name: fp.name, sqft: fp.sqft, total: sched.totalPrice };
+            })
+            .filter((u): u is { id: string; name: string; sqft: number; total: number } => u != null);
+    }, [input]);
+
+    // ── Initial load: read handoff, parse, render once ────────────────────
     useEffect(() => {
         let cancelled = false;
         (async () => {
             try {
-                // ── Step 1: read handoff data the admin tab wrote before opening this one
                 const raw = window.localStorage.getItem(HANDOFF_KEY);
-                if (!raw) {
+                if (raw) {
+                    let parsed: AgreementBuildInput;
+                    try {
+                        parsed = JSON.parse(raw) as AgreementBuildInput;
+                    } catch {
+                        throw new Error("Proposal data is malformed.");
+                    }
+                    if (cancelled) return;
+                    setInput(parsed);
+                    setSelectedAduId(
+                        parsed.selectedAduId ??
+                            (parsed.comparedUnitIds ?? []).find(
+                                (id) => parsed.proposalPaymentSchedulesByAduId?.[id]
+                            ) ??
+                            null
+                    );
+                    return; // the effect below will render once `input` + `selectedAduId` are set
+                }
+
+                // Backward compat: legacy v1 handoff was the resolved template
+                // data, not the rebuild inputs. Render it once and don't show
+                // the switcher.
+                const legacyRaw = window.localStorage.getItem(LEGACY_HANDOFF_KEY);
+                if (!legacyRaw) {
                     throw new Error(
                         "No proposal data found. Open this page from the admin tool's 'Edit Agreement' button — that's what passes the data in."
                     );
                 }
-                let parsed: AgreementTemplateData;
-                try {
-                    parsed = JSON.parse(raw) as AgreementTemplateData;
-                } catch {
-                    throw new Error("Proposal data is malformed.");
-                }
+                const legacyParsed = JSON.parse(legacyRaw) as AgreementTemplateData;
                 if (cancelled) return;
-                setData(parsed);
-
-                // ── Step 2: generate the populated .docx blob
-                const blob = await generateAgreement(parsed);
+                setData(legacyParsed);
+                const blob = await generateAgreement(legacyParsed);
                 if (cancelled) return;
                 docxBlobRef.current = blob;
-
-                // ── Step 3: convert the populated .docx → HTML via mammoth
                 const arrayBuffer = await blob.arrayBuffer();
                 const result = await mammoth.convertToHtml({ arrayBuffer });
                 if (cancelled) return;
@@ -137,28 +176,55 @@ export function AgreementPreviewClient() {
                 });
             }
         })();
-        return () => {
-            cancelled = true;
-        };
+        return () => { cancelled = true; };
     }, []);
 
+    // ── Rebuild whenever the selected unit changes ────────────────────────
+    useEffect(() => {
+        if (!input) return;
+        let cancelled = false;
+        setPhase({ state: "loading" });
+        (async () => {
+            try {
+                const built = buildAgreementData({ ...input, selectedAduId });
+                if (cancelled) return;
+                setData(built);
+                const blob = await generateAgreement(built);
+                if (cancelled) return;
+                docxBlobRef.current = blob;
+                const arrayBuffer = await blob.arrayBuffer();
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                if (cancelled) return;
+                setHtml(postProcessHtml(result.value));
+                setPhase({ state: "ready" });
+            } catch (err) {
+                if (cancelled) return;
+                setPhase({
+                    state: "error",
+                    message: err instanceof Error ? err.message : String(err),
+                });
+            }
+        })();
+        return () => { cancelled = true; };
+    }, [input, selectedAduId]);
+
     function handlePrint() {
-        // Browser print uses the @media print rules in the CSS module to
-        // hide the toolbar and render the page in a print-friendly layout.
-        // The user picks "Save as PDF" in the dialog.
         window.print();
     }
 
     function handleDownloadDocx() {
         if (!docxBlobRef.current || !data) return;
         const lastName = data.customerLastName || "Customer";
+        const unitSuffix = data.aduName && data.aduName !== "—"
+            ? `-${data.aduName.replace(/[^a-z0-9]+/gi, "-")}`
+            : "";
         const safeAddress = data.propertyAddress
             .replace(/[^a-z0-9]+/gi, "-")
             .replace(/^-+|-+$/g, "")
             .slice(0, 60) || "proposal";
         triggerDownload(
             docxBlobRef.current,
-            `BackyardEstates-Agreement-${lastName}-${safeAddress}.docx`
+            `BackyardEstates-Agreement-${lastName}-${safeAddress}${unitSuffix}.docx`
         );
     }
 
@@ -181,24 +247,53 @@ export function AgreementPreviewClient() {
                     )}
                     <span className={s.status}>{statusText()}</span>
                 </div>
+
                 <div className={s.actions}>
+                    {/* Unit switcher — visible whenever the rebuild inputs are
+                        available and there's more than one compared unit. */}
+                    {switchableUnits.length > 1 && (
+                        <label className={s.unitSwitch}>
+                            <span className={s.unitSwitchLabel}>Based on</span>
+                            <select
+                                className={s.unitSwitchSelect}
+                                value={selectedAduId ?? ""}
+                                onChange={(e) => setSelectedAduId(e.target.value || null)}
+                                disabled={phase.state === "loading"}
+                                title="Switch which compared unit drives the agreement — totals and exclusions update accordingly"
+                            >
+                                {switchableUnits.map((u) => (
+                                    <option key={u.id} value={u.id}>
+                                        {u.name}
+                                        {u.sqft ? ` — ${u.sqft.toLocaleString()} sqft` : ""}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    )}
+
                     <button
                         type="button"
                         className={s.btn}
                         onClick={handleDownloadDocx}
                         disabled={phase.state !== "ready"}
-                        title="Download the original .docx (your inline edits are not included)"
+                        title="Downloads the editable Word document generated from your proposal data. Inline edits made in this preview are NOT included — use this when you want to keep editing in Microsoft Word."
                     >
-                        Download DOCX
+                        <span className={s.btnLabel}>
+                            <span>Download .docx</span>
+                            <span className={s.btnHint}>editable in Word · no inline edits</span>
+                        </span>
                     </button>
                     <button
                         type="button"
                         className={`${s.btn} ${s.btnPrimary}`}
                         onClick={handlePrint}
                         disabled={phase.state !== "ready"}
-                        title="Open the print dialog with your edits applied — choose 'Save as PDF'"
+                        title="Opens the browser print dialog so you can save the agreement as a PDF. Any inline edits you've made in this preview ARE included — use this for the final version to send the customer."
                     >
-                        Print / Save as PDF
+                        <span className={s.btnLabel}>
+                            <span>Save as PDF</span>
+                            <span className={s.btnHint}>final · includes your inline edits</span>
+                        </span>
                     </button>
                 </div>
             </div>

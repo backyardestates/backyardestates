@@ -4,6 +4,9 @@ generator client {
 }
 
 datasource db {
+    // Prisma 7 forbids url/directUrl here — they live in prisma.config.ts.
+    // Runtime URL is resolved in lib/prisma.ts (adapter for postgres://, or
+    // accelerateUrl for prisma+postgres://).
     provider = "postgresql"
 }
 
@@ -747,6 +750,12 @@ model Proposal {
     pdfUrl    String?
 
     notes String?
+
+    // Pipedrive link — populated when the rep links this proposal to a
+    // Pipedrive person and/or deal from Step 1. Used to auto-post a note
+    // back to that person/deal whenever the proposal is saved.
+    pipedrivePersonId String?
+    pipedriveDealId   String?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

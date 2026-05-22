@@ -4,17 +4,17 @@ import React from "react";
 import styles from "./StepSidebar.module.css";
 
 const STEPS = [
-    { n: 1, label: "Who & Where",       kind: "data"   as const },
-    { n: 2, label: "Choose Units",      kind: "data"   as const },
-    { n: 3, label: "Estimate the Job",  kind: "data"   as const },
-    { n: 4, label: "Discounts",         kind: "data"   as const },
-    { n: 5, label: "Rental Market",     kind: "review" as const },
-    { n: 6, label: "Review & Generate", kind: "review" as const },
-    { n: 7, label: "Feature Builds",    kind: "data"   as const },
-    { n: 8, label: "Feature Stories",   kind: "data"   as const },
-    { n: 9, label: "Feature Rentals",   kind: "data"   as const },
-    { n: 10, label: "Slide Order",      kind: "data"   as const },
-    { n: 11, label: "Project Timeline", kind: "data"   as const },
+    { n: 1,  label: "Who, Where & Units", kind: "data"   as const },
+    { n: 2,  label: "Estimate the Job",   kind: "data"   as const },
+    { n: 3,  label: "Discounts",          kind: "data"   as const },
+    { n: 4,  label: "Rental Market",      kind: "review" as const },
+    { n: 5,  label: "Review & Generate",  kind: "review" as const },
+    { n: 6,  label: "Feature Builds",     kind: "data"   as const },
+    { n: 7,  label: "Feature Stories",    kind: "data"   as const },
+    { n: 8,  label: "Feature Rentals",    kind: "data"   as const },
+    { n: 9,  label: "Slide Order",        kind: "data"   as const },
+    { n: 10, label: "Project Timeline",   kind: "data"   as const },
+    { n: 11, label: "Payment Schedule",   kind: "data"   as const },
 ];
 
 export function StepSidebar({

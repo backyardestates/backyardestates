@@ -2,6 +2,7 @@
 
 import React from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { AduTypeBadge } from "../_components/AduTypeBadge";
 import s from "./Slide8.module.css";
 
 function fmt$(n: number) {
@@ -44,7 +45,7 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export function Slide8_ROIComparison() {
-    const { scenarios, comparedUnitIds, floorplans, customerName, propertyAddress } = usePresentationStore();
+    const { scenarios, comparedUnitIds, floorplans, customerName, propertyAddress, aduType, aduTypeByUnitId } = usePresentationStore();
 
     const aduScenarios = scenarios.filter((sc) => sc.kind === "adu");
 
@@ -151,8 +152,14 @@ export function Slide8_ROIComparison() {
                     const titlePrefix = lastSpace > 0 ? baseName.slice(0, lastSpace) : "";
                     const titleAccent = lastSpace > 0 ? baseName.slice(lastSpace + 1) : baseName;
 
+                    const unitId = fpId(sc.key);
                     return (
                         <div key={sc.key} className={s.card}>
+                            <AduTypeBadge
+                                type={aduTypeByUnitId?.[unitId] ?? aduType}
+                                variant="dark"
+                                corner="top-right"
+                            />
                             <div className={s.cardTitle}>
                                 The {titlePrefix && <>{titlePrefix} </>}
                                 <span className={s.cardTitleNum}>{titleAccent}</span>

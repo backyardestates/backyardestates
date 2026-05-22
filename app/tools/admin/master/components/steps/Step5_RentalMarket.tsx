@@ -19,7 +19,7 @@ export interface Step5Props {
 
 export function Step5_RentalMarket(props: Step5Props) {
     return (
-        <StepCard stepNumber={5} title="Rental Market" {...props}>
+        <StepCard stepNumber={4} title="Rental Market" {...props}>
             {props.children}
         </StepCard>
     );

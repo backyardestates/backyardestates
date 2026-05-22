@@ -19,7 +19,7 @@ export interface Step12Props {
 
 export function Step12_PaymentSchedule(props: Step12Props) {
     return (
-        <StepCard stepNumber={12} title="Payment Schedule" {...props}>
+        <StepCard stepNumber={11} title="Payment Schedule" {...props}>
             {props.children}
         </StepCard>
     );

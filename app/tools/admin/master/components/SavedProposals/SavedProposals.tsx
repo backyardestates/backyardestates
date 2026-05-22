@@ -61,13 +61,13 @@ export function SavedProposals({ open, onClose, onLoadProposal, onLoadDraft }: P
 
     function handleDeleteProposal(addressKey: string, address: string) {
         if (!window.confirm(`Delete saved proposal for "${address}"? This cannot be undone.`)) return;
-        deleteProposal(addressKey);
+        void deleteProposal(addressKey);
         refresh();
     }
 
     function handleDeleteDraft(addressKey: string, address: string) {
         if (!window.confirm(`Delete draft for "${address}"? This cannot be undone.`)) return;
-        deleteDraft(addressKey);
+        void deleteDraft(addressKey);
         refresh();
     }
 
@@ -90,8 +90,8 @@ export function SavedProposals({ open, onClose, onLoadProposal, onLoadDraft }: P
             );
             if (!ok) return;
         }
-        saveProposal({ ...snap, savedAt: new Date().toISOString() });
-        deleteDraft(addressKey);
+        void saveProposal({ ...snap, savedAt: new Date().toISOString() });
+        void deleteDraft(addressKey);
         refresh();
     }
 

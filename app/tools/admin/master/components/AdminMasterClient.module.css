@@ -596,3 +596,14 @@
 .addressField {
     grid-column: 1 / -1;
 }
+
+/* Loading state shown while a code-split step panel is being fetched. */
+.panelLoading {
+    min-height: 200px;
+    display: grid;
+    place-items: center;
+    color: rgba(20, 48, 47, 0.45);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.02em;
+}

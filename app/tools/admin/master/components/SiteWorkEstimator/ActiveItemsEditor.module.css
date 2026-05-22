@@ -1,0 +1,445 @@
+/* Active items editor — replaces the read-only ActiveList in SiteWorkEstimator.
+   Each row is clickable into an inline edit / remove panel with an Apply-to
+   chip picker that mirrors the SiteWorkSearch flow. */
+
+.wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.empty {
+    padding: 32px 16px;
+    color: rgba(20, 48, 47, 0.55);
+    font-size: 13px;
+    font-style: italic;
+    text-align: center;
+}
+
+/* ── Header + rows ───────────────────────────────────────────────────────── */
+
+.head,
+.row {
+    display: grid;
+    grid-template-columns:
+        minmax(180px, 2fr)
+        minmax(56px, 0.6fr)
+        minmax(56px, 0.6fr)
+        minmax(86px, 0.9fr)
+        minmax(64px, 0.7fr)
+        minmax(86px, 0.9fr)
+        minmax(96px, 1fr)
+        minmax(132px, auto);
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+}
+
+.head {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.20em;
+    color: rgba(20, 48, 47, 0.55);
+    font-weight: 700;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.20);
+    padding-bottom: 8px;
+    margin-bottom: 2px;
+}
+
+.row {
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.18);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #14302F;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.row:hover {
+    border-color: rgba(184, 149, 74, 0.40);
+}
+
+.rowOverridden {
+    box-shadow: inset 3px 0 0 #B8954A;
+}
+
+.rowExpanded {
+    border-color: #B8954A;
+    background: rgba(184, 149, 74, 0.06);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.itemCell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.itemLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #14302F;
+    line-height: 1.2;
+}
+
+.customBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    background: rgba(184, 149, 74, 0.18);
+    border: 1px solid rgba(184, 149, 74, 0.35);
+    color: #8A6B14;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.itemCat {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(20, 48, 47, 0.55);
+    font-weight: 500;
+}
+
+.num {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.dim {
+    color: rgba(20, 48, 47, 0.55);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    text-align: center;
+}
+
+.total {
+    font-weight: 700;
+    color: #14302F;
+}
+
+/* ── Row action buttons ──────────────────────────────────────────────────── */
+
+.actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.editBtn,
+.removeBtn {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.editBtn {
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.40);
+    color: #14302F;
+}
+
+.editBtn:hover {
+    background: rgba(184, 149, 74, 0.10);
+    border-color: #B8954A;
+}
+
+.removeBtn {
+    background: transparent;
+    border: 1px solid rgba(184, 50, 60, 0.35);
+    color: #B8503E;
+}
+
+.removeBtn:hover {
+    background: #FCEBE7;
+    border-color: #B8503E;
+}
+
+/* ── Inline editor (expanded row) ────────────────────────────────────────── */
+
+.inlineEditor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px 16px;
+    background: rgba(184, 149, 74, 0.06);
+    border: 1px solid #B8954A;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    margin-bottom: 6px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fieldLabel {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: #B8954A;
+    font-weight: 700;
+}
+
+.fieldHint {
+    font-size: 11px;
+    color: #8A3A2E;
+    font-style: italic;
+}
+
+/* ── Cost input ──────────────────────────────────────────────────────────── */
+
+.costInputWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 240px;
+}
+
+.costPrefix {
+    position: absolute;
+    left: 12px;
+    font-size: 15px;
+    color: rgba(20, 48, 47, 0.55);
+    font-weight: 600;
+    pointer-events: none;
+    line-height: 1;
+}
+
+.costInput {
+    flex: 1;
+    padding: 9px 12px 9px 26px;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.30);
+    border-radius: 8px;
+    font-size: 15px;
+    color: #14302F;
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.costInput:focus {
+    outline: none;
+    border-color: #B8954A;
+    box-shadow: 0 0 0 3px rgba(184, 149, 74, 0.15);
+}
+
+.costInput::-webkit-outer-spin-button,
+.costInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.costInput[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* ── Apply-to chips ──────────────────────────────────────────────────────── */
+
+.chipRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.30);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #14302F;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.chip:hover {
+    border-color: #B8954A;
+    background: rgba(184, 149, 74, 0.06);
+}
+
+.chipActive {
+    background: #14302F;
+    border-color: #14302F;
+    color: #F7F2E8;
+}
+
+.chipActive:hover {
+    background: #1F4948;
+    border-color: #1F4948;
+}
+
+.chipPresent {
+    background: rgba(184, 149, 74, 0.10);
+    border-color: rgba(184, 149, 74, 0.55);
+    color: #8A6B14;
+}
+
+.chipPresent:hover {
+    background: rgba(184, 149, 74, 0.18);
+    border-color: #B8954A;
+    color: #14302F;
+}
+
+.chipCheck {
+    margin-right: 4px;
+    font-size: 11px;
+    color: #B8954A;
+    line-height: 1;
+}
+
+.chipActive .chipCheck {
+    color: #DBB668;
+}
+
+/* ── Remove notice ───────────────────────────────────────────────────────── */
+
+.removeNotice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 9px 12px;
+    background: #FCEBE7;
+    border: 1px solid rgba(184, 50, 60, 0.30);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #8A3A2E;
+    line-height: 1.4;
+}
+
+.removeNoticeIcon {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #B8503E;
+    color: #FBF7EE;
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    margin-top: 1px;
+}
+
+/* ── Editor footer ───────────────────────────────────────────────────────── */
+
+.editorActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 4px;
+}
+
+.cancelBtn {
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid rgba(20, 48, 47, 0.20);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(20, 48, 47, 0.70);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.cancelBtn:hover {
+    background: rgba(20, 48, 47, 0.05);
+    border-color: rgba(20, 48, 47, 0.40);
+    color: #14302F;
+}
+
+.saveBtn {
+    padding: 8px 16px;
+    background: #14302F;
+    color: #F7F2E8;
+    border: 1px solid #14302F;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease;
+}
+
+.saveBtn:hover:not(:disabled) {
+    background: #1F4948;
+}
+
+.saveBtn:disabled {
+    background: rgba(184, 149, 74, 0.30);
+    border-color: rgba(184, 149, 74, 0.40);
+    color: rgba(20, 48, 47, 0.50);
+    cursor: not-allowed;
+}
+
+.removeConfirmBtn {
+    padding: 8px 16px;
+    background: #B8503E;
+    color: #FBF7EE;
+    border: 1px solid #B8503E;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease;
+}
+
+.removeConfirmBtn:hover:not(:disabled) {
+    background: #9E4231;
+    border-color: #9E4231;
+}
+
+.removeConfirmBtn:disabled {
+    background: rgba(184, 50, 60, 0.30);
+    border-color: rgba(184, 50, 60, 0.30);
+    color: rgba(255, 255, 255, 0.65);
+    cursor: not-allowed;
+}
+
+/* ── Grand total ─────────────────────────────────────────────────────────── */
+
+.grandTotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: #14302F;
+    color: #F7F2E8;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.grandTotal span:last-child {
+    font-size: 18px;
+    color: #DBB668;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+}

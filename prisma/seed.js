@@ -1,11 +1,22 @@
-require("dotenv/config");
+// Load .env then .env.local (Next.js convention) so the seed picks up the
+// same vars as the app — Prisma CLI may spawn this in a fresh process where
+// .env.local wasn't already loaded.
+require("dotenv").config({ path: ".env" });
+require("dotenv").config({ path: ".env.local", override: true });
 
 const { PrismaClient } = require("@prisma/client");
 const { Pool } = require("pg");
 const { PrismaPg } = require("@prisma/adapter-pg");
 
+// Seed runs against a direct Postgres connection — Accelerate's HTTP proxy
+// (prisma+postgres://) can't be used with the pg adapter. Prefer DIRECT_URL
+// and fall back to DATABASE_URL for local setups not yet on Accelerate.
+const seedConnectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
+if (!seedConnectionString) {
+    throw new Error("Seed needs DATABASE_URL (or DIRECT_URL when using Accelerate) in .env.local");
+}
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: seedConnectionString,
 });
 
 const adapter = new PrismaPg(pool);

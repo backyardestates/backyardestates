@@ -1,0 +1,325 @@
+/* Step 1 redesign — three clean sections (Customer / Property / Units).
+ *
+ * Layout principles from UI/UX Pro Max applied:
+ *   • Section spacing hierarchy: 32px between sections, 16px between fields
+ *   • Field grouping: clearly-labeled section headers with eyebrow caps
+ *   • Visual hierarchy: size + weight + spacing, not color
+ *   • Whitespace balance: generous breathing room between groups
+ *   • One primary CTA only: "Fetch market data" sits in the Property header
+ *   • Progressive disclosure: per-unit customization only shows when units picked
+ *   • Tap targets ≥40px height; 8px+ gaps between adjacent controls
+ *   • Consistent rounded-corner card aesthetic matching the existing tool */
+
+.root {
+    --s-bg: #ffffff;
+    --s-surface: var(--color-brand-beige-subtle);
+    --s-text: var(--color-brand-dark-blue);
+    --s-text-mute: rgba(20, 48, 47, 0.65);
+    --s-text-faint: rgba(20, 48, 47, 0.45);
+    --s-border: var(--color-brand-beige-A040);
+    --s-border-soft: var(--color-brand-beige-A020);
+    --s-accent: #2a7a52;
+    --s-gold: var(--color-brand-beige, #c9a96e);
+    --s-radius-card: 14px;
+    --s-radius-field: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    font-family: 'Roboto', system-ui, sans-serif;
+    color: var(--s-text);
+}
+
+/* ── Section ─────────────────────────────────────────────────────────── */
+
+.section {
+    background: var(--s-bg);
+    border: 1px solid var(--s-border-soft);
+    border-radius: var(--s-radius-card);
+    padding: 22px 24px;
+    box-shadow: 0 1px 3px rgba(20, 48, 47, 0.04);
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--s-border-soft);
+}
+
+.sectionLabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--s-text-mute);
+}
+
+.sectionHint {
+    font-size: 12px;
+    color: var(--s-text-faint);
+}
+
+/* ── Field grid ──────────────────────────────────────────────────────── */
+
+.grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 760px) {
+    .grid2col {
+        grid-template-columns: 1fr 1fr;
+    }
+    .grid2col_addressWide :global(.field-address) {
+        grid-column: 1 / -1;
+    }
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--s-text);
+    letter-spacing: 0.02em;
+}
+
+.input,
+.select {
+    height: 40px;
+    padding: 0 12px;
+    background: var(--s-bg);
+    border: 1.5px solid var(--s-border);
+    border-radius: var(--s-radius-field);
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--s-text);
+    transition: border-color 0.12s, box-shadow 0.12s;
+}
+
+.input::placeholder {
+    color: var(--s-text-faint);
+}
+
+.input:focus,
+.select:focus {
+    outline: none;
+    border-color: var(--s-accent);
+    box-shadow: 0 0 0 3px rgba(42, 122, 82, 0.12);
+}
+
+/* Embed currency $ inside a small wrapper so the input itself has no $ sign. */
+.moneyWrap {
+    position: relative;
+}
+
+.moneyPrefix {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: var(--s-text-faint);
+    pointer-events: none;
+}
+
+.moneyWrap .input {
+    padding-left: 24px;
+}
+
+/* ── Chips (motivation, default type) ────────────────────────────────── */
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chip {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--s-border);
+    background: var(--s-bg);
+    color: var(--s-text-mute);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.chip:hover:not(.chipActive) {
+    border-color: var(--s-text-mute);
+    color: var(--s-text);
+}
+
+.chipActive {
+    background: rgba(42, 122, 82, 0.10);
+    border-color: var(--s-accent);
+    color: var(--s-accent);
+}
+
+/* ── Section-header actions ──────────────────────────────────────────── */
+
+.headerAction {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--s-border);
+    background: var(--s-bg);
+    color: var(--s-text);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+    white-space: nowrap;
+}
+
+.headerAction:hover:not(:disabled) {
+    background: var(--s-surface);
+    border-color: var(--s-text-mute);
+}
+
+.headerAction:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.headerActionPrimary {
+    border-color: var(--s-accent);
+    background: rgba(42, 122, 82, 0.10);
+    color: var(--s-accent);
+}
+
+.headerActionPrimary:hover:not(:disabled) {
+    background: rgba(42, 122, 82, 0.18);
+}
+
+/* ── Pipedrive compact strip ─────────────────────────────────────────── */
+
+.pipedriveStrip {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: var(--s-surface);
+    border: 1px dashed var(--s-border-soft);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--s-text-mute);
+}
+
+/* ── Units section — picker + per-unit detail ────────────────────────── */
+
+.defaultTypeWrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.defaultTypeLabel {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--s-text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.subHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 22px 0 10px;
+}
+
+.subHeaderLabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--s-text-faint);
+}
+
+.subHeaderHint {
+    font-size: 11px;
+    color: var(--s-text-faint);
+    font-style: italic;
+}
+
+/* ── Property photo (compact tertiary control) ───────────────────────── */
+
+.photoRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: var(--s-surface);
+    border: 1px dashed var(--s-border-soft);
+    border-radius: 8px;
+    flex-wrap: wrap;
+}
+
+.photoThumb {
+    width: 56px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--s-border);
+}
+
+.photoLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--s-text);
+}
+
+.photoMeta {
+    font-size: 11px;
+    color: var(--s-text-faint);
+    flex: 1;
+    min-width: 120px;
+}
+
+.photoLink,
+.photoLinkDanger {
+    background: transparent;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    color: var(--s-accent);
+}
+
+.photoLink:hover {
+    background: rgba(42, 122, 82, 0.10);
+}
+
+.photoLinkDanger {
+    color: #7a1f1f;
+}
+
+.photoLinkDanger:hover {
+    background: rgba(176, 59, 59, 0.10);
+}
+
+.error {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba(176, 59, 59, 0.08);
+    border: 1px solid rgba(176, 59, 59, 0.32);
+    color: #7a1f1f;
+    font-size: 13px;
+}

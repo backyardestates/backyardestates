@@ -30,9 +30,13 @@ export default async function AdminMasterPage() {
         siteWorkCats,
         discountRows,
     ] = await Promise.all([
-        client.fetch(FLOORPLANS_QUERY),
-        client.fetch(PRESENTER_COMPLETED_PROPERTIES_QUERY),
-        client.fetch(PRESENTER_STORIES_QUERY),
+        // Sanity content rarely changes — cache for 5 min so repeat visits
+        // to the master tool skip the external API round-trip. Admins who
+        // publish new floorplans/stories see the change within 5 minutes
+        // without needing a deploy or manual invalidation.
+        client.fetch(FLOORPLANS_QUERY, {}, { next: { revalidate: 300 } }),
+        client.fetch(PRESENTER_COMPLETED_PROPERTIES_QUERY, {}, { next: { revalidate: 300 } }),
+        client.fetch(PRESENTER_STORIES_QUERY, {}, { next: { revalidate: 300 } }),
         // Catalog defaults — seeded with the code-defined DEFAULTS the first
         // time it runs. New proposals will inherit whatever an admin has saved
         // here; existing proposals keep their own frozen copy.

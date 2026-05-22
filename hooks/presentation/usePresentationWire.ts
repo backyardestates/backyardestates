@@ -28,6 +28,10 @@ interface WireInput {
     propertyPhotoUrl: string | null;
     customerMotivation: CustomerMotivation;
     comparedUnitIds: string[];
+    // Per-unit overrides for ADU type / beds / baths. Empty = use floorplan defaults.
+    aduTypeByUnitId: Record<string, "detached" | "attached" | "garage">;
+    bedsByUnitId: Record<string, number>;
+    bathsByUnitId: Record<string, number>;
     // Full admin floorplan list (Sanity + admin-added custom units). The wire
     // filters out the custom ones and broadcasts them so the presenter can
     // merge them into its floorplans state.
@@ -115,6 +119,9 @@ export function usePresentationWire({
     propertyPhotoUrl,
     customerMotivation,
     comparedUnitIds,
+    aduTypeByUnitId,
+    bedsByUnitId,
+    bathsByUnitId,
     floorplans,
     featuredPropertyIds,
     featuredStoryIds,
@@ -216,6 +223,9 @@ export function usePresentationWire({
             propertyPhotoUrl,
             customerMotivation,
             comparedUnitIds,
+            aduTypeByUnitId,
+            bedsByUnitId,
+            bathsByUnitId,
             customFloorplans,
             featuredPropertyIds,
             featuredStoryIds,
@@ -239,7 +249,7 @@ export function usePresentationWire({
         // Directly broadcast to presenter window — bypasses the fragile Zustand
         // subscription chain which breaks under React StrictMode's double-invoke
         broadcastAdminState(data);
-    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, floorplans, featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder, projectTimeline, proposalPaymentSchedule, proposalPaymentSchedulesByAduId, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId, discountLinesByAduId, discountsCatalog]);
+    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, aduTypeByUnitId, bedsByUnitId, bathsByUnitId, floorplans, featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder, projectTimeline, proposalPaymentSchedule, proposalPaymentSchedulesByAduId, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId, discountLinesByAduId, discountsCatalog]);
 }
 
 export type PresenterVariant = "original" | "v2";

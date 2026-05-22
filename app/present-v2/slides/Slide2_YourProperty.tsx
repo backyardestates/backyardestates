@@ -2,10 +2,21 @@
 
 import React from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { resolveBeds, resolveBaths } from "@/lib/units/resolveUnitSpec";
+import { AduTypeBadge } from "../_components/AduTypeBadge";
 import s from "./Slide2.module.css";
 
 export function Slide2_YourProperty() {
-    const { propertyAddress, aduType, propertyPhotoUrl, floorplans, comparedUnitIds } = usePresentationStore();
+    const {
+        propertyAddress,
+        aduType,
+        aduTypeByUnitId,
+        propertyPhotoUrl,
+        floorplans,
+        comparedUnitIds,
+        bedsByUnitId,
+        bathsByUnitId,
+    } = usePresentationStore();
 
     const aduLabel = aduType
         ? ({ detached: "Detached ADU", attached: "Attached ADU", garage: "Garage Conversion" }[aduType] ?? aduType)
@@ -61,23 +72,34 @@ export function Slide2_YourProperty() {
                     <div className={s.unitGrid}>
                         {comparedUnits.length > 0 ? comparedUnits.map((fp, idx) => (
                             <div key={fp._id} className={s.unitCard}>
+                                <AduTypeBadge
+                                    type={aduTypeByUnitId?.[fp._id] ?? aduType}
+                                    variant="light"
+                                    corner="top-right"
+                                />
                                 <div className={s.unitMeta}>
                                     <div className={s.unitIndex}>Option {String(idx + 1).padStart(2, "0")}</div>
                                     <div className={s.unitName}>The {fp.name}</div>
+                                    {(() => {
+                                        const beds = resolveBeds(fp, bedsByUnitId);
+                                        const baths = resolveBaths(fp, bathsByUnitId);
+                                        return (
                                     <div className={s.unitStats}>
                                         <div className={s.unitStat}>
-                                            <span className={s.unitStatNum}>{fp.bed ?? "—"}</span>
-                                            <span className={s.unitStatLabel}>{fp.bed === 1 ? "bed" : "beds"}</span>
+                                            <span className={s.unitStatNum}>{beds || "—"}</span>
+                                            <span className={s.unitStatLabel}>{beds === 1 ? "bed" : "beds"}</span>
                                         </div>
                                         <div className={s.unitStat}>
-                                            <span className={s.unitStatNum}>{fp.bath ?? "—"}</span>
-                                            <span className={s.unitStatLabel}>{fp.bath === 1 ? "bath" : "baths"}</span>
+                                            <span className={s.unitStatNum}>{baths || "—"}</span>
+                                            <span className={s.unitStatLabel}>{baths === 1 ? "bath" : "baths"}</span>
                                         </div>
                                         <div className={s.unitStat}>
                                             <span className={s.unitStatNum}>{fp.sqft?.toLocaleString() ?? "—"}</span>
                                             <span className={s.unitStatLabel}>sqft</span>
                                         </div>
                                     </div>
+                                        );
+                                    })()}
                                 </div>
                                 <div className={s.unitDrawing}>
                                     {fp.floorPlanUrl ? (

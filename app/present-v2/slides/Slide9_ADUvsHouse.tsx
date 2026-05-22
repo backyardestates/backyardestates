@@ -168,7 +168,7 @@ export function Slide9_ADUvsHouse() {
             <div className={s.tableCard}>
                 <div className={s.thead}>
                     <div className={s.thLabel}>Line Item</div>
-                    <div className={`${s.thCol} ${s.thHouse}`}>$500K House</div>
+                    <div className={`${s.thCol} ${s.thHouse}`}>Your House</div>
                     <div className={`${s.thCol} ${s.thAdu}`}>Your ADU</div>
                 </div>
 

@@ -19,7 +19,7 @@ export interface Step8Props {
 
 export function Step8_FeatureStories(props: Step8Props) {
     return (
-        <StepCard stepNumber={8} title="Feature Stories" {...props}>
+        <StepCard stepNumber={7} title="Feature Stories" {...props}>
             {props.children}
         </StepCard>
     );

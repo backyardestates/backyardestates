@@ -19,7 +19,7 @@ export interface Step6Props {
 
 export function Step6_ReviewAndGenerate(props: Step6Props) {
     return (
-        <StepCard stepNumber={6} title="Review & Generate" {...props}>
+        <StepCard stepNumber={5} title="Review & Generate" {...props}>
             {props.children}
         </StepCard>
     );

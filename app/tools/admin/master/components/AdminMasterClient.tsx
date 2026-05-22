@@ -2,44 +2,99 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import styles from "./AdminMasterClient.module.css";
 import { AddressAutocomplete } from "./address/AddressAutocomplete";
 
 import { AdminHeader } from "../components/AdminHeader/AdminHeader";
-import { DealForm } from "../components/DealForm/DealForm";
+import { Step1Body } from "../components/Step1Body/Step1Body";
 import { StepSidebar } from "../components/StepSidebar/StepSidebar";
 
+// Step wrappers are tiny (just a StepCard + props) so they stay static.
 import { Step1_WhoAndWhere } from "../components/steps/Step1_WhoAndWhere";
+// Step2_ChooseUnits absorbed into Step 1 — kept as an import for now in case
+// other code paths reference it; remove once the renumber is complete.
 import { Step2_ChooseUnits } from "../components/steps/Step2_ChooseUnits";
 import { Step3_EstimateJob } from "../components/steps/Step3_EstimateJob";
 import { Step4_Discounts } from "../components/steps/Step4_Discounts";
 import { Step5_RentalMarket } from "../components/steps/Step5_RentalMarket";
 import { Step6_ReviewAndGenerate } from "../components/steps/Step6_ReviewAndGenerate";
+import { ExclusionsPanel } from "../components/ExclusionsPanel/ExclusionsPanel";
 import { Step7_FeatureBuilds } from "../components/steps/Step7_FeatureBuilds";
 import { Step8_FeatureStories } from "../components/steps/Step8_FeatureStories";
 import { Step9_FeatureRentals } from "../components/steps/Step9_FeatureRentals";
 import { Step10_SlideOrder } from "../components/steps/Step10_SlideOrder";
 import { Step11_Timeline } from "../components/steps/Step11_Timeline";
 import { Step12_PaymentSchedule } from "../components/steps/Step12_PaymentSchedule";
-import { FeaturePropertiesPanel } from "../components/FeaturePropertiesPanel/FeaturePropertiesPanel";
-import { FeatureStoriesPanel } from "../components/FeatureStoriesPanel/FeatureStoriesPanel";
-import { FeatureRentalsPanel } from "../components/FeatureRentalsPanel/FeatureRentalsPanel";
-import { SlideOrderPanel } from "../components/SlideOrderPanel/SlideOrderPanel";
-import { TimelineEditorPanel } from "../components/TimelineEditorPanel/TimelineEditorPanel";
-import { PaymentSchedulePanel } from "../components/PaymentSchedulePanel/PaymentSchedulePanel";
+
 import { CatalogDriftBanner } from "../components/CatalogDriftBanner/CatalogDriftBanner";
 import { detectCatalogDrift, type CatalogDriftReport } from "@/lib/investment/catalogDrift";
+import { DraftBanner } from "../components/DraftBanner/DraftBanner";
+import { DiffPanel } from "../components/DraftBanner/DiffPanel";
+import { diffSnapshots } from "@/lib/proposalDiff";
 
-import { InvestmentControls } from "../components/Investment/InvestmentControls";
-import { InvestmentCompareSummary } from "../components/Investment/InvestmentCompareSummary";
-import { ModelTable } from "../components/Investment/ModelTable";
-import { SiteWorkPanel } from "../components/SiteWorkEstimator/SiteWorkPanel";
-import { DiscountsPanel } from "../components/DiscountsPanel/DiscountsPanel";
-import { RentalsPanel } from "../components/RentalsPanel/RentalsPanel";
 import { FinancingTable } from "../components/Financing/FinancingTable";
 
 import sectionStyles from "../components/Investment/InvestmentSection.module.css";
 import tableStyles from "../components/investmentModel/InvestmentModelTable.module.css";
+
+// ── Lazy-loaded heavy panels ─────────────────────────────────────────────
+// Each step's body only mounts when that step is active (see StepCard's
+// `{showBody && children}` gate), so dynamic-import with ssr:false defers
+// the panel's JS until the rep opens that step. Shrinks the initial bundle
+// the master tool ships on first paint.
+const PanelLoading = () => (
+    <div className={styles.panelLoading} aria-live="polite">Loading…</div>
+);
+
+const InvestmentControls = dynamic(
+    () => import("../components/Investment/InvestmentControls").then((m) => m.InvestmentControls),
+    { ssr: false, loading: PanelLoading },
+);
+const InvestmentCompareSummary = dynamic(
+    () => import("../components/Investment/InvestmentCompareSummary").then((m) => m.InvestmentCompareSummary),
+    { ssr: false, loading: PanelLoading },
+);
+const ModelTable = dynamic(
+    () => import("../components/Investment/ModelTable").then((m) => m.ModelTable),
+    { ssr: false, loading: PanelLoading },
+);
+const SiteWorkPanel = dynamic(
+    () => import("../components/SiteWorkEstimator/SiteWorkPanel").then((m) => m.SiteWorkPanel),
+    { ssr: false, loading: PanelLoading },
+);
+const DiscountsPanel = dynamic(
+    () => import("../components/DiscountsPanel/DiscountsPanel").then((m) => m.DiscountsPanel),
+    { ssr: false, loading: PanelLoading },
+);
+const RentalsPanel = dynamic(
+    () => import("../components/RentalsPanel/RentalsPanel").then((m) => m.RentalsPanel),
+    { ssr: false, loading: PanelLoading },
+);
+const FeaturePropertiesPanel = dynamic(
+    () => import("../components/FeaturePropertiesPanel/FeaturePropertiesPanel").then((m) => m.FeaturePropertiesPanel),
+    { ssr: false, loading: PanelLoading },
+);
+const FeatureStoriesPanel = dynamic(
+    () => import("../components/FeatureStoriesPanel/FeatureStoriesPanel").then((m) => m.FeatureStoriesPanel),
+    { ssr: false, loading: PanelLoading },
+);
+const FeatureRentalsPanel = dynamic(
+    () => import("../components/FeatureRentalsPanel/FeatureRentalsPanel").then((m) => m.FeatureRentalsPanel),
+    { ssr: false, loading: PanelLoading },
+);
+const SlideOrderPanel = dynamic(
+    () => import("../components/SlideOrderPanel/SlideOrderPanel").then((m) => m.SlideOrderPanel),
+    { ssr: false, loading: PanelLoading },
+);
+const TimelineEditorPanel = dynamic(
+    () => import("../components/TimelineEditorPanel/TimelineEditorPanel").then((m) => m.TimelineEditorPanel),
+    { ssr: false, loading: PanelLoading },
+);
+const PaymentSchedulePanel = dynamic(
+    () => import("../components/PaymentSchedulePanel/PaymentSchedulePanel").then((m) => m.PaymentSchedulePanel),
+    { ssr: false, loading: PanelLoading },
+);
 
 import type { Floorplan } from "@/lib/rentcast/types";
 import type { SanityProperty, SanityStory, FeaturedRental, ProjectTimeline, CityData } from "@/lib/store/presentationStore";
@@ -113,6 +168,11 @@ export default function AdminMasterClient({
     const [featuredPropertyIds, setFeaturedPropertyIds] = useState<string[]>([]);
     const [featuredStoryIds, setFeaturedStoryIds] = useState<string[]>([]);
     const [featuredRentals, setFeaturedRentals] = useState<FeaturedRental[]>([]);
+
+    // Per-unit overrides for the merged Step 1 — see lib/units/resolveUnitSpec.ts
+    const [aduTypeByUnitId, setAduTypeByUnitId] = useState<Record<string, "detached" | "attached" | "garage">>({});
+    const [bedsByUnitId, setBedsByUnitId] = useState<Record<string, number>>({});
+    const [bathsByUnitId, setBathsByUnitId] = useState<Record<string, number>>({});
     // Seed slide order from the DB catalog (empty array if not yet fetched —
     // applySnapshot() will overwrite on proposal load, so existing proposals
     // still keep their frozen copy).
@@ -124,6 +184,40 @@ export default function AdminMasterClient({
     const projectTimelineTouchedRef = React.useRef(false);
     const [proposalPaymentSchedule, setProposalPaymentSchedule] = useState<ProposalPaymentSchedule | null>(null);
     const [proposalPaymentSchedulesByAduId, setProposalPaymentSchedulesByAduId] = useState<Record<string, ProposalPaymentSchedule>>({});
+    /** Which compared unit drives the agreement on initial open. Left at
+     *  null today so the preview tab's switcher picks the primary by default;
+     *  reserved for a future "pre-pick a unit before opening" affordance in
+     *  the admin header. */
+    const [agreementAduId] = useState<string | null>(null);
+
+    /** Manual exclusions text — one line per exclusion. Owned by the
+     *  proposal, persisted in the snapshot. The legacy global localStorage
+     *  key `agreement_exclusions_v1` is auto-migrated into a fresh draft on
+     *  first mount below (so a value entered before this field existed
+     *  isn't lost) and then cleared so it can't ghost future proposals. */
+    const [agreementExclusions, setAgreementExclusions] = useState<string>("");
+
+    /** One-time migration of the legacy browser-global exclusions key.
+     *  Runs once on mount: if there's a value in localStorage, copy it into
+     *  state (so the rep doesn't lose what they had typed) and clear the
+     *  legacy key (so it can't keep haunting every future proposal). */
+    useEffect(() => {
+        try {
+            const legacy = window.localStorage.getItem("agreement_exclusions_v1");
+            if (legacy && legacy.trim().length > 0) {
+                setAgreementExclusions((current) => current || legacy);
+            }
+            // Always clear the legacy key, even when empty, so it can never
+            // surprise a future build that reads from it.
+            window.localStorage.removeItem("agreement_exclusions_v1");
+        } catch { /* ignore — private browsing / quota issues are fine here */ }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Pipedrive link — set via Step 1's PipedriveLinkPanel. When non-null,
+    // every Save will also post a proposal-link note back to that record.
+    const [pipedrivePersonId, setPipedrivePersonId] = useState<string | null>(null);
+    const [pipedriveDealId, setPipedriveDealId] = useState<string | null>(null);
 
     // ── Save / Saved Proposals ────────────────────────────────────────────────
     const [savedModalOpen, setSavedModalOpen] = useState(false);
@@ -142,7 +236,31 @@ export default function AdminMasterClient({
     const [currentFirstPmtMonthly, setCurrentFirstPmtMonthly] = useState("");
     const [siteWorkConfirmed, setSiteWorkConfirmed] = useState(false);
     const [driftReport, setDriftReport] = useState<CatalogDriftReport | null>(null);
-    const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(1);
+    const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11>(1);
+
+    // ── Draft/canonical bundle for the currently loaded address ──────────────
+    //
+    // When we load a proposal from a URL or saved-list click, we fetch the
+    // full bundle (canonical REVIEWED + my own DRAFT + other-user drafts
+    // for admins). The banner uses this to show "viewing your draft vs the
+    // canonical" toggles and to power the diff pop-out.
+    //
+    // `loadedBundle` snapshots the server state at load time; it's
+    // refreshed on save. `currentView` tracks which snapshot is currently
+    // *applied* to the form state.
+    type LoadedBundle = {
+        reviewed: { snapshot: ProposalSnapshot; ownedBy: { id: string; email: string | null }; savedAt: string } | null;
+        myDraft: { snapshot: ProposalSnapshot; savedAt: string } | null;
+        otherDrafts: Array<{ userId: string; email: string | null; savedAt: string }>;
+    };
+    type CurrentView =
+        | { kind: "my-draft"; savedAt: string }
+        | { kind: "reviewed"; savedAt: string }
+        | { kind: "other-draft"; userId: string; email: string | null; savedAt: string }
+        | null;
+    const [loadedBundle, setLoadedBundle] = useState<LoadedBundle | null>(null);
+    const [currentView, setCurrentView] = useState<CurrentView>(null);
+    const [diffOpen, setDiffOpen] = useState(false);
 
     useEffect(() => {
         setFloorplans(initialFloorplans);
@@ -309,6 +427,66 @@ export default function AdminMasterClient({
     });
 
     // ── Custom floorplan handlers ─────────────────────────────────────────────
+    /** Infer beds/baths for a custom unit by interpolating between the two
+     *  catalog floorplans flanking its sqft — mirrors the price proration
+     *  logic so a 700 SF custom unit picks up bed/bath counts from the 650
+     *  and 750 SF catalog entries. Returns whole beds and 0.5-step baths. */
+    function inferBedsBathsFromCatalog(sqft: number): { beds: number; baths: number } {
+        const catalog = floorplans
+            .filter((fp) => !fp._id.startsWith("custom_"))
+            .map((fp) => ({
+                sqft: fp.sqft,
+                beds: fp.beds ?? fp.bed ?? fp.bedrooms ?? 0,
+                baths: fp.baths ?? fp.bath ?? fp.bathrooms ?? 1,
+            }))
+            .filter((fp) => fp.sqft > 0)
+            .sort((a, b) => a.sqft - b.sqft);
+
+        if (catalog.length === 0) return { beds: 0, baths: 1 };
+        if (catalog.length === 1) return { beds: catalog[0].beds, baths: catalog[0].baths };
+        if (sqft <= catalog[0].sqft) return { beds: catalog[0].beds, baths: catalog[0].baths };
+        const last = catalog[catalog.length - 1];
+        if (sqft >= last.sqft) return { beds: last.beds, baths: last.baths };
+
+        let lo = catalog[0];
+        let hi = last;
+        for (let i = 0; i < catalog.length - 1; i++) {
+            if (catalog[i].sqft <= sqft && catalog[i + 1].sqft >= sqft) {
+                lo = catalog[i];
+                hi = catalog[i + 1];
+                break;
+            }
+        }
+        const t = (sqft - lo.sqft) / (hi.sqft - lo.sqft);
+        return {
+            beds: Math.round(lo.beds + t * (hi.beds - lo.beds)),
+            baths: Math.round((lo.baths + t * (hi.baths - lo.baths)) * 2) / 2,
+        };
+    }
+
+    /** Pick the catalog floorplan with sqft closest to the given size and
+     *  return its drawing URL. Used as the default image for a new custom
+     *  unit when the rep doesn't pick or upload one explicitly. */
+    function inferDrawingFromCatalog(sqft: number): { url: string | undefined; sourceName: string | undefined } {
+        const catalog = floorplans
+            .filter((fp) => !fp._id.startsWith("custom_"))
+            .filter((fp) => fp.sqft > 0 && (fp.floorPlanUrl || fp.imageUrl));
+        if (catalog.length === 0) return { url: undefined, sourceName: undefined };
+        let closest = catalog[0];
+        let bestDelta = Math.abs(catalog[0].sqft - sqft);
+        for (const fp of catalog) {
+            const d = Math.abs(fp.sqft - sqft);
+            if (d < bestDelta) {
+                closest = fp;
+                bestDelta = d;
+            }
+        }
+        return {
+            url: closest.floorPlanUrl ?? closest.imageUrl,
+            sourceName: closest.name,
+        };
+    }
+
     function addCustomFloorplan(input: {
         name?: string;
         sqft: number;
@@ -318,8 +496,11 @@ export default function AdminMasterClient({
         imageUrl?: string;
     }) {
         const id = `custom_${crypto.randomUUID()}`;
-        const beds = input.bedrooms ?? 0;
-        const baths = input.bathrooms ?? 1;
+        const inferred = inferBedsBathsFromCatalog(input.sqft);
+        const beds = input.bedrooms ?? inferred.beds;
+        const baths = input.bathrooms ?? inferred.baths;
+        const inferredImage = inferDrawingFromCatalog(input.sqft);
+        const drawingUrl = input.imageUrl?.trim() || inferredImage.url;
         const fp: Floorplan = {
             _id: id,
             name: input.name?.trim() || `Custom ${input.sqft} SF`,
@@ -327,10 +508,11 @@ export default function AdminMasterClient({
             price: input.price,
             beds,
             baths,
-            bedrooms: input.bedrooms,
-            bathrooms: input.bathrooms ?? baths,
+            bedrooms: input.bedrooms ?? inferred.beds,
+            bathrooms: input.bathrooms ?? inferred.baths,
             key: id,
-            imageUrl: input.imageUrl?.trim() || undefined,
+            floorPlanUrl: drawingUrl,
+            imageUrl: drawingUrl,
         };
         setFloorplans((prev) => [...prev, fp]);
         // Always add to the compare list — bump the cap when needed so the
@@ -413,6 +595,31 @@ export default function AdminMasterClient({
         setAduCompareIds((prev) => [...prev, newId]);
     }
 
+    /** Push a $10,000 "Additional bathroom" line into a unit's site-work
+     *  estimator. Called from the UnitsPanel inline confirm prompt when the
+     *  rep bumps a unit's bath count. Idempotent only on intent — each call
+     *  appends a new line so two confirmed bumps add $20k. */
+    function addBathroomUpcharge(unitId: string) {
+        adu.setEstimatorByAduId((prev) => {
+            const existing = prev[unitId] ?? { quantities: {}, overrides: {}, customItems: [] };
+            const newItem = {
+                id: `custom_bath_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                catId: "interior",
+                label: "Additional bathroom",
+                qty: 1,
+                beCost: 10000,
+                markup: 1,
+            };
+            return {
+                ...prev,
+                [unitId]: {
+                    ...existing,
+                    customItems: [...(existing.customItems ?? []), newItem],
+                },
+            };
+        });
+    }
+
     // ── Step state model ──────────────────────────────────────────────────────
     // Two separate concepts:
     //  • hasData[n]   — required form data is present for step n
@@ -420,39 +627,46 @@ export default function AdminMasterClient({
     // "Complete" = both true (so editing the data invalidates a prior Done).
     const [doneSteps, setDoneSteps] = useState<Set<number>>(new Set());
 
-    function markDone(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12) {
+    function markDone(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11) {
         setDoneSteps((prev) => {
             const next = new Set(prev);
             next.add(n);
             return next;
         });
-        if (n < 12) setActiveStep(((n + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12));
+        if (n < 11) setActiveStep(((n + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11));
     }
 
     // Per-step required-data validation
-    const step1HasData = address.length > 5;
-    const step2HasData = aduCompareIds.length > 0;
-    const step3HasData = adu.selectedAdus.length > 0;
-    const step4HasData = true; // discounts are optional
-    const step5HasData = true; // review-only
-    const step6HasData = true; // review-only
-    const step7HasData = true; // selection is optional (falls back to featured)
-    const step8HasData = true; // selection is optional (falls back to featured)
-    const step9HasData = true; // selection is optional (falls back to first N rentals)
-    const step10HasData = true; // slide order is optional (falls back to natural order)
-    const step11HasData = true; // timeline is optional (falls back to CITY_TIMELINES defaults)
-    const step12HasData = true; // payment schedule is optional (drives the future contract slide)
-    const hasData = [step1HasData, step2HasData, step3HasData, step4HasData, step5HasData, step6HasData, step7HasData, step8HasData, step9HasData, step10HasData, step11HasData, step12HasData];
+    // Step 1 now covers Who/Where + Choose Units in one panel.
+    // After merging Choose Units into Step 1, the steps are renumbered:
+    //   1: Who/Where/Units (was 1+2)   7: Feature Stories  (was 8)
+    //   2: Estimate Job   (was 3)      8: Feature Rentals  (was 9)
+    //   3: Discounts      (was 4)      9: Slide Order      (was 10)
+    //   4: Rental Market  (was 5)      10: Timeline        (was 11)
+    //   5: Review         (was 6)      11: Payment Sched   (was 12)
+    //   6: Feature Builds (was 7)
+    const step1HasData = address.length > 5 && aduCompareIds.length > 0;
+    const step2HasData = adu.selectedAdus.length > 0; // was step3
+    const step3HasData = true; // discounts (was step4)
+    const step4HasData = true; // rental market (was step5)
+    const step5HasData = true; // review (was step6)
+    const step6HasData = true; // feature builds (was step7)
+    const step7HasData = true; // feature stories (was step8)
+    const step8HasData = true; // feature rentals (was step9)
+    const step9HasData = true; // slide order (was step10)
+    const step10HasData = true; // timeline (was step11)
+    const step11HasData = true; // payment schedule (was step12)
+    const hasData = [step1HasData, step2HasData, step3HasData, step4HasData, step5HasData, step6HasData, step7HasData, step8HasData, step9HasData, step10HasData, step11HasData];
 
-    const completions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => doneSteps.has(n) && hasData[n - 1]);
+    const completions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => doneSteps.has(n) && hasData[n - 1]);
 
     const completedSteps = completions
         .map((done, i) => (done ? i + 1 : null))
         .filter((n): n is number => n !== null);
 
-    const needsInputSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].filter((n) => !hasData[n - 1]);
+    const needsInputSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].filter((n) => !hasData[n - 1]);
 
-    function stepState(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12) {
+    function stepState(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11) {
         const isComplete = completions[n - 1];
         return {
             isActive: activeStep === n,
@@ -481,6 +695,38 @@ export default function AdminMasterClient({
         propertyPhotoUrl,
         customerMotivation,
         comparedUnitIds: aduCompareIds,
+        // Per-unit overrides — user-edited values from the merged Step 1
+        // panel take precedence over the global aduType and floorplan
+        // defaults. Anything not overridden falls back so the presenter
+        // sees a complete map.
+        aduTypeByUnitId: Object.fromEntries(
+            adu.selectedAdus.map((fp) => [
+                fp._id,
+                aduTypeByUnitId[fp._id]
+                    ?? ((aduType || "detached") as "detached" | "attached" | "garage"),
+            ]),
+        ),
+        bedsByUnitId: Object.fromEntries(
+            // Sanity floorplans project as `bed` (singular); admin-created
+            // custom units use `beds` (plural). Accept either so the wire
+            // never broadcasts 0 just because the source field name differs.
+            adu.selectedAdus.map((fp) => [
+                fp._id,
+                bedsByUnitId[fp._id]
+                    ?? fp.beds
+                    ?? (fp as unknown as { bed?: number }).bed
+                    ?? 0,
+            ]),
+        ),
+        bathsByUnitId: Object.fromEntries(
+            adu.selectedAdus.map((fp) => [
+                fp._id,
+                bathsByUnitId[fp._id]
+                    ?? fp.baths
+                    ?? (fp as unknown as { bath?: number }).bath
+                    ?? 0,
+            ]),
+        ),
         floorplans,
         featuredPropertyIds,
         featuredStoryIds,
@@ -520,6 +766,9 @@ export default function AdminMasterClient({
 
             customFloorplans,
             aduCompareIds,
+            aduTypeByUnitId,
+            bedsByUnitId,
+            bathsByUnitId,
 
             defaults: adu.defaults,
             estimatorByAduId: adu.estimatorByAduId,
@@ -538,6 +787,11 @@ export default function AdminMasterClient({
             projectTimeline,
             proposalPaymentSchedule,
             proposalPaymentSchedulesByAduId,
+
+            pipedrivePersonId,
+            pipedriveDealId,
+
+            agreementExclusions,
 
             activeStep,
             doneSteps: Array.from(doneSteps),
@@ -573,6 +827,10 @@ export default function AdminMasterClient({
         setFloorplans([...initialFloorplans, ...(snap.customFloorplans ?? [])]);
 
         setAduCompareIds(snap.aduCompareIds ?? []);
+        // Per-unit overrides (merged Step 1)
+        setAduTypeByUnitId(snap.aduTypeByUnitId ?? {});
+        setBedsByUnitId(snap.bedsByUnitId ?? {});
+        setBathsByUnitId(snap.bathsByUnitId ?? {});
         // Block the "selected floorplan changed → recompute compare window" effect
         // from clobbering the loaded selection on the next render.
         lastSelectedIdRef.current = snap.floorplanId ?? null;
@@ -617,8 +875,16 @@ export default function AdminMasterClient({
             setProposalPaymentSchedulesByAduId({});
         }
 
+        // Pipedrive linkage
+        setPipedrivePersonId(snap.pipedrivePersonId ?? null);
+        setPipedriveDealId(snap.pipedriveDealId ?? null);
+
+        // Manual agreement exclusions (per-proposal — empty for snapshots
+        // saved before this field existed).
+        setAgreementExclusions(snap.agreementExclusions ?? "");
+
         // Step status
-        setActiveStep((snap.activeStep ?? 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12);
+        setActiveStep((snap.activeStep ?? 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11);
         setDoneSteps(new Set(snap.doneSteps ?? []));
 
         // Seed the autosave fingerprint with the just-loaded content so the
@@ -632,20 +898,27 @@ export default function AdminMasterClient({
             window.alert("Add a property address before opening the agreement.");
             return;
         }
-        if (!proposalPaymentSchedule) {
+        if (Object.keys(proposalPaymentSchedulesByAduId).length === 0) {
             window.alert("Configure the payment schedule (Step 12) before opening the agreement.");
             return;
         }
-        // Carry-over exclusions across runs. They're editable inline in the
-        // preview anyway, so we skip the prompt and just load whatever was
-        // saved last time. A dedicated step panel could promote this later.
-        const exclusionsRaw = window.localStorage.getItem("agreement_exclusions_v1") || "";
+        // Per-proposal manual exclusions edited in Step 6's ExclusionsPanel.
+        // (The previous design read from a browser-global localStorage key,
+        // which caused entries to ghost across every customer's agreement.)
+        const exclusionsRaw = agreementExclusions;
 
         try {
-            const data = buildAgreementData({
+            // Hand off the FULL set of inputs (not the resolved template
+            // data). The preview client renders a unit-switcher dropdown and
+            // re-runs buildAgreementData on each switch — so it needs to be
+            // able to rebuild on demand. The "selectedAduId" field lets the
+            // admin pre-select which unit drives the agreement on first open.
+            const input = {
                 customerName,
                 propertyAddress: address,
-                proposalPaymentSchedule,
+                proposalPaymentSchedulesByAduId,
+                comparedUnitIds: aduCompareIds,
+                selectedAduId: agreementAduId,
                 floorplans,
                 siteWorkByUnitId: adu.activeSnapshotByAduId
                     ? Object.fromEntries(
@@ -661,15 +934,17 @@ export default function AdminMasterClient({
                     : {},
                 discountLinesByUnitId: adu.discountLinesByAduId,
                 exclusions: exclusionsRaw,
-            });
+                bedsByUnitId,
+                bathsByUnitId,
+            };
 
-            // Hand the prepared data to the preview tab via localStorage,
-            // then open the editor. The preview client generates the .docx
-            // there, converts to HTML, and lets the user edit before
-            // printing or downloading.
+            // Sanity-check: make sure the inputs actually produce a valid
+            // agreement before opening the preview tab.
+            buildAgreementData(input);
+
             window.localStorage.setItem(
-                "be_agreement_preview_data_v1",
-                JSON.stringify(data)
+                "be_agreement_preview_input_v2",
+                JSON.stringify(input)
             );
             window.open(
                 "/tools/admin/master/agreement",
@@ -683,7 +958,7 @@ export default function AdminMasterClient({
         }
     }
 
-    function handleSave() {
+    async function handleSave() {
         const key = normalizeAddress(address);
         if (!key) {
             window.alert("Add a property address before saving.");
@@ -697,15 +972,42 @@ export default function AdminMasterClient({
         }
         try {
             const snap = buildSnapshot();
-            saveProposal(snap);
+            // Await server persistence so a quota error or network blip
+            // surfaces as an alert instead of a silent loss. The LS mirror
+            // is best-effort and won't throw.
+            await saveProposal(snap);
             // The draft for this address has been promoted to a proposal —
             // remove it so the dashboard doesn't show a duplicate entry.
-            deleteDraft(key);
+            // Fire-and-forget; the user doesn't need to wait.
+            void deleteDraft(key);
             // Block the pending autosave (and any future one) from re-creating
             // an identical draft until the user actually edits something.
             lastDraftFpRef.current = snapshotFingerprint(snap);
             setJustSaved(true);
             setTimeout(() => setJustSaved(false), 1800);
+
+            // Pipedrive: if this proposal is linked to a person or deal,
+            // post a "proposal saved" note back to the CRM with a deep link
+            // into the master tool. Fire-and-forget — a CRM-side failure
+            // shouldn't undo the save the rep just confirmed.
+            if (pipedrivePersonId || pipedriveDealId) {
+                const proposalUrl = `${window.location.origin}/tools/admin/master?address=${encodeURIComponent(key)}`;
+                const lines = [
+                    `Proposal saved for ${customerName || "this customer"} (${address}).`,
+                    `Open in tool: ${proposalUrl}`,
+                ];
+                void fetch("/api/pipedrive/post-note", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        personId: pipedrivePersonId,
+                        dealId: pipedriveDealId,
+                        content: lines.join("\n\n"),
+                    }),
+                }).catch((err) => {
+                    console.warn("[pipedrive.post-note] failed", err);
+                });
+            }
         } catch (err) {
             window.alert(
                 `Failed to save proposal: ${err instanceof Error ? err.message : String(err)}`
@@ -734,10 +1036,23 @@ export default function AdminMasterClient({
         const autoPresent = params.get("autoPresent") === "1";
         const autoExport = params.get("autoExport") === "1";
 
-        async function fetchSnapshot(key: string, status: "SAVED" | "DRAFT"): Promise<ProposalSnapshot | null> {
+        // Admin chip-click: ?asDraftOf=<userId> opens that user's draft.
+        const asDraftOf = params.get("asDraftOf");
+
+        async function fetchBundle(key: string) {
+            try {
+                const res = await fetch(`/api/admin/proposals/${encodeURIComponent(key)}`);
+                if (!res.ok) return null;
+                return (await res.json()) as LoadedBundle;
+            } catch {
+                return null;
+            }
+        }
+
+        async function fetchUserDraft(key: string, forUserId: string): Promise<ProposalSnapshot | null> {
             try {
                 const res = await fetch(
-                    `/api/admin/proposals/${encodeURIComponent(key)}?status=${status}`,
+                    `/api/admin/proposals/${encodeURIComponent(key)}?status=DRAFT&forUser=${encodeURIComponent(forUserId)}`,
                 );
                 if (!res.ok) return null;
                 const data = (await res.json()) as { proposal: ProposalSnapshot | null };
@@ -748,14 +1063,49 @@ export default function AdminMasterClient({
         }
 
         (async () => {
-            // Try SAVED first; fall back to DRAFT for in-flight work.
-            const saved = await fetchSnapshot(addressKey, "SAVED");
-            const draft = saved ?? (await fetchSnapshot(addressKey, "DRAFT"));
-            // Last-resort fallback to localStorage so the master tool still
-            // hydrates if the API is unreachable.
-            const snap = saved ?? draft ?? getProposal(addressKey) ?? getDraft(addressKey);
+            // Fetch the bundle so the banner has full context (reviewed +
+            // myDraft + otherDrafts) regardless of which one ends up applied.
+            const bundle = await fetchBundle(addressKey);
+            if (bundle) setLoadedBundle(bundle);
+
+            // Decide which snapshot to apply, in order:
+            //   1. ?asDraftOf=<userId>     — admin clicked a chip; open that draft
+            //   2. bundle.myDraft          — pick up where the caller left off
+            //   3. bundle.reviewed         — canonical
+            //   4. localStorage fallbacks  — offline / network dead
+            let snap: ProposalSnapshot | null = null;
+            let appliedView: CurrentView = null;
+
+            if (asDraftOf) {
+                snap = await fetchUserDraft(addressKey, asDraftOf);
+                if (snap) {
+                    const meta = bundle?.otherDrafts.find((d) => d.userId === asDraftOf);
+                    appliedView = {
+                        kind: "other-draft",
+                        userId: asDraftOf,
+                        email: meta?.email ?? null,
+                        savedAt: meta?.savedAt ?? snap.savedAt,
+                    };
+                }
+            }
+
+            if (!snap && bundle?.myDraft) {
+                snap = bundle.myDraft.snapshot;
+                appliedView = { kind: "my-draft", savedAt: bundle.myDraft.savedAt };
+            }
+            if (!snap && bundle?.reviewed) {
+                snap = bundle.reviewed.snapshot;
+                appliedView = { kind: "reviewed", savedAt: bundle.reviewed.savedAt };
+            }
+            if (!snap) {
+                snap = getProposal(addressKey) ?? getDraft(addressKey);
+                // Local-fallback path: best guess at view kind.
+                if (snap) appliedView = { kind: "my-draft", savedAt: snap.savedAt };
+            }
+
             if (snap) {
                 applySnapshot(snap);
+                setCurrentView(appliedView);
 
                 // Give the presentation wire (~1 render) a moment to flush
                 // the freshly-applied snapshot into localStorage + the
@@ -834,6 +1184,9 @@ export default function AdminMasterClient({
 
         // Reset comparisons; force the auto-seed effect to re-fire
         setAduCompareIds([]);
+        setAduTypeByUnitId({});
+        setBedsByUnitId({});
+        setBathsByUnitId({});
         lastSelectedIdRef.current = null;
 
         // Investment model state
@@ -857,6 +1210,10 @@ export default function AdminMasterClient({
         projectTimelineTouchedRef.current = false;
         setProjectTimeline(null);
         setProposalPaymentSchedule(null);
+        setProposalPaymentSchedulesByAduId({});
+        setPipedrivePersonId(null);
+        setPipedriveDealId(null);
+        setAgreementExclusions("");
 
         // Step navigation
         setActiveStep(1);
@@ -873,6 +1230,58 @@ export default function AdminMasterClient({
         // Reset autosave fingerprint so the next edit (after the user enters a
         // valid address) triggers a fresh draft save.
         lastDraftFpRef.current = "";
+        setLoadedBundle(null);
+        setCurrentView(null);
+    }
+
+    // ── Draft / canonical view switching ──────────────────────────────────────
+    //
+    // Banner buttons call these to swap the loaded snapshot. Each handler
+    // applies the target snapshot (which re-fingerprints lastDraftFpRef so
+    // the autosave doesn't fire spuriously) and updates currentView so the
+    // banner reflects what's on screen.
+
+    function switchToMyDraft() {
+        const snap = loadedBundle?.myDraft?.snapshot;
+        if (!snap) return;
+        applySnapshot(snap);
+        setCurrentView({ kind: "my-draft", savedAt: loadedBundle!.myDraft!.savedAt });
+    }
+
+    function switchToReviewed() {
+        const snap = loadedBundle?.reviewed?.snapshot;
+        if (!snap) return;
+        applySnapshot(snap);
+        setCurrentView({ kind: "reviewed", savedAt: loadedBundle!.reviewed!.savedAt });
+    }
+
+    async function switchToOtherDraft(targetUserId: string) {
+        const key = normalizeAddress(address);
+        if (!key) return;
+        try {
+            const res = await fetch(
+                `/api/admin/proposals/${encodeURIComponent(key)}?status=DRAFT&forUser=${encodeURIComponent(targetUserId)}`,
+            );
+            if (!res.ok) {
+                window.alert("Couldn't load that draft.");
+                return;
+            }
+            const data = (await res.json()) as { proposal: ProposalSnapshot | null };
+            if (!data.proposal) {
+                window.alert("That draft no longer exists.");
+                return;
+            }
+            applySnapshot(data.proposal);
+            const meta = loadedBundle?.otherDrafts.find((d) => d.userId === targetUserId);
+            setCurrentView({
+                kind: "other-draft",
+                userId: targetUserId,
+                email: meta?.email ?? null,
+                savedAt: meta?.savedAt ?? data.proposal.savedAt,
+            });
+        } catch (err) {
+            window.alert(`Failed to load draft: ${err instanceof Error ? err.message : String(err)}`);
+        }
     }
 
     // ── Autosave (debounced) ──────────────────────────────────────────────────
@@ -886,9 +1295,59 @@ export default function AdminMasterClient({
     // when the current content matches this — prevents a "ghost draft" from
     // being re-created right after Save/Load/New.
     const lastDraftFpRef = React.useRef<string>("");
+
+    /**
+     * Stable, recursive JSON stringify — sorts object keys at every level so
+     * two equivalent objects with different insertion order produce the same
+     * string. Critical for the autosave equality check: a server-loaded
+     * snapshot and a freshly-rebuilt one have identical content but the JS
+     * object key order differs, which broke a naive JSON.stringify compare.
+     */
+    function stableStringify(value: unknown): string {
+        if (value === null || typeof value !== "object") return JSON.stringify(value);
+        if (Array.isArray(value)) return "[" + value.map(stableStringify).join(",") + "]";
+        const obj = value as Record<string, unknown>;
+        const keys = Object.keys(obj).sort();
+        return "{" + keys.map((k) => JSON.stringify(k) + ":" + stableStringify(obj[k])).join(",") + "}";
+    }
+
+    /**
+     * Fingerprint only the *user-editable* fields. Excluded:
+     *   - savedAt           — bookkeeping, not content.
+     *   - activeStep/doneSteps/siteWorkConfirmed — UI navigation, not data.
+     *   - rentcast          — refreshed from the API in the background; not
+     *                         a user edit, would falsely mark the proposal
+     *                         as "changed" the moment the API responds.
+     *   - companionStorage  — duplicates of in-state estimator/discount data
+     *                         which are already fingerprinted.
+     */
     function snapshotFingerprint(snap: ProposalSnapshot): string {
-        const { savedAt: _ignored, ...rest } = snap;
-        return JSON.stringify(rest);
+        return stableStringify({
+            customerName: snap.customerName,
+            address: snap.address,
+            owed: snap.owed,
+            propertyPhotoUrl: snap.propertyPhotoUrl,
+            customerMotivation: snap.customerMotivation,
+            aduType: snap.aduType,
+            floorplanId: snap.floorplanId,
+            currentFirstPmtMonthly: snap.currentFirstPmtMonthly,
+            customFloorplans: snap.customFloorplans,
+            aduCompareIds: snap.aduCompareIds,
+            defaults: snap.defaults,
+            estimatorByAduId: snap.estimatorByAduId,
+            rentByAduId: snap.rentByAduId,
+            baseCostByAduId: snap.baseCostByAduId,
+            sqftByAduId: snap.sqftByAduId,
+            discountAmountByAduId: snap.discountAmountByAduId,
+            discountLinesByAduId: snap.discountLinesByAduId,
+            featuredPropertyIds: snap.featuredPropertyIds,
+            featuredStoryIds: snap.featuredStoryIds,
+            featuredRentals: snap.featuredRentals,
+            slideOrder: snap.slideOrder,
+            projectTimeline: snap.projectTimeline,
+            proposalPaymentSchedule: snap.proposalPaymentSchedule,
+            proposalPaymentSchedulesByAduId: snap.proposalPaymentSchedulesByAduId,
+        });
     }
 
     // The SiteWorkPanel (Step 3) and DiscountsPanel (Step 4) write straight to
@@ -919,16 +1378,21 @@ export default function AdminMasterClient({
         }
 
         setDraftStatus({ state: "pending" });
-        const t = setTimeout(() => {
+        const t = setTimeout(async () => {
+            const snap = buildSnapshotRef.current();
+            const fp = snapshotFingerprint(snap);
+            if (fp === lastDraftFpRef.current) {
+                // Nothing actually changed (e.g. just after Save/Load/New).
+                // Don't touch the draft store or the visible status.
+                setDraftStatus((prev) => prev.state === "pending" ? { state: "idle" } : prev);
+                return;
+            }
+            // saveDraft fires the server upsert immediately and returns its
+            // promise. The localStorage mirror is best-effort and won't throw
+            // here (it has its own quota-safe handling). We await the server
+            // promise so the "saved" state reflects real DB persistence.
             try {
-                const snap = buildSnapshotRef.current();
-                const fp = snapshotFingerprint(snap);
-                if (fp === lastDraftFpRef.current) {
-                    // Nothing actually changed (e.g. just after Save/Load/New).
-                    // Don't touch the draft store or the visible status.
-                    return;
-                }
-                saveDraft(snap);
+                await saveDraft(snap);
                 lastDraftFpRef.current = fp;
                 setDraftStatus({ state: "saved", at: new Date() });
             } catch (err) {
@@ -949,6 +1413,7 @@ export default function AdminMasterClient({
         property, avm, rentals, market,
         featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder,
         projectTimeline, proposalPaymentSchedule, proposalPaymentSchedulesByAduId,
+        agreementExclusions,
         activeStep, doneSteps, siteWorkConfirmed,
         companionVersion,
     ]);
@@ -986,10 +1451,40 @@ export default function AdminMasterClient({
                     activeStep={activeStep}
                     completedSteps={completedSteps}
                     needsInputSteps={needsInputSteps}
-                    onStepClick={(n) => setActiveStep(n as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12)}
+                    onStepClick={(n) => setActiveStep(n as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11)}
                 />
 
                 <main className={styles.main}>
+
+                    {/* ── Draft / canonical view banner ──────────────────── */}
+                    <DraftBanner
+                        bundle={loadedBundle}
+                        view={currentView}
+                        hasUnsavedEdits={
+                            !!currentView && lastDraftFpRef.current !== "" &&
+                            snapshotFingerprint(buildSnapshot()) !== lastDraftFpRef.current
+                        }
+                        onSwitchToMyDraft={switchToMyDraft}
+                        onSwitchToReviewed={switchToReviewed}
+                        onSwitchToOtherDraft={switchToOtherDraft}
+                        onShowDiff={() => setDiffOpen(true)}
+                    />
+
+                    {diffOpen && loadedBundle?.reviewed && (
+                        <DiffPanel
+                            activeLabel={
+                                currentView?.kind === "my-draft" ? "Your draft" :
+                                currentView?.kind === "other-draft" ? `${currentView.email || "Other"}'s draft` :
+                                "Current view"
+                            }
+                            sections={diffSnapshots(
+                                buildSnapshot(),
+                                loadedBundle.reviewed.snapshot,
+                                { a: currentView?.kind === "my-draft" ? "Your draft" : "Current", b: "Canonical" },
+                            )}
+                            onClose={() => setDiffOpen(false)}
+                        />
+                    )}
 
                     {/* ── Drift warning (loaded proposal references missing catalog items) ── */}
                     <CatalogDriftBanner
@@ -1003,75 +1498,71 @@ export default function AdminMasterClient({
                         {...stepState(1)}
                         kind="data"
                         needsInput={!step1HasData}
-                        needsInputMessage="Enter the property address to continue"
-                        onDone={() => markDone(1)}
-                        completeSummary={address || "No address yet"}
+                        needsInputMessage="Enter the address and pick at least one unit to continue"
+                        doneLabel={loading ? "Pulling property data…" : "Pull property data"}
+                        onDone={() => {
+                            getApiData({ address, selectedFloorplan });
+                            markDone(1);
+                        }}
+                        completeSummary={
+                            address
+                                ? `${address}${aduCompareIds.length > 0 ? ` · ${aduCompareIds.length} unit${aduCompareIds.length > 1 ? "s" : ""}` : ""}`
+                                : "No address yet"
+                        }
                     >
-                        <DealForm
-                            styles={styles}
-                            AddressAutocomplete={AddressAutocomplete}
+                        <Step1Body
+                            // Customer
                             customerName={customerName}
                             setCustomerName={setCustomerName}
+                            customerMotivation={customerMotivation}
+                            setCustomerMotivation={setCustomerMotivation}
+                            pipedrivePersonId={pipedrivePersonId}
+                            pipedriveDealId={pipedriveDealId}
+                            setPipedrivePersonId={setPipedrivePersonId}
+                            setPipedriveDealId={setPipedriveDealId}
+                            // Property
+                            AddressAutocomplete={AddressAutocomplete}
                             address={address}
                             setAddress={setAddress}
                             owed={owed}
                             setOwed={setOwed}
-                            propertyPhotoUrl={propertyPhotoUrl}
-                            setPropertyPhotoUrl={setPropertyPhotoUrl}
-                            customerMotivation={customerMotivation}
-                            setCustomerMotivation={setCustomerMotivation}
-                            floorplans={floorplans}
-                            floorplanId={floorplanId}
-                            setFloorplanId={setFloorplanId}
-                            selectedFloorplan={selectedFloorplan}
-                            loading={loading}
-                            error={error}
-                            onSubmit={() => {
-                                getApiData({ address, selectedFloorplan });
-                                if (address.length > 5) setActiveStep(2);
-                            }}
                             currentFirstPmtMonthly={currentFirstPmtMonthly}
                             setCurrentFirstPmtMonthly={setCurrentFirstPmtMonthly}
+                            propertyPhotoUrl={propertyPhotoUrl}
+                            setPropertyPhotoUrl={setPropertyPhotoUrl}
+                            loading={loading}
+                            error={error}
+                            // Units
+                            floorplans={floorplans}
+                            selectedFloorplan={selectedFloorplan}
+                            floorplanId={floorplanId}
+                            setFloorplanId={setFloorplanId}
+                            aduCompareIds={aduCompareIds}
                             aduType={aduType}
                             setAduType={setAduType}
+                            aduTypeByUnitId={aduTypeByUnitId}
+                            setAduTypeByUnitId={setAduTypeByUnitId}
+                            bedsByUnitId={bedsByUnitId}
+                            setBedsByUnitId={setBedsByUnitId}
+                            bathsByUnitId={bathsByUnitId}
+                            setBathsByUnitId={setBathsByUnitId}
+                            defaults={adu.defaults}
+                            updateDefault={adu.updateDefault}
+                            toggleAdu={adu.toggleAdu}
+                            addCustomFloorplan={addCustomFloorplan}
+                            removeCustomFloorplan={removeCustomFloorplan}
+                            duplicateFloorplan={duplicateFloorplan}
+                            addBathroomUpcharge={addBathroomUpcharge}
                         />
                     </Step1_WhoAndWhere>
 
-                    {/* ── Step 2 · Choose Units ─────────────────────────────── */}
-                    <Step2_ChooseUnits
-                        {...stepState(2)}
-                        kind="data"
-                        needsInput={!step2HasData}
-                        needsInputMessage="Select at least one floor plan to continue"
-                        onDone={() => markDone(2)}
-                        completeSummary={
-                            aduCompareIds.length > 0
-                                ? `${aduCompareIds.length} unit${aduCompareIds.length > 1 ? "s" : ""} selected`
-                                : "No units selected"
-                        }
-                    >
-                        <InvestmentControls
-                            defaults={adu.defaults}
-                            defaultsProp={undefined}
-                            setDefaults={adu.setDefaults}
-                            updateDefault={adu.updateDefault}
-                            allFloorplans={floorplans}
-                            aduCompareIds={aduCompareIds}
-                            toggleAdu={adu.toggleAdu}
-                            view="picker"
-                            onAddCustomFloorplan={addCustomFloorplan}
-                            onRemoveFloorplan={removeCustomFloorplan}
-                            onDuplicateFloorplan={duplicateFloorplan}
-                        />
-                    </Step2_ChooseUnits>
-
                     {/* ── Step 3 · Estimate the Job ─────────────────────────── */}
                     <Step3_EstimateJob
-                        {...stepState(3)}
+                        {...stepState(2)}
                         kind="data"
                         needsInput={!step3HasData}
                         needsInputMessage="Select units in Step 2 before estimating site work"
-                        onDone={() => { setSiteWorkConfirmed(true); markDone(3); }}
+                        onDone={() => { setSiteWorkConfirmed(true); markDone(2); }}
                         completeSummary="Site work confirmed"
                     >
                         {adu.selectedAdus.length === 0 ? (
@@ -1090,9 +1581,9 @@ export default function AdminMasterClient({
 
                     {/* ── Step 4 · Discounts ────────────────────────────────── */}
                     <Step4_Discounts
-                        {...stepState(4)}
+                        {...stepState(3)}
                         kind="data"
-                        onDone={() => markDone(4)}
+                        onDone={() => markDone(3)}
                         completeSummary="Discounts applied"
                     >
                         <DiscountsPanel
@@ -1105,9 +1596,9 @@ export default function AdminMasterClient({
 
                     {/* ── Step 5 · Rental Market ────────────────────────────── */}
                     <Step5_RentalMarket
-                        {...stepState(5)}
+                        {...stepState(4)}
                         kind="review"
-                        onDone={() => markDone(5)}
+                        onDone={() => markDone(4)}
                         completeSummary="Rental market reviewed"
                     >
                         {adu.selectedAdus.length > 0 && (
@@ -1148,7 +1639,7 @@ export default function AdminMasterClient({
 
                     {/* ── Step 6 · Review & Generate ────────────────────────── */}
                     <Step6_ReviewAndGenerate
-                        {...stepState(6)}
+                        {...stepState(5)}
                         kind="review"
                         completeSummary="Ready to present"
                     >
@@ -1161,6 +1652,11 @@ export default function AdminMasterClient({
                             setSqftByAduId={adu.setSqftByAduId}
                             rentByAduId={adu.rentByAduId}
                             setRentByAduId={adu.setRentByAduId}
+                        />
+
+                        <ExclusionsPanel
+                            value={agreementExclusions}
+                            onChange={setAgreementExclusions}
                         />
 
                         <FinancingTable
@@ -1221,9 +1717,9 @@ export default function AdminMasterClient({
 
                     {/* ── Step 7 · Feature Builds (curate Slide 5) ──────────── */}
                     <Step7_FeatureBuilds
-                        {...stepState(7)}
+                        {...stepState(6)}
                         kind="data"
-                        onDone={() => markDone(7)}
+                        onDone={() => markDone(6)}
                         completeSummary={
                             featuredPropertyIds.length > 0
                                 ? `${featuredPropertyIds.length} build${featuredPropertyIds.length > 1 ? "s" : ""} curated`
@@ -1239,9 +1735,9 @@ export default function AdminMasterClient({
 
                     {/* ── Step 8 · Feature Stories (curate Slide 6) ─────────── */}
                     <Step8_FeatureStories
-                        {...stepState(8)}
+                        {...stepState(7)}
                         kind="data"
-                        onDone={() => markDone(8)}
+                        onDone={() => markDone(7)}
                         completeSummary={
                             featuredStoryIds.length > 0
                                 ? `${featuredStoryIds.length} stor${featuredStoryIds.length > 1 ? "ies" : "y"} curated`
@@ -1257,9 +1753,9 @@ export default function AdminMasterClient({
 
                     {/* ── Step 9 · Feature Rentals (curate Slide 10) ────────── */}
                     <Step9_FeatureRentals
-                        {...stepState(9)}
+                        {...stepState(8)}
                         kind="data"
-                        onDone={() => markDone(9)}
+                        onDone={() => markDone(8)}
                         completeSummary={
                             featuredRentals.length > 0
                                 ? `${featuredRentals.length} rental${featuredRentals.length > 1 ? "s" : ""} curated`
@@ -1276,9 +1772,9 @@ export default function AdminMasterClient({
 
                     {/* ── Step 10 · Slide Order (drag-and-drop) ─────────────── */}
                     <Step10_SlideOrder
-                        {...stepState(10)}
+                        {...stepState(9)}
                         kind="data"
-                        onDone={() => markDone(10)}
+                        onDone={() => markDone(9)}
                         completeSummary={
                             slideOrder.length > 0
                                 ? "Custom slide order"
@@ -1293,9 +1789,9 @@ export default function AdminMasterClient({
 
                     {/* ── Step 11 · Project Timeline (Slide 7 source) ───────── */}
                     <Step11_Timeline
-                        {...stepState(11)}
+                        {...stepState(10)}
                         kind="data"
-                        onDone={() => markDone(11)}
+                        onDone={() => markDone(10)}
                         completeSummary={
                             projectTimeline
                                 ? "Custom timeline entered"
@@ -1316,9 +1812,9 @@ export default function AdminMasterClient({
 
                     {/* ── Step 12 · Payment Schedule (drives the future contract slide) ── */}
                     <Step12_PaymentSchedule
-                        {...stepState(12)}
+                        {...stepState(11)}
                         kind="data"
-                        onDone={() => markDone(12)}
+                        onDone={() => markDone(11)}
                         completeSummary={
                             Object.keys(proposalPaymentSchedulesByAduId).length > 0
                                 ? "Schedule entered"

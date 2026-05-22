@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { AduTypeBadge } from "../_components/AduTypeBadge";
 import {
     getDiscountLines,
     createEmptyDiscountState,
@@ -86,6 +87,7 @@ export function Slide3_YourOptions() {
         floorplans,
         scenarios,
         aduType,
+        aduTypeByUnitId,
         propertyAddress,
         customerName,
         siteWorkTagsByUnitId,
@@ -202,6 +204,14 @@ export function Slide3_YourOptions() {
                             className={`${s.planCol}`}
                             data-disc={unitDiscounts.length}
                         >
+
+                            {/* ADU-type badge — corner overlay so it doesn't
+                                push the breakdown rows down. */}
+                            <AduTypeBadge
+                                type={aduTypeByUnitId?.[fp._id] ?? aduType}
+                                variant="dark"
+                                corner="top-right"
+                            />
 
                             {/* Plan header */}
                             <div className={s.planColHeader}>

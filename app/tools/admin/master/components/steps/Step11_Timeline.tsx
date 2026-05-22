@@ -19,7 +19,7 @@ export interface Step11Props {
 
 export function Step11_Timeline(props: Step11Props) {
     return (
-        <StepCard stepNumber={11} title="Project Timeline" {...props}>
+        <StepCard stepNumber={10} title="Project Timeline" {...props}>
             {props.children}
         </StepCard>
     );

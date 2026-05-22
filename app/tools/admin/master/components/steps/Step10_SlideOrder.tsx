@@ -19,7 +19,7 @@ export interface Step10Props {
 
 export function Step10_SlideOrder(props: Step10Props) {
     return (
-        <StepCard stepNumber={10} title="Slide Order" {...props}>
+        <StepCard stepNumber={9} title="Slide Order" {...props}>
             {props.children}
         </StepCard>
     );

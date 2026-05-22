@@ -126,8 +126,14 @@ export type PresentationState = {
     propertyPhotoUrl: string | null;
     customerMotivation: CustomerMotivation;
 
-    // From Step 2
+    // From Step 1 (merged unit picker)
     comparedUnitIds: string[];
+
+    // Per-unit overrides keyed by floorplan id. When set, they take precedence
+    // over the Sanity floorplan defaults (beds/baths) or the global aduType.
+    aduTypeByUnitId: Record<string, "detached" | "attached" | "garage">;
+    bedsByUnitId: Record<string, number>;
+    bathsByUnitId: Record<string, number>;
 
     // From Step 7 — admin-curated order for the Completed Builds gallery (Slide 5).
     // Empty = fall back to Sanity `featured` flag.
@@ -288,6 +294,10 @@ export type AdminBroadcast = {
     propertyPhotoUrl: string | null;
     customerMotivation: CustomerMotivation;
     comparedUnitIds: string[];
+    // Per-unit overrides — see PresentationState above for semantics.
+    aduTypeByUnitId: Record<string, "detached" | "attached" | "garage">;
+    bedsByUnitId: Record<string, number>;
+    bathsByUnitId: Record<string, number>;
     // Admin-added units (id starts with "custom_") — merged into the presenter's
     // floorplans list so custom comparisons render alongside Sanity units.
     customFloorplans: SanityFloorplan[];
@@ -323,6 +333,9 @@ const initialData = {
     propertyPhotoUrl: null,
     customerMotivation: null as CustomerMotivation,
     comparedUnitIds: [],
+    aduTypeByUnitId: {} as Record<string, "detached" | "attached" | "garage">,
+    bedsByUnitId: {} as Record<string, number>,
+    bathsByUnitId: {} as Record<string, number>,
     featuredPropertyIds: [],
     featuredStoryIds: [],
     featuredRentals: [],

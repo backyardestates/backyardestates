@@ -9,7 +9,15 @@ export type Floorplan = {
     price: number;
     beds: number;
     baths: number;
+    /** Sanity-shape bed/bath (singular). FLOORPLANS_QUERY returns these fields,
+     *  so they're the actual source-of-truth values on catalog units. */
+    bed?: number;
+    bath?: number;
     key: string;
+    /** Cloudinary drawing URL — projected from `drawing.secure_url` on the
+     *  Sanity floorplan. Catalog units always have this; custom units inherit
+     *  it via the picker (or upload). */
+    floorPlanUrl?: string;
     /** Optional override for the floorplan image. Used by admin-added custom
      *  units; when absent on a custom unit, the presenter falls back to the
      *  nearest-sqft Sanity floorplan's image at broadcast time. */

@@ -1,0 +1,555 @@
+/* Site-work line-item quick-add search bar
+   ─────────────────────────────────────────
+   Editorial paper + gold-hairline aesthetic matching the rest of the admin
+   tool. Sits at the top of SiteWorkPanel as the primary way to add work. */
+
+.wrap {
+    position: relative;
+    width: 100%;
+}
+
+/* ── Input ───────────────────────────────────────────────────────────────── */
+
+.inputRow {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 14px;
+    color: #B8954A;
+    font-size: 18px;
+    pointer-events: none;
+    line-height: 1;
+}
+
+.input {
+    flex: 1;
+    padding: 11px 38px 11px 38px;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.30);
+    border-radius: 10px;
+    font-size: 14px;
+    color: #14302F;
+    font-family: inherit;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+    min-height: 42px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #B8954A;
+    box-shadow: 0 0 0 3px rgba(184, 149, 74, 0.15);
+}
+
+.input::placeholder {
+    color: rgba(20, 48, 47, 0.42);
+}
+
+.clearBtn {
+    position: absolute;
+    right: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(20, 48, 47, 0.08);
+    border: none;
+    color: rgba(20, 48, 47, 0.62);
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.12s ease;
+}
+
+.clearBtn:hover {
+    background: rgba(20, 48, 47, 0.18);
+    color: #14302F;
+}
+
+/* ── Dropdown ────────────────────────────────────────────────────────────── */
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.30);
+    border-radius: 12px;
+    box-shadow:
+        0 2px 4px rgba(20, 48, 47, 0.04),
+        0 12px 28px rgba(20, 48, 47, 0.12);
+    overflow: hidden;
+}
+
+/* ── Results list ───────────────────────────────────────────────────────── */
+
+.results {
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.resultBtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s ease;
+    font-family: inherit;
+}
+
+.resultBtn:hover,
+.resultBtn:focus-visible {
+    background: rgba(184, 149, 74, 0.10);
+    outline: none;
+}
+
+/* Item is already on at least one unit — left gold rail + tinted bg */
+.resultBtnAdded {
+    background: rgba(184, 149, 74, 0.06);
+    box-shadow: inset 3px 0 0 #B8954A;
+}
+
+.resultBtnAdded:hover,
+.resultBtnAdded:focus-visible {
+    background: rgba(184, 149, 74, 0.14);
+}
+
+.resultMain {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.resultLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: #14302F;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.resultMeta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(20, 48, 47, 0.55);
+    font-weight: 500;
+}
+
+.addedBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    background: rgba(184, 149, 74, 0.18);
+    border: 1px solid rgba(184, 149, 74, 0.35);
+    color: #8A6B14;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.addedBadgeCheck {
+    font-size: 10px;
+    color: #B8954A;
+    line-height: 1;
+}
+
+.resultCost {
+    flex-shrink: 0;
+    font-size: 13px;
+    color: #14302F;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.resultCostUnit {
+    margin-left: 2px;
+    font-size: 10px;
+    color: rgba(20, 48, 47, 0.50);
+    font-weight: 500;
+}
+
+.noResults {
+    padding: 16px 14px;
+    font-size: 13px;
+    color: rgba(20, 48, 47, 0.60);
+    font-style: italic;
+    text-align: center;
+}
+
+.noResults em {
+    color: #14302F;
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* ── Add custom item CTA ─────────────────────────────────────────────────── */
+
+.addCustomRow {
+    padding: 8px;
+    border-top: 1px solid rgba(184, 149, 74, 0.18);
+    background: #FBF7EE;
+}
+
+.addCustomBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+    padding: 9px 12px;
+    background: #FFFFFF;
+    border: 1px dashed rgba(184, 149, 74, 0.55);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #14302F;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.addCustomBtn:hover:not(:disabled) {
+    background: rgba(184, 149, 74, 0.10);
+    border-color: #B8954A;
+}
+
+.addCustomBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.addCustomIcon {
+    font-size: 15px;
+    color: #B8954A;
+    line-height: 1;
+}
+
+/* ── Form (cost + apply-to) ──────────────────────────────────────────────── */
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px 14px;
+}
+
+.formHead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.18);
+}
+
+.formHeadMain {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}
+
+.formItemName {
+    font-size: 15px;
+    font-weight: 600;
+    color: #14302F;
+    letter-spacing: -0.005em;
+    line-height: 1.2;
+}
+
+.formLabelInput {
+    padding: 6px 10px;
+    background: #FBF7EE;
+    border: 1px solid rgba(184, 149, 74, 0.30);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #14302F;
+    font-family: inherit;
+    transition: border-color 0.12s ease;
+}
+
+.formLabelInput:focus {
+    outline: none;
+    border-color: #B8954A;
+}
+
+.formCatMeta {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.20em;
+    color: #B8954A;
+    font-weight: 700;
+}
+
+.formCatSelect {
+    padding: 4px 8px;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.30);
+    border-radius: 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #14302F;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.formBackBtn {
+    flex-shrink: 0;
+    padding: 4px 8px;
+    background: transparent;
+    border: none;
+    color: rgba(20, 48, 47, 0.55);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.12s ease;
+}
+
+.formBackBtn:hover {
+    color: #14302F;
+}
+
+.formField {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.formFieldLabel {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: #B8954A;
+    font-weight: 700;
+}
+
+/* ── Cost input ──────────────────────────────────────────────────────────── */
+
+.costInputWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.costPrefix {
+    position: absolute;
+    left: 12px;
+    font-size: 15px;
+    color: rgba(20, 48, 47, 0.55);
+    font-weight: 600;
+    pointer-events: none;
+    line-height: 1;
+}
+
+.costInput {
+    flex: 1;
+    padding: 9px 12px 9px 26px;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.30);
+    border-radius: 8px;
+    font-size: 15px;
+    color: #14302F;
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.costInput:focus {
+    outline: none;
+    border-color: #B8954A;
+    box-shadow: 0 0 0 3px rgba(184, 149, 74, 0.15);
+}
+
+.costInput::-webkit-outer-spin-button,
+.costInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.costInput[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* ── Apply-to chips ──────────────────────────────────────────────────────── */
+
+.applyRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.applyChip {
+    padding: 6px 12px;
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.30);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #14302F;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.applyChip:hover {
+    border-color: #B8954A;
+    background: rgba(184, 149, 74, 0.06);
+}
+
+.applyChipActive {
+    background: #14302F;
+    border-color: #14302F;
+    color: #F7F2E8;
+}
+
+.applyChipActive:hover {
+    background: #1F4948;
+    border-color: #1F4948;
+}
+
+/* Unit already has this item — gold-tinted ring + checkmark.
+   When also active (.applyChipActive), the dark fill wins for clarity. */
+.applyChipAlready {
+    background: rgba(184, 149, 74, 0.10);
+    border-color: rgba(184, 149, 74, 0.55);
+    color: #8A6B14;
+}
+
+.applyChipAlready:hover {
+    background: rgba(184, 149, 74, 0.18);
+    border-color: #B8954A;
+    color: #14302F;
+}
+
+.applyChipCheck {
+    margin-right: 4px;
+    font-size: 11px;
+    color: #B8954A;
+    line-height: 1;
+}
+
+.applyChipActive .applyChipCheck {
+    color: var(--p-gold-bright, #DBB668);
+}
+
+/* Duplicate-aware notice above the chip row */
+.dupNotice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 9px 12px;
+    background: rgba(184, 149, 74, 0.12);
+    border: 1px solid rgba(184, 149, 74, 0.35);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #14302F;
+    line-height: 1.4;
+}
+
+.dupNoticeIcon {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #B8954A;
+    color: #FBF7EE;
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    margin-top: 1px;
+}
+
+.formHint {
+    font-size: 11px;
+    color: #8A3A2E;
+    font-style: italic;
+}
+
+/* ── Form actions ────────────────────────────────────────────────────────── */
+
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 6px;
+}
+
+.cancelBtn {
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid rgba(20, 48, 47, 0.20);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(20, 48, 47, 0.70);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.cancelBtn:hover {
+    background: rgba(20, 48, 47, 0.05);
+    border-color: rgba(20, 48, 47, 0.40);
+    color: #14302F;
+}
+
+.submitBtn {
+    padding: 8px 16px;
+    background: #14302F;
+    color: #F7F2E8;
+    border: 1px solid #14302F;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+    background: #1F4948;
+}
+
+.submitBtn:disabled {
+    background: rgba(184, 149, 74, 0.30);
+    border-color: rgba(184, 149, 74, 0.40);
+    color: rgba(20, 48, 47, 0.50);
+    cursor: not-allowed;
+}

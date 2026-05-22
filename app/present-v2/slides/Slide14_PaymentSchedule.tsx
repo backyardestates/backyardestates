@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { AduTypeBadge } from "../_components/AduTypeBadge";
 import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
 import s from "./Slide14.module.css";
 
@@ -82,6 +83,8 @@ export function Slide14_PaymentSchedule() {
         floorplans,
         currentSlide,
         isPrintMode,
+        aduType,
+        aduTypeByUnitId,
     } = usePresentationStore();
 
     const active = currentSlide === 11 || isPrintMode;
@@ -174,12 +177,19 @@ export function Slide14_PaymentSchedule() {
                         const { titlePrefix, titleAccent, dupSuffix } = splitTitle(col.name);
                         return (
                             <div key={col.id} className={`${s.cell} ${s.thCol} ${s.thAmount}`}>
+                                {/* Type badge above the plan name. The total
+                                    used to live here too but it's already
+                                    shown in the "Total contract" row at the
+                                    bottom of the table — redundant. */}
+                                <AduTypeBadge
+                                    type={aduTypeByUnitId?.[col.id] ?? aduType}
+                                    variant="light"
+                                />
                                 <div className={s.thAduName}>
                                     The {titlePrefix && <>{titlePrefix} </>}
                                     <span className={s.thAduAccent}>{titleAccent}</span>
                                     {dupSuffix}
                                 </div>
-                                <div className={s.thAduTotal}>{fmt$(col.schedule.totalPrice)}</div>
                             </div>
                         );
                     })}

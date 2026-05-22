@@ -58,6 +58,12 @@ export function snapshotToProposalCreate(
         zip,
         addressKey: snapshot.addressKey,
 
+        // Pipedrive linkage — promoted to columns so future queries (e.g.
+        // "find all proposals attached to this Pipedrive deal") don't need
+        // to scan the snapshot JSON blob.
+        pipedrivePersonId: snapshot.pipedrivePersonId ?? null,
+        pipedriveDealId: snapshot.pipedriveDealId ?? null,
+
         snapshotVersion: snapshot.schemaVersion ?? 1,
         snapshotJson: snapshot as unknown as object,
     };

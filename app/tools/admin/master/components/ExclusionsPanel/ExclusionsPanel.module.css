@@ -1,0 +1,117 @@
+/* Compact editor for the per-proposal agreement exclusions. Renders as a
+ * collapsible panel inside Step 6 (Review & Generate) so the rep can review
+ * what will land in the contract right before generating. */
+
+.root {
+    border: 1px solid rgba(20, 48, 47, 0.14);
+    border-radius: 12px;
+    padding: 16px 18px;
+    background: rgba(20, 48, 47, 0.025);
+    color: var(--color-brand-dark-blue, #14302f);
+    font-family: 'Roboto', system-ui, sans-serif;
+    margin: 16px 0;
+}
+
+.header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(20, 48, 47, 0.08);
+}
+
+.label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(20, 48, 47, 0.7);
+}
+
+.count {
+    font-size: 11px;
+    color: rgba(20, 48, 47, 0.5);
+    font-variant-numeric: tabular-nums;
+}
+
+.hint {
+    font-size: 12px;
+    color: rgba(20, 48, 47, 0.6);
+    margin: 0 0 10px;
+    line-height: 1.45;
+}
+
+.textarea {
+    width: 100%;
+    min-height: 96px;
+    padding: 10px 12px;
+    background: #fff;
+    border: 1.5px solid rgba(20, 48, 47, 0.18);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-brand-dark-blue, #14302f);
+    resize: vertical;
+    transition: border-color 0.12s, box-shadow 0.12s;
+}
+
+.textarea::placeholder {
+    color: rgba(20, 48, 47, 0.4);
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: #2a7a52;
+    box-shadow: 0 0 0 3px rgba(42, 122, 82, 0.12);
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.preview {
+    font-size: 11px;
+    color: rgba(20, 48, 47, 0.55);
+    font-style: italic;
+    flex: 1;
+    min-width: 0;
+}
+
+.clearBtn {
+    background: transparent;
+    border: 1px solid rgba(20, 48, 47, 0.18);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(20, 48, 47, 0.65);
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    white-space: nowrap;
+}
+
+.clearBtn:hover:not(:disabled) {
+    background: rgba(176, 59, 59, 0.08);
+    border-color: rgba(176, 59, 59, 0.4);
+    color: #7a1f1f;
+}
+
+.clearBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.autoNote {
+    margin-top: 8px;
+    font-size: 11px;
+    color: rgba(20, 48, 47, 0.55);
+    font-style: italic;
+    line-height: 1.45;
+}

@@ -8,7 +8,6 @@ import {
     type SiteWorkPreset,
     type SiteWorkCatalogData,
     type CustomItemData,
-    type ActiveLineItem,
     createEmptyState,
     rowCustomerPrice,
     computeTotal,
@@ -18,6 +17,7 @@ import {
     effectiveMarkup,
 } from "@/lib/investment/siteWorkItems";
 import { money } from "@/lib/investment/format";
+import { ActiveItemsEditor, type ActiveEditorCrossUnit } from "./ActiveItemsEditor";
 import s from "./SiteWorkEstimator.module.css";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -27,6 +27,10 @@ interface Props {
     onChange: (next: EstimatorState) => void;
     aduName?: string;
     catalog?: SiteWorkCatalogData;
+    /** Optional cross-unit context for the Active tab editor. When provided,
+     *  each active-item row exposes an Apply-to picker so edits and removals
+     *  can fan out across all selected ADUs. */
+    crossUnit?: ActiveEditorCrossUnit;
 }
 
 interface Snapshot {
@@ -41,8 +45,6 @@ type Tab = "all" | "active";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function fmt(n: number) { return n === 0 ? "—" : money(n); }
-function pct(n: number) { return `${Math.round(n * 100)}%`; }
 
 function activeItemCount(state: EstimatorState, categories: SiteWorkCategory[]): number {
     let count = 0;
@@ -311,48 +313,9 @@ function CustomRow({
     );
 }
 
-// ─── Active items flat list ────────────────────────────────────────────────────
-
-function ActiveList({ snapshot }: { snapshot: ActiveLineItem[] }) {
-    if (snapshot.length === 0) {
-        return <div className={s.emptyActive}>No items yet — set any qty above zero in the All tab.</div>;
-    }
-    return (
-        <div className={s.activeList}>
-            <div className={s.activeListHead}>
-                <span>Item</span>
-                <span>Qty</span>
-                <span>Unit</span>
-                <span>BE Cost</span>
-                <span>Markup</span>
-                <span>Unit Price</span>
-                <span>Customer Total</span>
-            </div>
-            {snapshot.map((item) => (
-                <div key={item.itemId} className={`${s.activeRow} ${item.isOverridden ? s.activeRowOverridden : ""}`}>
-                    <div>
-                        <div className={s.activeItemLabel}>{item.label}</div>
-                        <div className={s.activeItemCat}>{item.catLabel}</div>
-                    </div>
-                    <span>{item.qty}</span>
-                    <span className={s.activeUnit}>{item.unit}</span>
-                    <span>{item.unit === "quote" ? "—" : money(item.beCost)}</span>
-                    <span>{pct(item.markup)}</span>
-                    <span>{item.unitPrice > 0 ? money(item.unitPrice) : "—"}</span>
-                    <span className={s.activeTotal}>{money(item.customerTotal)}</span>
-                </div>
-            ))}
-            <div className={s.activeGrandTotal}>
-                <span>Grand total</span>
-                <span>{money(snapshot.reduce((s, i) => s + i.customerTotal, 0))}</span>
-            </div>
-        </div>
-    );
-}
-
 // ─── Main component ────────────────────────────────────────────────────────────
 
-export function SiteWorkEstimator({ value, onChange, aduName, catalog }: Props) {
+export function SiteWorkEstimator({ value, onChange, aduName, catalog, crossUnit }: Props) {
     // Resolve the runtime category list: DB-backed catalog when supplied,
     // legacy SITE_WORK_CATEGORIES otherwise. Item ids are stripped of their
     // `cat__` slug prefix inside catalogToSiteWorkCategories so existing
@@ -519,10 +482,14 @@ export function SiteWorkEstimator({ value, onChange, aduName, catalog }: Props) 
                 </div>
             </div>
 
-            {/* ── Tab: Active items flat list ──────────────────────────────── */}
+            {/* ── Tab: Active items editor ─────────────────────────────────── */}
             {tab === "active" && (
                 <div className={s.inner}>
-                    <ActiveList snapshot={snapshot} />
+                    <ActiveItemsEditor
+                        snapshot={snapshot}
+                        grandTotal={total}
+                        crossUnit={crossUnit}
+                    />
                 </div>
             )}
 

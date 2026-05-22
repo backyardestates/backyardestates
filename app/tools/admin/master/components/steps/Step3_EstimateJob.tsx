@@ -19,7 +19,7 @@ export interface Step3Props {
 
 export function Step3_EstimateJob(props: Step3Props) {
     return (
-        <StepCard stepNumber={3} title="Estimate the Job" {...props}>
+        <StepCard stepNumber={2} title="Estimate the Job" {...props}>
             {props.children}
         </StepCard>
     );

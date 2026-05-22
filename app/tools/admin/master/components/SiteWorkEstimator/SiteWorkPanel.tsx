@@ -13,6 +13,7 @@ import {
 } from "@/lib/investment/siteWorkItems";
 import { money } from "@/lib/investment/format";
 import { SiteWorkEstimator } from "./SiteWorkEstimator";
+import { SiteWorkSearch, type PresenceEntry } from "./SiteWorkSearch";
 import s from "./SiteWorkPanel.module.css";
 
 const LS_MASTER_KEY = "swp_master";
@@ -121,15 +122,321 @@ export function SiteWorkPanel({ selectedAdus, setEstimatorByAduId, catalog }: Pr
         setExpandedAduId(null);
     }
 
+    // Deep-copy the current master into a fresh per-unit override so we can
+    // mutate one unit without touching the others. Mirrors handleCustomize's
+    // shape but is callable without expanding the panel.
+    function snapshotFromMaster(): EstimatorState {
+        return {
+            quantities: { ...masterEstimator.quantities },
+            customItems: masterEstimator.customItems.map((ci) => ({ ...ci })),
+            overrides: { ...(masterEstimator.overrides ?? {}) },
+        };
+    }
+
+    // ── Search → add: preset item ─────────────────────────────────────────
+    // "All units" writes through master AND every existing custom override
+    // so the rep sees the item on every card. A subset target only mutates
+    // the named units' overrides — synced units stay on master.
+    function handleApplyPreset({
+        itemId,
+        customerTotal,
+        targetUnitIds,
+    }: {
+        itemId: string;
+        catId: string;
+        customerTotal: number;
+        targetUnitIds: "all" | string[];
+    }) {
+        const preset = resolvedCategories
+            .flatMap((c) => c.items)
+            .find((i) => i.id === itemId);
+        if (!preset) return;
+        const markup = preset.markup > 0 ? preset.markup : 1.2;
+        const beCost = customerTotal / markup;
+        const qty = 1;
+
+        function applyToState(state: EstimatorState): EstimatorState {
+            return {
+                ...state,
+                quantities: { ...state.quantities, [itemId]: qty },
+                overrides: {
+                    ...(state.overrides ?? {}),
+                    [itemId]: { beCost, markup },
+                },
+            };
+        }
+
+        if (targetUnitIds === "all") {
+            setMasterEstimator((prev) => applyToState(prev));
+            setCustomByAduId((prev) => {
+                const next: Record<string, EstimatorState | null> = {};
+                for (const [uid, st] of Object.entries(prev)) {
+                    next[uid] = st ? applyToState(st) : null;
+                }
+                return next;
+            });
+            return;
+        }
+
+        setCustomByAduId((prev) => {
+            const next = { ...prev };
+            for (const uid of targetUnitIds) {
+                const base = next[uid] ?? snapshotFromMaster();
+                next[uid] = applyToState(base);
+            }
+            return next;
+        });
+    }
+
+    // ── Search → add: custom (free-text) item ─────────────────────────────
+    // Each unit gets its own customItem id so deleting one doesn't break the
+    // others' arrays.
+    function handleApplyCustom({
+        catId,
+        label,
+        customerTotal,
+        targetUnitIds,
+    }: {
+        catId: string;
+        label: string;
+        customerTotal: number;
+        targetUnitIds: "all" | string[];
+    }) {
+        const markup = 1.2;
+        const beCost = customerTotal / markup;
+        const qty = 1;
+        const trimmed = label.trim();
+        if (!trimmed) return;
+        const norm = trimmed.toLowerCase();
+
+        // Update-in-place if an item with the same (catId, label) already
+        // exists in the target state; otherwise append a fresh one. This is
+        // what stops "Snow removal" submitted twice from creating two rows.
+        function updateOrAdd(state: EstimatorState): EstimatorState {
+            const idx = state.customItems.findIndex(
+                (ci) => ci.catId === catId && (ci.label?.trim().toLowerCase() ?? "") === norm,
+            );
+            if (idx >= 0) {
+                const nextItems = state.customItems.slice();
+                nextItems[idx] = { ...nextItems[idx], beCost, markup, qty };
+                return { ...state, customItems: nextItems };
+            }
+            return {
+                ...state,
+                customItems: [
+                    ...state.customItems,
+                    { id: crypto.randomUUID(), catId, label: trimmed, qty, beCost, markup },
+                ],
+            };
+        }
+
+        if (targetUnitIds === "all") {
+            setMasterEstimator((prev) => updateOrAdd(prev));
+            setCustomByAduId((prev) => {
+                const next: Record<string, EstimatorState | null> = {};
+                for (const [uid, st] of Object.entries(prev)) {
+                    next[uid] = st ? updateOrAdd(st) : null;
+                }
+                return next;
+            });
+            return;
+        }
+
+        setCustomByAduId((prev) => {
+            const next = { ...prev };
+            for (const uid of targetUnitIds) {
+                const base = next[uid] ?? snapshotFromMaster();
+                next[uid] = updateOrAdd(base);
+            }
+            return next;
+        });
+    }
+
+    // ── Remove handlers — called from the Active items editor ─────────────
+
+    function handleRemovePreset({
+        itemId,
+        targetUnitIds,
+    }: {
+        itemId: string;
+        catId: string;
+        targetUnitIds: "all" | string[];
+    }) {
+        function removeFromState(state: EstimatorState): EstimatorState {
+            const quantities = { ...state.quantities };
+            delete quantities[itemId];
+            const overrides = { ...(state.overrides ?? {}) };
+            delete overrides[itemId];
+            return { ...state, quantities, overrides };
+        }
+
+        if (targetUnitIds === "all") {
+            setMasterEstimator((prev) => removeFromState(prev));
+            setCustomByAduId((prev) => {
+                const next: Record<string, EstimatorState | null> = {};
+                for (const [uid, st] of Object.entries(prev)) {
+                    next[uid] = st ? removeFromState(st) : null;
+                }
+                return next;
+            });
+            return;
+        }
+
+        setCustomByAduId((prev) => {
+            const next = { ...prev };
+            for (const uid of targetUnitIds) {
+                const base = next[uid] ?? snapshotFromMaster();
+                next[uid] = removeFromState(base);
+            }
+            return next;
+        });
+    }
+
+    function handleRemoveCustom({
+        catId,
+        label,
+        targetUnitIds,
+    }: {
+        catId: string;
+        label: string;
+        targetUnitIds: "all" | string[];
+    }) {
+        const norm = label.trim().toLowerCase();
+        function removeFromState(state: EstimatorState): EstimatorState {
+            return {
+                ...state,
+                customItems: state.customItems.filter(
+                    (ci) =>
+                        !(
+                            ci.catId === catId &&
+                            (ci.label?.trim().toLowerCase() ?? "") === norm
+                        ),
+                ),
+            };
+        }
+
+        if (targetUnitIds === "all") {
+            setMasterEstimator((prev) => removeFromState(prev));
+            setCustomByAduId((prev) => {
+                const next: Record<string, EstimatorState | null> = {};
+                for (const [uid, st] of Object.entries(prev)) {
+                    next[uid] = st ? removeFromState(st) : null;
+                }
+                return next;
+            });
+            return;
+        }
+
+        setCustomByAduId((prev) => {
+            const next = { ...prev };
+            for (const uid of targetUnitIds) {
+                const base = next[uid] ?? snapshotFromMaster();
+                next[uid] = removeFromState(base);
+            }
+            return next;
+        });
+    }
+
     const expandedFp = useMemo(
         () => (expandedAduId ? selectedAdus.find((fp) => fp._id === expandedAduId) ?? null : null),
         [expandedAduId, selectedAdus]
     );
 
+    // ── Presence index ────────────────────────────────────────────────────
+    // Per-item map of which units currently *effectively* show the item, plus
+    // a sample current cost. Drives the "already added" badges in search and
+    // the apply-to chip checkmarks. Built off effective state (custom override
+    // wins over master) so it reflects what the rep sees on each card.
+    const presenceIndex = useMemo<PresenceEntry[]>(() => {
+        const presetMeta = new Map<string, { catId: string; label: string; markup: number }>();
+        for (const cat of resolvedCategories)
+            for (const item of cat.items)
+                presetMeta.set(item.id, { catId: cat.id, label: item.label, markup: item.markup });
+
+        const byKey = new Map<string, PresenceEntry>();
+        for (const fp of selectedAdus) {
+            const st = customByAduId[fp._id] ?? masterEstimator;
+            // Presets
+            for (const [itemId, rawQty] of Object.entries(st.quantities)) {
+                const qty = rawQty ?? 0;
+                if (qty <= 0) continue;
+                const meta = presetMeta.get(itemId);
+                if (!meta) continue;
+                const ov = st.overrides?.[itemId];
+                const beCost = ov?.beCost;
+                const markup = ov?.markup ?? meta.markup;
+                const cost = beCost != null ? beCost * markup : null;
+                const key = `preset:${itemId}`;
+                const existing = byKey.get(key);
+                if (existing) {
+                    existing.unitIds.push(fp._id);
+                    if (existing.sampleCost == null && cost != null) existing.sampleCost = cost;
+                } else {
+                    byKey.set(key, {
+                        kind: "preset",
+                        presetItemId: itemId,
+                        label: meta.label,
+                        catId: meta.catId,
+                        unitIds: [fp._id],
+                        sampleCost: cost,
+                    });
+                }
+            }
+            // Custom items — keyed by (catId + normalized label) so the same
+            // free-text item across units collapses into a single search hit.
+            for (const ci of st.customItems) {
+                const label = ci.label?.trim();
+                if (!label || ci.qty <= 0) continue;
+                const norm = label.toLowerCase();
+                const key = `custom:${ci.catId}:${norm}`;
+                const cost = ci.beCost * ci.markup * ci.qty;
+                const existing = byKey.get(key);
+                if (existing) existing.unitIds.push(fp._id);
+                else byKey.set(key, {
+                    kind: "custom",
+                    customLabel: label,
+                    label,
+                    catId: ci.catId,
+                    unitIds: [fp._id],
+                    sampleCost: cost > 0 ? cost : null,
+                });
+            }
+        }
+        return Array.from(byKey.values());
+    }, [masterEstimator, customByAduId, resolvedCategories, selectedAdus]);
+
+    // Per-presence Maps the Active editor needs to mark which unit chips
+    // already have the row in question. Both maps share the same source so
+    // they stay in sync.
+    const presetPresenceByItemId = useMemo(() => {
+        const m = new Map<string, string[]>();
+        for (const e of presenceIndex)
+            if (e.kind === "preset" && e.presetItemId) m.set(e.presetItemId, e.unitIds);
+        return m;
+    }, [presenceIndex]);
+
+    const customPresenceByKey = useMemo(() => {
+        const m = new Map<string, string[]>();
+        for (const e of presenceIndex) {
+            if (e.kind === "custom" && e.customLabel)
+                m.set(`${e.catId}:${e.customLabel.toLowerCase()}`, e.unitIds);
+        }
+        return m;
+    }, [presenceIndex]);
+
     if (selectedAdus.length === 0) return null;
 
     return (
         <div className={s.panel}>
+            {/* ── Quick-add search ───────────────────────────────────────── */}
+            <SiteWorkSearch
+                categories={resolvedCategories}
+                selectedAdus={selectedAdus}
+                presenceIndex={presenceIndex}
+                onApplyPreset={handleApplyPreset}
+                onApplyCustom={handleApplyCustom}
+            />
+
             {/* ── Unit summary cards ─────────────────────────────────────── */}
             <div className={s.unitRow}>
                 {selectedAdus.map((fp) => {
@@ -198,6 +505,16 @@ export function SiteWorkPanel({ selectedAdus, setEstimatorByAduId, catalog }: Pr
                         value={getEffective(expandedFp._id)}
                         onChange={(next) => handleUnitChange(expandedFp._id, next)}
                         catalog={catalog}
+                        crossUnit={{
+                            selectedAdus,
+                            currentUnitId: expandedFp._id,
+                            presetPresenceByItemId,
+                            customPresenceByKey,
+                            onEditPreset: handleApplyPreset,
+                            onEditCustom: handleApplyCustom,
+                            onRemovePreset: handleRemovePreset,
+                            onRemoveCustom: handleRemoveCustom,
+                        }}
                     />
                 </div>
             )}
@@ -218,6 +535,16 @@ export function SiteWorkPanel({ selectedAdus, setEstimatorByAduId, catalog }: Pr
                     value={masterEstimator}
                     onChange={setMasterEstimator}
                     catalog={catalog}
+                    crossUnit={{
+                        selectedAdus,
+                        currentUnitId: undefined,
+                        presetPresenceByItemId,
+                        customPresenceByKey,
+                        onEditPreset: handleApplyPreset,
+                        onEditCustom: handleApplyCustom,
+                        onRemovePreset: handleRemovePreset,
+                        onRemoveCustom: handleRemoveCustom,
+                    }}
                 />
             </div>
         </div>

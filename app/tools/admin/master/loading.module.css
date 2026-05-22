@@ -1,0 +1,83 @@
+.shell {
+    min-height: calc(100vh - 60px);
+    background: #F6F1E6;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: #FFFFFF;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.18);
+    gap: 16px;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.body {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    flex: 1;
+    min-height: 0;
+}
+
+.sidebar {
+    padding: 24px 20px;
+    background: #FFFFFF;
+    border-right: 1px solid rgba(184, 149, 74, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebarRow {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0;
+}
+
+.main {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: hidden;
+}
+
+.stepCard {
+    background: #FFFFFF;
+    border: 1px solid rgba(184, 149, 74, 0.18);
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
+}
+
+.stepHead {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.stepBody {
+    padding-left: 42px;
+}
+
+@media (max-width: 880px) {
+    .body {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
+    }
+}

@@ -62,17 +62,40 @@
 }
 
 .btn {
-    height: 30px;
-    padding: 0 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    /* Tall enough to host a two-line label (primary action + helper text). */
+    min-height: 36px;
+    padding: 4px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
     background: transparent;
-    color: rgba(247, 245, 240, 0.85);
+    color: #f7f5f0;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btnLabel {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.15;
+    gap: 1px;
+}
+
+.btnHint {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: rgba(247, 245, 240, 0.65);
+    text-transform: none;
+}
+
+.btnPrimary .btnHint {
+    color: rgba(255, 247, 214, 0.75);
 }
 
 .btn:hover:not(:disabled) {
@@ -270,6 +293,79 @@
 .editor :global(a) {
     color: #0563C1;
     text-decoration: underline;
+}
+
+/* ── Unit switcher (toolbar) ──────────────────────────────────────────────
+ * Toolbar background is near-black teal (rgba(13,31,31,0.97)), so the
+ * switcher uses light-on-dark contrast to match the rest of the toolbar
+ * (matches .btn and .btnPrimary). All foreground colors are chosen to
+ * exceed WCAG AA (4.5:1) on that background. */
+
+.unitSwitch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 30px;
+    padding: 0 4px 0 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    font-family: inherit;
+    color: #f7f5f0;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.unitSwitch:hover,
+.unitSwitch:focus-within {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(245, 220, 160, 0.6);
+}
+
+.unitSwitchLabel {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: rgba(247, 245, 240, 0.7);
+    white-space: nowrap;
+}
+
+.unitSwitchSelect {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    /* Inline chevron so the dropdown affordance is visible against the dark toolbar. */
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23f5dca0' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px 6px;
+    padding: 0 26px 0 4px;
+    border: none;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f7f5f0;
+    cursor: pointer;
+    min-width: 180px;
+    height: 28px;
+}
+
+.unitSwitchSelect:focus {
+    outline: none;
+    color: #fff7d6;
+}
+
+.unitSwitchSelect:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+/* Browser-rendered <option> elements use OS defaults so they stay legible
+ * against the OS native popup. We set explicit values so dark-themed browsers
+ * don't render cream-on-cream when the menu opens. */
+.unitSwitchSelect option {
+    color: #14302f;
+    background: #f7f5f0;
 }
 
 /* ── Print rules ────────────────────────────────────────────────────────── */
