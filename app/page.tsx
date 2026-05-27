@@ -21,6 +21,8 @@ import { TurnkeySection } from '@/components/TurnkeySection/TurnkeySection'
 import OfficeVisitSection from '@/components/OfficeVisit/OfficeVisit'
 import CallToAction from '@/components/CallToAction'
 import AttentionCTA from '@/components/AttentionCTA'
+import Annoucement from '@/components/Announcement'
+import Announcement from '@/components/Announcement'
 
 const title = 'Backyard Estates - Premier ADU builder'
 const description =
@@ -73,6 +75,7 @@ export default async function Home() {
         <div className={style.container}>
             <Nav />
             <Banner events={events} />
+            <Announcement />
             <CustomerStories stories={stories} />
             <Floorplans showNav />
             <OfficeVisitSection wistiaId='zezemmgiam' />
