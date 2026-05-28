@@ -7,7 +7,9 @@
             "@/lib/*": ["lib/*"],
             "@/sanity/*": ["sanity/*"],
             "@/content/*": ["content/*"],
-            "@/hooks/*": ["hooks/*"]
+            "@/hooks/*": ["hooks/*"],
+            "@/types/*": ["types/*"],
+            "@/app/*": ["app/*"]
         },
         "lib": ["dom", "dom.iterable", "esnext"],
         "allowJs": true,

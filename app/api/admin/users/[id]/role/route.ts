@@ -7,7 +7,13 @@ import { requireDbRole } from "@/lib/auth";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VALID_ROLES = new Set<Role>([Role.CUSTOMER, Role.ARCHITECT, Role.ADMIN]);
+const VALID_ROLES = new Set<Role>([
+    Role.CUSTOMER,
+    Role.ARCHITECT,
+    Role.SALES_REP,
+    Role.STAFF,
+    Role.ADMIN,
+]);
 
 /**
  * PUT /api/admin/users/[id]/role
@@ -39,7 +45,7 @@ export async function PUT(
         const raw = typeof body.role === "string" ? body.role.toUpperCase() : "";
         if (!VALID_ROLES.has(raw as Role)) {
             return NextResponse.json(
-                { error: `Invalid role. Must be one of CUSTOMER, ARCHITECT, ADMIN.` },
+                { error: `Invalid role. Must be one of ${[...VALID_ROLES].join(", ")}.` },
                 { status: 400 },
             );
         }

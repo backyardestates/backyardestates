@@ -295,6 +295,37 @@ async function main() {
     await linkTrigger("site-drainage-upgrades", "retaining-wall", "If grade changes require retention.");
     await linkTrigger("over-excavation-export", "retaining-wall", "If excavation exposes slope instability / needs retention.");
 
+    // --- RBAC: seed default role permissions ---
+    // Keep in sync with lib/rbac/permissions.ts. Only `allowed: true` grants are
+    // seeded; missing rows = denied. Idempotent: existing rows are left as-is so
+    // re-seeding never overturns an admin's matrix edits.
+    const ALL_PERMISSION_KEYS = [
+        "engagements.view_own", "engagements.view_all", "engagements.start", "engagements.edit",
+        "consultation.run",
+        "fpa.view_assigned", "fpa.view_all", "fpa.fill", "fpa.submit",
+        "proposals.view_own", "proposals.view_all", "proposals.edit", "proposals.present",
+        "proposals.agreement", "proposals.send_signature",
+        "feasibility.use",
+        "drip.manage",
+        "dashboard.admin", "settings.manage", "users.manage", "roles.manage",
+    ];
+    const ROLE_PERMISSION_DEFAULTS = {
+        ADMIN: ALL_PERMISSION_KEYS,
+        ARCHITECT: ["fpa.view_assigned", "fpa.fill", "fpa.submit", "engagements.view_own", "proposals.view_own", "feasibility.use"],
+        SALES_REP: ["engagements.view_own", "engagements.start", "engagements.edit", "consultation.run", "fpa.view_assigned", "proposals.view_own", "proposals.edit", "proposals.present", "proposals.agreement", "proposals.send_signature", "feasibility.use", "drip.manage"],
+        STAFF: ["engagements.view_all", "proposals.view_all", "fpa.view_all", "feasibility.use"],
+        CUSTOMER: [],
+    };
+    for (const [role, keys] of Object.entries(ROLE_PERMISSION_DEFAULTS)) {
+        for (const permissionKey of keys) {
+            await prisma.rolePermission.upsert({
+                where: { role_permissionKey: { role, permissionKey } },
+                update: {},
+                create: { role, permissionKey, allowed: true },
+            });
+        }
+    }
+
     console.log("✅ Seed complete.");
 }
 

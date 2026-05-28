@@ -69,6 +69,7 @@ export default async function AdminDashboardPage() {
         { label: "Tax topics", href: "/tools/admin/settings/tax-topics", description: "Slide 12 write-off checklist", badge: taxTopicCount },
         { label: "Slide order", href: "/tools/admin/settings/slide-order", description: "Default presenter slide sequence" },
         { label: "Payment milestones", href: "/tools/admin/settings/payment-milestones", description: "Balloon schedule templates", badge: milestoneCount },
+        { label: "Roles & access", href: "/tools/admin/settings/roles", description: "Per-role tool & dashboard permissions" },
     ];
 
     return (

@@ -19,6 +19,8 @@ datasource db {
 enum Role {
     CUSTOMER
     ARCHITECT
+    SALES_REP
+    STAFF
     ADMIN
 }
 
@@ -268,6 +270,25 @@ model Membership {
     @@unique([organizationId, userId])
     @@index([userId])
     @@index([organizationId])
+}
+
+/**
+ * Admin-editable RBAC grant: does `role` have `permissionKey`? The set of
+ * permission keys is defined in code (lib/rbac/permissions.ts); only the grants
+ * live here. Seeded with defaults (prisma/seed.js); the admin matrix at
+ * /tools/admin/settings/roles edits these rows. Missing row = denied.
+ */
+model RolePermission {
+    id            String  @id @default(cuid())
+    role          Role
+    permissionKey String
+    allowed       Boolean @default(false)
+
+    updatedAt   DateTime @updatedAt
+    updatedById String?
+
+    @@unique([role, permissionKey])
+    @@index([role])
 }
 
 /**

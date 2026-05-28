@@ -1,6 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { normalizeRole } from "../types/roles";
+import { normalizeRole, STAFF_ROLES } from "../types/roles";
 import { Role } from "@prisma/client";
 
 export async function requireUserId() {
@@ -19,21 +19,22 @@ export async function getDbUser() {
     const phone = cu?.phoneNumbers?.[0]?.phoneNumber;
 
     const clerkRole = normalizeRole(cu?.publicMetadata?.role);
+    // Sync staff-tier roles (Admin/Architect/Sales rep/Staff) from Clerk; never
+    // auto-demote an existing staff user to CUSTOMER.
+    const syncedStaffRole = STAFF_ROLES.includes(clerkRole) ? (clerkRole as Role) : undefined;
 
-    // Ensure user exists + keep DB role aligned with Clerk role for staff
-    // (Customers remain CUSTOMER unless you explicitly promote them)
     const dbUser = await prisma.user.upsert({
         where: { id: userId },
         update: {
             email: email ?? undefined,
             phone: phone ?? undefined,
-            role: clerkRole === "ADMIN" ? "ADMIN" : clerkRole === "ARCHITECT" ? "ARCHITECT" : undefined,
+            role: syncedStaffRole,
         },
         create: {
             id: userId,
             email: email ?? undefined,
             phone: phone ?? undefined,
-            role: clerkRole === "ADMIN" ? "ADMIN" : clerkRole === "ARCHITECT" ? "ARCHITECT" : "CUSTOMER",
+            role: syncedStaffRole ?? "CUSTOMER",
         },
     });
 
