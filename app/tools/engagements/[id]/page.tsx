@@ -7,6 +7,7 @@ import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { stageLabel } from "@/lib/engagement/stage";
 import { StageControl } from "./StageControl";
 import { StartEstimateButton } from "./StartEstimateButton";
+import { DripCancelButton } from "./DripCancelButton";
 import s from "../engagements.module.css";
 
 export const dynamic = "force-dynamic";
@@ -49,6 +50,10 @@ export default async function EngagementDetailPage({
                     updatedAt: true,
                 },
             },
+            dripEnrollments: {
+                orderBy: { createdAt: "desc" },
+                include: { messages: { orderBy: { stepIndex: "asc" } } },
+            },
             events: { orderBy: { createdAt: "desc" }, take: 100 },
         },
     });
@@ -72,6 +77,8 @@ export default async function EngagementDetailPage({
     const costTotal = flags
         .filter((f) => f.flagType === "COST_ADDER")
         .reduce((sum, f) => sum + (Number(f.estCostImpact) || 0), 0);
+
+    const drip = engagement.dripEnrollments[0];
 
     return (
         <div className={s.shell}>
@@ -213,6 +220,35 @@ export default async function EngagementDetailPage({
                             </ul>
                         )}
                     </section>
+
+                    {drip && (
+                        <section className={s.panel}>
+                            <h2 className={s.panelTitle}>Follow-up drip</h2>
+                            <p className={s.rowMuted} style={{ marginBottom: 8 }}>
+                                Status: {drip.status}
+                            </p>
+                            <ul className={s.timeline}>
+                                {drip.messages.map((m) => (
+                                    <li key={m.id} className={s.timelineItem}>
+                                        <span className={s.timelineType}>{m.subject}</span>
+                                        <span className={s.rowMeta} style={{ marginLeft: 12 }}>
+                                            <span className={s.chip}>{m.status}</span>
+                                        </span>
+                                        <span className={s.timelineWhen}>
+                                            {m.status === "SENT" && m.sentAt
+                                                ? `sent ${m.sentAt.toLocaleDateString()}`
+                                                : m.scheduledFor.toLocaleDateString()}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                            {drip.status === "ACTIVE" && (
+                                <div style={{ marginTop: 10 }}>
+                                    <DripCancelButton engagementId={engagement.id} />
+                                </div>
+                            )}
+                        </section>
+                    )}
 
                     <section className={s.panel}>
                         <h2 className={s.panelTitle}>Activity</h2>

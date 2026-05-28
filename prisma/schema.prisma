@@ -217,6 +217,25 @@ enum NotificationType {
     GENERIC
 }
 
+enum DripStatus {
+    ACTIVE
+    PAUSED
+    COMPLETED
+    CANCELLED
+}
+
+enum DripMessageStatus {
+    SCHEDULED
+    SENT
+    SKIPPED
+    FAILED
+}
+
+enum DripChannel {
+    EMAIL
+    SMS
+}
+
 /**
  * =========================
  * MULTI-TENANT
@@ -1088,11 +1107,12 @@ model Engagement {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    consultations  Consultation[]
-    formalAnalyses FormalAnalysis[]
-    proposals      Proposal[]
-    events         EngagementEvent[]
-    notifications  Notification[]
+    consultations   Consultation[]
+    formalAnalyses  FormalAnalysis[]
+    proposals       Proposal[]
+    events          EngagementEvent[]
+    notifications   Notification[]
+    dripEnrollments DripEnrollment[]
 
     @@index([organizationId, stage])
     @@index([addressKey])
@@ -1185,4 +1205,47 @@ model Notification {
 
     @@index([userId, read, createdAt])
     @@index([engagementId])
+}
+
+/**
+ * A multi-touch follow-up sequence enrolled after the next-steps email, with
+ * each message's content matched to the prospect's consultation sentiment/intent
+ * and Backyard Estates' Sanity content (stories, completed builds).
+ */
+model DripEnrollment {
+    id           String     @id @default(cuid())
+    engagementId String
+    engagement   Engagement @relation(fields: [engagementId], references: [id])
+
+    status DripStatus @default(ACTIVE)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    messages DripMessage[]
+
+    @@index([engagementId])
+    @@index([status])
+}
+
+model DripMessage {
+    id           String         @id @default(cuid())
+    enrollmentId String
+    enrollment   DripEnrollment @relation(fields: [enrollmentId], references: [id])
+
+    stepIndex Int
+    channel   DripChannel @default(EMAIL)
+    subject   String
+    body      String
+    // Optional Sanity doc id this message references (story / completed build).
+    contentRef String?
+
+    scheduledFor DateTime
+    status       DripMessageStatus @default(SCHEDULED)
+    sentAt       DateTime?
+
+    createdAt DateTime @default(now())
+
+    @@index([status, scheduledFor])
+    @@index([enrollmentId, stepIndex])
 }

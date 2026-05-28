@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { canAccessEngagement } from "@/lib/engagement/access";
 import { transitionEngagementStage } from "@/lib/engagement/stage";
+import { enrollInDrip } from "@/lib/drip/enroll";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -119,6 +120,11 @@ export async function POST(
             eventType: EngagementEventType.NEXT_STEPS_SENT,
             message: `Next-steps email sent to ${consultation.engagement.customerName || to}.`,
         });
+
+        // Enroll in a content-matched follow-up drip (best-effort, async).
+        void enrollInDrip(consultation.engagementId).catch((err) =>
+            console.error("[send-next-steps] drip enroll failed", err),
+        );
 
         return NextResponse.json({ ok: true });
     } catch (err) {
