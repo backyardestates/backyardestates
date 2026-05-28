@@ -104,7 +104,9 @@ export default async function EngagementDetailPage({
                             <ul className={s.timeline}>
                                 {engagement.formalAnalyses.map((f) => (
                                     <li key={f.id} className={s.timelineItem}>
-                                        <span className={s.timelineType}>{f.status}</span>
+                                        <Link href={`/tools/fpa/${f.id}`}>
+                                            <span className={s.timelineType}>{f.status}</span>
+                                        </Link>
                                         <span className={s.timelineWhen}>
                                             {f.createdAt.toLocaleString()}
                                         </span>
