@@ -125,6 +125,7 @@ import { DEFAULTS, type Defaults } from "@/lib/investment/types";
 import { usePresentationWire, openPresenterWindow } from "@/hooks/presentation/usePresentationWire";
 import { usePresentationStore } from "@/lib/store/presentationStore";
 import { buildAdminBroadcast } from "@/lib/sync/presentationSync";
+import { ArchitectFlagsPanel } from "./ArchitectFlagsPanel";
 
 
 export default function AdminMasterClient({
@@ -1540,6 +1541,9 @@ export default function AdminMasterClient({
                         selectedAdus={adu.selectedAdus}
                         onDismiss={() => setDriftReport(null)}
                     />
+
+                    {/* ── Architect findings (read-only; Phase 4) ──────────── */}
+                    <ArchitectFlagsPanel addressKey={normalizeAddress(address)} />
 
                     {/* ── Step 1 · Who & Where ─────────────────────────────── */}
                     <Step1_WhoAndWhere

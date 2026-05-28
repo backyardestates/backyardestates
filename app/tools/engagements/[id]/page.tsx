@@ -6,9 +6,24 @@ import { guardPageRole } from "@/lib/auth/guardPage";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { stageLabel } from "@/lib/engagement/stage";
 import { StageControl } from "./StageControl";
+import { StartEstimateButton } from "./StartEstimateButton";
 import s from "../engagements.module.css";
 
 export const dynamic = "force-dynamic";
+
+interface Flag {
+    label?: string;
+    flagType?: string;
+    flagNote?: string;
+    estCostImpact?: number | null;
+}
+const FLAG_LABEL: Record<string, string> = {
+    COST_ADDER: "Cost adder",
+    CONCERN: "Concern",
+    QUESTION: "Open question",
+};
+const money = (n: number) =>
+    n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 export default async function EngagementDetailPage({
     params,
@@ -49,6 +64,14 @@ export default async function EngagementDetailPage({
         [engagement.addressLine1, engagement.city, engagement.state, engagement.zip]
             .filter(Boolean)
             .join(", ") || "(no address yet)";
+
+    const latestComplete = engagement.formalAnalyses.find((f) => f.status === "COMPLETE");
+    const flags: Flag[] = Array.isArray(latestComplete?.flagsJson)
+        ? (latestComplete!.flagsJson as Flag[])
+        : [];
+    const costTotal = flags
+        .filter((f) => f.flagType === "COST_ADDER")
+        .reduce((sum, f) => sum + (Number(f.estCostImpact) || 0), 0);
 
     return (
         <div className={s.shell}>
@@ -116,8 +139,44 @@ export default async function EngagementDetailPage({
                         )}
                     </section>
 
+                    {flags.length > 0 && (
+                        <section className={s.panel}>
+                            <h2 className={s.panelTitle}>Architect findings</h2>
+                            {costTotal > 0 && (
+                                <p className={s.rowMuted}>
+                                    Cost-adders total: <strong>{money(costTotal)}</strong>
+                                </p>
+                            )}
+                            <ul className={s.timeline}>
+                                {flags.map((f, i) => (
+                                    <li key={i} className={s.timelineItem}>
+                                        <span className={s.metaPill}>
+                                            {FLAG_LABEL[f.flagType ?? ""] ?? "Flag"}
+                                        </span>{" "}
+                                        <span className={s.timelineType}>
+                                            {f.label || "(unlabeled)"}
+                                        </span>
+                                        {f.flagType === "COST_ADDER" && f.estCostImpact != null && (
+                                            <span className={s.rowMuted}>
+                                                {" "}· {money(Number(f.estCostImpact))}
+                                            </span>
+                                        )}
+                                        {f.flagNote && (
+                                            <span className={s.rowMuted}> — {f.flagNote}</span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+
                     <section className={s.panel}>
                         <h2 className={s.panelTitle}>Proposals</h2>
+                        <StartEstimateButton
+                            engagementId={engagement.id}
+                            addressKey={engagement.addressKey}
+                            currentStage={engagement.stage}
+                        />
                         {engagement.proposals.length === 0 ? (
                             <p className={s.empty}>No proposal linked yet.</p>
                         ) : (

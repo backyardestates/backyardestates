@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { ProposalStatus, Role } from "@prisma/client";
+import { ProposalStatus, Role, EngagementStage, EngagementEventType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { proposalToSnapshot, snapshotToProposalCreate } from "@/lib/db/proposalMapper";
 import { materializeProposal } from "@/lib/db/materializeProposal";
+import { STAGE_ORDER, transitionEngagementStage } from "@/lib/engagement/stage";
 import type { ProposalSnapshot } from "@/lib/proposalSnapshot";
 
 export const runtime = "nodejs";
@@ -167,6 +168,44 @@ export async function POST(req: Request) {
                 // the snapshot is the source of truth. Log and surface in
                 // the response for visibility.
                 console.error("[POST /api/admin/proposals] materialize failed", matErr);
+            }
+        }
+
+        // Phase 4: link this proposal to a matching engagement (by address) and
+        // nudge the engagement to PROPOSAL_DRAFT. Best-effort + fail-safe — never
+        // affects the save the rep just confirmed.
+        if (status !== ProposalStatus.DRAFT && saved.addressKey) {
+            try {
+                const eng = await prisma.engagement.findFirst({
+                    where: {
+                        organizationId,
+                        addressKey: saved.addressKey,
+                        stage: { notIn: [EngagementStage.SIGNED, EngagementStage.LOST] },
+                    },
+                    orderBy: { updatedAt: "desc" },
+                    select: { id: true, stage: true },
+                });
+                if (eng) {
+                    if (saved.engagementId !== eng.id) {
+                        await prisma.proposal.update({
+                            where: { id: saved.id },
+                            data: { engagementId: eng.id },
+                        });
+                    }
+                    const from = STAGE_ORDER.indexOf(eng.stage);
+                    const target = STAGE_ORDER.indexOf(EngagementStage.PROPOSAL_DRAFT);
+                    if (from !== -1 && from < target) {
+                        await transitionEngagementStage({
+                            engagementId: eng.id,
+                            toStage: EngagementStage.PROPOSAL_DRAFT,
+                            actorId: userId,
+                            eventType: EngagementEventType.PROPOSAL_LINKED,
+                            message: "Proposal drafted.",
+                        });
+                    }
+                }
+            } catch (linkErr) {
+                console.error("[POST /api/admin/proposals] engagement link failed", linkErr);
             }
         }
 
