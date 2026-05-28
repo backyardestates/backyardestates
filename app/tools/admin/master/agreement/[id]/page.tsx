@@ -26,6 +26,7 @@ export default async function AgreementByIdPage({
     return (
         <AgreementPreviewClient
             initialInput={proposal.agreementInput as unknown as AgreementBuildInput}
+            proposalId={id}
         />
     );
 }

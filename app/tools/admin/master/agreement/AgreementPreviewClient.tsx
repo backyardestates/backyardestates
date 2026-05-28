@@ -93,13 +93,18 @@ type Phase =
 
 export function AgreementPreviewClient({
     initialInput,
+    proposalId,
 }: {
     /** Phase 0b: when provided (by the /agreement/[id] route), the preview
      *  builds from this persisted input instead of the localStorage handoff
      *  the admin tab writes. Absent for the live "Edit Agreement" flow. */
     initialInput?: AgreementBuildInput;
+    /** Phase 6: present in by-id mode — enables "Send for signature". */
+    proposalId?: string;
 } = {}) {
     const [phase, setPhase] = useState<Phase>({ state: "loading" });
+    const [signState, setSignState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+    const [signError, setSignError] = useState<string | null>(null);
     const [html, setHtml] = useState<string>("");
     const [data, setData] = useState<AgreementTemplateData | null>(null);
     /** Original (un-edited) Blob, kept so the user can download the .docx
@@ -248,6 +253,34 @@ export function AgreementPreviewClient({
         );
     }
 
+    async function handleSendForSignature() {
+        if (!proposalId || !docxBlobRef.current) return;
+        setSignState("sending");
+        setSignError(null);
+        try {
+            const lastName = data?.customerLastName || "Customer";
+            const fd = new FormData();
+            fd.append(
+                "file",
+                new File([docxBlobRef.current], `BackyardEstates-Agreement-${lastName}.docx`, {
+                    type:
+                        docxBlobRef.current.type ||
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                }),
+            );
+            const res = await fetch(`/api/proposals/${proposalId}/send-for-signature`, {
+                method: "POST",
+                body: fd,
+            });
+            const d = await res.json();
+            if (!res.ok) throw new Error(d.error || "Failed to send for signature");
+            setSignState("sent");
+        } catch (err) {
+            setSignError(err instanceof Error ? err.message : String(err));
+            setSignState("error");
+        }
+    }
+
     function statusText() {
         if (phase.state === "loading") return "Generating from your proposal…";
         if (phase.state === "ready") return "Editable. Click any text to make changes.";
@@ -315,6 +348,32 @@ export function AgreementPreviewClient({
                             <span className={s.btnHint}>final · includes your inline edits</span>
                         </span>
                     </button>
+                    {proposalId && (
+                        <button
+                            type="button"
+                            className={`${s.btn} ${s.btnPrimary}`}
+                            onClick={handleSendForSignature}
+                            disabled={
+                                phase.state !== "ready" ||
+                                signState === "sending" ||
+                                signState === "sent"
+                            }
+                            title="Send this agreement to the customer for e-signature via Dropbox Sign."
+                        >
+                            <span className={s.btnLabel}>
+                                <span>
+                                    {signState === "sent"
+                                        ? "Sent for signature ✓"
+                                        : signState === "sending"
+                                          ? "Sending…"
+                                          : "Send for signature"}
+                                </span>
+                                <span className={s.btnHint}>
+                                    {signError ?? "e-sign · Dropbox Sign"}
+                                </span>
+                            </span>
+                        </button>
+                    )}
                 </div>
             </div>
 

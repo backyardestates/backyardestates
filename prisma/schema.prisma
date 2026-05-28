@@ -872,6 +872,10 @@ model Proposal {
     // rotated/revoked without changing the canonical record id.
     shareToken String? @unique
 
+    // Dropbox Sign signature request id (Phase 6) — correlates the e-sign
+    // webhook back to this proposal.
+    signatureRequestId String? @unique
+
     // Snapshot + versioning
     snapshotVersion Int   @default(1)
     pricingVersion  Int   @default(1)
