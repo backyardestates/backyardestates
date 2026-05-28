@@ -4,8 +4,8 @@ import { Role, AnalysisStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { guardPageRole } from "@/lib/auth/guardPage";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
-import { listActiveWorkItemsByCategory } from "@/lib/db/workItems";
-import { FpaForm, type InitialAnswer } from "./FpaForm";
+import { FPA_TEMPLATE } from "@/lib/fpa/template";
+import { FpaForm, type DiscoveryContext, type FlagEntry } from "./FpaForm";
 import s from "../../engagements/engagements.module.css";
 
 export const dynamic = "force-dynamic";
@@ -26,19 +26,12 @@ export default async function FpaDetailPage({
                 select: {
                     id: true,
                     customerName: true,
+                    customerEmail: true,
+                    customerPhone: true,
                     addressLine1: true,
                     city: true,
                     state: true,
-                },
-            },
-            answers: {
-                select: {
-                    workItemId: true,
-                    valueJson: true,
-                    notes: true,
-                    flagType: true,
-                    flagNote: true,
-                    estCostImpact: true,
+                    zip: true,
                 },
             },
         },
@@ -47,32 +40,30 @@ export default async function FpaDetailPage({
     if (!analysis) notFound();
     if (role !== Role.ADMIN && analysis.architectId !== userId) notFound();
 
-    const [categories, consultation] = await Promise.all([
-        listActiveWorkItemsByCategory().catch(() => []),
-        analysis.engagement
-            ? prisma.consultation.findFirst({
-                  where: { engagementId: analysis.engagement.id },
-                  orderBy: { createdAt: "desc" },
-                  select: { summary: true },
-              })
-            : null,
-    ]);
-
-    const initialAnswers: Record<string, InitialAnswer> = {};
-    for (const a of analysis.answers) {
-        const status = (a.valueJson as { status?: string } | null)?.status ?? "";
-        initialAnswers[a.workItemId] = {
-            status,
-            notes: a.notes ?? "",
-            flagType: a.flagType ?? "",
-            flagNote: a.flagNote ?? "",
-            estCostImpact: a.estCostImpact ?? null,
-        };
-    }
+    const consultation = analysis.engagement
+        ? await prisma.consultation.findFirst({
+              where: { engagementId: analysis.engagement.id },
+              orderBy: { createdAt: "desc" },
+              select: { summary: true, aiSummaryJson: true },
+          })
+        : null;
 
     const e = analysis.engagement;
-    const address = [e?.addressLine1, e?.city, e?.state].filter(Boolean).join(", ") || "(no address)";
+    const address =
+        [e?.addressLine1, e?.city, e?.state, e?.zip].filter(Boolean).join(", ") || "(no address)";
     const submitted = analysis.status === AnalysisStatus.COMPLETE;
+
+    const ai = (consultation?.aiSummaryJson ?? null) as {
+        bulletPoints?: string[];
+        intent?: { primaryMotivation?: string; readiness?: string; concerns?: string[] };
+    } | null;
+    const discovery: DiscoveryContext = {
+        summary: consultation?.summary ?? null,
+        bulletPoints: ai?.bulletPoints ?? [],
+        motivation: ai?.intent?.primaryMotivation ?? null,
+        readiness: ai?.intent?.readiness ?? null,
+        concerns: ai?.intent?.concerns ?? [],
+    };
 
     return (
         <div className={s.shell}>
@@ -87,18 +78,20 @@ export default async function FpaDetailPage({
                 <span className={s.stageBadge}>{submitted ? "Submitted" : "On-site analysis"}</span>
             </header>
 
-            {consultation?.summary && (
-                <section className={s.panel}>
-                    <h2 className={s.panelTitle}>Consultation context</h2>
-                    <p style={{ fontSize: 14, margin: 0 }}>{consultation.summary}</p>
-                </section>
-            )}
-
             <FpaForm
                 analysisId={analysis.id}
                 engagementId={e?.id ?? null}
-                categories={categories}
-                initialAnswers={initialAnswers}
+                template={FPA_TEMPLATE}
+                contact={{
+                    name: e?.customerName ?? null,
+                    email: e?.customerEmail ?? null,
+                    phone: e?.customerPhone ?? null,
+                    address,
+                }}
+                discovery={discovery}
+                initialSiteVisit={(analysis.siteVisitJson as Record<string, unknown> | null) ?? {}}
+                initialCityInfo={(analysis.cityInfoJson as Record<string, unknown> | null) ?? {}}
+                initialFlags={(analysis.flagsJson as FlagEntry[] | null) ?? []}
                 readOnly={submitted}
             />
         </div>

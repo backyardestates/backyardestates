@@ -466,6 +466,15 @@ model FormalAnalysis {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    // Architect's on-site form, mirroring the legacy Google Sheet tabs. Stored
+    // as structured JSON (the form is a fixed template — see lib/fpa/template.ts).
+    // siteVisitJson: architect's Site Visit Info tab. cityInfoJson: the team
+    // member's City Info tab. flagsJson: [{ label, flagType, flagNote,
+    // estCostImpact }] — surfaced to the rep's estimate review (Phase 4).
+    siteVisitJson Json?
+    cityInfoJson  Json?
+    flagsJson     Json?
+
     answers  FormalAnswer[]
     files    EvidenceFile[]
     proposal Proposal?

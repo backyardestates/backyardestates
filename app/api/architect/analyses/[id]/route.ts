@@ -1,27 +1,20 @@
 import { NextResponse } from "next/server";
-import { Prisma, Role, AnalysisStatus, FlagType } from "@prisma/client";
+import { Prisma, Role, AnalysisStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-interface AnswerInput {
-    workItemId: string;
-    status?: string; // "ok" | "attention" | "na"
-    notes?: string;
-    flagType?: string | null; // COST_ADDER | CONCERN | QUESTION | null
-    flagNote?: string;
-    estCostImpact?: number | null;
-}
-
-function parseFlag(raw: string | null | undefined): FlagType | null {
-    if (!raw) return null;
-    return raw in FlagType ? (raw as FlagType) : null;
+interface PatchBody {
+    siteVisit?: Record<string, unknown>;
+    cityInfo?: Record<string, unknown>;
+    flags?: { label?: string; flagType?: string; flagNote?: string; estCostImpact?: number | null }[];
 }
 
 // PATCH /api/architect/analyses/[id]
-// Save (upsert) the architect's answers + flags for a formal analysis.
+// Save the architect's Site Visit / City Info answers and the estimate flags.
+// Each field is optional — only the provided tabs/flags are written.
 export async function PATCH(
     req: Request,
     { params }: { params: Promise<{ id: string }> },
@@ -47,54 +40,34 @@ export async function PATCH(
             );
         }
 
-        let body: { answers?: AnswerInput[] };
+        let body: PatchBody;
         try {
-            body = (await req.json()) as { answers?: AnswerInput[] };
+            body = (await req.json()) as PatchBody;
         } catch {
             return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
         }
-        const answers = body.answers ?? [];
 
-        await prisma.$transaction([
-            ...answers.map((a) =>
-                prisma.formalAnswer.upsert({
-                    where: {
-                        formalAnalysisId_workItemId: {
-                            formalAnalysisId: id,
-                            workItemId: a.workItemId,
-                        },
-                    },
-                    create: {
-                        formalAnalysisId: id,
-                        workItemId: a.workItemId,
-                        valueJson: { status: a.status ?? null } as Prisma.InputJsonValue,
-                        notes: a.notes ?? null,
-                        flagType: parseFlag(a.flagType),
-                        flagNote: a.flagNote ?? null,
-                        estCostImpact: a.estCostImpact ?? null,
-                    },
-                    update: {
-                        valueJson: { status: a.status ?? null } as Prisma.InputJsonValue,
-                        notes: a.notes ?? null,
-                        flagType: parseFlag(a.flagType),
-                        flagNote: a.flagNote ?? null,
-                        estCostImpact: a.estCostImpact ?? null,
-                    },
-                }),
-            ),
-            prisma.formalAnalysis.update({
-                where: { id },
-                data: {
-                    status:
-                        analysis.status === AnalysisStatus.PENDING
-                            ? AnalysisStatus.IN_PROGRESS
-                            : analysis.status,
-                    startedAt: analysis.status === AnalysisStatus.PENDING ? new Date() : undefined,
-                },
-            }),
-        ]);
+        await prisma.formalAnalysis.update({
+            where: { id },
+            data: {
+                ...(body.siteVisit !== undefined
+                    ? { siteVisitJson: body.siteVisit as Prisma.InputJsonValue }
+                    : {}),
+                ...(body.cityInfo !== undefined
+                    ? { cityInfoJson: body.cityInfo as Prisma.InputJsonValue }
+                    : {}),
+                ...(body.flags !== undefined
+                    ? { flagsJson: body.flags as unknown as Prisma.InputJsonValue }
+                    : {}),
+                status:
+                    analysis.status === AnalysisStatus.PENDING
+                        ? AnalysisStatus.IN_PROGRESS
+                        : analysis.status,
+                startedAt: analysis.status === AnalysisStatus.PENDING ? new Date() : undefined,
+            },
+        });
 
-        return NextResponse.json({ ok: true, saved: answers.length });
+        return NextResponse.json({ ok: true });
     } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         if (msg === "UNAUTHORIZED") {

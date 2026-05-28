@@ -5,7 +5,6 @@ import {
     EngagementStage,
     EngagementEventType,
     NotificationType,
-    FlagType,
 } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
@@ -15,15 +14,32 @@ import { notifyUser } from "@/lib/engagement/notify";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const FLAG_LABEL: Record<FlagType, string> = {
+const FLAG_LABEL: Record<string, string> = {
     COST_ADDER: "cost-adder",
     CONCERN: "concern",
     QUESTION: "open question",
 };
 
+interface FlagEntry {
+    flagType?: string;
+}
+
+function summarizeFlags(flagsJson: unknown): string {
+    const flags = Array.isArray(flagsJson) ? (flagsJson as FlagEntry[]) : [];
+    if (flags.length === 0) return "No flags raised";
+    const counts: Record<string, number> = {};
+    for (const f of flags) {
+        const t = f.flagType ?? "";
+        if (t) counts[t] = (counts[t] ?? 0) + 1;
+    }
+    const parts = Object.entries(counts).map(
+        ([t, n]) => `${n} ${FLAG_LABEL[t] ?? t.toLowerCase()}${n === 1 ? "" : "s"}`,
+    );
+    return parts.length ? parts.join(", ") : "No flags raised";
+}
+
 // POST /api/architect/analyses/[id]/submit
-// Finalize the analysis, advance the engagement to FPA_SUBMITTED, and notify
-// the rep that it's ready to estimate.
+// Finalize the analysis, advance the engagement to FPA_SUBMITTED, notify the rep.
 export async function POST(
     _req: Request,
     { params }: { params: Promise<{ id: string }> },
@@ -48,17 +64,7 @@ export async function POST(
             return NextResponse.json({ error: "Already submitted." }, { status: 409 });
         }
 
-        const flagCounts = await prisma.formalAnswer.groupBy({
-            by: ["flagType"],
-            where: { formalAnalysisId: id, flagType: { not: null } },
-            _count: { _all: true },
-        });
-        const flagSummary =
-            flagCounts.length === 0
-                ? "No flags raised."
-                : flagCounts
-                      .map((f) => `${f._count._all} ${FLAG_LABEL[f.flagType as FlagType]}`)
-                      .join(", ");
+        const flagSummary = summarizeFlags(analysis.flagsJson);
 
         await prisma.formalAnalysis.update({
             where: { id },
