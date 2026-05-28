@@ -147,6 +147,78 @@ enum WorkItemKind {
 
 /**
  * =========================
+ * ENGAGEMENT PIPELINE (consultation → signed agreement)
+ * =========================
+ */
+
+// The full lifecycle stage of an Engagement. Driven by events (email sent,
+// Calendly-paid webhook, architect submit, proposal sent, signature) — see
+// lib/engagement/stage.ts. Distinct from ProposalStatus/ProposalStage which
+// track an individual proposal artifact.
+enum EngagementStage {
+    CONSULTATION
+    NEXT_STEPS_SENT
+    FPA_PAID
+    FPA_SCHEDULED
+    FPA_IN_PROGRESS
+    FPA_SUBMITTED
+    ESTIMATING
+    PROPOSAL_DRAFT
+    PROPOSAL_SENT
+    AGREEMENT_SENT
+    SIGNED
+    LOST
+}
+
+enum EngagementEventType {
+    CREATED
+    STAGE_CHANGED
+    CONSULTATION_RECORDED
+    CONSULTATION_TRANSCRIBED
+    AI_SUMMARY_GENERATED
+    NEXT_STEPS_SENT
+    FPA_PAID
+    FPA_ASSIGNED
+    FPA_SUBMITTED
+    PROPOSAL_LINKED
+    PIPEDRIVE_SYNCED
+    NOTE
+}
+
+// How a consultation transcript was obtained. RECORDED = captured in-app via
+// MediaRecorder; UPLOADED = audio file uploaded; PASTED = transcript text.
+enum ConsultationSource {
+    RECORDED
+    UPLOADED
+    PASTED
+}
+
+enum ConsultationStatus {
+    DRAFT
+    TRANSCRIBING
+    TRANSCRIBED
+    SUMMARIZED
+    SENT
+    FAILED
+}
+
+// Architect flag on a formal-analysis answer — surfaces in the rep's estimate
+// review (Phase 4). COST_ADDER pre-fills the site-work estimator.
+enum FlagType {
+    COST_ADDER
+    CONCERN
+    QUESTION
+}
+
+enum NotificationType {
+    FPA_PAID
+    FPA_SUBMITTED
+    NEXT_STEPS_SENT
+    GENERIC
+}
+
+/**
+ * =========================
  * MULTI-TENANT
  * =========================
  */
@@ -159,6 +231,7 @@ model Organization {
 
     memberships Membership[]
     proposals   Proposal[]
+    engagements Engagement[]
 }
 
 model Membership {
@@ -203,6 +276,12 @@ model User {
 
     memberships    Membership[]
     proposalEvents ProposalEvent[]
+
+    engagementsAsRep       Engagement[]      @relation("EngagementRep")
+    engagementsAsArchitect Engagement[]      @relation("EngagementArchitect")
+    engagementEvents       EngagementEvent[] @relation("EngagementEventActor")
+    consultations          Consultation[]    @relation("ConsultationCreatedBy")
+    notifications          Notification[]    @relation("UserNotifications")
 }
 
 /**
@@ -364,9 +443,17 @@ model FeasibilityAnswer {
 }
 
 model FormalAnalysis {
-    id       String            @id @default(cuid())
-    reportId String
-    report   FeasibilityReport @relation(fields: [reportId], references: [id])
+    id String @id @default(cuid())
+
+    // Optional link back to a customer-submitted feasibility report. Nullable:
+    // a formal analysis can be created directly from an Engagement (paid FPA)
+    // with no prior self-serve feasibility report.
+    reportId String?
+    report   FeasibilityReport? @relation(fields: [reportId], references: [id])
+
+    // The engagement this analysis belongs to (the pipeline spine).
+    engagementId String?
+    engagement   Engagement? @relation(fields: [engagementId], references: [id])
 
     architectId String?
     architect   User?   @relation("ArchitectAssignments", fields: [architectId], references: [id])
@@ -382,6 +469,8 @@ model FormalAnalysis {
     answers  FormalAnswer[]
     files    EvidenceFile[]
     proposal Proposal?
+
+    @@index([engagementId])
 }
 
 model FormalAnswer {
@@ -396,10 +485,16 @@ model FormalAnswer {
     valueJson Json?
     notes     String?
 
+    // Architect flagging — surfaces in the rep's estimate review (Phase 4).
+    flagType      FlagType?
+    flagNote      String?
+    estCostImpact Int? // architect's rough $ impact for a COST_ADDER flag
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     @@unique([formalAnalysisId, workItemId])
+    @@index([flagType])
 }
 
 model EvidenceFile {
@@ -702,6 +797,10 @@ model Proposal {
     formalAnalysisId String?         @unique
     formalAnalysis   FormalAnalysis? @relation(fields: [formalAnalysisId], references: [id])
 
+    // Optional link to the Engagement pipeline spine.
+    engagementId String?
+    engagement   Engagement? @relation(fields: [engagementId], references: [id])
+
     status ProposalStatus @default(DRAFT)
 
     // Choose ONE: keep AssessStage OR use ProposalStage (keeping both is OK)
@@ -740,6 +839,11 @@ model Proposal {
     internalTotal  Int?
     profit         Int?
 
+    // Stable, non-guessable token for public by-id share links (Phase 0b:
+    // /present/[id], /agreement/[id]). Separate from the cuid `id` so it can be
+    // rotated/revoked without changing the canonical record id.
+    shareToken String? @unique
+
     // Snapshot + versioning
     snapshotVersion Int   @default(1)
     pricingVersion  Int   @default(1)
@@ -775,6 +879,7 @@ model Proposal {
     @@index([totalPrice])
     @@index([createdById, addressKey, status])
     @@index([addressKey])
+    @@index([engagementId])
 }
 
 model ProposalFloorplanSelection {
@@ -919,4 +1024,149 @@ model ProposalUpload {
     createdAt DateTime @default(now())
 
     @@index([proposalId])
+}
+
+/**
+ * =========================
+ * ENGAGEMENT PIPELINE MODELS
+ * =========================
+ */
+
+/**
+ * The pipeline spine. One Engagement per prospect-property; every artifact
+ * (consultation, formal analysis, proposal, agreement) hangs off it. Pipedrive
+ * stays the CRM source of truth — we reference its person/deal ids and sync
+ * notes/stage changes back. See lib/engagement/stage.ts for transitions.
+ */
+model Engagement {
+    id String @id @default(cuid())
+
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id])
+
+    stage EngagementStage @default(CONSULTATION)
+
+    // Pipedrive linkage (CRM source of truth for identity + deal stage).
+    pipedrivePersonId String?
+    pipedriveDealId   String?
+
+    // Customer + address snapshot (denormalized for listing/search).
+    customerName  String?
+    customerEmail String?
+    customerPhone String?
+
+    addressLine1 String?
+    addressLine2 String?
+    city         String?
+    state        String?
+    zip          String?
+    // Normalized lowercase/single-spaced key — the soft link to Proposal.
+    addressKey String?
+
+    // Assignment.
+    repId       String?
+    rep         User?   @relation("EngagementRep", fields: [repId], references: [id])
+    architectId String?
+    architect   User?   @relation("EngagementArchitect", fields: [architectId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    consultations  Consultation[]
+    formalAnalyses FormalAnalysis[]
+    proposals      Proposal[]
+    events         EngagementEvent[]
+    notifications  Notification[]
+
+    @@index([organizationId, stage])
+    @@index([addressKey])
+    @@index([pipedrivePersonId])
+    @@index([repId, stage])
+    @@index([architectId, stage])
+    @@index([updatedAt])
+}
+
+/**
+ * Append-only audit log of everything that happened on an engagement — both
+ * the accountability record and the history the AI can draw on.
+ */
+model EngagementEvent {
+    id           String     @id @default(cuid())
+    engagementId String
+    engagement   Engagement @relation(fields: [engagementId], references: [id])
+
+    type    EngagementEventType
+    actorId String?
+    actor   User?               @relation("EngagementEventActor", fields: [actorId], references: [id])
+
+    message  String?
+    metadata Json?
+
+    createdAt DateTime @default(now())
+
+    @@index([engagementId, createdAt])
+    @@index([type, createdAt])
+}
+
+/**
+ * A recorded/uploaded office consultation + its AI-generated outputs. The rep
+ * reviews/edits the draft before anything is sent (human-in-the-loop).
+ */
+model Consultation {
+    id           String     @id @default(cuid())
+    engagementId String
+    engagement   Engagement @relation(fields: [engagementId], references: [id])
+
+    source ConsultationSource @default(RECORDED)
+    status ConsultationStatus @default(DRAFT)
+
+    // Recording consent (CA two-party consent state).
+    consentGiven Boolean   @default(false)
+    consentAt    DateTime?
+
+    // Audio (Supabase Storage path) + transcript.
+    audioStoragePath String?
+    transcript       String?
+
+    // AI outputs.
+    summary                  String? // short prose summary
+    aiSummaryJson            Json? // { bullets, actionItems, sentiment, intent, ... }
+    nextStepsEmailDraft      String?
+    marketingSuggestionsJson Json? // [{ title, detail }, ...] (5–10 actions)
+
+    sentAt DateTime?
+
+    createdById String?
+    createdBy   User?   @relation("ConsultationCreatedBy", fields: [createdById], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([engagementId, createdAt])
+    @@index([status])
+}
+
+/**
+ * In-app notification, fanned out per recipient. Backs every cross-stage
+ * handoff (architect on FPA_PAID, rep on FPA_SUBMITTED, etc.).
+ */
+model Notification {
+    id     String @id @default(cuid())
+    userId String
+    user   User   @relation("UserNotifications", fields: [userId], references: [id])
+
+    engagementId String?
+    engagement   Engagement? @relation(fields: [engagementId], references: [id])
+
+    type    NotificationType @default(GENERIC)
+    title   String
+    body    String?
+    linkUrl String?
+    read    Boolean          @default(false)
+    readAt  DateTime?
+
+    createdAt DateTime @default(now())
+
+    @@index([userId, read, createdAt])
+    @@index([engagementId])
 }

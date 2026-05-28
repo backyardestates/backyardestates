@@ -1,0 +1,190 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Role } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { guardPageRole } from "@/lib/auth/guardPage";
+import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
+import { stageLabel } from "@/lib/engagement/stage";
+import { StageControl } from "./StageControl";
+import s from "../engagements.module.css";
+
+export const dynamic = "force-dynamic";
+
+export default async function EngagementDetailPage({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}) {
+    await guardPageRole([Role.ADMIN, Role.ARCHITECT], "/tools/engagements");
+    const { userId, role } = await ensureProposalContext();
+    const { id } = await params;
+
+    const engagement = await prisma.engagement.findUnique({
+        where: { id },
+        include: {
+            consultations: { orderBy: { createdAt: "desc" } },
+            formalAnalyses: { orderBy: { createdAt: "desc" } },
+            proposals: {
+                orderBy: { updatedAt: "desc" },
+                select: {
+                    id: true,
+                    status: true,
+                    addressKey: true,
+                    totalPrice: true,
+                    updatedAt: true,
+                },
+            },
+            events: { orderBy: { createdAt: "desc" }, take: 100 },
+        },
+    });
+
+    if (!engagement) notFound();
+    const visible =
+        role === Role.ADMIN ||
+        engagement.repId === userId ||
+        engagement.architectId === userId;
+    if (!visible) notFound();
+
+    const address =
+        [engagement.addressLine1, engagement.city, engagement.state, engagement.zip]
+            .filter(Boolean)
+            .join(", ") || "(no address yet)";
+
+    return (
+        <div className={s.shell}>
+            <Link href="/tools/engagements" className={s.backLink}>
+                ← All engagements
+            </Link>
+
+            <header className={s.header}>
+                <div>
+                    <h1 className={s.title}>{engagement.customerName || "(no name)"}</h1>
+                    <p className={s.subtitle}>{address}</p>
+                </div>
+                <span className={s.stageBadge}>{stageLabel(engagement.stage)}</span>
+            </header>
+
+            <div className={s.detailGrid}>
+                {/* ── Left column: artifacts + timeline ───────────────────── */}
+                <div>
+                    <section className={s.panel}>
+                        <h2 className={s.panelTitle}>Consultations</h2>
+                        {engagement.consultations.length === 0 ? (
+                            <p className={s.empty}>No consultation recorded yet.</p>
+                        ) : (
+                            <ul className={s.timeline}>
+                                {engagement.consultations.map((c) => (
+                                    <li key={c.id} className={s.timelineItem}>
+                                        <span className={s.timelineType}>
+                                            {c.source} · {c.status}
+                                        </span>
+                                        <span className={s.timelineWhen}>
+                                            {c.createdAt.toLocaleString()}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
+
+                    <section className={s.panel}>
+                        <h2 className={s.panelTitle}>Formal analyses</h2>
+                        {engagement.formalAnalyses.length === 0 ? (
+                            <p className={s.empty}>No formal analysis yet.</p>
+                        ) : (
+                            <ul className={s.timeline}>
+                                {engagement.formalAnalyses.map((f) => (
+                                    <li key={f.id} className={s.timelineItem}>
+                                        <span className={s.timelineType}>{f.status}</span>
+                                        <span className={s.timelineWhen}>
+                                            {f.createdAt.toLocaleString()}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
+
+                    <section className={s.panel}>
+                        <h2 className={s.panelTitle}>Proposals</h2>
+                        {engagement.proposals.length === 0 ? (
+                            <p className={s.empty}>No proposal linked yet.</p>
+                        ) : (
+                            <ul className={s.timeline}>
+                                {engagement.proposals.map((p) => (
+                                    <li key={p.id} className={s.timelineItem}>
+                                        {p.addressKey ? (
+                                            <Link
+                                                href={`/tools/admin/master?address=${encodeURIComponent(
+                                                    p.addressKey,
+                                                )}`}
+                                            >
+                                                <span className={s.timelineType}>{p.status}</span>
+                                            </Link>
+                                        ) : (
+                                            <span className={s.timelineType}>{p.status}</span>
+                                        )}
+                                        <span className={s.timelineWhen}>
+                                            {p.updatedAt.toLocaleString()}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
+
+                    <section className={s.panel}>
+                        <h2 className={s.panelTitle}>Activity</h2>
+                        {engagement.events.length === 0 ? (
+                            <p className={s.empty}>No activity yet.</p>
+                        ) : (
+                            <ul className={s.timeline}>
+                                {engagement.events.map((ev) => (
+                                    <li key={ev.id} className={s.timelineItem}>
+                                        <span className={s.timelineType}>
+                                            {ev.message || ev.type}
+                                        </span>
+                                        <span className={s.timelineWhen}>
+                                            {ev.createdAt.toLocaleString()}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
+                </div>
+
+                {/* ── Right column: details + stage control ───────────────── */}
+                <aside>
+                    <section className={s.panel}>
+                        <h2 className={s.panelTitle}>Move stage</h2>
+                        <StageControl
+                            engagementId={engagement.id}
+                            currentStage={engagement.stage}
+                        />
+                    </section>
+
+                    <section className={s.panel}>
+                        <h2 className={s.panelTitle}>Customer</h2>
+                        <div className={s.kv}>
+                            <span className={s.kvLabel}>Email</span>
+                            <span>{engagement.customerEmail || "—"}</span>
+                        </div>
+                        <div className={s.kv}>
+                            <span className={s.kvLabel}>Phone</span>
+                            <span>{engagement.customerPhone || "—"}</span>
+                        </div>
+                        <div className={s.kv}>
+                            <span className={s.kvLabel}>Pipedrive person</span>
+                            <span>{engagement.pipedrivePersonId || "—"}</span>
+                        </div>
+                        <div className={s.kv}>
+                            <span className={s.kvLabel}>Pipedrive deal</span>
+                            <span>{engagement.pipedriveDealId || "—"}</span>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </div>
+    );
+}

@@ -28,6 +28,10 @@ const isArchitectRoute = createRouteMatcher([
     "/api/architect(.*)",
     "/tools/admin/master(.*)",
     "/api/admin/proposals(.*)",
+    // Engagement pipeline — reps (ADMIN) and architects both work here; the
+    // API enforces per-user visibility (own engagements / assigned analyses).
+    "/tools/engagements(.*)",
+    "/api/engagements(.*)",
 ]);
 
 // Admin catch-all — everything under /tools/admin/* and /api/admin/* that the
