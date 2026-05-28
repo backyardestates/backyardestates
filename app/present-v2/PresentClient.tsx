@@ -10,6 +10,7 @@ import {
     type TaxTopicData,
     type CityData,
     type DiscountPresetData,
+    type AdminBroadcast,
 } from "@/lib/store/presentationStore";
 import { startPresenterSync } from "@/lib/sync/presentationSync";
 import { selectStory } from "@/lib/investment/storySelector";
@@ -82,6 +83,11 @@ interface Props {
     taxTopicsCatalog?: TaxTopicData[];
     citiesCatalog?: CityData[];
     discountsCatalog?: DiscountPresetData[];
+    /** Phase 0b: when provided, seed the store from this persisted broadcast and
+     *  render standalone (no BroadcastChannel/localStorage subscription). When
+     *  absent, behavior is unchanged — the deck hydrates from a live admin
+     *  session via startPresenterSync(). */
+    initialBroadcast?: Partial<AdminBroadcast>;
 }
 
 export function PresentClient({
@@ -93,6 +99,7 @@ export function PresentClient({
     taxTopicsCatalog,
     citiesCatalog,
     discountsCatalog,
+    initialBroadcast,
 }: Props) {
     const {
         currentSlide,
@@ -155,8 +162,14 @@ export function PresentClient({
     useEffect(() => {
         if (syncStarted.current) return;
         syncStarted.current = true;
+        // By-id mode: seed once from the persisted broadcast and stay standalone
+        // so stale localStorage / a stray admin tab can't clobber the snapshot.
+        if (initialBroadcast) {
+            usePresentationStore.getState().syncFromAdmin(initialBroadcast);
+            return;
+        }
         return startPresenterSync();
-    }, []);
+    }, [initialBroadcast]);
 
     useEffect(() => {
         setSanityData({ floorplans, stories, completedProperties });

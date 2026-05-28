@@ -113,17 +113,28 @@ export default async function EngagementDetailPage({
                             <ul className={s.timeline}>
                                 {engagement.proposals.map((p) => (
                                     <li key={p.id} className={s.timelineItem}>
-                                        {p.addressKey ? (
-                                            <Link
-                                                href={`/tools/admin/master?address=${encodeURIComponent(
-                                                    p.addressKey,
-                                                )}`}
-                                            >
-                                                <span className={s.timelineType}>{p.status}</span>
+                                        <span className={s.timelineType}>{p.status}</span>
+                                        <span className={s.rowMeta} style={{ marginLeft: 12 }}>
+                                            {p.addressKey && (
+                                                <Link
+                                                    className={s.chip}
+                                                    href={`/tools/admin/master?address=${encodeURIComponent(
+                                                        p.addressKey,
+                                                    )}`}
+                                                >
+                                                    Edit
+                                                </Link>
+                                            )}
+                                            <Link className={s.chip} href={`/present-v2/${p.id}`}>
+                                                Present
                                             </Link>
-                                        ) : (
-                                            <span className={s.timelineType}>{p.status}</span>
-                                        )}
+                                            <Link
+                                                className={s.chip}
+                                                href={`/tools/admin/master/agreement/${p.id}`}
+                                            >
+                                                Agreement
+                                            </Link>
+                                        </span>
                                         <span className={s.timelineWhen}>
                                             {p.updatedAt.toLocaleString()}
                                         </span>

@@ -91,7 +91,14 @@ type Phase =
     | { state: "ready" }
     | { state: "error"; message: string };
 
-export function AgreementPreviewClient() {
+export function AgreementPreviewClient({
+    initialInput,
+}: {
+    /** Phase 0b: when provided (by the /agreement/[id] route), the preview
+     *  builds from this persisted input instead of the localStorage handoff
+     *  the admin tab writes. Absent for the live "Edit Agreement" flow. */
+    initialInput?: AgreementBuildInput;
+} = {}) {
     const [phase, setPhase] = useState<Phase>({ state: "loading" });
     const [html, setHtml] = useState<string>("");
     const [data, setData] = useState<AgreementTemplateData | null>(null);
@@ -128,6 +135,19 @@ export function AgreementPreviewClient() {
         let cancelled = false;
         (async () => {
             try {
+                // Phase 0b: by-id mode — build from the persisted input prop.
+                if (initialInput) {
+                    setInput(initialInput);
+                    setSelectedAduId(
+                        initialInput.selectedAduId ??
+                            (initialInput.comparedUnitIds ?? []).find(
+                                (id) => initialInput.proposalPaymentSchedulesByAduId?.[id]
+                            ) ??
+                            null
+                    );
+                    return;
+                }
+
                 const raw = window.localStorage.getItem(HANDOFF_KEY);
                 if (raw) {
                     let parsed: AgreementBuildInput;
@@ -177,7 +197,7 @@ export function AgreementPreviewClient() {
             }
         })();
         return () => { cancelled = true; };
-    }, []);
+    }, [initialInput]);
 
     // ── Rebuild whenever the selected unit changes ────────────────────────
     useEffect(() => {

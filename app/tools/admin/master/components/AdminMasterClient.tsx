@@ -123,6 +123,8 @@ import { useAduModel } from "@/hooks/investment/useAduModel";
 import { money } from "@/lib/investment/format";
 import { DEFAULTS, type Defaults } from "@/lib/investment/types";
 import { usePresentationWire, openPresenterWindow } from "@/hooks/presentation/usePresentationWire";
+import { usePresentationStore } from "@/lib/store/presentationStore";
+import { buildAdminBroadcast } from "@/lib/sync/presentationSync";
 
 
 export default function AdminMasterClient({
@@ -975,7 +977,7 @@ export default function AdminMasterClient({
             // Await server persistence so a quota error or network blip
             // surfaces as an alert instead of a silent loss. The LS mirror
             // is best-effort and won't throw.
-            await saveProposal(snap);
+            const saved = await saveProposal(snap);
             // The draft for this address has been promoted to a proposal —
             // remove it so the dashboard doesn't show a duplicate entry.
             // Fire-and-forget; the user doesn't need to wait.
@@ -1007,6 +1009,52 @@ export default function AdminMasterClient({
                 }).catch((err) => {
                     console.warn("[pipedrive.post-note] failed", err);
                 });
+            }
+
+            // Phase 0b: persist the presenter-ready payloads so /present/[id]
+            // and /agreement/[id] can render this proposal standalone (no live
+            // admin session). Fire-and-forget + fully isolated — a failure here
+            // never affects the save above or the live presenting flow.
+            if (saved?.id) {
+                try {
+                    const presenterBroadcast = buildAdminBroadcast(
+                        usePresentationStore.getState(),
+                        { includeCustomFloorplans: true }
+                    );
+                    const agreementInput = {
+                        customerName,
+                        propertyAddress: address,
+                        proposalPaymentSchedulesByAduId,
+                        comparedUnitIds: aduCompareIds,
+                        selectedAduId: aduCompareIds[0] ?? null,
+                        floorplans,
+                        siteWorkByUnitId: adu.activeSnapshotByAduId
+                            ? Object.fromEntries(
+                                  Object.entries(adu.activeSnapshotByAduId).map(([id, items]) => [
+                                      id,
+                                      items.map((it) => ({
+                                          label: it.label,
+                                          category: it.catLabel,
+                                          total: it.customerTotal,
+                                      })),
+                                  ])
+                              )
+                            : {},
+                        discountLinesByUnitId: adu.discountLinesByAduId,
+                        exclusions: agreementExclusions,
+                        bedsByUnitId,
+                        bathsByUnitId,
+                    };
+                    void fetch(`/api/proposals/${saved.id}/presenter-payload`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ presenterBroadcast, agreementInput }),
+                    }).catch((err) => {
+                        console.warn("[presenter-payload] failed", err);
+                    });
+                } catch (err) {
+                    console.warn("[presenter-payload] build failed", err);
+                }
             }
         } catch (err) {
             window.alert(

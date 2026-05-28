@@ -1,9 +1,55 @@
 "use client";
 
-import { usePresentationStore, type AdminBroadcast } from "@/lib/store/presentationStore";
+import {
+    usePresentationStore,
+    type AdminBroadcast,
+    type PresentationState,
+} from "@/lib/store/presentationStore";
 
 const CHANNEL_NAME = "be_presentation";
 const LS_KEY = "be_present_state";
+
+/**
+ * Build the presenter-ready AdminBroadcast from a store snapshot. Used by
+ * Phase 0b to persist a proposal's presenter payload at save time so
+ * /present/[id] can render standalone. `startAdminSync` keeps its own inline
+ * mapping (with customFloorplans omitted, since live custom units flow via
+ * usePresentationWire) — this helper takes `includeCustomFloorplans` so the
+ * persisted copy is self-contained.
+ */
+export function buildAdminBroadcast(
+    state: PresentationState,
+    opts: { includeCustomFloorplans?: boolean } = {},
+): AdminBroadcast {
+    return {
+        customerName: state.customerName,
+        propertyAddress: state.propertyAddress,
+        aduType: state.aduType,
+        propertyPhotoUrl: state.propertyPhotoUrl,
+        customerMotivation: state.customerMotivation,
+        comparedUnitIds: state.comparedUnitIds,
+        aduTypeByUnitId: state.aduTypeByUnitId,
+        bedsByUnitId: state.bedsByUnitId,
+        bathsByUnitId: state.bathsByUnitId,
+        customFloorplans: opts.includeCustomFloorplans
+            ? state.floorplans.filter((fp) => fp._id.startsWith("custom_"))
+            : [],
+        featuredPropertyIds: state.featuredPropertyIds,
+        featuredStoryIds: state.featuredStoryIds,
+        featuredRentals: state.featuredRentals,
+        slideOrder: state.slideOrder,
+        projectTimeline: state.projectTimeline,
+        proposalPaymentSchedule: state.proposalPaymentSchedule,
+        proposalPaymentSchedulesByAduId: state.proposalPaymentSchedulesByAduId,
+        scenarios: state.scenarios,
+        rentalComps: state.rentalComps,
+        rentByUnitId: state.rentByUnitId,
+        paymentSchedules: state.paymentSchedules,
+        siteWorkTagsByUnitId: state.siteWorkTagsByUnitId,
+        siteWorkByUnitId: state.siteWorkByUnitId,
+        discountLinesByUnitId: state.discountLinesByUnitId,
+    };
+}
 
 let channel: BroadcastChannel | null = null;
 

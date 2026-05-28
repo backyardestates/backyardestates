@@ -849,6 +849,13 @@ model Proposal {
     pricingVersion  Int   @default(1)
     snapshotJson    Json?
 
+    // Presenter-ready payloads (Phase 0b: present/agreement by id). Populated
+    // on REVIEWED save with the computed AdminBroadcast + AgreementBuildInput so
+    // /present/[id] and /agreement/[id] can render standalone — no live admin
+    // session required. Nullable: old proposals fall back to live broadcast.
+    presenterBroadcast Json?
+    agreementInput     Json?
+
     // PDF lifecycle
     pdfStatus String?
     pdfUrl    String?

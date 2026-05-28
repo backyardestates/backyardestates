@@ -222,7 +222,7 @@ export function hasProposal(addressKey: string): boolean {
  *  off first so a localStorage quota error can never prevent persistence.
  *  Returns the awaitable server promise so callers can show "saving… → saved"
  *  based on server reality. The LS write is best-effort + quota-safe. */
-export function saveProposal(snapshot: ProposalSnapshot): Promise<void> {
+export function saveProposal(snapshot: ProposalSnapshot): Promise<{ id?: string }> {
     const serverPromise = serverUpsertProposal(snapshot, "SAVED");
     const store = readStore(PROPOSALS_STORAGE_KEY);
     store[snapshot.addressKey] = snapshot;
@@ -307,8 +307,8 @@ type ServerStatus = "SAVED" | "DRAFT";
 async function serverUpsertProposal(
     snapshot: ProposalSnapshot,
     status: ServerStatus
-): Promise<void> {
-    if (typeof window === "undefined") return;
+): Promise<{ id?: string }> {
+    if (typeof window === "undefined") return {};
     // Throws on network errors AND on non-2xx server responses so callers
     // can surface "saving… → saved/error". Callers that don't care can
     // .catch() the promise — see `void saveDraft(snap).catch(...)` callsites.
@@ -321,6 +321,10 @@ async function serverUpsertProposal(
         const text = await res.text().catch(() => "");
         throw new Error(`Server save failed (${res.status})${text ? `: ${text}` : ""}`);
     }
+    // Surface the saved proposal id so callers (e.g. the REVIEWED save) can
+    // attach presenter payloads for by-id rendering. Best-effort parse.
+    const data = (await res.json().catch(() => ({}))) as { id?: string };
+    return { id: data.id };
 }
 
 async function serverDeleteProposal(
