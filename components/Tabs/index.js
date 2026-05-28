@@ -11,8 +11,6 @@ import style from './Tabs.module.css'
 export default function Tabs({ tabs }) {
     const [selectedTab, setSelectedTab] = useState(0)
 
-    // console.log(tabs[selectedTab])
-
     function handleClick(index) {
         setSelectedTab(index)
     }
@@ -25,7 +23,7 @@ export default function Tabs({ tabs }) {
                         key={index}
                         index={index}
                         handler={handleClick}
-                        isSelected={selectedTab === index ? true : false}
+                        isSelected={selectedTab === index}
                     >
                         {tab.title}
                     </Tab>

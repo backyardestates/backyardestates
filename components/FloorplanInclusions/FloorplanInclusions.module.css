@@ -1,0 +1,191 @@
+.wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ---------- Tabs ---------- */
+.tablist {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 0.25rem;
+    scroll-snap-type: x proximity;
+}
+
+.tablist::-webkit-scrollbar {
+    display: none;
+}
+
+.tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    border: 1px solid var(--color-neutral-100);
+    background: var(--color-white);
+    border-radius: 2rem;
+    padding: 0.6rem 1.1rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.55);
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.tab:hover {
+    color: var(--color-brand-dark-blue);
+    border-color: var(--color-brand-beige);
+}
+
+.tab:focus-visible {
+    outline: 2px solid var(--color-brand-beige);
+    outline-offset: 2px;
+}
+
+.tabActive,
+.tabActive:hover {
+    background: var(--color-brand-dark-blue);
+    border-color: var(--color-brand-dark-blue);
+    color: var(--color-white);
+}
+
+.tabIcon {
+    width: 1.05rem;
+    height: 1.05rem;
+}
+
+.tabCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: hsla(35, 32%, 53%, 0.18);
+    color: var(--color-brand-beige);
+}
+
+.tabActive .tabCount {
+    background: rgba(255, 255, 255, 0.18);
+    color: var(--color-white);
+}
+
+/* ---------- Panel ---------- */
+.panel {
+    animation: panelFade 0.35s ease;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.5rem;
+    background: var(--color-white);
+    border-radius: 1rem;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.cardHead {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.checkBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: hsla(35, 32%, 53%, 0.14);
+}
+
+.checkIcon {
+    width: 0.95rem;
+    height: 0.95rem;
+    color: var(--color-brand-beige);
+    stroke-width: 3;
+}
+
+.cardTitle {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+}
+
+.cardText {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.55;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+@keyframes panelFade {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media only screen and (min-width: 640px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (min-width: 960px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .panel,
+    .card {
+        animation: none;
+        transition: none;
+    }
+    .card:hover {
+        transform: none;
+    }
+}

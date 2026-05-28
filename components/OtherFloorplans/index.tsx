@@ -1,0 +1,113 @@
+'use client'
+
+import Link from 'next/link'
+import { CldImage } from 'next-cloudinary'
+import { Bed, Bath, Ruler } from 'lucide-react'
+
+import { USDollar } from '@/utils/currency'
+
+import style from './OtherFloorplans.module.css'
+
+interface CloudinaryAsset {
+    public_id?: string
+}
+
+export interface OtherFloorplan {
+    _id: string
+    name: string
+    slug: string
+    bed?: number
+    bath?: number
+    sqft?: number
+    price?: number | null
+    drawing?: CloudinaryAsset
+}
+
+export default function OtherFloorplans({
+    floorplans,
+}: {
+    floorplans: OtherFloorplan[]
+}) {
+    if (!floorplans || floorplans.length === 0) return null
+
+    return (
+        <section className={style.section}>
+            <div className={style.intro}>
+                <span className={style.eyebrow}>Keep exploring</span>
+                <h2 className={style.title}>Explore other plans</h2>
+            </div>
+
+            <div className={style.scroller}>
+                <ul className={style.track}>
+                    {floorplans.map((fp) => (
+                        <li key={fp._id} className={style.card}>
+                            <Link
+                                href={`/floorplans/${fp.slug}`}
+                                className={style.cardLink}
+                            >
+                                <div className={style.imageWrapper}>
+                                    {fp.drawing?.public_id && (
+                                        <CldImage
+                                            src={fp.drawing.public_id}
+                                            alt={`${fp.name} floor plan drawing`}
+                                            fill
+                                            sizes="17rem"
+                                            className={style.image}
+                                        />
+                                    )}
+                                </div>
+                                <div className={style.cardBody}>
+                                    <span className={style.cardName}>
+                                        {fp.name}
+                                    </span>
+                                    <ul className={style.specs}>
+                                        <li>
+                                            <Bed
+                                                className={style.specIcon}
+                                                aria-hidden="true"
+                                            />
+                                            {fp.bed === 0
+                                                ? 'Studio'
+                                                : `${fp.bed} Bed`}
+                                        </li>
+                                        {fp.bath != null && (
+                                            <li>
+                                                <Bath
+                                                    className={style.specIcon}
+                                                    aria-hidden="true"
+                                                />
+                                                {fp.bath} Bath
+                                            </li>
+                                        )}
+                                        {fp.sqft != null && (
+                                            <li>
+                                                <Ruler
+                                                    className={style.specIcon}
+                                                    aria-hidden="true"
+                                                />
+                                                {fp.sqft} sq ft
+                                            </li>
+                                        )}
+                                    </ul>
+                                    {fp.price != null && (
+                                        <div className={style.priceRow}>
+                                            <span className={style.priceLabel}>
+                                                All-in from
+                                            </span>
+                                            <span className={style.priceValue}>
+                                                {USDollar.format(fp.price)}
+                                            </span>
+                                        </div>
+                                    )}
+                                    <span className={style.viewLink}>
+                                        View plan &amp; pricing →
+                                    </span>
+                                </div>
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </section>
+    )
+}

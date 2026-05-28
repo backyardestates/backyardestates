@@ -3,79 +3,79 @@
     margin: 0;
     padding: 0.75rem;
     background-color: var(--color-white);
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     font-family: var(--font-sans);
-    border: 2px solid var(--color-brand-beige);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
     width: 100%;
+    box-sizing: border-box;
 }
 
 .buttonLeft,
 .buttonRight {
     position: absolute;
-    top: calc(50% - 1.5rem - 2px);
-    z-index: 999;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
 }
 
 .buttonLeft {
-    left: calc(-1.5rem - 2px);
+    left: 1.25rem;
 }
 .buttonRight {
-    right: calc(-1.5rem - 2px);
+    right: 1.25rem;
+}
+
+.buttonLeft:hover:not(:disabled),
+.buttonRight:hover:not(:disabled) {
+    transform: translateY(-50%) scale(1.06);
+}
+
+.buttonLeft:disabled,
+.buttonRight:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.buttonLeft:focus-visible,
+.buttonRight:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
 }
 
 .content {
     display: flex;
-    gap: 4rem;
-    flex: 1;
+    justify-content: flex-end;
     margin: 0;
-    padding: 1rem 0.75rem 0.75rem 0.75rem;
-    /* border: 1px solid pink; */
-}
-
-.content p {
-    color: var(--color-neutral-500);
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1rem;
-    /* border: 1px solid pink; */
-}
-
-.content p:last-child {
-    margin-left: auto;
-    text-wrap: nowrap;
-    /* border: 3px solid pink; */
-}
-
-.content p strong {
-    color: var(--color-black);
+    padding: 0.75rem 0.75rem 0.25rem;
 }
 
 .folio {
+    margin: 0;
     color: var(--color-neutral-500);
     font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-style: normal;
-    font-weight: 400;
+    font-size: 0.8rem;
+    font-weight: 500;
     line-height: 1rem;
     text-wrap: nowrap;
     flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
 }
 
 .slideViewer {
     width: 100%;
     overflow: hidden;
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
+    border-radius: 0.75rem;
 }
 
 .slides {
     display: flex;
-}
-
-.slides::-webkit-scrollbar-track {
-    background-color: red;
 }
 
 .slide {
@@ -87,4 +87,6 @@
     width: 100%;
     height: auto;
     aspect-ratio: 16 / 9;
+    border-radius: 0.75rem;
+    object-fit: cover;
 }

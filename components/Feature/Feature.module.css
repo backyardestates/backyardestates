@@ -6,7 +6,7 @@
 .base > h3 {
     margin: 1rem 0 0 0;
     padding: 0;
-    color: var(--Brand-Dark-blue-Default, #36484b);
+    color: var(--color-brand-dark-blue);
     font-family: var(--font-sans);
     font-size: 1rem;
     font-style: normal;

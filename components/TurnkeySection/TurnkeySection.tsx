@@ -4,15 +4,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, Clock } from "lucide-react";
 import styles from "./TurnkeySection.module.css";
 import SoftCTA from "../SoftCTA";
+import { BUILD_PHASES, type BuildPhase } from "@/content/timeline";
 
-type PhaseKey = "plans" | "permits" | "construction";
-
-type Phase = {
-    key: PhaseKey;
-    title: string;
-    timeline: string;
-    items: string[];
-};
+type Phase = BuildPhase;
 
 type TurnkeySectionProps = {
     label?: string;
@@ -22,51 +16,7 @@ type TurnkeySectionProps = {
     className?: string;
 };
 
-const DEFAULT_PHASES: Phase[] = [
-    {
-        key: "plans",
-        title: "Plans",
-        timeline: "4–6 Weeks",
-        items: [
-            "Custom Floor Plans",
-            "Site Plan + Elevations",
-            "Structural + T24",
-            "MEP Engineering",
-            "Soils / Survey / Hydrology",
-            "Septic (if required)",
-            "Full Kitchen Design",
-            "Finish Selections",
-        ],
-    },
-    {
-        key: "permits",
-        title: "Permits",
-        timeline: "As Fast as 6 Weeks",
-        items: [
-            "Planning Department",
-            "Building Department",
-            "Engineering",
-            "Fire Department",
-            "School Fees",
-            "Impact Fees",
-            "Plan Check Corrections",
-            "Permit Pull Process",
-        ],
-    },
-    {
-        key: "construction",
-        title: "Construction",
-        timeline: "6–10 Weeks",
-        items: [
-            "Dedicated PM + Superintendent",
-            "Weekly Updates",
-            "Jobsite Photos",
-            "Online Portal (Plans, Corrections, Payments)",
-            "City Inspections",
-            "Finish Installation",
-        ],
-    },
-];
+const DEFAULT_PHASES: Phase[] = BUILD_PHASES;
 
 export function TurnkeySection({
     label = "TURNKEY PROCESS",
