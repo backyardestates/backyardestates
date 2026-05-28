@@ -311,7 +311,7 @@ async function main() {
     ];
     const ROLE_PERMISSION_DEFAULTS = {
         ADMIN: ALL_PERMISSION_KEYS,
-        ARCHITECT: ["fpa.view_assigned", "fpa.fill", "fpa.submit", "engagements.view_own", "proposals.view_own", "feasibility.use"],
+        ARCHITECT: ["fpa.view_assigned", "fpa.view_all", "fpa.fill", "fpa.submit", "engagements.view_own", "engagements.edit", "consultation.run", "proposals.view_own", "proposals.edit", "proposals.present", "proposals.agreement", "proposals.send_signature", "feasibility.use"],
         SALES_REP: ["engagements.view_own", "engagements.start", "engagements.edit", "consultation.run", "fpa.view_assigned", "proposals.view_own", "proposals.edit", "proposals.present", "proposals.agreement", "proposals.send_signature", "feasibility.use", "drip.manage"],
         STAFF: ["engagements.view_all", "proposals.view_all", "fpa.view_all", "feasibility.use"],
         CUSTOMER: [],

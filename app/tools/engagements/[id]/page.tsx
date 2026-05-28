@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { guardPageRole } from "@/lib/auth/guardPage";
+import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { stageLabel } from "@/lib/engagement/stage";
 import { StageControl } from "./StageControl";
@@ -31,7 +30,10 @@ export default async function EngagementDetailPage({
 }: {
     params: Promise<{ id: string }>;
 }) {
-    await guardPageRole([Role.ADMIN, Role.ARCHITECT], "/tools/engagements");
+    await guardPageAnyPermission(
+        ["engagements.view_own", "engagements.view_all"],
+        "/tools/engagements",
+    );
     const { userId, role } = await ensureProposalContext();
     const { id } = await params;
 
@@ -60,7 +62,7 @@ export default async function EngagementDetailPage({
 
     if (!engagement) notFound();
     const visible =
-        role === Role.ADMIN ||
+        (await can(role, "engagements.view_all")) ||
         engagement.repId === userId ||
         engagement.architectId === userId;
     if (!visible) notFound();
@@ -79,6 +81,7 @@ export default async function EngagementDetailPage({
         .reduce((sum, f) => sum + (Number(f.estCostImpact) || 0), 0);
 
     const drip = engagement.dripEnrollments[0];
+    const canConsult = await can(role, "consultation.run");
 
     return (
         <div className={s.shell}>
@@ -99,13 +102,15 @@ export default async function EngagementDetailPage({
                 <div>
                     <section className={s.panel}>
                         <h2 className={s.panelTitle}>Consultations</h2>
-                        <Link
-                            href={`/tools/engagements/${engagement.id}/consultation`}
-                            className={s.primaryAction}
-                            style={{ marginBottom: 12 }}
-                        >
-                            + Record / generate notes
-                        </Link>
+                        {canConsult && (
+                            <Link
+                                href={`/tools/engagements/${engagement.id}/consultation`}
+                                className={s.primaryAction}
+                                style={{ marginBottom: 12 }}
+                            >
+                                + Record / generate notes
+                            </Link>
+                        )}
                         {engagement.consultations.length === 0 ? (
                             <p className={s.empty} style={{ marginTop: 12 }}>
                                 No consultation recorded yet.

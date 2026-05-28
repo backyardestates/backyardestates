@@ -49,12 +49,21 @@ const ALL = PERMISSION_KEYS;
 // only applied when seeding; runtime access always reads the RolePermission rows.
 export const ROLE_PERMISSION_DEFAULTS: Record<Role, string[]> = {
     ADMIN: ALL,
+    // Broad internal access (preserves what architects can reach today; admins
+    // can trim in the matrix).
     ARCHITECT: [
         "fpa.view_assigned",
+        "fpa.view_all",
         "fpa.fill",
         "fpa.submit",
         "engagements.view_own",
+        "engagements.edit",
+        "consultation.run",
         "proposals.view_own",
+        "proposals.edit",
+        "proposals.present",
+        "proposals.agreement",
+        "proposals.send_signature",
         "feasibility.use",
     ],
     SALES_REP: [

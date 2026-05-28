@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Role, AnalysisStatus } from "@prisma/client";
+import { AnalysisStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { guardPageRole } from "@/lib/auth/guardPage";
+import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import s from "../engagements/engagements.module.css";
 
@@ -14,12 +14,13 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default async function FpaListPage() {
-    await guardPageRole([Role.ADMIN, Role.ARCHITECT], "/tools/fpa");
+    await guardPageAnyPermission(["fpa.view_assigned", "fpa.view_all"], "/tools/fpa");
     const { userId, role } = await ensureProposalContext();
+    const viewAll = await can(role, "fpa.view_all");
 
     const analyses = await prisma.formalAnalysis
         .findMany({
-            where: role === Role.ADMIN ? {} : { architectId: userId },
+            where: viewAll ? {} : { architectId: userId },
             orderBy: [{ status: "asc" }, { scheduledAt: "asc" }, { createdAt: "desc" }],
             include: {
                 engagement: {

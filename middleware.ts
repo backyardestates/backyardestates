@@ -17,6 +17,7 @@ const isPublicRoute = createRouteMatcher([
 const isAnySignedInRoute = createRouteMatcher([
     "/tools/feasibility(.*)",
     "/tools/dashboard(.*)",
+    "/tools/notifications(.*)",
     "/after-signin",
 ]);
 
@@ -80,10 +81,13 @@ export default clerkMiddleware(async (auth, req) => {
 
     const role = getRoleFromClaims(sessionClaims);
 
-    // Architect carve-out wins over the admin catch-all — check first.
+    // Staff carve-out wins over the admin catch-all — check first. Coarse gate:
+    // any internal (non-customer) role may reach these tools; fine-grained
+    // access is enforced in-app via the RBAC permission checks.
     if (isArchitectRoute(req)) {
-        if (role !== "ARCHITECT" && role !== "ADMIN") {
-            return denyForUser(req, ["ARCHITECT", "ADMIN"]);
+        const STAFF_TIER = ["ARCHITECT", "SALES_REP", "STAFF", "ADMIN"];
+        if (!STAFF_TIER.includes(role)) {
+            return denyForUser(req, STAFF_TIER);
         }
         return;
     }

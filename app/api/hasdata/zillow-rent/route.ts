@@ -41,7 +41,7 @@ function extractZestimate(payload: any): number | null {
 
 export async function GET(req: Request) {
     // HasData bills per call — keep this admin/architect only.
-    const guard = await requireRole(["ADMIN", "ARCHITECT"]);
+    const guard = await requireRole(["ADMIN", "ARCHITECT", "SALES_REP", "STAFF"]);
     if (guard) return guard;
 
     const { searchParams } = new URL(req.url);

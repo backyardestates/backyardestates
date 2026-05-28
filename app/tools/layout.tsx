@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import type { Role } from "@prisma/client";
+import { getPermissions } from "@/lib/rbac/getPermissions";
 import { ToolsNav } from "./_components/ToolsNav";
 import "./_components/tools-theme.css";
 
@@ -23,6 +24,7 @@ export default async function ToolsLayout({
 
     let role: Role | null = null;
     let email: string | null = null;
+    let permissions: string[] = [];
 
     if (userId) {
         // findUnique avoids the upsert side-effect of getDbUser() since we
@@ -37,12 +39,13 @@ export default async function ToolsLayout({
         if (dbUser) {
             role = dbUser.role;
             email = dbUser.email ?? null;
+            permissions = [...(await getPermissions(dbUser.role).catch(() => new Set<string>()))];
         }
     }
 
     return (
         <>
-            <ToolsNav signedIn={!!userId} role={role} email={email} />
+            <ToolsNav signedIn={!!userId} role={role} email={email} permissions={permissions} />
             {children}
         </>
     );

@@ -1,4 +1,5 @@
 import AdminMasterClient from "./components/AdminMasterClient";
+import { guardPagePermission } from "@/lib/rbac/getPermissions";
 import { client } from "@/sanity/client";
 import { FLOORPLANS_QUERY, PRESENTER_COMPLETED_PROPERTIES_QUERY, PRESENTER_STORIES_QUERY } from "@/sanity/queries";
 import { getFinancialDefaults } from "@/lib/db/financialDefaults";
@@ -19,6 +20,8 @@ import type { SiteWorkCatalogData, SiteWorkUnit } from "@/lib/investment/siteWor
 export type { DiscountsCatalogSummary };
 
 export default async function AdminMasterPage() {
+    await guardPagePermission("proposals.edit", "/tools/admin/master");
+
     const [
         floorplans,
         completedProperties,

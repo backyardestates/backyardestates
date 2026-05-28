@@ -4,32 +4,30 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SignInButton, SignOutButton } from "@clerk/nextjs";
 import type { Role } from "@prisma/client";
+import { NotificationBell } from "./NotificationBell";
 import s from "./ToolsNav.module.css";
 
 interface Props {
     signedIn: boolean;
     role: Role | null;
     email: string | null;
+    permissions: string[];
 }
 
 /** Routes where the nav should hide itself entirely (e.g. print-style pages
  *  whose output would otherwise carry the nav into a generated PDF). */
-const HIDE_ON_ROUTES = [
-    "/tools/admin/master/agreement",
-];
+const HIDE_ON_ROUTES = ["/tools/admin/master/agreement"];
 
-export function ToolsNav({ signedIn, role, email }: Props) {
+export function ToolsNav({ signedIn, role, email, permissions }: Props) {
     const pathname = usePathname() ?? "";
 
     if (HIDE_ON_ROUTES.some((p) => pathname.startsWith(p))) {
         return null;
     }
 
-    const isAdmin = role === "ADMIN";
-    const isArchitect = role === "ARCHITECT";
-    const canBuild = isAdmin || isArchitect;
+    const perms = new Set(permissions);
+    const has = (...keys: string[]) => keys.some((k) => perms.has(k));
 
-    // Mark the current section so the user always knows where they are.
     function isActive(href: string): boolean {
         if (href === "/tools/dashboard") return pathname === href;
         return pathname === href || pathname.startsWith(href + "/");
@@ -48,12 +46,22 @@ export function ToolsNav({ signedIn, role, email }: Props) {
                         My Proposals
                     </NavLink>
                 )}
-                {isAdmin && (
+                {has("dashboard.admin") && (
                     <NavLink href="/tools/admin/dashboard" active={isActive("/tools/admin/dashboard")}>
                         Admin Dashboard
                     </NavLink>
                 )}
-                {canBuild && (
+                {has("engagements.view_own", "engagements.view_all") && (
+                    <NavLink href="/tools/engagements" active={isActive("/tools/engagements")}>
+                        Engagements
+                    </NavLink>
+                )}
+                {has("fpa.view_assigned", "fpa.view_all", "fpa.fill") && (
+                    <NavLink href="/tools/fpa" active={isActive("/tools/fpa")}>
+                        Formal Analysis
+                    </NavLink>
+                )}
+                {has("proposals.edit") && (
                     <NavLink href="/tools/admin/master" active={isActive("/tools/admin/master")}>
                         New / Edit Proposal
                     </NavLink>
@@ -68,6 +76,7 @@ export function ToolsNav({ signedIn, role, email }: Props) {
             <div className={s.right}>
                 {signedIn ? (
                     <>
+                        <NotificationBell />
                         <div className={s.userChip}>
                             {email && <span className={s.userEmail}>{email}</span>}
                             {role && <span className={`${s.rolePill} ${s[`role_${role}`] ?? ""}`}>{role}</span>}

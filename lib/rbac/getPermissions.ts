@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getDbUser } from "@/lib/auth";
+import { ROLE_PERMISSION_DEFAULTS } from "@/lib/rbac/permissions";
 
 // Permissions change rarely (only via the admin matrix), so cache the resolved
 // set per role for a short TTL to keep checks cheap. The matrix save calls
@@ -13,22 +14,37 @@ export function bustPermissionCache(): void {
     cache.clear();
 }
 
-/** Resolve the effective permission set for a role from RolePermission grants. */
+/**
+ * Resolve the effective permission set for a role. Lockout-safe: if a role has
+ * NO RolePermission rows at all (unseeded DB), fall back to the code defaults so
+ * staff never lose access just because the seed hasn't run. Once any row exists
+ * for the role (i.e. it's been seeded or edited in the matrix), the DB is
+ * authoritative — including a role with everything toggled off.
+ */
 export async function getPermissions(role: Role): Promise<Set<string>> {
     const hit = cache.get(role);
     if (hit && Date.now() - hit.at < TTL_MS) return hit.perms;
 
     const rows = await prisma.rolePermission.findMany({
-        where: { role, allowed: true },
-        select: { permissionKey: true },
+        where: { role },
+        select: { permissionKey: true, allowed: true },
     });
-    const perms = new Set(rows.map((r) => r.permissionKey));
+    const perms =
+        rows.length === 0
+            ? new Set(ROLE_PERMISSION_DEFAULTS[role] ?? [])
+            : new Set(rows.filter((r) => r.allowed).map((r) => r.permissionKey));
+
     cache.set(role, { perms, at: Date.now() });
     return perms;
 }
 
 export async function can(role: Role, key: string): Promise<boolean> {
     return (await getPermissions(role)).has(key);
+}
+
+export async function canAny(role: Role, keys: string[]): Promise<boolean> {
+    const perms = await getPermissions(role);
+    return keys.some((k) => perms.has(k));
 }
 
 /**
@@ -56,6 +72,30 @@ export async function guardPagePermission(key: string, from: string) {
         }
         const params = new URLSearchParams();
         params.set("need", key);
+        params.set("from", from);
+        redirect(`/access-denied?${params.toString()}`);
+    }
+}
+
+/** Like requirePermission, but passes if the user has ANY of the keys. */
+export async function requireAnyPermission(keys: string[]) {
+    const dbUser = await getDbUser();
+    const perms = await getPermissions(dbUser.role);
+    if (!keys.some((k) => perms.has(k))) throw new Error("FORBIDDEN");
+    return dbUser;
+}
+
+/** Page guard variant that passes if the user has ANY of the keys. */
+export async function guardPageAnyPermission(keys: string[], from: string) {
+    try {
+        return await requireAnyPermission(keys);
+    } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg === "UNAUTHORIZED") {
+            redirect(`/sign-in?redirect_url=${encodeURIComponent(from)}`);
+        }
+        const params = new URLSearchParams();
+        params.set("need", keys.join(","));
         params.set("from", from);
         redirect(`/access-denied?${params.toString()}`);
     }

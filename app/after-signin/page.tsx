@@ -45,8 +45,11 @@ export default async function AfterSigninPage({
     switch (user.role) {
         case Role.ADMIN:
             redirect("/tools/admin/dashboard");
+        case Role.SALES_REP:
+        case Role.STAFF:
+            redirect("/tools/engagements");
         case Role.ARCHITECT:
-            redirect("/tools/dashboard");
+            redirect("/tools/fpa");
         case Role.CUSTOMER:
         default:
             redirect("/tools/dashboard");

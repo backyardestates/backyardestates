@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { guardPageRole } from "@/lib/auth/guardPage";
+import { guardPagePermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { canAccessEngagement } from "@/lib/engagement/access";
 import { ConsultationClient } from "./ConsultationClient";
@@ -15,7 +14,7 @@ export default async function ConsultationPage({
 }: {
     params: Promise<{ id: string }>;
 }) {
-    await guardPageRole([Role.ADMIN, Role.ARCHITECT], "/tools/engagements");
+    await guardPagePermission("consultation.run", "/tools/engagements");
     const { userId, role } = await ensureProposalContext();
     const { id } = await params;
 
@@ -30,7 +29,12 @@ export default async function ConsultationPage({
         },
     });
     if (!engagement) notFound();
-    if (!canAccessEngagement(engagement, userId, role)) notFound();
+    if (
+        !canAccessEngagement(engagement, userId, role) &&
+        !(await can(role, "engagements.view_all"))
+    ) {
+        notFound();
+    }
 
     return (
         <div className={s.shell}>

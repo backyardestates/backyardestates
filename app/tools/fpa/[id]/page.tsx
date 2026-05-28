@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Role, AnalysisStatus } from "@prisma/client";
+import { AnalysisStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { guardPageRole } from "@/lib/auth/guardPage";
+import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { FPA_TEMPLATE } from "@/lib/fpa/template";
 import { FpaForm, type DiscoveryContext, type FlagEntry } from "./FpaForm";
@@ -15,7 +15,10 @@ export default async function FpaDetailPage({
 }: {
     params: Promise<{ id: string }>;
 }) {
-    await guardPageRole([Role.ADMIN, Role.ARCHITECT], "/tools/fpa");
+    await guardPageAnyPermission(
+        ["fpa.view_assigned", "fpa.view_all", "fpa.fill"],
+        "/tools/fpa",
+    );
     const { userId, role } = await ensureProposalContext();
     const { id } = await params;
 
@@ -38,7 +41,7 @@ export default async function FpaDetailPage({
     });
 
     if (!analysis) notFound();
-    if (role !== Role.ADMIN && analysis.architectId !== userId) notFound();
+    if (!(await can(role, "fpa.view_all")) && analysis.architectId !== userId) notFound();
 
     const consultation = analysis.engagement
         ? await prisma.consultation.findFirst({

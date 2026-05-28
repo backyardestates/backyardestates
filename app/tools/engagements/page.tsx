@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Role, EngagementStage } from "@prisma/client";
+import { EngagementStage } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { guardPageRole } from "@/lib/auth/guardPage";
+import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { STAGE_ORDER, stageLabel } from "@/lib/engagement/stage";
 import { StartEngagement } from "./StartEngagement";
@@ -10,16 +10,18 @@ import s from "./engagements.module.css";
 export const dynamic = "force-dynamic";
 
 export default async function EngagementsPage() {
-    await guardPageRole([Role.ADMIN, Role.ARCHITECT], "/tools/engagements");
+    await guardPageAnyPermission(
+        ["engagements.view_own", "engagements.view_all"],
+        "/tools/engagements",
+    );
     const { userId, organizationId, role } = await ensureProposalContext();
+    const viewAll = await can(role, "engagements.view_all");
 
     const engagements = await prisma.engagement
         .findMany({
             where: {
                 organizationId,
-                ...(role === Role.ADMIN
-                    ? {}
-                    : { OR: [{ repId: userId }, { architectId: userId }] }),
+                ...(viewAll ? {} : { OR: [{ repId: userId }, { architectId: userId }] }),
             },
             orderBy: { updatedAt: "desc" },
             include: {
