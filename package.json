@@ -12,6 +12,7 @@
     "seed": "node prisma/seed.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.99.0",
     "@clerk/backend": "^2.29.5",
     "@clerk/nextjs": "^6.36.10",
     "@cloudinary/react": "^1.14.1",

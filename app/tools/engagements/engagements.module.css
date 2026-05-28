@@ -334,3 +334,141 @@
     text-decoration: none;
     font-size: 14px;
 }
+
+/* ── Consultation capture ──────────────────────────────── */
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.tab {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.tabActive {
+    border-color: #0f766e;
+    background: #f0fdfa;
+    color: #0f766e;
+    font-weight: 600;
+}
+
+.textarea {
+    width: 100%;
+    min-height: 140px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.field {
+    margin-bottom: 12px;
+}
+
+.label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.consentRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: #374151;
+    margin: 10px 0 16px;
+}
+
+.recDot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #ef4444;
+    margin-right: 6px;
+    animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.aiList {
+    list-style: disc;
+    margin: 0 0 12px 18px;
+    padding: 0;
+    font-size: 14px;
+}
+
+.aiList li {
+    margin-bottom: 4px;
+}
+
+.pillRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.metaPill {
+    background: #eef2f7;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 12px;
+    color: #374151;
+}
+
+.mktCard {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+
+.mktTitle {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.mktChannel {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #0f766e;
+    font-weight: 700;
+    margin-left: 6px;
+}
+
+.mktDetail {
+    font-size: 13px;
+    color: #4b5563;
+    margin-top: 2px;
+}
+
+.input {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 14px;
+}
+
+.success {
+    color: #047857;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 10px;
+}

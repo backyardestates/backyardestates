@@ -69,8 +69,17 @@ export default async function EngagementDetailPage({
                 <div>
                     <section className={s.panel}>
                         <h2 className={s.panelTitle}>Consultations</h2>
+                        <Link
+                            href={`/tools/engagements/${engagement.id}/consultation`}
+                            className={s.primaryAction}
+                            style={{ marginBottom: 12 }}
+                        >
+                            + Record / generate notes
+                        </Link>
                         {engagement.consultations.length === 0 ? (
-                            <p className={s.empty}>No consultation recorded yet.</p>
+                            <p className={s.empty} style={{ marginTop: 12 }}>
+                                No consultation recorded yet.
+                            </p>
                         ) : (
                             <ul className={s.timeline}>
                                 {engagement.consultations.map((c) => (

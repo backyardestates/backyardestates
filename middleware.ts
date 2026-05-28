@@ -32,6 +32,7 @@ const isArchitectRoute = createRouteMatcher([
     // API enforces per-user visibility (own engagements / assigned analyses).
     "/tools/engagements(.*)",
     "/api/engagements(.*)",
+    "/api/consultations(.*)",
 ]);
 
 // Admin catch-all — everything under /tools/admin/* and /api/admin/* that the
