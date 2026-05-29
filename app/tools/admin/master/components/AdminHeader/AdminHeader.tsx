@@ -18,6 +18,9 @@ interface AdminHeaderProps {
     onNew?: () => void;
     onExportPdf?: () => void;
     onGenerateAgreement?: () => void;
+    /** Re-open the consultation→FPA AI prefill review for the current proposal. */
+    onAiMatch?: () => void;
+    aiMatchBusy?: boolean;
     saveDisabled?: boolean;
     exportDisabled?: boolean;
     agreementDisabled?: boolean;
@@ -84,6 +87,8 @@ export function AdminHeader({
     onNew,
     onExportPdf,
     onGenerateAgreement,
+    onAiMatch,
+    aiMatchBusy = false,
     saveDisabled = false,
     exportDisabled = false,
     agreementDisabled = false,
@@ -132,6 +137,20 @@ export function AdminHeader({
 
             <div className={styles.actions}>
                 <DraftIndicator status={draftStatus} />
+                {onAiMatch && (
+                    <button
+                        type="button"
+                        className={styles.aiBtn}
+                        onClick={onAiMatch}
+                        disabled={aiMatchBusy}
+                        title="Review (or re-run) the AI matches from this customer's consultation & property analysis"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 2l1.9 5.1L19 9l-5.1 1.9L12 16l-1.9-5.1L5 9l5.1-1.9L12 2zM19 14l.9 2.6L22 17.5l-2.1.9L19 21l-.9-2.6L16 17.5l2.1-.9L19 14z" />
+                        </svg>
+                        {aiMatchBusy ? "Matching…" : "AI match"}
+                    </button>
+                )}
                 {onNew && (
                     <button
                         type="button"

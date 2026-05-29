@@ -1,15 +1,12 @@
 import { Inter, Fraunces } from "next/font/google";
-import "./styles/brand.css";
 
-// Make the present-v2 type system available to opt-in components (e.g. the
-// consultation→FPA prefill modal) without changing the rest of the tool, which
-// keeps using --be-font (system). These only expose CSS variables.
 const inter = Inter({
     subsets: ["latin"],
-    weight: ["400", "500", "600", "700"],
+    weight: ["300", "400", "500", "600", "700"],
     display: "swap",
     variable: "--font-inter",
 });
+
 const fraunces = Fraunces({
     subsets: ["latin"],
     style: ["italic", "normal"],
@@ -18,10 +15,6 @@ const fraunces = Fraunces({
     axes: ["opsz"],
 });
 
-export default function AdminMasterLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+export default function DripLayout({ children }: { children: React.ReactNode }) {
     return <div className={`${inter.variable} ${fraunces.variable}`}>{children}</div>;
 }

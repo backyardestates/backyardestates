@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Role, EngagementStage } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
-import { stageLabel } from "@/lib/engagement/stage";
-import { Role } from "@prisma/client";
+import { STAGE_ORDER, stageLabel } from "@/lib/engagement/stage";
 import { StageControl } from "./StageControl";
 import { StartEstimateButton } from "./StartEstimateButton";
 import { StartFpaButton } from "./StartFpaButton";
 import { DripCancelButton } from "./DripCancelButton";
 import { ResyncButton } from "./ResyncButton";
-import s from "../engagements.module.css";
+import s from "./detail.module.css";
 
 export const dynamic = "force-dynamic";
 
@@ -25,8 +25,37 @@ const FLAG_LABEL: Record<string, string> = {
     CONCERN: "Concern",
     QUESTION: "Open question",
 };
+const flagToneClass = (type?: string) =>
+    type === "COST_ADDER" ? s.tagCost : type === "QUESTION" ? s.tagQuestion : s.tagConcern;
+
 const money = (n: number) =>
     n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+// Status → tag tone. Terminal/success states read gold/green; in-flight reads
+// teal; not-yet-started reads muted.
+function analysisTone(status: string) {
+    if (status === "COMPLETE") return s.statusTagDone;
+    if (status === "IN_PROGRESS") return s.statusTagGold;
+    return s.statusTagMuted;
+}
+function proposalTone(status: string) {
+    if (status === "SIGNED") return s.statusTagDone;
+    if (status === "SENT" || status === "AGREEMENT_SENT") return s.statusTagGold;
+    if (status === "DRAFT") return s.statusTagMuted;
+    return s.statusTag;
+}
+function dripTone(status: string) {
+    if (status === "ACTIVE") return s.statusTagDone;
+    if (status === "SENT") return s.statusTagDone;
+    return s.statusTagMuted;
+}
+
+const PinIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+        <circle cx="12" cy="10" r="3" />
+    </svg>
+);
 
 export default async function EngagementDetailPage({
     params,
@@ -53,6 +82,8 @@ export default async function EngagementDetailPage({
                     addressKey: true,
                     totalPrice: true,
                     updatedAt: true,
+                    pdfUrl: true,
+                    pdfGeneratedAt: true,
                 },
             },
             dripEnrollments: {
@@ -97,52 +128,122 @@ export default async function EngagementDetailPage({
           })
         : [];
 
+    // Pipeline progress (LOST is terminal/off-pipeline).
+    const isLost = engagement.stage === EngagementStage.LOST;
+    const isSigned = engagement.stage === EngagementStage.SIGNED;
+    const stageIdx = STAGE_ORDER.indexOf(engagement.stage);
+    const totalSteps = STAGE_ORDER.length;
+    const stepNum = stageIdx >= 0 ? stageIdx + 1 : 0;
+    const progressPct = isLost ? 100 : stageIdx >= 0 ? Math.round((stepNum / totalSteps) * 100) : 0;
+
+    const badgeClass = isSigned
+        ? `${s.statusBadge} ${s.statusBadgeDone}`
+        : isLost
+          ? `${s.statusBadge} ${s.statusBadgeLost}`
+          : s.statusBadge;
+
     return (
-        <div className={s.shell}>
+        <div className={s.page}>
             <Link href="/tools/engagements" className={s.backLink}>
-                ← All engagements
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                All engagements
             </Link>
 
-            <header className={s.header}>
-                <div>
-                    <h1 className={s.title}>{engagement.customerName || "(no name)"}</h1>
-                    <p className={s.subtitle}>{address}</p>
+            {/* ── Hero ─────────────────────────────────────────────────────── */}
+            <header className={s.hero}>
+                <div className={s.heroTop}>
+                    <div>
+                        <p className={s.eyebrow}>Engagement</p>
+                        <h1 className={s.title}>{engagement.customerName || "(no name)"}</h1>
+                        <p className={s.subtitle}>
+                            <PinIcon />
+                            {address}
+                        </p>
+                    </div>
+                    <span className={badgeClass}>
+                        <span className={s.statusDot} />
+                        {stageLabel(engagement.stage)}
+                    </span>
                 </div>
-                <span className={s.stageBadge}>{stageLabel(engagement.stage)}</span>
+
+                <div className={s.heroProgress}>
+                    <div className={s.progressMeta}>
+                        <span className={s.progressStage}>
+                            {isLost ? "Marked lost" : stageLabel(engagement.stage)}
+                        </span>
+                        <span className={s.progressStep}>
+                            {isLost ? "Off pipeline" : `Step ${stepNum} of ${totalSteps}`}
+                        </span>
+                    </div>
+                    <div className={s.progressTrack}>
+                        <div
+                            className={`${s.progressFill} ${isLost ? s.progressFillLost : ""}`}
+                            style={{ width: `${progressPct}%` }}
+                        />
+                    </div>
+                </div>
             </header>
+
+            {/* ── KPI strip ────────────────────────────────────────────────── */}
+            <div className={s.statStrip}>
+                <div className={s.statCard}>
+                    <p className={s.statLabel}>Consultations</p>
+                    <div className={s.statValue}>{engagement.consultations.length}</div>
+                    <span className={s.statSub}>recorded</span>
+                </div>
+                <div className={s.statCard}>
+                    <p className={s.statLabel}>Formal analyses</p>
+                    <div className={s.statValue}>{engagement.formalAnalyses.length}</div>
+                    <span className={s.statSub}>{hasOpenAnalysis ? "1 in progress" : "on file"}</span>
+                </div>
+                <div className={s.statCard}>
+                    <p className={s.statLabel}>Proposals</p>
+                    <div className={s.statValue}>{engagement.proposals.length}</div>
+                    <span className={s.statSub}>linked</span>
+                </div>
+                <div className={s.statCard}>
+                    <p className={s.statLabel}>Cost-adders</p>
+                    <div className={`${s.statValue} ${s.statValueGold}`}>{money(costTotal)}</div>
+                    <span className={s.statSub}>from FPA flags</span>
+                </div>
+            </div>
 
             <div className={s.detailGrid}>
                 {/* ── Left column: artifacts + timeline ───────────────────── */}
-                <div>
+                <div className={s.main}>
                     <section className={s.panel}>
-                        <h2 className={s.panelTitle}>Consultations</h2>
+                        <div className={s.panelHead}>
+                            <h2 className={s.panelTitle}>Consultations</h2>
+                        </div>
                         {canConsult && (
-                            <Link
-                                href={`/tools/engagements/${engagement.id}/consultation`}
-                                className={s.primaryAction}
-                                style={{ marginBottom: 12 }}
-                            >
-                                + Record / generate notes
-                            </Link>
+                            <div className={s.panelActions}>
+                                <Link
+                                    href={`/tools/engagements/${engagement.id}/consultation`}
+                                    className={s.primaryAction}
+                                >
+                                    + Record / generate notes
+                                </Link>
+                            </div>
                         )}
                         {engagement.consultations.length === 0 ? (
-                            <p className={s.empty} style={{ marginTop: 12 }}>
-                                No consultation recorded yet.
-                            </p>
+                            <p className={s.empty}>No consultation recorded yet.</p>
                         ) : (
                             <ul className={s.timeline}>
                                 {engagement.consultations.map((c) => (
                                     <li key={c.id} className={s.timelineItem}>
-                                        <Link
-                                            href={`/tools/engagements/${engagement.id}/consultations/${c.id}`}
-                                        >
-                                            <span className={s.timelineType}>
+                                        <div className={s.timelineRow}>
+                                            <Link
+                                                href={`/tools/engagements/${engagement.id}/consultations/${c.id}`}
+                                                className={s.timelineType}
+                                            >
                                                 {c.source} · {c.status}
+                                            </Link>
+                                            <span className={s.timelineWhen}>
+                                                {c.createdAt.toLocaleString()}
                                             </span>
-                                        </Link>
-                                        <span className={s.timelineWhen}>
-                                            {c.createdAt.toLocaleString()}
-                                        </span>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -150,13 +251,17 @@ export default async function EngagementDetailPage({
                     </section>
 
                     <section className={s.panel}>
-                        <h2 className={s.panelTitle}>Formal analyses</h2>
+                        <div className={s.panelHead}>
+                            <h2 className={s.panelTitle}>Formal analyses</h2>
+                        </div>
                         {canStartFpa && !hasOpenAnalysis && (
-                            <StartFpaButton
-                                engagementId={engagement.id}
-                                architects={architects}
-                                defaultArchitectId={engagement.architectId}
-                            />
+                            <div className={s.panelActions}>
+                                <StartFpaButton
+                                    engagementId={engagement.id}
+                                    architects={architects}
+                                    defaultArchitectId={engagement.architectId}
+                                />
+                            </div>
                         )}
                         {engagement.formalAnalyses.length === 0 ? (
                             <p className={s.empty}>No formal analysis yet.</p>
@@ -164,12 +269,19 @@ export default async function EngagementDetailPage({
                             <ul className={s.timeline}>
                                 {engagement.formalAnalyses.map((f) => (
                                     <li key={f.id} className={s.timelineItem}>
-                                        <Link href={`/tools/fpa/${f.id}`}>
-                                            <span className={s.timelineType}>{f.status}</span>
-                                        </Link>
-                                        <span className={s.timelineWhen}>
-                                            {f.createdAt.toLocaleString()}
-                                        </span>
+                                        <div className={s.timelineRow}>
+                                            <Link href={`/tools/fpa/${f.id}`} className={s.timelineType}>
+                                                Site analysis
+                                            </Link>
+                                            <span className={s.timelineWhen}>
+                                                {f.createdAt.toLocaleString()}
+                                            </span>
+                                        </div>
+                                        <div className={s.timelineMeta}>
+                                            <span className={`${s.statusTag} ${analysisTone(f.status)}`}>
+                                                {f.status.replace("_", " ")}
+                                            </span>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -178,60 +290,70 @@ export default async function EngagementDetailPage({
 
                     {flags.length > 0 && (
                         <section className={s.panel}>
-                            <h2 className={s.panelTitle}>Architect findings</h2>
+                            <div className={s.panelHead}>
+                                <h2 className={s.panelTitle}>Architect findings</h2>
+                            </div>
                             {costTotal > 0 && (
-                                <p className={s.rowMuted}>
-                                    Cost-adders total: <strong>{money(costTotal)}</strong>
+                                <p className={s.findingsTotal}>
+                                    Cost-adders total <strong>{money(costTotal)}</strong>
                                 </p>
                             )}
-                            <ul className={s.timeline}>
+                            <div className={s.flagList}>
                                 {flags.map((f, i) => (
-                                    <li key={i} className={s.timelineItem}>
-                                        <span className={s.metaPill}>
+                                    <div key={i} className={s.flagItem}>
+                                        <span className={`${s.tag} ${flagToneClass(f.flagType)}`}>
                                             {FLAG_LABEL[f.flagType ?? ""] ?? "Flag"}
-                                        </span>{" "}
-                                        <span className={s.timelineType}>
-                                            {f.label || "(unlabeled)"}
                                         </span>
+                                        <span className={s.flagWhat}>{f.label || "(unlabeled)"}</span>
                                         {f.flagType === "COST_ADDER" && f.estCostImpact != null && (
-                                            <span className={s.rowMuted}>
-                                                {" "}· {money(Number(f.estCostImpact))}
+                                            <span className={s.flagMoney}>
+                                                {money(Number(f.estCostImpact))}
                                             </span>
                                         )}
-                                        {f.flagNote && (
-                                            <span className={s.rowMuted}> — {f.flagNote}</span>
-                                        )}
-                                    </li>
+                                        {f.flagNote && <p className={s.flagBody}>{f.flagNote}</p>}
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </section>
                     )}
 
                     <section className={s.panel}>
-                        <h2 className={s.panelTitle}>Proposals</h2>
-                        <StartEstimateButton
-                            engagementId={engagement.id}
-                            addressKey={engagement.addressKey}
-                            currentStage={engagement.stage}
-                        />
+                        <div className={s.panelHead}>
+                            <h2 className={s.panelTitle}>Proposals</h2>
+                        </div>
+                        <div className={s.panelActions}>
+                            <StartEstimateButton
+                                engagementId={engagement.id}
+                                addressKey={engagement.addressKey}
+                            />
+                        </div>
                         {engagement.proposals.length === 0 ? (
                             <p className={s.empty}>No proposal linked yet.</p>
                         ) : (
                             <ul className={s.timeline}>
                                 {engagement.proposals.map((p) => (
                                     <li key={p.id} className={s.timelineItem}>
-                                        <span className={s.timelineType}>{p.status}</span>
-                                        <span className={s.rowMeta} style={{ marginLeft: 12 }}>
-                                            {p.addressKey && (
-                                                <Link
-                                                    className={s.chip}
-                                                    href={`/tools/admin/master?address=${encodeURIComponent(
-                                                        p.addressKey,
-                                                    )}`}
-                                                >
-                                                    Edit
-                                                </Link>
-                                            )}
+                                        <div className={s.timelineRow}>
+                                            <span className={`${s.statusTag} ${proposalTone(p.status)}`}>
+                                                {p.status.replace(/_/g, " ")}
+                                            </span>
+                                            <span className={s.timelineWhen}>
+                                                {p.updatedAt.toLocaleString()}
+                                            </span>
+                                        </div>
+                                        <div className={s.timelineMeta}>
+                                            <Link
+                                                className={s.chip}
+                                                href={`/tools/admin/master?proposalId=${encodeURIComponent(
+                                                    p.id,
+                                                )}${
+                                                    p.addressKey
+                                                        ? `&address=${encodeURIComponent(p.addressKey)}`
+                                                        : ""
+                                                }`}
+                                            >
+                                                {p.status === "DRAFT" ? "Open draft" : "Edit"}
+                                            </Link>
                                             <Link className={s.chip} href={`/present-v2/${p.id}`}>
                                                 Present
                                             </Link>
@@ -241,10 +363,25 @@ export default async function EngagementDetailPage({
                                             >
                                                 Agreement
                                             </Link>
-                                        </span>
-                                        <span className={s.timelineWhen}>
-                                            {p.updatedAt.toLocaleString()}
-                                        </span>
+                                            {p.pdfUrl && (
+                                                <a
+                                                    className={s.chip}
+                                                    href={p.pdfUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    title={
+                                                        p.pdfGeneratedAt
+                                                            ? `Saved agreement PDF · ${p.pdfGeneratedAt.toLocaleDateString()}`
+                                                            : "Saved agreement PDF"
+                                                    }
+                                                >
+                                                    PDF
+                                                    {p.pdfGeneratedAt
+                                                        ? ` · ${p.pdfGeneratedAt.toLocaleDateString()}`
+                                                        : ""}
+                                                </a>
+                                            )}
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -253,47 +390,63 @@ export default async function EngagementDetailPage({
 
                     {drip && (
                         <section className={s.panel}>
-                            <h2 className={s.panelTitle}>Follow-up drip</h2>
-                            <p className={s.rowMuted} style={{ marginBottom: 8 }}>
-                                Status: {drip.status}
-                            </p>
+                            <div className={s.panelHead}>
+                                <h2 className={s.panelTitle}>Follow-up drip</h2>
+                                <span className={`${s.statusTag} ${dripTone(drip.status)}`}>
+                                    {drip.status}
+                                </span>
+                            </div>
                             <ul className={s.timeline}>
                                 {drip.messages.map((m) => (
                                     <li key={m.id} className={s.timelineItem}>
-                                        <span className={s.timelineType}>{m.subject}</span>
-                                        <span className={s.rowMeta} style={{ marginLeft: 12 }}>
-                                            <span className={s.chip}>{m.status}</span>
-                                        </span>
-                                        <span className={s.timelineWhen}>
-                                            {m.status === "SENT" && m.sentAt
-                                                ? `sent ${m.sentAt.toLocaleDateString()}`
-                                                : m.scheduledFor.toLocaleDateString()}
-                                        </span>
+                                        <div className={s.timelineRow}>
+                                            <span className={s.timelineType}>{m.subject}</span>
+                                            <span className={s.timelineWhen}>
+                                                {m.status === "SENT" && m.sentAt
+                                                    ? `sent ${m.sentAt.toLocaleDateString()}`
+                                                    : m.scheduledFor.toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <div className={s.timelineMeta}>
+                                            <span className={`${s.statusTag} ${dripTone(m.status)}`}>
+                                                {m.status}
+                                            </span>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
-                            {drip.status === "ACTIVE" && (
-                                <div style={{ marginTop: 10 }}>
+                            <div className={s.panelActions} style={{ marginTop: 14 }}>
+                                <Link
+                                    href={`/tools/engagements/${engagement.id}/drip`}
+                                    className={s.primaryAction}
+                                >
+                                    Manage drip
+                                </Link>
+                                {drip.status === "ACTIVE" && (
                                     <DripCancelButton engagementId={engagement.id} />
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </section>
                     )}
 
                     <section className={s.panel}>
-                        <h2 className={s.panelTitle}>Activity</h2>
+                        <div className={s.panelHead}>
+                            <h2 className={s.panelTitle}>Activity</h2>
+                        </div>
                         {engagement.events.length === 0 ? (
                             <p className={s.empty}>No activity yet.</p>
                         ) : (
                             <ul className={s.timeline}>
                                 {engagement.events.map((ev) => (
                                     <li key={ev.id} className={s.timelineItem}>
-                                        <span className={s.timelineType}>
-                                            {ev.message || ev.type}
-                                        </span>
-                                        <span className={s.timelineWhen}>
-                                            {ev.createdAt.toLocaleString()}
-                                        </span>
+                                        <div className={s.timelineRow}>
+                                            <span className={s.timelineType}>
+                                                {ev.message || ev.type}
+                                            </span>
+                                            <span className={s.timelineWhen}>
+                                                {ev.createdAt.toLocaleString()}
+                                            </span>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -301,33 +454,34 @@ export default async function EngagementDetailPage({
                     </section>
                 </div>
 
-                {/* ── Right column: details + stage control ───────────────── */}
-                <aside>
+                {/* ── Right column: stage control + customer ──────────────── */}
+                <aside className={s.aside}>
                     <section className={s.panel}>
-                        <h2 className={s.panelTitle}>Move stage</h2>
-                        <StageControl
-                            engagementId={engagement.id}
-                            currentStage={engagement.stage}
-                        />
+                        <div className={s.panelHead}>
+                            <h2 className={s.panelTitle}>Move stage</h2>
+                        </div>
+                        <StageControl engagementId={engagement.id} currentStage={engagement.stage} />
                     </section>
 
                     <section className={s.panel}>
-                        <h2 className={s.panelTitle}>Customer</h2>
+                        <div className={s.panelHead}>
+                            <h2 className={s.panelTitle}>Customer</h2>
+                        </div>
                         <div className={s.kv}>
                             <span className={s.kvLabel}>Email</span>
-                            <span>{engagement.customerEmail || "—"}</span>
+                            <span className={s.kvVal}>{engagement.customerEmail || "—"}</span>
                         </div>
                         <div className={s.kv}>
                             <span className={s.kvLabel}>Phone</span>
-                            <span>{engagement.customerPhone || "—"}</span>
+                            <span className={s.kvVal}>{engagement.customerPhone || "—"}</span>
                         </div>
                         <div className={s.kv}>
                             <span className={s.kvLabel}>Pipedrive person</span>
-                            <span>{engagement.pipedrivePersonId || "—"}</span>
+                            <span className={s.kvVal}>{engagement.pipedrivePersonId || "—"}</span>
                         </div>
                         <div className={s.kv}>
                             <span className={s.kvLabel}>Pipedrive deal</span>
-                            <span>{engagement.pipedriveDealId || "—"}</span>
+                            <span className={s.kvVal}>{engagement.pipedriveDealId || "—"}</span>
                         </div>
                         {(engagement.pipedrivePersonId || engagement.pipedriveDealId) && (
                             <ResyncButton engagementId={engagement.id} />

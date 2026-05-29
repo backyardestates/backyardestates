@@ -1,0 +1,602 @@
+/* Drip manager — present-v2 design language at web scale.
+   Palette + fonts mirror app/present-v2/styles/present.design.css. */
+
+.shell {
+    --cream: #f7f5f0;
+    --cream-2: #f0ede7;
+    --paper: #faf6ec;
+    --teal-ink: #14302f;
+    --teal: #2d5f5f;
+    --teal-light: #3a7070;
+    --gold: #b8954a;
+    --gold-soft: #d4b074;
+    --gold-bg: rgba(184, 149, 74, 0.1);
+    --gold-border: rgba(184, 149, 74, 0.4);
+    --ink: #1a1a1a;
+    --ink-muted: #5a5550;
+    --ink-faint: #8a8278;
+    --border-light: #e5e1d8;
+    --positive: #2e7d5b;
+    --negative: #b85440;
+
+    --font: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-disp: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+
+    --shadow-sm: 0 1px 2px rgba(20, 48, 47, 0.06), 0 1px 1px rgba(20, 48, 47, 0.04);
+    --shadow-md: 0 8px 24px rgba(20, 48, 47, 0.08), 0 2px 6px rgba(20, 48, 47, 0.05);
+    --shadow-lg: 0 24px 60px rgba(20, 48, 47, 0.14), 0 6px 16px rgba(20, 48, 47, 0.07);
+
+    min-height: 100vh;
+    background:
+        radial-gradient(1200px 600px at 100% -10%, rgba(184, 149, 74, 0.06), transparent 60%),
+        var(--cream);
+    font-family: var(--font);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    padding: 40px clamp(20px, 6vw, 80px) 120px;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--teal);
+    text-decoration: none;
+    font-weight: 500;
+}
+.backLink:hover {
+    color: var(--teal-ink);
+}
+
+/* ── Header ──────────────────────────────────────────── */
+.header {
+    margin-top: 22px;
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+.eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 10px;
+}
+.title {
+    margin: 0;
+    font-family: var(--font);
+    font-weight: 300;
+    font-size: clamp(30px, 4vw, 46px);
+    letter-spacing: -0.02em;
+    line-height: 1.04;
+    color: var(--teal-ink);
+}
+.title em {
+    font-family: var(--font-disp);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold);
+}
+.subtitle {
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: var(--ink-muted);
+    letter-spacing: 0.01em;
+}
+
+.headerControls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Status pill ─────────────────────────────────────── */
+.dripStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 40px;
+    border: 1px solid var(--border-light);
+    background: var(--paper);
+    color: var(--ink-muted);
+}
+.dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.s_ACTIVE {
+    color: var(--positive);
+    border-color: rgba(46, 125, 91, 0.3);
+    background: rgba(46, 125, 91, 0.07);
+}
+.s_PAUSED {
+    color: var(--gold);
+    border-color: var(--gold-border);
+    background: var(--gold-bg);
+}
+.s_COMPLETED {
+    color: var(--teal);
+    border-color: rgba(45, 95, 95, 0.25);
+    background: rgba(45, 95, 95, 0.07);
+}
+.s_CANCELLED {
+    color: var(--negative);
+    border-color: rgba(184, 84, 64, 0.3);
+    background: rgba(184, 84, 64, 0.06);
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    background: var(--paper);
+    color: var(--teal-ink);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+}
+.btn:hover:not(:disabled) {
+    border-color: var(--teal);
+    box-shadow: var(--shadow-sm);
+}
+.btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.btnPrimary {
+    background: var(--teal-ink);
+    color: var(--cream);
+    border-color: var(--teal-ink);
+}
+.btnPrimary:hover:not(:disabled) {
+    background: var(--teal);
+    border-color: var(--teal);
+    box-shadow: var(--shadow-md);
+}
+.btnGold {
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+    color: #2a2102;
+    border-color: var(--gold);
+    font-weight: 600;
+}
+.btnGold:hover:not(:disabled) {
+    box-shadow: 0 6px 18px rgba(184, 149, 74, 0.32);
+}
+.btnDanger {
+    color: var(--negative);
+}
+.btnDanger:hover:not(:disabled) {
+    border-color: var(--negative);
+}
+.btnGhost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--teal);
+    padding: 10px 12px;
+}
+.btnGhost:hover:not(:disabled) {
+    background: rgba(45, 95, 95, 0.07);
+    box-shadow: none;
+}
+
+/* ── List ────────────────────────────────────────────── */
+.list {
+    list-style: none;
+    margin: 36px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+/* ── Card ────────────────────────────────────────────── */
+.card {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--border-light);
+    border-radius: 18px;
+    box-shadow: var(--shadow-md);
+    padding: 26px 28px 22px;
+    overflow: hidden;
+    animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), transparent 70%);
+    opacity: 0.7;
+}
+.card.dimmed {
+    opacity: 0.6;
+}
+.card.locked {
+    background: var(--cream-2);
+}
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cardHead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+.stepWrap {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+}
+.plate {
+    font-family: var(--font-disp);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1;
+    color: var(--gold);
+    letter-spacing: 0.01em;
+}
+.stepMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.stepLabel {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+.contentRef {
+    font-size: 12px;
+    color: var(--teal);
+    font-style: italic;
+    font-family: var(--font-disp);
+}
+
+/* status badge on card */
+.badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-light);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.b_SCHEDULED {
+    color: var(--teal);
+    background: rgba(45, 95, 95, 0.08);
+    border-color: rgba(45, 95, 95, 0.2);
+}
+.b_SENT {
+    color: var(--positive);
+    background: rgba(46, 125, 91, 0.08);
+    border-color: rgba(46, 125, 91, 0.25);
+}
+.b_SKIPPED {
+    color: var(--ink-faint);
+    background: var(--cream-2);
+}
+.b_FAILED {
+    color: var(--negative);
+    background: rgba(184, 84, 64, 0.07);
+    border-color: rgba(184, 84, 64, 0.28);
+}
+
+/* ── Fields ──────────────────────────────────────────── */
+.field {
+    margin-bottom: 16px;
+}
+.label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 7px;
+}
+.input,
+.textarea,
+.dateInput {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--cream);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 11px 14px;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.input:focus,
+.textarea:focus,
+.dateInput:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: #fff;
+    box-shadow: 0 0 0 3px var(--gold-bg);
+}
+.textarea {
+    min-height: 150px;
+    line-height: 1.6;
+    resize: vertical;
+}
+.dateInput {
+    width: auto;
+    color: var(--teal-ink);
+    font-variant-numeric: tabular-nums;
+}
+.input:disabled,
+.textarea:disabled,
+.dateInput:disabled {
+    background: transparent;
+    border-color: transparent;
+    padding-left: 0;
+    color: var(--ink-muted);
+    cursor: default;
+}
+.fieldRow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+/* ── Formatting toolbar ──────────────────────────────── */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.toolBtn {
+    min-width: 32px;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid var(--border-light);
+    background: var(--cream);
+    color: var(--teal-ink);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    transition: all 0.15s ease;
+}
+.toolBtn:hover {
+    border-color: var(--teal);
+    background: #fff;
+}
+.toolHint {
+    margin-left: 6px;
+    font-size: 11px;
+    color: var(--ink-faint);
+}
+.rowMutedSm {
+    font-size: 13px;
+    color: var(--ink-faint);
+}
+
+/* ── Attachments ─────────────────────────────────────── */
+.attachList {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.attachItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cream);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+.attachClip {
+    opacity: 0.7;
+}
+.attachName {
+    flex: 1;
+    color: var(--teal);
+    text-decoration: none;
+    font-size: 14px;
+    word-break: break-all;
+}
+.attachName:hover {
+    text-decoration: underline;
+}
+.attachRemove {
+    border: none;
+    background: transparent;
+    color: var(--negative);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+.attachAdd {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.attachInput {
+    flex: 1;
+    min-width: 160px;
+    font-family: var(--font);
+    font-size: 14px;
+    background: var(--cream);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--ink);
+}
+.attachInput:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: #fff;
+    box-shadow: 0 0 0 3px var(--gold-bg);
+}
+
+/* ── Actions ─────────────────────────────────────────── */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-light);
+}
+.spacer {
+    flex: 1;
+}
+.sentNote {
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-style: italic;
+    font-family: var(--font-disp);
+}
+
+/* ── AI polish ───────────────────────────────────────── */
+.polishPanel {
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(184, 149, 74, 0.09), rgba(184, 149, 74, 0.03));
+    border: 1px solid var(--gold-border);
+}
+.polishHead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+}
+.polishRow {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+.polishInput {
+    flex: 1;
+    font-family: var(--font);
+    font-size: 14px;
+    background: #fff;
+    border: 1px solid var(--gold-border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--ink);
+}
+.polishInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--gold-bg);
+}
+.proposal {
+    margin-top: 16px;
+    background: #fff;
+    border: 1px solid var(--gold-border);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+    animation: rise 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.proposalLabel {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 6px;
+}
+.proposalSubject {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--teal-ink);
+    margin: 0 0 10px;
+}
+.proposalBody {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    white-space: pre-wrap;
+    margin: 0 0 16px;
+}
+.proposalActions {
+    display: flex;
+    gap: 8px;
+}
+
+.error {
+    color: var(--negative);
+    font-size: 13px;
+    margin: 12px 0 0;
+}
+.savedFlash {
+    color: var(--positive);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+/* ── Empty state ─────────────────────────────────────── */
+.empty {
+    margin-top: 40px;
+    text-align: center;
+    padding: 60px 24px;
+    border: 1px dashed var(--border-light);
+    border-radius: 18px;
+    background: var(--paper);
+}
+.emptyTitle {
+    font-family: var(--font-disp);
+    font-style: italic;
+    font-size: 24px;
+    color: var(--teal-ink);
+    margin: 0 0 8px;
+}
+.emptyText {
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin: 0;
+}

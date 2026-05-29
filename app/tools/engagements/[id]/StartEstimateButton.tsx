@@ -2,36 +2,50 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import s from "../engagements.module.css";
+import s from "./detail.module.css";
 
-// Advances the engagement to ESTIMATING (only from FPA_SUBMITTED, so it never
-// moves a deal backwards) and opens the proposal builder for this address.
+// Advances the engagement to ESTIMATING (forward-only) via the start-estimate
+// route, which also creates/reuses a DRAFT proposal, then opens the proposal
+// builder by id with the consultation→FPA prefill popup armed.
 export function StartEstimateButton({
     engagementId,
     addressKey,
-    currentStage,
 }: {
     engagementId: string;
     addressKey: string | null;
-    currentStage: string;
 }) {
     const router = useRouter();
     const [busy, setBusy] = useState(false);
 
     async function go() {
         setBusy(true);
+        // Server-side: advance the stage, create/reuse a DRAFT proposal linked to
+        // this engagement, and hand back its id so the proposal tool can load by
+        // id and arm the consultation→FPA prefill popup.
+        let proposalId: string | null = null;
+        let resolvedAddress: string | null = addressKey;
         try {
-            if (currentStage === "FPA_SUBMITTED") {
-                await fetch(`/api/engagements/${engagementId}`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ toStage: "ESTIMATING", message: "Started estimate" }),
-                }).catch(() => {});
+            const res = await fetch(`/api/engagements/${engagementId}/start-estimate`, {
+                method: "POST",
+            });
+            if (res.ok) {
+                const data = await res.json();
+                proposalId = data.proposalId ?? null;
+                resolvedAddress = data.addressKey ?? addressKey;
             }
+        } catch {
+            /* fall through to a best-effort open below */
         } finally {
-            const url = addressKey
-                ? `/tools/admin/master?address=${encodeURIComponent(addressKey)}`
-                : "/tools/admin/master";
+            let url: string;
+            if (proposalId) {
+                const qs = new URLSearchParams({ proposalId, prefill: "1" });
+                if (resolvedAddress) qs.set("address", resolvedAddress);
+                url = `/tools/admin/master?${qs.toString()}`;
+            } else if (resolvedAddress) {
+                url = `/tools/admin/master?address=${encodeURIComponent(resolvedAddress)}`;
+            } else {
+                url = "/tools/admin/master";
+            }
             window.open(url, "_blank", "noopener");
             setBusy(false);
             router.refresh();

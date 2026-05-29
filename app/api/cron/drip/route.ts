@@ -1,18 +1,10 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { DripStatus, DripMessageStatus, DripChannel } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { sendDripMessageNow, parseAttachments } from "@/lib/drip/send";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-function textToHtml(text: string): string {
-    const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    return text
-        .split(/\n{2,}/)
-        .map((p) => `<p>${esc(p).replace(/\n/g, "<br/>")}</p>`)
-        .join("\n");
-}
 
 // Sends due drip emails. Invoked by the Vercel cron (see vercel.json); Vercel
 // sends `Authorization: Bearer $CRON_SECRET`. Also POST-able with the same header.
@@ -22,11 +14,9 @@ async function handle(req: Request) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const from = process.env.NEXT_STEPS_FROM ?? process.env.SIGNUP_NOTIFY_FROM;
-    if (!process.env.RESEND_API_KEY || !from) {
+    if (!process.env.RESEND_API_KEY || !(process.env.NEXT_STEPS_FROM ?? process.env.SIGNUP_NOTIFY_FROM)) {
         return NextResponse.json({ error: "Email not configured" }, { status: 503 });
     }
-    const resend = new Resend(process.env.RESEND_API_KEY);
 
     const due = await prisma.dripMessage.findMany({
         where: {
@@ -58,16 +48,12 @@ async function handle(req: Request) {
             continue;
         }
         try {
-            const { error } = await resend.emails.send({
-                from,
+            await sendDripMessageNow({
+                id: m.id,
                 to,
                 subject: m.subject,
-                html: textToHtml(m.body),
-            });
-            if (error) throw new Error(typeof error === "string" ? error : error.message);
-            await prisma.dripMessage.update({
-                where: { id: m.id },
-                data: { status: DripMessageStatus.SENT, sentAt: new Date() },
+                body: m.body,
+                attachments: parseAttachments(m.attachmentsJson),
             });
             sent++;
         } catch (err) {

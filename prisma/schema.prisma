@@ -910,8 +910,16 @@ model Proposal {
     agreementInput     Json?
 
     // PDF lifecycle
-    pdfStatus String?
-    pdfUrl    String?
+    pdfStatus      String?
+    pdfUrl         String?
+    pdfGeneratedAt DateTime? // when the latest agreement PDF was saved (newest-by-date)
+
+    // Consultation→FPA→proposal prefill (approve/decline popup). prefillJson
+    // caches the AI-derived plan so reopening doesn't re-bill AI; prefillAppliedAt
+    // is set once the rep applies it so the popup doesn't reopen. Both nullable;
+    // the existing snapshot/mapper never read them, so saves are unaffected.
+    prefillJson      Json?
+    prefillAppliedAt DateTime?
 
     notes String?
 
@@ -1264,6 +1272,8 @@ model DripMessage {
     body      String
     // Optional Sanity doc id this message references (story / completed build).
     contentRef String?
+    // Email attachments: [{ filename, url }] passed to Resend at send time.
+    attachmentsJson Json?
 
     scheduledFor DateTime
     status       DripMessageStatus @default(SCHEDULED)

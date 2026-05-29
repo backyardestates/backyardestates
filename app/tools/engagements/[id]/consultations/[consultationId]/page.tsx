@@ -5,7 +5,7 @@ import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { canAccessEngagement } from "@/lib/engagement/access";
 import { EmailSender, AskBox } from "./ConsultationDetailClient";
-import s from "../../../engagements.module.css";
+import s from "../../detail.module.css";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +35,13 @@ function parseEmailDraft(raw: string | null): { subject: string; body: string } 
         /* not JSON — fall through */
     }
     return null;
+}
+
+// Consultation lifecycle → hero badge tone.
+function statusBadgeClass(status: string, sent: boolean) {
+    if (sent || status === "SENT" || status === "SUMMARIZED") return `${s.statusBadge} ${s.statusBadgeDone}`;
+    if (status === "FAILED") return `${s.statusBadge} ${s.statusBadgeLost}`;
+    return s.statusBadge;
 }
 
 export default async function ConsultationDetailPage({
@@ -86,27 +93,38 @@ export default async function ConsultationDetailPage({
     const alreadySent = consultation.status === "SENT" || !!consultation.sentAt;
 
     return (
-        <div className={s.shell}>
+        <div className={s.page}>
             <Link href={`/tools/engagements/${id}`} className={s.backLink}>
-                ← Back to engagement
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Back to engagement
             </Link>
 
-            <header className={s.header}>
-                <div>
-                    <h1 className={s.title}>Consultation notes</h1>
-                    <p className={s.subtitle}>
-                        {consultation.engagement.customerName || "(no name)"} ·{" "}
-                        {consultation.source} · {consultation.status} ·{" "}
-                        {consultation.createdAt.toLocaleString()}
-                        {consultation.sentAt &&
-                            ` · email sent ${consultation.sentAt.toLocaleDateString()}`}
-                    </p>
+            {/* ── Hero ─────────────────────────────────────────────────────── */}
+            <header className={s.hero}>
+                <div className={s.heroTop}>
+                    <div>
+                        <p className={s.eyebrow}>Consultation notes</p>
+                        <h1 className={s.title}>
+                            {consultation.engagement.customerName || "(no name)"}
+                        </h1>
+                        <p className={s.subtitle}>
+                            {consultation.source} · {consultation.createdAt.toLocaleString()}
+                            {consultation.sentAt &&
+                                ` · email sent ${consultation.sentAt.toLocaleDateString()}`}
+                        </p>
+                    </div>
+                    <span className={statusBadgeClass(consultation.status, alreadySent)}>
+                        <span className={s.statusDot} />
+                        {consultation.status}
+                    </span>
                 </div>
             </header>
 
             {!hasNotes ? (
                 <section className={s.panel}>
-                    <p className={s.empty}>
+                    <p className={s.empty} style={{ marginBottom: 14 }}>
                         {consultation.status === "FAILED"
                             ? "Analysis failed for this consultation. Record or paste it again to regenerate notes."
                             : "No AI notes have been generated for this consultation yet."}
@@ -114,24 +132,21 @@ export default async function ConsultationDetailPage({
                     <Link
                         className={s.primaryAction}
                         href={`/tools/engagements/${id}/consultation`}
-                        style={{ marginTop: 12 }}
                     >
                         Record / generate notes
                     </Link>
                 </section>
             ) : (
-                <>
+                <div className={s.main}>
                     <section className={s.panel}>
-                        <h2 className={s.panelTitle}>Summary</h2>
-                        <p style={{ fontSize: 14, margin: 0 }}>
-                            {consultation.summary || "—"}
-                        </p>
+                        <div className={s.panelHead}>
+                            <h2 className={s.panelTitle}>Summary</h2>
+                        </div>
+                        <p className={s.lead}>{consultation.summary || "—"}</p>
 
                         {bulletPoints.length > 0 && (
                             <>
-                                <h2 className={s.panelTitle} style={{ marginTop: 16 }}>
-                                    Key points
-                                </h2>
+                                <p className={s.subhead}>Key points</p>
                                 <ul className={s.aiList}>
                                     {bulletPoints.map((b, i) => (
                                         <li key={i}>{b}</li>
@@ -139,49 +154,50 @@ export default async function ConsultationDetailPage({
                                 </ul>
                             </>
                         )}
-
-                        {actionItems.length > 0 && (
-                            <>
-                                <h2 className={s.panelTitle}>Action items</h2>
-                                <ul className={s.aiList}>
-                                    {actionItems.map((a, i) => (
-                                        <li key={i}>
-                                            {a.task} <span className={s.metaPill}>{a.owner}</span>{" "}
-                                            <span className={s.metaPill}>{a.priority}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </>
-                        )}
-
-                        {(sentiment || intent) && (
-                            <>
-                                <h2 className={s.panelTitle}>Read</h2>
-                                <div className={s.pillRow}>
-                                    {sentiment && (
-                                        <span className={s.metaPill}>
-                                            sentiment: {sentiment.overall}
-                                        </span>
-                                    )}
-                                    {intent && (
-                                        <>
-                                            <span className={s.metaPill}>
-                                                readiness: {intent.readiness}
-                                            </span>
-                                            <span className={s.metaPill}>
-                                                {intent.primaryMotivation}
-                                            </span>
-                                        </>
-                                    )}
-                                </div>
-                                {intent && intent.concerns.length > 0 && (
-                                    <p className={s.rowMuted}>
-                                        Concerns: {intent.concerns.join("; ")}
-                                    </p>
-                                )}
-                            </>
-                        )}
                     </section>
+
+                    {actionItems.length > 0 && (
+                        <section className={s.panel}>
+                            <div className={s.panelHead}>
+                                <h2 className={s.panelTitle}>Action items</h2>
+                            </div>
+                            {actionItems.map((a, i) => (
+                                <div key={i} className={s.actionItem}>
+                                    <span className={s.actionTask}>{a.task}</span>
+                                    <span className={s.metaPill}>{a.owner}</span>
+                                    <span className={s.metaPill}>{a.priority}</span>
+                                </div>
+                            ))}
+                        </section>
+                    )}
+
+                    {(sentiment || intent) && (
+                        <section className={s.panel}>
+                            <div className={s.panelHead}>
+                                <h2 className={s.panelTitle}>The read</h2>
+                            </div>
+                            <div className={s.pillRow}>
+                                {sentiment && (
+                                    <span className={s.metaPill}>sentiment: {sentiment.overall}</span>
+                                )}
+                                {intent && (
+                                    <>
+                                        <span className={s.metaPill}>
+                                            readiness: {intent.readiness}
+                                        </span>
+                                        <span className={s.metaPill}>
+                                            {intent.primaryMotivation}
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                            {intent && intent.concerns.length > 0 && (
+                                <p className={s.rowMuted} style={{ marginTop: 12 }}>
+                                    Concerns: {intent.concerns.join("; ")}
+                                </p>
+                            )}
+                        </section>
+                    )}
 
                     {hasTranscript && <AskBox consultationId={consultation.id} />}
 
@@ -197,19 +213,23 @@ export default async function ConsultationDetailPage({
 
                     {marketing.length > 0 && (
                         <section className={s.panel}>
-                            <h2 className={s.panelTitle}>Marketing follow-up ideas</h2>
-                            {marketing.map((m, i) => (
-                                <div key={i} className={s.mktCard}>
-                                    <div>
-                                        <span className={s.mktTitle}>{m.title}</span>
-                                        <span className={s.mktChannel}>{m.channel}</span>
+                            <div className={s.panelHead}>
+                                <h2 className={s.panelTitle}>Marketing follow-up ideas</h2>
+                            </div>
+                            <div className={s.mktGrid}>
+                                {marketing.map((m, i) => (
+                                    <div key={i} className={s.mktCard}>
+                                        <div className={s.mktCardHead}>
+                                            <span className={s.mktTitle}>{m.title}</span>
+                                            <span className={s.mktChannel}>{m.channel}</span>
+                                        </div>
+                                        <div className={s.mktDetail}>{m.detail}</div>
                                     </div>
-                                    <div className={s.mktDetail}>{m.detail}</div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </section>
                     )}
-                </>
+                </div>
             )}
         </div>
     );

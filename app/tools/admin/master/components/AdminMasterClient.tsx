@@ -126,6 +126,27 @@ import { usePresentationWire, openPresenterWindow } from "@/hooks/presentation/u
 import { usePresentationStore } from "@/lib/store/presentationStore";
 import { buildAdminBroadcast } from "@/lib/sync/presentationSync";
 import { ArchitectFlagsPanel } from "./ArchitectFlagsPanel";
+import {
+    ProposalPrefillModal,
+    PrefillStatusBanner,
+    type PrefillDecisions,
+    type PrefillStatus,
+} from "./ProposalPrefillModal/ProposalPrefillModal";
+import type { ProposalPrefillPlan } from "@/lib/ai/proposalPrefill";
+import type { EstimatorState } from "@/lib/investment/siteWorkItems";
+
+// Count of matchable items in a prefill plan (for the status banner).
+function prefillCount(p: ProposalPrefillPlan): number {
+    let n = 0;
+    if (p.customerProfile?.name || p.customerProfile?.pipedriveDealId) n++;
+    if (p.motivation?.value) n++;
+    if (p.aduType?.value) n++;
+    if (p.unitSpec?.beds.value != null || p.unitSpec?.baths.value != null) n++;
+    if (p.financials?.owed.value != null || p.financials?.currentMortgageMonthly.value != null) n++;
+    n += p.costAdders?.length ?? 0;
+    n += (p.featuredStoryIds?.value.length ?? 0) + (p.featuredPropertyIds?.value.length ?? 0);
+    return n;
+}
 
 
 export default function AdminMasterClient({
@@ -166,6 +187,16 @@ export default function AdminMasterClient({
     const [aduType, setAduType] = useState<"detached" | "attached" | "garage" | "">("detached");
 
     const [floorplans, setFloorplans] = useState<Floorplan[]>(initialFloorplans);
+
+    // ── Consultation→FPA prefill popup (opened from "Start estimate") ────────
+    const [prefillOpen, setPrefillOpen] = useState(false);
+    const [prefillLoading, setPrefillLoading] = useState(false);
+    const [prefillPlan, setPrefillPlan] = useState<ProposalPrefillPlan | null>(null);
+    const [prefillProposalId, setPrefillProposalId] = useState<string | null>(null);
+    const [prefillStatus, setPrefillStatus] = useState<PrefillStatus>("idle");
+    const [prefillError, setPrefillError] = useState<string | null>(null);
+    // Bumped after applying cost-adders so the (localStorage-seeded) SiteWorkPanel remounts and re-reads.
+    const [swKey, setSwKey] = useState(0);
     const [floorplanId, setFloorplanId] = useState<string>(initialFloorplans?.[0]?._id ?? "");
 
     const [featuredPropertyIds, setFeaturedPropertyIds] = useState<string[]>([]);
@@ -1064,7 +1095,206 @@ export default function AdminMasterClient({
         }
     }
 
-    // ── Load proposal from `?address=` URL param ────────────────────────────
+    // ── Consultation→FPA prefill ────────────────────────────────────────────
+    // Fetch the AI prefill plan for a proposal id (cached server-side after the
+    // first build). Opens the modal; closes it if there's nothing to prefill.
+    async function loadPrefillPlan(pid: string) {
+        setPrefillLoading(true);
+        setPrefillStatus("loading");
+        setPrefillError(null);
+        setPrefillOpen(true);
+        console.info("[prefill] requesting plan for proposal", pid);
+        try {
+            const res = await fetch(`/api/proposals/${pid}/prefill`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    units: floorplans.map((fp) => ({
+                        id: fp._id,
+                        name: fp.name,
+                        bed: fp.bed,
+                        bath: fp.bath,
+                        sqft: fp.sqft,
+                    })),
+                }),
+            });
+            const data = await res.json().catch(() => ({}));
+            console.info("[prefill] response", res.status, data);
+            if (!res.ok) {
+                setPrefillPlan(null);
+                setPrefillOpen(false);
+                setPrefillStatus("error");
+                setPrefillError(data?.error || `HTTP ${res.status}`);
+                return;
+            }
+            if (data?.plan) {
+                setPrefillPlan(data.plan as ProposalPrefillPlan);
+                setPrefillStatus("ready");
+            } else {
+                setPrefillPlan(null);
+                setPrefillOpen(false); // nothing to prefill — banner shows instead
+                setPrefillStatus(data?.error ? "error" : "empty");
+                if (data?.error) setPrefillError(data.error);
+            }
+        } catch (err) {
+            console.error("[prefill] request failed", err);
+            setPrefillPlan(null);
+            setPrefillOpen(false);
+            setPrefillStatus("error");
+            setPrefillError(err instanceof Error ? err.message : String(err));
+        } finally {
+            setPrefillLoading(false);
+        }
+    }
+
+    // Apply approved cost-adders through the SiteWorkPanel's localStorage channel
+    // (swp_master / swp_custom) — the panel owns that state and re-derives
+    // estimatorByAduId from it on mount, so we mutate there + remount via swKey.
+    function applyCostAddersToEstimator(adders: PrefillDecisions["costAdders"]) {
+        if (adders.length === 0) return;
+        const readLS = <T,>(k: string, fallback: T): T => {
+            try {
+                const raw = localStorage.getItem(k);
+                return raw ? (JSON.parse(raw) as T) : fallback;
+            } catch {
+                return fallback;
+            }
+        };
+        const master = readLS<EstimatorState>("swp_master", {
+            quantities: {},
+            overrides: {},
+            customItems: [],
+        });
+        const custom = readLS<Record<string, EstimatorState | null>>("swp_custom", {});
+
+        const mutate = (state: EstimatorState, a: PrefillDecisions["costAdders"][number]): EstimatorState => {
+            if (a.itemId) {
+                return {
+                    ...state,
+                    quantities: { ...state.quantities, [a.itemId]: 1 },
+                    overrides:
+                        a.amount != null
+                            ? { ...(state.overrides ?? {}), [a.itemId]: { beCost: a.amount, markup: 1 } }
+                            : { ...(state.overrides ?? {}) },
+                };
+            }
+            const id =
+                typeof crypto !== "undefined" && "randomUUID" in crypto
+                    ? crypto.randomUUID()
+                    : `pf_${Date.now()}_${Math.round(Number(`0.${String(a.label.length)}`) * 1e6)}`;
+            return {
+                ...state,
+                customItems: [
+                    ...state.customItems,
+                    { id, catId: a.catId, label: a.label, qty: 1, beCost: a.amount ?? 0, markup: 1 },
+                ],
+            };
+        };
+
+        let nextMaster = master;
+        const nextCustom: Record<string, EstimatorState | null> = { ...custom };
+        for (const a of adders) {
+            if (a.targetUnitId === "all") {
+                nextMaster = mutate(nextMaster, a);
+                // Also reflect into any units that already detached from master.
+                for (const uid of Object.keys(nextCustom)) {
+                    if (nextCustom[uid]) nextCustom[uid] = mutate(nextCustom[uid]!, a);
+                }
+            } else {
+                const base = nextCustom[a.targetUnitId] ?? {
+                    quantities: { ...nextMaster.quantities },
+                    overrides: { ...(nextMaster.overrides ?? {}) },
+                    customItems: nextMaster.customItems.map((ci) => ({ ...ci })),
+                };
+                nextCustom[a.targetUnitId] = mutate(base, a);
+            }
+        }
+
+        restoreCompanionStorage({
+            swp_master: JSON.stringify(nextMaster),
+            swp_custom: JSON.stringify(nextCustom),
+        });
+        setSwKey((k) => k + 1); // remount SiteWorkPanel so it re-reads localStorage
+    }
+
+    // Apply the rep-approved prefill decisions into the wizard's store.
+    function applyPrefill(d: PrefillDecisions) {
+        if (d.customerProfile) {
+            if (d.customerProfile.name) setCustomerName(d.customerProfile.name);
+            if (d.customerProfile.pipedrivePersonId) setPipedrivePersonId(d.customerProfile.pipedrivePersonId);
+            if (d.customerProfile.pipedriveDealId) setPipedriveDealId(d.customerProfile.pipedriveDealId);
+        }
+        if (d.motivation) setCustomerMotivation(d.motivation);
+        if (d.aduType) setAduType(d.aduType);
+
+        // Select the AI-matched unit(s): make the top suggestion the PRIMARY
+        // selected floorplan and put the suggestions into the compare set.
+        const validSuggested = d.suggestedUnitIds.filter((id) =>
+            floorplans.some((fp) => fp._id === id),
+        );
+        let nextCompareIds = aduCompareIds;
+        if (validSuggested.length) {
+            const primary = validSuggested[0];
+            nextCompareIds = Array.from(
+                new Set([...validSuggested, ...aduCompareIds]),
+            ).slice(0, Math.max(maxAduComparisons, validSuggested.length));
+            // Pre-seat the ref so the "selected floorplan changed" effect doesn't
+            // re-derive (and clobber) the compare list we're about to set.
+            lastSelectedIdRef.current = primary;
+            setFloorplanId(primary);
+            setAduCompareIds(nextCompareIds);
+            // Make sure the model can show them all if the AI suggested > default.
+            if (nextCompareIds.length > maxAduComparisons) {
+                adu.updateDefault("maxAduComparisons", nextCompareIds.length);
+            }
+        }
+        if (d.unitSpec) {
+            const targetIds = nextCompareIds.length ? nextCompareIds : aduCompareIds;
+            if (d.unitSpec.beds != null) {
+                const beds = d.unitSpec.beds;
+                setBedsByUnitId((prev) => {
+                    const n = { ...prev };
+                    for (const id of targetIds) n[id] = beds;
+                    return n;
+                });
+            }
+            if (d.unitSpec.baths != null) {
+                const baths = d.unitSpec.baths;
+                setBathsByUnitId((prev) => {
+                    const n = { ...prev };
+                    for (const id of targetIds) n[id] = baths;
+                    return n;
+                });
+            }
+        }
+        if (d.financials.owed != null) setOwed(String(d.financials.owed));
+        if (d.financials.currentMortgageMonthly != null) {
+            setCurrentFirstPmtMonthly(String(d.financials.currentMortgageMonthly));
+        }
+        if (d.featuredPropertyIds.length) {
+            setFeaturedPropertyIds((prev) => Array.from(new Set([...prev, ...d.featuredPropertyIds])));
+        }
+        if (d.featuredStoryIds.length) {
+            setFeaturedStoryIds((prev) => Array.from(new Set([...prev, ...d.featuredStoryIds])));
+        }
+        applyCostAddersToEstimator(d.costAdders);
+
+        if (prefillProposalId) {
+            void fetch(`/api/proposals/${prefillProposalId}/prefill?apply=1`, { method: "POST" }).catch(() => {});
+        }
+        // Drop the prefill flag so a refresh won't reopen the popup.
+        try {
+            const u = new URL(window.location.href);
+            u.searchParams.delete("prefill");
+            window.history.replaceState({}, "", u.toString());
+        } catch {
+            /* noop */
+        }
+        setPrefillOpen(false);
+        setPrefillStatus("idle");
+    }
+
+    // ── Load proposal from `?proposalId=` or `?address=` URL param ───────────
     // Dashboards link "Open →" to /tools/admin/master?address=<key>. We hit
     // the proposal API directly rather than waiting on the bulk
     // `syncFromServer()` pull to finish (which races against this mount
@@ -1077,6 +1307,75 @@ export default function AdminMasterClient({
         initialUrlLoadRef.current = true;
         if (typeof window === "undefined") return;
         const params = new URLSearchParams(window.location.search);
+
+        // ── Load by proposal id (from "Start estimate") ──────────────────────
+        // Takes precedence over ?address=. Hydrates from the proposal's stored
+        // snapshot (or seeds name/address for a fresh draft), then arms the
+        // consultation→FPA prefill popup when ?prefill=1 and not yet applied.
+        const proposalId = params.get("proposalId");
+        if (proposalId) {
+            const wantPrefill = params.get("prefill") === "1";
+            console.info("[prefill] load-by-id", { proposalId, wantPrefill });
+            // Always remember the proposal id so the toolbar "AI match" button can
+            // (re)run the prefill later, even after it's been applied once.
+            setPrefillProposalId(proposalId);
+            if (wantPrefill) {
+                setPrefillStatus("loading"); // show the banner immediately
+            }
+            (async () => {
+                try {
+                    const res = await fetch(`/api/proposals/${encodeURIComponent(proposalId)}`);
+                    const data = await res.json().catch(() => ({}));
+                    console.info("[prefill] proposal fetch", res.status, {
+                        hasSnapshot: !!data?.snapshotJson,
+                        prefillAppliedAt: data?.prefillAppliedAt ?? null,
+                    });
+                    if (!res.ok) {
+                        if (wantPrefill) {
+                            setPrefillStatus("error");
+                            setPrefillError(data?.error || `Couldn't load proposal (HTTP ${res.status})`);
+                        }
+                        return;
+                    }
+                    if (data.snapshotJson) {
+                        applySnapshot(data.snapshotJson as ProposalSnapshot);
+                    } else {
+                        if (data.customerName) setCustomerName(data.customerName);
+                        if (data.addressKey) setAddress(data.addressKey);
+                    }
+                    if (wantPrefill) {
+                        if (data.prefillAppliedAt) {
+                            // Already applied — don't reopen; clear the armed state.
+                            setPrefillStatus("idle");
+                        } else {
+                            // Fresh draft with no snapshot: wipe the GLOBAL site-work /
+                            // discount localStorage so a previously-open proposal's
+                            // estimate doesn't bleed in and override the AI match. (A
+                            // snapshot-backed load restores its own companion storage
+                            // via applySnapshot, so we only clear the blank-draft case.)
+                            if (!data.snapshotJson) {
+                                restoreCompanionStorage({
+                                    swp_master: null,
+                                    swp_custom: null,
+                                    dp_master: null,
+                                    dp_custom: null,
+                                });
+                                setSwKey((k) => k + 1); // remount SiteWorkPanel to re-read the cleared state
+                            }
+                            void loadPrefillPlan(proposalId);
+                        }
+                    }
+                } catch (err) {
+                    console.error("[prefill] proposal fetch failed", err);
+                    if (wantPrefill) {
+                        setPrefillStatus("error");
+                        setPrefillError(err instanceof Error ? err.message : String(err));
+                    }
+                }
+            })();
+            return;
+        }
+
         const addressKey = params.get("address");
         if (!addressKey) return;
 
@@ -1482,6 +1781,15 @@ export default function AdminMasterClient({
                     window.open("/present-v2/print", "be_print_v2", "noopener");
                 }}
                 onGenerateAgreement={handleGenerateAgreement}
+                onAiMatch={
+                    prefillProposalId
+                        ? () => {
+                              setPrefillPlan(null);
+                              void loadPrefillPlan(prefillProposalId);
+                          }
+                        : undefined
+                }
+                aiMatchBusy={prefillLoading}
                 saveDisabled={normalizeAddress(address).length === 0}
                 exportDisabled={normalizeAddress(address).length === 0}
                 agreementDisabled={normalizeAddress(address).length === 0 || !proposalPaymentSchedule}
@@ -1494,6 +1802,37 @@ export default function AdminMasterClient({
                 onLoadProposal={handleLoad}
                 onLoadDraft={handleLoadDraft}
             />
+
+            <PrefillStatusBanner
+                status={prefillOpen ? "idle" : prefillStatus}
+                count={prefillPlan ? prefillCount(prefillPlan) : 0}
+                error={prefillError}
+                onReview={() => setPrefillOpen(true)}
+                onRetry={() => prefillProposalId && loadPrefillPlan(prefillProposalId)}
+                onDismiss={() => setPrefillStatus("idle")}
+            />
+
+            {prefillOpen && (
+                <ProposalPrefillModal
+                    key={prefillPlan ? "prefill-ready" : "prefill-loading"}
+                    plan={prefillPlan}
+                    loading={prefillLoading}
+                    customerName={customerName || null}
+                    selectedAdus={adu.selectedAdus.map((u) => ({ _id: u._id, name: u.name }))}
+                    stories={initialStories.map((s) => ({ id: s._id, name: s.names }))}
+                    properties={initialCompletedProperties.map((p) => ({ id: p._id, name: p.name }))}
+                    onClose={() => setPrefillOpen(false)}
+                    onApply={applyPrefill}
+                    onReanalyze={
+                        prefillProposalId
+                            ? () => {
+                                  setPrefillPlan(null);
+                                  void loadPrefillPlan(prefillProposalId);
+                              }
+                            : undefined
+                    }
+                />
+            )}
 
             <div className={styles.appBody}>
                 <StepSidebar
@@ -1623,6 +1962,7 @@ export default function AdminMasterClient({
                             </div>
                         ) : (
                             <SiteWorkPanel
+                                key={`sw-${swKey}`}
                                 selectedAdus={adu.selectedAdus}
                                 estimatorByAduId={adu.estimatorByAduId}
                                 setEstimatorByAduId={adu.setEstimatorByAduId}

@@ -105,6 +105,9 @@ export function AgreementPreviewClient({
     const [phase, setPhase] = useState<Phase>({ state: "loading" });
     const [signState, setSignState] = useState<"idle" | "sending" | "sent" | "error">("idle");
     const [signError, setSignError] = useState<string | null>(null);
+    const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+    const [saveError, setSaveError] = useState<string | null>(null);
+    const [savedUrl, setSavedUrl] = useState<string | null>(null);
     const [html, setHtml] = useState<string>("");
     const [data, setData] = useState<AgreementTemplateData | null>(null);
     /** Original (un-edited) Blob, kept so the user can download the .docx
@@ -281,6 +284,70 @@ export function AgreementPreviewClient({
         }
     }
 
+    // Render the (inline-edited) agreement to a real PDF in-browser, then store
+    // it (Cloudinary → Sanity fallback) so it's retrievable from any device.
+    async function handleSavePdf() {
+        if (!proposalId || !editorRef.current) return;
+        setSaveState("saving");
+        setSaveError(null);
+        try {
+            const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+                import("html2canvas"),
+                import("jspdf"),
+            ]);
+            const el = editorRef.current;
+            const canvas = await html2canvas(el, {
+                scale: 2,
+                backgroundColor: "#ffffff",
+                useCORS: true,
+            });
+            const pdf = new jsPDF({ unit: "pt", format: "letter" });
+            const pageW = pdf.internal.pageSize.getWidth();
+            const pageH = pdf.internal.pageSize.getHeight();
+            const margin = 36;
+            const imgW = pageW - margin * 2;
+            const imgH = (canvas.height * imgW) / canvas.width;
+            const imgData = canvas.toDataURL("image/jpeg", 0.92);
+
+            let heightLeft = imgH;
+            let position = margin;
+            pdf.addImage(imgData, "JPEG", margin, position, imgW, imgH, undefined, "FAST");
+            heightLeft -= pageH - margin * 2;
+            while (heightLeft > 0) {
+                position = margin - (imgH - heightLeft);
+                pdf.addPage();
+                pdf.addImage(imgData, "JPEG", margin, position, imgW, imgH, undefined, "FAST");
+                heightLeft -= pageH - margin * 2;
+            }
+
+            const blob = pdf.output("blob");
+            const lastName = data?.customerLastName || "Customer";
+            const safeAddress =
+                (data?.propertyAddress ?? "")
+                    .replace(/[^a-z0-9]+/gi, "-")
+                    .replace(/^-+|-+$/g, "")
+                    .slice(0, 60) || "proposal";
+            const fd = new FormData();
+            fd.append(
+                "file",
+                new File([blob], `BackyardEstates-Agreement-${lastName}-${safeAddress}.pdf`, {
+                    type: "application/pdf",
+                }),
+            );
+            const res = await fetch(`/api/proposals/${proposalId}/agreement-pdf`, {
+                method: "POST",
+                body: fd,
+            });
+            const d = await res.json();
+            if (!res.ok) throw new Error(d.error || "Failed to save the PDF");
+            setSavedUrl(d.pdfUrl ?? null);
+            setSaveState("saved");
+        } catch (err) {
+            setSaveError(err instanceof Error ? err.message : String(err));
+            setSaveState("error");
+        }
+    }
+
     function statusText() {
         if (phase.state === "loading") return "Generating from your proposal…";
         if (phase.state === "ready") return "Editable. Click any text to make changes.";
@@ -348,6 +415,34 @@ export function AgreementPreviewClient({
                             <span className={s.btnHint}>final · includes your inline edits</span>
                         </span>
                     </button>
+                    {proposalId && (
+                        <button
+                            type="button"
+                            className={`${s.btn} ${s.btnPrimary}`}
+                            onClick={handleSavePdf}
+                            disabled={phase.state !== "ready" || saveState === "saving"}
+                            title="Generates a PDF (with your inline edits) and stores it to the cloud so you — and the deal record — can open the latest agreement from any device."
+                        >
+                            <span className={s.btnLabel}>
+                                <span>
+                                    {saveState === "saved"
+                                        ? "Saved to cloud ✓"
+                                        : saveState === "saving"
+                                          ? "Saving…"
+                                          : "Save & store PDF"}
+                                </span>
+                                <span className={s.btnHint}>
+                                    {saveState === "saved" && savedUrl ? (
+                                        <a href={savedUrl} target="_blank" rel="noopener noreferrer">
+                                            Open saved PDF
+                                        </a>
+                                    ) : (
+                                        saveError ?? "stored · retrievable anywhere"
+                                    )}
+                                </span>
+                            </span>
+                        </button>
+                    )}
                     {proposalId && (
                         <button
                             type="button"

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import s from "../engagements.module.css";
+import s from "./detail.module.css";
 
 export interface ArchitectOption {
     id: string;

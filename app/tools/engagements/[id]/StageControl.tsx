@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import s from "../engagements.module.css";
+import s from "./detail.module.css";
 
 const STAGES: { value: string; label: string }[] = [
     { value: "CONSULTATION", label: "Office consultation" },

@@ -35,6 +35,15 @@ export async function GET(
                 addressKey: true,
                 presenterBroadcast: true,
                 agreementInput: true,
+                // Internal fields for the admin tool's load-by-id + prefill flow
+                // (returned to authed callers only, below).
+                snapshotJson: true,
+                engagementId: true,
+                formalAnalysisId: true,
+                prefillJson: true,
+                prefillAppliedAt: true,
+                pdfUrl: true,
+                pdfGeneratedAt: true,
             },
         });
 
@@ -59,8 +68,15 @@ export async function GET(
             customerName: proposal.customerName,
             addressKey: proposal.addressKey,
             presenterBroadcast: proposal.presenterBroadcast,
-            // agreementInput is internal — only return it to authed callers.
+            // Internal fields — only return them to authed callers.
             agreementInput: authed ? proposal.agreementInput : null,
+            snapshotJson: authed ? proposal.snapshotJson : null,
+            engagementId: authed ? proposal.engagementId : null,
+            formalAnalysisId: authed ? proposal.formalAnalysisId : null,
+            prefillJson: authed ? proposal.prefillJson : null,
+            prefillAppliedAt: authed ? proposal.prefillAppliedAt : null,
+            pdfUrl: authed ? proposal.pdfUrl : null,
+            pdfGeneratedAt: authed ? proposal.pdfGeneratedAt : null,
         });
     } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);

@@ -6,21 +6,10 @@ import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { canAccessEngagement } from "@/lib/engagement/access";
 import { transitionEngagementStage, logEngagementEvent } from "@/lib/engagement/stage";
 import { enrollInDrip } from "@/lib/drip/enroll";
+import { renderBrandedEmailFromBody } from "@/lib/email/template";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-function textToHtml(text: string): string {
-    const esc = (s: string) =>
-        s
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-    return text
-        .split(/\n{2,}/)
-        .map((p) => `<p>${esc(p).replace(/\n/g, "<br/>")}</p>`)
-        .join("\n");
-}
 
 interface SendBody {
     to?: string;
@@ -100,7 +89,7 @@ export async function POST(
             from,
             to,
             subject,
-            html: textToHtml(emailBody),
+            html: renderBrandedEmailFromBody(emailBody, subject),
         });
         if (error) {
             return NextResponse.json(

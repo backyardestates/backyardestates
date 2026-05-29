@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import s from "../../../engagements.module.css";
+import s from "../../detail.module.css";
 
 // ── Edit & (re)send the next-steps email ──────────────────────────────────────
 export function EmailSender({
@@ -57,7 +57,9 @@ export function EmailSender({
 
     return (
         <section className={s.panel}>
-            <h2 className={s.panelTitle}>Next-steps email</h2>
+            <div className={s.panelHead}>
+                <h2 className={s.panelTitle}>Next-steps email</h2>
+            </div>
             {!hasEmail && (
                 <p className={s.error}>
                     This engagement has no customer email on file — add one in Pipedrive to send.
@@ -122,8 +124,10 @@ export function AskBox({ consultationId }: { consultationId: string }) {
 
     return (
         <section className={s.panel}>
-            <h2 className={s.panelTitle}>Ask about this meeting</h2>
-            <p className={s.rowMuted} style={{ marginTop: 0 }}>
+            <div className={s.panelHead}>
+                <h2 className={s.panelTitle}>Ask about this meeting</h2>
+            </div>
+            <p className={s.rowMuted} style={{ margin: "0 0 12px" }}>
                 Search the full transcript for anything the summary didn&apos;t capture — budget,
                 timeline, objections, who said what.
             </p>
@@ -146,18 +150,7 @@ export function AskBox({ consultationId }: { consultationId: string }) {
             >
                 {busy ? "Searching transcript…" : "Ask"}
             </button>
-            {answer && (
-                <div
-                    style={{
-                        marginTop: 14,
-                        whiteSpace: "pre-wrap",
-                        fontSize: 14,
-                        lineHeight: 1.55,
-                    }}
-                >
-                    {answer}
-                </div>
-            )}
+            {answer && <div className={s.answerBox}>{answer}</div>}
             {error && <p className={s.error}>{error}</p>}
         </section>
     );
