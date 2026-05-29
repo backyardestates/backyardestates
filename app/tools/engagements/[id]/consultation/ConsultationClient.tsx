@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLiveTranscription } from "./useLiveTranscription";
 import s from "../../engagements.module.css";
 
-type CaptureMode = "record" | "upload" | "paste";
+type CaptureMode = "live" | "upload" | "paste";
 type Step = "capture" | "review" | "sent";
+type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 interface ActionItem {
     task: string;
@@ -28,140 +30,174 @@ interface Analysis {
     marketingActions: MarketingAction[];
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export function ConsultationClient({
     engagementId,
-    customerName,
-    hasEmail,
+    customerName: _customerName,
+    customerEmail,
+    existingConsultationId,
+    existingTranscript,
 }: {
     engagementId: string;
     customerName: string | null;
-    hasEmail: boolean;
+    customerEmail: string | null;
+    existingConsultationId: string | null;
+    existingTranscript: string | null;
 }) {
     const router = useRouter();
+    const lsKey = `consultation:transcript:${engagementId}`;
+
     const [step, setStep] = useState<Step>("capture");
-    const [mode, setMode] = useState<CaptureMode>("record");
+    const [mode, setMode] = useState<CaptureMode>("live");
     const [consent, setConsent] = useState(false);
-    const [pasted, setPasted] = useState("");
-    const [recording, setRecording] = useState(false);
-    const [audioReady, setAudioReady] = useState(false);
+
+    // The single source of truth for captured text. Live dictation, audio
+    // upload, and paste all write here; it stays directly editable.
+    const [transcript, setTranscript] = useState<string>(() => {
+        if (typeof window !== "undefined") {
+            const local = window.localStorage.getItem(lsKey);
+            // Prefer a local backup (may hold unsaved edits) over the server copy.
+            if (local && local.trim()) return local;
+        }
+        return existingTranscript ?? "";
+    });
+    const [interim, setInterim] = useState("");
+
+    const [saveStatus, setSaveStatus] = useState<SaveStatus>(
+        existingTranscript ? "saved" : "idle",
+    );
     const [busy, setBusy] = useState(false);
     const [busyLabel, setBusyLabel] = useState("");
     const [error, setError] = useState<string | null>(null);
 
     const [analysis, setAnalysis] = useState<Analysis | null>(null);
+    const [recipientEmail, setRecipientEmail] = useState(customerEmail ?? "");
     const [emailSubject, setEmailSubject] = useState("");
     const [emailBody, setEmailBody] = useState("");
 
-    const recorderRef = useRef<MediaRecorder | null>(null);
-    const chunksRef = useRef<Blob[]>([]);
-    const audioBlobRef = useRef<Blob | null>(null);
-    const sentRef = useRef<string | null>(null);
+    const consultationIdRef = useRef<string | null>(existingConsultationId);
+    const createPromiseRef = useRef<Promise<string> | null>(null);
+    const lastSavedRef = useRef<string>(existingTranscript ?? "");
 
-    async function startRecording() {
-        setError(null);
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const rec = new MediaRecorder(stream);
-            chunksRef.current = [];
-            rec.ondataavailable = (e) => {
-                if (e.data.size > 0) chunksRef.current.push(e.data);
-            };
-            rec.onstop = () => {
-                audioBlobRef.current = new Blob(chunksRef.current, { type: "audio/webm" });
-                setAudioReady(true);
-                stream.getTracks().forEach((t) => t.stop());
-            };
-            rec.start();
-            recorderRef.current = rec;
-            setRecording(true);
-            setAudioReady(false);
-        } catch {
-            setError("Couldn't access the microphone. Check browser permissions.");
-        }
-    }
-
-    function stopRecording() {
-        recorderRef.current?.stop();
-        setRecording(false);
-    }
-
-    function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
-        const f = e.target.files?.[0];
-        if (f) {
-            audioBlobRef.current = f;
-            setAudioReady(true);
-        }
-    }
-
-    async function generate() {
-        setError(null);
-        const usingAudio = mode === "record" || mode === "upload";
-        if (usingAudio && !consent) {
-            setError("Please confirm recording consent before generating notes.");
-            return;
-        }
-        if (usingAudio && !audioBlobRef.current) {
-            setError("Record or upload audio first.");
-            return;
-        }
-        if (mode === "paste" && pasted.trim().length < 20) {
-            setError("Paste the meeting transcript first.");
-            return;
-        }
-
-        setBusy(true);
-        try {
-            // 1. Create the consultation.
-            setBusyLabel("Saving consultation…");
-            const createRes = await fetch(
-                `/api/engagements/${engagementId}/consultations`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        source: mode === "paste" ? "PASTED" : mode === "upload" ? "UPLOADED" : "RECORDED",
-                        consentGiven: usingAudio ? consent : true,
-                        transcript: mode === "paste" ? pasted.trim() : undefined,
-                    }),
-                },
-            );
-            const createData = await createRes.json();
-            if (!createRes.ok) throw new Error(createData.error || "Failed to create consultation");
-            const consultationId: string = createData.consultation.id;
-
-            // 2. Transcribe audio if needed.
-            if (usingAudio && audioBlobRef.current) {
-                setBusyLabel("Transcribing audio…");
-                const fd = new FormData();
-                fd.append(
-                    "audio",
-                    new File([audioBlobRef.current], "consultation.webm", {
-                        type: audioBlobRef.current.type || "audio/webm",
-                    }),
-                );
-                const tRes = await fetch(`/api/consultations/${consultationId}/transcribe`, {
-                    method: "POST",
-                    body: fd,
-                });
-                const tData = await tRes.json();
-                if (!tRes.ok) throw new Error(tData.error || "Transcription failed");
-            }
-
-            // 3. Analyze.
-            setBusyLabel("Generating notes with AI…");
-            const aRes = await fetch(`/api/consultations/${consultationId}/analyze`, {
+    // ── Persistence ───────────────────────────────────────────────
+    // Create the consultation row lazily (on the first save / audio upload /
+    // dictation), deduped so concurrent callers share one create.
+    async function ensureConsultation(): Promise<string> {
+        if (consultationIdRef.current) return consultationIdRef.current;
+        if (createPromiseRef.current) return createPromiseRef.current;
+        const p = (async () => {
+            const res = await fetch(`/api/engagements/${engagementId}/consultations`, {
                 method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    source:
+                        mode === "paste" ? "PASTED" : mode === "upload" ? "UPLOADED" : "RECORDED",
+                    consentGiven: mode === "paste" ? true : consent,
+                }),
             });
-            const aData = await aRes.json();
-            if (!aRes.ok) throw new Error(aData.error || "Analysis failed");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Failed to create consultation");
+            consultationIdRef.current = data.consultation.id as string;
+            return consultationIdRef.current;
+        })();
+        createPromiseRef.current = p;
+        try {
+            return await p;
+        } finally {
+            createPromiseRef.current = null;
+        }
+    }
 
-            const a: Analysis = aData.analysis;
-            setAnalysis(a);
-            setEmailSubject(a.nextStepsEmail.subject);
-            setEmailBody(a.nextStepsEmail.body);
-            // Stash the id for sending.
-            sentRef.current = consultationId;
-            setStep("review");
+    async function saveNow(text: string): Promise<string> {
+        setSaveStatus("saving");
+        try {
+            const id = await ensureConsultation();
+            const res = await fetch(`/api/consultations/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ transcript: text }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Failed to save transcript");
+            lastSavedRef.current = text;
+            setSaveStatus("saved");
+            return id;
+        } catch (err) {
+            setSaveStatus("error");
+            throw err;
+        }
+    }
+
+    // Mirror to localStorage immediately (survives crashes / network loss), and
+    // debounce a server save so the transcript persists without an explicit tap.
+    useEffect(() => {
+        try {
+            if (transcript) window.localStorage.setItem(lsKey, transcript);
+            else window.localStorage.removeItem(lsKey);
+        } catch {
+            /* quota / private mode — ignore, server save still runs */
+        }
+        if (step !== "capture") return;
+        if (!transcript.trim()) return;
+        if (transcript === lastSavedRef.current) return;
+        const t = setTimeout(() => {
+            void saveNow(transcript).catch(() => {
+                /* status already set to "error"; localStorage holds the text */
+            });
+        }, 1500);
+        return () => clearTimeout(t);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [transcript]);
+
+    // ── Live dictation ───────────────────────────────────────────
+    const live = useLiveTranscription({
+        onFinal: (seg) => {
+            setTranscript((prev) => prev + (prev && !/\s$/.test(prev) ? " " : "") + seg);
+            setInterim("");
+        },
+        onInterim: (seg) => setInterim(seg),
+    });
+
+    function startLive() {
+        if (!consent) {
+            setError("Confirm recording consent before dictating.");
+            return;
+        }
+        setError(null);
+        void live.start();
+    }
+
+    function stopLive() {
+        live.stop();
+        setInterim("");
+    }
+
+    // ── Audio upload (batch transcription fills the same field) ───
+    async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
+        const f = e.target.files?.[0];
+        if (!f) return;
+        if (!consent) {
+            setError("Confirm recording consent before uploading audio.");
+            return;
+        }
+        setError(null);
+        setBusy(true);
+        setBusyLabel("Transcribing audio…");
+        try {
+            const id = await ensureConsultation();
+            const fd = new FormData();
+            fd.append("audio", f, f.name);
+            const res = await fetch(`/api/consultations/${id}/transcribe`, {
+                method: "POST",
+                body: fd,
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Transcription failed");
+            const text: string = data.consultation?.transcript ?? "";
+            // Append to anything already captured; the autosave effect persists
+            // the combined transcript.
+            setTranscript((prev) => (prev.trim() ? `${prev}\n\n${text}` : text));
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
         } finally {
@@ -170,19 +206,63 @@ export function ConsultationClient({
         }
     }
 
+    // ── Generate (separate step — transcript is already saved) ────
+    async function generate() {
+        setError(null);
+        if (transcript.trim().length < 20) {
+            setError("Capture a bit more of the conversation before generating notes.");
+            return;
+        }
+        if (live.recording) stopLive();
+        setBusy(true);
+        try {
+            // Ensure the latest text is persisted before we spend AI on it.
+            setBusyLabel("Saving transcript…");
+            const id = await saveNow(transcript);
+
+            setBusyLabel("Generating notes with AI…");
+            const aRes = await fetch(`/api/consultations/${id}/analyze`, { method: "POST" });
+            const aData = await aRes.json();
+            if (!aRes.ok) throw new Error(aData.error || "Analysis failed");
+
+            const a: Analysis = aData.analysis;
+            setAnalysis(a);
+            setEmailSubject(a.nextStepsEmail.subject);
+            setEmailBody(a.nextStepsEmail.body);
+            setStep("review");
+        } catch (err) {
+            // Transcript stays saved (server + localStorage) — just retry.
+            setError(err instanceof Error ? err.message : String(err));
+        } finally {
+            setBusy(false);
+            setBusyLabel("");
+        }
+    }
+
     async function sendEmail() {
-        if (!sentRef.current) return;
+        const id = consultationIdRef.current;
+        if (!id) return;
+        const to = recipientEmail.trim();
+        if (!EMAIL_RE.test(to)) {
+            setError("Enter a valid recipient email before sending.");
+            return;
+        }
         setError(null);
         setBusy(true);
         setBusyLabel("Sending email…");
         try {
-            const res = await fetch(`/api/consultations/${sentRef.current}/send-next-steps`, {
+            const res = await fetch(`/api/consultations/${id}/send-next-steps`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ subject: emailSubject, body: emailBody }),
+                body: JSON.stringify({ to, subject: emailSubject, body: emailBody }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Failed to send email");
+            try {
+                window.localStorage.removeItem(lsKey);
+            } catch {
+                /* ignore */
+            }
             setStep("sent");
             router.refresh();
         } catch (err) {
@@ -209,6 +289,7 @@ export function ConsultationClient({
     }
 
     if (step === "review" && analysis) {
+        const emailValid = EMAIL_RE.test(recipientEmail.trim());
         return (
             <div>
                 <section className={s.panel}>
@@ -245,11 +326,25 @@ export function ConsultationClient({
 
                 <section className={s.panel}>
                     <h2 className={s.panelTitle}>Next-steps email (review &amp; edit before sending)</h2>
-                    {!hasEmail && (
-                        <p className={s.error}>
-                            This engagement has no customer email on file — add one in Pipedrive to send.
-                        </p>
-                    )}
+                    <div className={s.field}>
+                        <label className={s.label}>To</label>
+                        <input
+                            className={s.input}
+                            type="email"
+                            placeholder="customer@example.com"
+                            value={recipientEmail}
+                            onChange={(e) => setRecipientEmail(e.target.value)}
+                        />
+                        {!customerEmail && (
+                            <p className={s.rowMuted} style={{ marginTop: 6 }}>
+                                No email was on file for this engagement — enter one to send. It’ll
+                                be saved to the engagement for next time.
+                            </p>
+                        )}
+                        {recipientEmail.trim() && !emailValid && (
+                            <p className={s.error}>That doesn’t look like a valid email address.</p>
+                        )}
+                    </div>
                     <div className={s.field}>
                         <label className={s.label}>Subject</label>
                         <input
@@ -270,7 +365,7 @@ export function ConsultationClient({
                     <button
                         className={s.primaryAction}
                         onClick={sendEmail}
-                        disabled={busy || !hasEmail}
+                        disabled={busy || !emailValid}
                     >
                         {busy ? busyLabel || "Sending…" : "Send next-steps email"}
                     </button>
@@ -294,66 +389,79 @@ export function ConsultationClient({
     }
 
     // step === "capture"
+    const saveText =
+        saveStatus === "saving"
+            ? "Saving…"
+            : saveStatus === "saved"
+              ? "Saved ✓"
+              : saveStatus === "error"
+                ? "Save failed — kept on this device, will retry"
+                : "Not saved yet";
+
     return (
         <section className={s.panel}>
             <h2 className={s.panelTitle}>Capture the consultation</h2>
             <div className={s.tabs}>
-                {(["record", "upload", "paste"] as CaptureMode[]).map((m) => (
+                {(["live", "upload", "paste"] as CaptureMode[]).map((m) => (
                     <button
                         key={m}
                         className={`${s.tab} ${mode === m ? s.tabActive : ""}`}
                         onClick={() => setMode(m)}
-                        disabled={busy || recording}
+                        disabled={busy || live.recording}
                     >
-                        {m === "record" ? "Record" : m === "upload" ? "Upload audio" : "Paste transcript"}
+                        {m === "live"
+                            ? "Live dictation"
+                            : m === "upload"
+                              ? "Upload audio"
+                              : "Paste transcript"}
                     </button>
                 ))}
             </div>
 
-            {mode === "record" && (
+            {mode === "live" && (
                 <div className={s.field}>
-                    {recording ? (
-                        <button className={s.btnGhost} onClick={stopRecording}>
-                            <span className={s.recDot} />Stop recording
+                    {live.recording ? (
+                        <button className={s.btnGhost} onClick={stopLive}>
+                            <span className={s.recDot} />
+                            Stop dictation
                         </button>
                     ) : (
-                        <button className={s.btnGhost} onClick={startRecording} disabled={busy}>
-                            {audioReady ? "Re-record" : "Start recording"}
+                        <button
+                            className={s.btnGhost}
+                            onClick={startLive}
+                            disabled={busy || live.connecting || !live.supported}
+                        >
+                            {live.connecting ? "Connecting…" : "Start dictation"}
                         </button>
                     )}
-                    {audioReady && !recording && (
+                    {live.recording && (
                         <span className={s.rowMuted} style={{ marginLeft: 10 }}>
-                            Audio captured ✓
+                            Listening — speak naturally
                         </span>
                     )}
+                    {!live.supported && (
+                        <p className={s.rowMuted} style={{ marginTop: 6 }}>
+                            Live dictation needs microphone support — use Upload audio or Paste
+                            instead.
+                        </p>
+                    )}
+                    {live.error && <p className={s.error}>{live.error}</p>}
                 </div>
             )}
 
             {mode === "upload" && (
                 <div className={s.field}>
                     <input type="file" accept="audio/*" onChange={onUpload} disabled={busy} />
-                    {audioReady && <span className={s.rowMuted} style={{ marginLeft: 10 }}>Ready ✓</span>}
                 </div>
             )}
 
-            {mode === "paste" && (
-                <div className={s.field}>
-                    <textarea
-                        className={s.textarea}
-                        placeholder="Paste the meeting transcript (from Otter, Fireflies, Zoom, etc.)…"
-                        value={pasted}
-                        onChange={(e) => setPasted(e.target.value)}
-                        disabled={busy}
-                    />
-                </div>
-            )}
-
-            {(mode === "record" || mode === "upload") && (
+            {(mode === "live" || mode === "upload") && (
                 <label className={s.consentRow}>
                     <input
                         type="checkbox"
                         checked={consent}
                         onChange={(e) => setConsent(e.target.checked)}
+                        disabled={live.recording}
                     />
                     <span>
                         I confirm everyone present consented to this meeting being recorded
@@ -362,7 +470,49 @@ export function ConsultationClient({
                 </label>
             )}
 
-            <button className={s.primaryAction} onClick={generate} disabled={busy}>
+            <div className={s.field}>
+                <label className={s.label}>Transcript</label>
+                <textarea
+                    className={s.textarea}
+                    style={{ minHeight: 220 }}
+                    placeholder={
+                        mode === "paste"
+                            ? "Paste the meeting transcript (from Otter, Fireflies, Zoom, etc.)…"
+                            : "Your words appear here as you speak — edit freely before generating notes."
+                    }
+                    value={interim ? `${transcript}${transcript ? " " : ""}${interim}` : transcript}
+                    onChange={(e) => {
+                        setInterim("");
+                        setTranscript(e.target.value);
+                    }}
+                    disabled={busy}
+                />
+                <div
+                    className={s.rowMuted}
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                        marginTop: 6,
+                    }}
+                >
+                    <span className={saveStatus === "error" ? s.error : undefined}>{saveText}</span>
+                    <button
+                        type="button"
+                        className={s.btnGhost}
+                        onClick={() => void saveNow(transcript).catch(() => {})}
+                        disabled={busy || !transcript.trim() || saveStatus === "saving"}
+                    >
+                        Save transcript
+                    </button>
+                </div>
+            </div>
+
+            <button
+                className={s.primaryAction}
+                onClick={generate}
+                disabled={busy || transcript.trim().length < 20}
+            >
                 {busy ? busyLabel || "Working…" : "Generate notes & email"}
             </button>
             {error && <p className={s.error}>{error}</p>}

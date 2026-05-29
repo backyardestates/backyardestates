@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AnalysisStatus } from "@prisma/client";
+import { AnalysisStatus, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
@@ -12,6 +12,14 @@ const STATUS_LABEL: Record<string, string> = {
     IN_PROGRESS: "In progress",
     COMPLETE: "Submitted",
 };
+
+type AnalysisRow = Prisma.FormalAnalysisGetPayload<{
+    include: {
+        engagement: {
+            select: { id: true; customerName: true; addressLine1: true; city: true };
+        };
+    };
+}>;
 
 export default async function FpaListPage() {
     await guardPageAnyPermission(["fpa.view_assigned", "fpa.view_all"], "/tools/fpa");
@@ -28,7 +36,7 @@ export default async function FpaListPage() {
                 },
             },
         })
-        .catch(() => []);
+        .catch((): AnalysisRow[] => []);
 
     const open = analyses.filter((a) => a.status !== AnalysisStatus.COMPLETE);
     const done = analyses.filter((a) => a.status === AnalysisStatus.COMPLETE);

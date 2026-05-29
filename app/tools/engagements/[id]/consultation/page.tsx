@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ConsultationStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { guardPagePermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
@@ -36,6 +37,24 @@ export default async function ConsultationPage({
         notFound();
     }
 
+    // Resume the most recent in-progress consultation (transcript saved but not
+    // yet summarized/sent) so a page reload never loses captured words.
+    const draft = await prisma.consultation.findFirst({
+        where: {
+            engagementId: engagement.id,
+            status: {
+                in: [
+                    ConsultationStatus.DRAFT,
+                    ConsultationStatus.TRANSCRIBING,
+                    ConsultationStatus.TRANSCRIBED,
+                    ConsultationStatus.FAILED,
+                ],
+            },
+        },
+        orderBy: { createdAt: "desc" },
+        select: { id: true, transcript: true },
+    });
+
     return (
         <div className={s.shell}>
             <Link href={`/tools/engagements/${id}`} className={s.backLink}>
@@ -54,7 +73,9 @@ export default async function ConsultationPage({
             <ConsultationClient
                 engagementId={engagement.id}
                 customerName={engagement.customerName}
-                hasEmail={!!engagement.customerEmail}
+                customerEmail={engagement.customerEmail}
+                existingConsultationId={draft?.id ?? null}
+                existingTranscript={draft?.transcript ?? null}
             />
         </div>
     );

@@ -4,7 +4,7 @@ import { ConsultationStatus, EngagementStage, EngagementEventType } from "@prism
 import { prisma } from "@/lib/prisma";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { canAccessEngagement } from "@/lib/engagement/access";
-import { transitionEngagementStage } from "@/lib/engagement/stage";
+import { transitionEngagementStage, logEngagementEvent } from "@/lib/engagement/stage";
 import { enrollInDrip } from "@/lib/drip/enroll";
 
 export const runtime = "nodejs";
@@ -23,9 +23,12 @@ function textToHtml(text: string): string {
 }
 
 interface SendBody {
+    to?: string;
     subject?: string;
     body?: string;
 }
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // POST /api/consultations/[id]/send-next-steps
 // Sends the (rep-edited) next-steps email, marks the consultation sent, and
@@ -74,10 +77,12 @@ export async function POST(
             );
         }
 
-        const to = consultation.engagement.customerEmail?.trim();
-        if (!to) {
+        // Prefer a rep-supplied recipient (e.g. when the engagement was started
+        // from a Pipedrive deal with no email), falling back to the stored one.
+        const to = body.to?.trim() || consultation.engagement.customerEmail?.trim() || "";
+        if (!EMAIL_RE.test(to)) {
             return NextResponse.json(
-                { error: "This engagement has no customer email on file." },
+                { error: "A valid recipient email is required." },
                 { status: 400 },
             );
         }
@@ -104,6 +109,21 @@ export async function POST(
             );
         }
 
+        // Save a rep-supplied / corrected recipient so future sends have it.
+        if (to !== consultation.engagement.customerEmail) {
+            await prisma.engagement
+                .update({
+                    where: { id: consultation.engagementId },
+                    data: { customerEmail: to },
+                })
+                .catch(() => {});
+        }
+
+        // First send vs. resend: only the first send advances the engagement
+        // stage and kicks off the drip. A resend just delivers the (possibly
+        // edited) email again and records the new draft.
+        const isResend = consultation.status === ConsultationStatus.SENT;
+
         await prisma.consultation.update({
             where: { id },
             data: {
@@ -113,20 +133,29 @@ export async function POST(
             },
         });
 
-        await transitionEngagementStage({
-            engagementId: consultation.engagementId,
-            toStage: EngagementStage.NEXT_STEPS_SENT,
-            actorId: userId,
-            eventType: EngagementEventType.NEXT_STEPS_SENT,
-            message: `Next-steps email sent to ${consultation.engagement.customerName || to}.`,
-        });
+        if (isResend) {
+            await logEngagementEvent({
+                engagementId: consultation.engagementId,
+                type: EngagementEventType.NOTE,
+                actorId: userId,
+                message: `Next-steps email re-sent to ${consultation.engagement.customerName || to}.`,
+            });
+        } else {
+            await transitionEngagementStage({
+                engagementId: consultation.engagementId,
+                toStage: EngagementStage.NEXT_STEPS_SENT,
+                actorId: userId,
+                eventType: EngagementEventType.NEXT_STEPS_SENT,
+                message: `Next-steps email sent to ${consultation.engagement.customerName || to}.`,
+            });
 
-        // Enroll in a content-matched follow-up drip (best-effort, async).
-        void enrollInDrip(consultation.engagementId).catch((err) =>
-            console.error("[send-next-steps] drip enroll failed", err),
-        );
+            // Enroll in a content-matched follow-up drip (best-effort, async).
+            void enrollInDrip(consultation.engagementId).catch((err) =>
+                console.error("[send-next-steps] drip enroll failed", err),
+            );
+        }
 
-        return NextResponse.json({ ok: true });
+        return NextResponse.json({ ok: true, resent: isResend });
     } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         if (msg === "UNAUTHORIZED") {

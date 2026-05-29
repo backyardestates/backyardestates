@@ -9,7 +9,16 @@ export const dynamic = "force-dynamic";
 interface PatchBody {
     siteVisit?: Record<string, unknown>;
     cityInfo?: Record<string, unknown>;
-    flags?: { label?: string; flagType?: string; flagNote?: string; estCostImpact?: number | null }[];
+    flags?: {
+        label?: string;
+        flagType?: string;
+        flagNote?: string;
+        estCostImpact?: number | null;
+        /** Set when the flag is tied to a specific template field (inline flag). */
+        fieldKey?: string;
+        /** Which tab the flagged field lives on ("siteVisit" | "cityInfo"). */
+        tab?: string;
+    }[];
 }
 
 // PATCH /api/architect/analyses/[id]

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EngagementStage } from "@prisma/client";
+import { EngagementStage, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
@@ -8,6 +8,14 @@ import { StartEngagement } from "./StartEngagement";
 import s from "./engagements.module.css";
 
 export const dynamic = "force-dynamic";
+
+type EngagementRow = Prisma.EngagementGetPayload<{
+    include: {
+        _count: {
+            select: { consultations: true; formalAnalyses: true; proposals: true };
+        };
+    };
+}>;
 
 export default async function EngagementsPage() {
     await guardPageAnyPermission(
@@ -30,7 +38,7 @@ export default async function EngagementsPage() {
                 },
             },
         })
-        .catch(() => []);
+        .catch((): EngagementRow[] => []);
 
     // Group by stage, preserving the pipeline order (+ LOST at the end).
     const orderedStages: EngagementStage[] = [...STAGE_ORDER, EngagementStage.LOST];

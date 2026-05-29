@@ -21,6 +21,7 @@ export const PERMISSIONS: PermissionDef[] = [
     // Formal analysis
     { key: "fpa.view_assigned", label: "See assigned analyses", group: "Formal analysis" },
     { key: "fpa.view_all", label: "See all analyses", group: "Formal analysis" },
+    { key: "fpa.create", label: "Start an analysis", group: "Formal analysis" },
     { key: "fpa.fill", label: "Fill on-site form", group: "Formal analysis" },
     { key: "fpa.submit", label: "Submit analysis", group: "Formal analysis" },
     // Proposals
@@ -54,6 +55,7 @@ export const ROLE_PERMISSION_DEFAULTS: Record<Role, string[]> = {
     ARCHITECT: [
         "fpa.view_assigned",
         "fpa.view_all",
+        "fpa.create",
         "fpa.fill",
         "fpa.submit",
         "engagements.view_own",

@@ -1,4 +1,5 @@
-import { z } from "zod";
+import type Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod/v4";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { getAnthropic, CLAUDE_MODEL } from "./claude";
 
@@ -103,4 +104,64 @@ export async function analyzeConsultation(
         throw new Error("Claude returned no structured output for the consultation.");
     }
     return parsed;
+}
+
+// ── Ask-the-transcript ────────────────────────────────────────────────────────
+// Lets the rep query the meeting for anything the canned summary missed. Frozen
+// system prompt → cacheable prefix; the transcript + question go in the user
+// message.
+const ASK_SYSTEM_PROMPT = `You are an assistant that answers a Backyard Estates sales rep's questions about a specific in-office ADU consultation, using ONLY the transcript of that meeting.
+
+Rules:
+- Answer strictly from the transcript. Quote or paraphrase what was actually said.
+- If the transcript does not contain the answer, say so plainly (e.g. "That wasn't discussed in this consultation.") — never guess, infer beyond what was said, or invent details.
+- Be concise and direct. Use short paragraphs or bullet points. Lead with the answer.`;
+
+export interface AskInput {
+    transcript: string;
+    question: string;
+    customerName?: string | null;
+    address?: string | null;
+}
+
+/** Answer a free-form question about a consultation, grounded only in its
+ *  transcript. Returns plain text. */
+export async function askConsultation(input: AskInput): Promise<string> {
+    const client = getAnthropic();
+
+    const userContent = [
+        input.customerName ? `Customer: ${input.customerName}` : null,
+        input.address ? `Property: ${input.address}` : null,
+        "",
+        "Consultation transcript:",
+        input.transcript,
+        "",
+        `Question: ${input.question}`,
+    ]
+        .filter((line): line is string => line !== null)
+        .join("\n");
+
+    const message = await client.messages.create({
+        model: CLAUDE_MODEL,
+        max_tokens: 2000,
+        system: [
+            {
+                type: "text",
+                text: ASK_SYSTEM_PROMPT,
+                cache_control: { type: "ephemeral" },
+            },
+        ],
+        messages: [{ role: "user", content: userContent }],
+    });
+
+    const answer = message.content
+        .filter((block): block is Anthropic.TextBlock => block.type === "text")
+        .map((block) => block.text)
+        .join("\n")
+        .trim();
+
+    if (!answer) {
+        throw new Error("Claude returned no answer for the question.");
+    }
+    return answer;
 }

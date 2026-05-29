@@ -254,7 +254,7 @@ export function hasDraft(addressKey: string): boolean {
 
 /** Same shape as saveProposal — server-first, LS-best-effort. Returns the
  *  server promise so the autosave UI can show real persistence status. */
-export function saveDraft(snapshot: ProposalSnapshot): Promise<void> {
+export function saveDraft(snapshot: ProposalSnapshot): Promise<{ id?: string }> {
     const serverPromise = serverUpsertProposal(snapshot, "DRAFT");
     const store = readStore(DRAFTS_STORAGE_KEY);
     store[snapshot.addressKey] = snapshot;

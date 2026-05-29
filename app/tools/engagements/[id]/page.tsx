@@ -4,9 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { stageLabel } from "@/lib/engagement/stage";
+import { Role } from "@prisma/client";
 import { StageControl } from "./StageControl";
 import { StartEstimateButton } from "./StartEstimateButton";
+import { StartFpaButton } from "./StartFpaButton";
 import { DripCancelButton } from "./DripCancelButton";
+import { ResyncButton } from "./ResyncButton";
 import s from "../engagements.module.css";
 
 export const dynamic = "force-dynamic";
@@ -82,6 +85,17 @@ export default async function EngagementDetailPage({
 
     const drip = engagement.dripEnrollments[0];
     const canConsult = await can(role, "consultation.run");
+    const hasOpenAnalysis = engagement.formalAnalyses.some(
+        (f) => f.status === "PENDING" || f.status === "IN_PROGRESS",
+    );
+    const canStartFpa = await can(role, "fpa.create");
+    const architects = canStartFpa
+        ? await prisma.user.findMany({
+              where: { role: Role.ARCHITECT },
+              orderBy: { createdAt: "asc" },
+              select: { id: true, email: true },
+          })
+        : [];
 
     return (
         <div className={s.shell}>
@@ -119,9 +133,13 @@ export default async function EngagementDetailPage({
                             <ul className={s.timeline}>
                                 {engagement.consultations.map((c) => (
                                     <li key={c.id} className={s.timelineItem}>
-                                        <span className={s.timelineType}>
-                                            {c.source} · {c.status}
-                                        </span>
+                                        <Link
+                                            href={`/tools/engagements/${engagement.id}/consultations/${c.id}`}
+                                        >
+                                            <span className={s.timelineType}>
+                                                {c.source} · {c.status}
+                                            </span>
+                                        </Link>
                                         <span className={s.timelineWhen}>
                                             {c.createdAt.toLocaleString()}
                                         </span>
@@ -133,6 +151,13 @@ export default async function EngagementDetailPage({
 
                     <section className={s.panel}>
                         <h2 className={s.panelTitle}>Formal analyses</h2>
+                        {canStartFpa && !hasOpenAnalysis && (
+                            <StartFpaButton
+                                engagementId={engagement.id}
+                                architects={architects}
+                                defaultArchitectId={engagement.architectId}
+                            />
+                        )}
                         {engagement.formalAnalyses.length === 0 ? (
                             <p className={s.empty}>No formal analysis yet.</p>
                         ) : (
@@ -304,6 +329,9 @@ export default async function EngagementDetailPage({
                             <span className={s.kvLabel}>Pipedrive deal</span>
                             <span>{engagement.pipedriveDealId || "—"}</span>
                         </div>
+                        {(engagement.pipedrivePersonId || engagement.pipedriveDealId) && (
+                            <ResyncButton engagementId={engagement.id} />
+                        )}
                     </section>
                 </aside>
             </div>

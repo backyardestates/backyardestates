@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { normalizeAddress } from "@/lib/proposalSnapshot";
 import { logEngagementEvent } from "@/lib/engagement/stage";
+import { isPipedriveConfigured } from "@/lib/pipedrive/client";
+import { fetchPipedriveContact, type PipedriveContact } from "@/lib/pipedrive/contact";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -81,16 +83,45 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
         }
 
-        const pipedrivePersonId = body.pipedrivePersonId?.trim() || null;
+        const bodyPersonId = body.pipedrivePersonId?.trim() || null;
         const pipedriveDealId = body.pipedriveDealId?.trim() || null;
-        const addressKey = body.address ? normalizeAddress(body.address) : null;
 
-        if (!pipedrivePersonId && !body.customerName?.trim()) {
+        if (!bodyPersonId && !pipedriveDealId && !body.customerName?.trim()) {
             return NextResponse.json(
-                { error: "Need a Pipedrive person or a customer name to start an engagement." },
+                {
+                    error: "Need a Pipedrive person or deal, or a customer name, to start an engagement.",
+                },
                 { status: 400 },
             );
         }
+
+        // Clean-fetch the customer's details from Pipedrive so the rep doesn't
+        // retype email / phone / address — this also resolves the linked person
+        // (and thus contact info) for engagements started from a deal. Anything
+        // the client already sent wins; the fetch fills in the rest.
+        let contact: PipedriveContact | null = null;
+        if (isPipedriveConfigured() && (bodyPersonId || pipedriveDealId)) {
+            contact = await fetchPipedriveContact({
+                personId: bodyPersonId ? Number(bodyPersonId) : null,
+                dealId: pipedriveDealId ? Number(pipedriveDealId) : null,
+            }).catch(() => null);
+        }
+
+        // A deal can supply the person, so record it even when only a deal id
+        // was selected — keeps reuse + future contact lookups working.
+        const pipedrivePersonId =
+            bodyPersonId ?? (contact?.personId ? String(contact.personId) : null);
+
+        const customerName = body.customerName?.trim() || contact?.customerName || null;
+        const customerEmail = body.customerEmail?.trim() || contact?.customerEmail || null;
+        const customerPhone = body.customerPhone?.trim() || contact?.customerPhone || null;
+        const addressLine1 = body.addressLine1?.trim() || contact?.addressLine1 || null;
+        const addressLine2 = body.addressLine2?.trim() || null;
+        const city = body.city?.trim() || contact?.city || null;
+        const state = body.state?.trim() || contact?.state || null;
+        const zip = body.zip?.trim() || contact?.zip || null;
+        const addressForKey = body.address?.trim() || contact?.address || null;
+        const addressKey = addressForKey ? normalizeAddress(addressForKey) : null;
 
         // Reuse an existing active engagement for the same person + address so a
         // rep re-opening the same prospect doesn't fork the pipeline.
@@ -116,14 +147,14 @@ export async function POST(req: Request) {
                 repId: userId,
                 pipedrivePersonId,
                 pipedriveDealId,
-                customerName: body.customerName?.trim() || null,
-                customerEmail: body.customerEmail?.trim() || null,
-                customerPhone: body.customerPhone?.trim() || null,
-                addressLine1: body.addressLine1?.trim() || null,
-                addressLine2: body.addressLine2?.trim() || null,
-                city: body.city?.trim() || null,
-                state: body.state?.trim() || null,
-                zip: body.zip?.trim() || null,
+                customerName,
+                customerEmail,
+                customerPhone,
+                addressLine1,
+                addressLine2,
+                city,
+                state,
+                zip,
                 addressKey,
             },
         });

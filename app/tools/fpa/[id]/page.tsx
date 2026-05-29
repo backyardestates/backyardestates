@@ -6,7 +6,7 @@ import { guardPageAnyPermission, can } from "@/lib/rbac/getPermissions";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { FPA_TEMPLATE } from "@/lib/fpa/template";
 import { FpaForm, type DiscoveryContext, type FlagEntry } from "./FpaForm";
-import s from "../../engagements/engagements.module.css";
+import s from "../fpa.module.css";
 
 export const dynamic = "force-dynamic";
 
@@ -69,16 +69,32 @@ export default async function FpaDetailPage({
     };
 
     return (
-        <div className={s.shell}>
+        <div className={s.page}>
             <Link href="/tools/fpa" className={s.backLink}>
-                ← All analyses
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                All analyses
             </Link>
-            <header className={s.header}>
-                <div>
-                    <h1 className={s.title}>{e?.customerName || "(no name)"}</h1>
-                    <p className={s.subtitle}>{address}</p>
+
+            <header className={s.hero}>
+                <div className={s.heroTop}>
+                    <div>
+                        <p className={s.eyebrow}>Formal Property Analysis</p>
+                        <h1 className={s.title}>{e?.customerName || "(no name)"}</h1>
+                        <p className={s.subtitle}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                <circle cx="12" cy="10" r="3" />
+                            </svg>
+                            {address}
+                        </p>
+                    </div>
+                    <span className={`${s.statusBadge} ${submitted ? s.statusBadgeDone : ""}`}>
+                        <span className={s.statusDot} />
+                        {submitted ? "Submitted" : "In progress"}
+                    </span>
                 </div>
-                <span className={s.stageBadge}>{submitted ? "Submitted" : "On-site analysis"}</span>
             </header>
 
             <FpaForm

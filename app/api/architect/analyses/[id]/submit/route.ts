@@ -93,7 +93,7 @@ export async function POST(
                     title: `Ready to estimate: ${engagement.customerName ?? "customer"}`,
                     body: `The architect submitted the formal analysis. ${flagSummary}.`,
                     linkPath: `/tools/engagements/${engagement.id}`,
-                    emailTo: rep.email ?? null,
+                    emailTo: rep?.email ?? null,
                 });
             }
         }

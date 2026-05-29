@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getDbUser } from "@/lib/auth";
-import { ROLE_PERMISSION_DEFAULTS } from "@/lib/rbac/permissions";
+import { ROLE_PERMISSION_DEFAULTS, PERMISSION_KEYS } from "@/lib/rbac/permissions";
 
 // Permissions change rarely (only via the admin matrix), so cache the resolved
 // set per role for a short TTL to keep checks cheap. The matrix save calls
@@ -22,6 +22,12 @@ export function bustPermissionCache(): void {
  * authoritative — including a role with everything toggled off.
  */
 export async function getPermissions(role: Role): Promise<Set<string>> {
+    // ADMIN is a superuser: it always holds every capability (engagements, FPA,
+    // proposals, settings, …). Resolving this in code rather than from the
+    // RolePermission table means an admin can never be locked out of a tool by a
+    // matrix edit or an unseeded/missing table.
+    if (role === Role.ADMIN) return new Set(PERMISSION_KEYS);
+
     const hit = cache.get(role);
     if (hit && Date.now() - hit.at < TTL_MS) return hit.perms;
 
