@@ -199,8 +199,23 @@ export function ConsultationClient({
             stage = "analyze";
             setBusyLabel("Generating notes with AI…");
             const aRes = await fetch(`/api/consultations/${id}/analyze`, { method: "POST" });
-            const aData = await aRes.json();
-            if (!aRes.ok) throw new Error(aData.error || "Analysis failed");
+            // Read as text first. A timed-out / crashed serverless function
+            // returns a non-JSON error page; calling .json() on that throws an
+            // opaque "SyntaxError" instead of telling us what actually happened.
+            const aText = await aRes.text();
+            let aData: { error?: string } = {};
+            if (aText) {
+                try {
+                    aData = JSON.parse(aText);
+                } catch {
+                    throw new Error(
+                        `Server returned a non-JSON response (HTTP ${aRes.status}). ${
+                            aText.slice(0, 200) || "(empty body)"
+                        }`,
+                    );
+                }
+            }
+            if (!aRes.ok) throw new Error(aData.error || `Analysis failed (HTTP ${aRes.status})`);
 
             stage = "navigate";
             // Notes are persisted on the consultation — clear the local draft and

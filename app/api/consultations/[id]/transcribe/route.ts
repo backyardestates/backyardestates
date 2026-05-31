@@ -8,6 +8,9 @@ import { transcribeAudio } from "@/lib/ai/transcription";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Audio transcription can run long; raise the serverless budget so the function
+// isn't killed mid-request (which returns a non-JSON page the client can't parse).
+export const maxDuration = 300;
 
 // POST /api/consultations/[id]/transcribe
 // Body: multipart/form-data with an `audio` file. Transcribes via the
