@@ -9,6 +9,10 @@ import { isAnthropicConfigured } from "@/lib/ai/claude";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// The Claude analysis can run past the default serverless time limit. Without a
+// raised budget the function is killed mid-request and returns a non-JSON error
+// page, which surfaces on the client as an opaque JSON parse error.
+export const maxDuration = 300;
 
 // POST /api/consultations/[id]/analyze
 // Runs the transcript through Claude and stores the structured notes, the

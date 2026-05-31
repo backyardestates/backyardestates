@@ -436,7 +436,7 @@ async function runAi(
         properties: input.properties,
     };
 
-    const message = await client.messages.parse({
+    const message = await client.beta.messages.parse({
         model: CLAUDE_MODEL,
         max_tokens: 6000,
         system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],

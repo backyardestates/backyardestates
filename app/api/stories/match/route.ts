@@ -5,6 +5,9 @@ import { matchStories, type StoryForMatch } from "@/lib/ai/storyMatch";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Claude calls can run long; raise the serverless budget so the function isn't
+// killed mid-request (which returns a non-JSON page the client can't parse).
+export const maxDuration = 300;
 
 // POST /api/stories/match
 // Body: { tags: string[]; stories: { id, name, quote?, purpose? }[] }

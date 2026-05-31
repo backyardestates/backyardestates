@@ -13,6 +13,9 @@ import { buildDripContent, sanitizeEmailLinks } from "@/lib/drip/links";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Claude calls can run long; raise the serverless budget so the function isn't
+// killed mid-request (which returns a non-JSON page the client can't parse).
+export const maxDuration = 300;
 
 interface PolishBody {
     instruction?: string;
