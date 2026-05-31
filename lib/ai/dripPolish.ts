@@ -71,7 +71,7 @@ export async function polishDripMessage(input: DripPolishInput): Promise<DripPol
         2,
     );
 
-    const message = await client.messages.parse({
+    const message = await client.beta.messages.parse({
         model: CLAUDE_MODEL,
         max_tokens: 2000,
         system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],

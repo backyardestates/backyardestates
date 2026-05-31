@@ -83,7 +83,7 @@ export async function analyzeConsultation(
         .filter((line): line is string => line !== null)
         .join("\n");
 
-    const message = await client.messages.parse({
+    const message = await client.beta.messages.parse({
         model: CLAUDE_MODEL,
         max_tokens: 8000,
         system: [

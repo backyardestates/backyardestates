@@ -72,7 +72,7 @@ export async function matchStories(input: {
         corpus,
     ].join("\n");
 
-    const message = await client.messages.parse({
+    const message = await client.beta.messages.parse({
         model: CLAUDE_MODEL,
         max_tokens: 4000,
         system: [
