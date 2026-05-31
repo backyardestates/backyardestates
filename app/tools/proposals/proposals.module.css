@@ -1,0 +1,339 @@
+/* My Proposals — present-v2 editorial language (cream paper, teal-ink, gold,
+   Inter + Fraunces). Tokens lifted from app/present-v2/styles/present.design.css
+   so the page is self-contained. */
+
+.shell {
+    --teal: #2d5f5f;
+    --teal-deep: #1f4444;
+    --teal-ink: #14302f;
+    --gold: #b8954a;
+    --gold-soft: #d4b074;
+    --cream: #f7f5f0;
+    --paper: #faf6ec;
+    --ink: #1a1a1a;
+    --ink-muted: #5a5550;
+    --ink-faint: #8a8278;
+    --border-light: #e5e1d8;
+    --border-mid: #d9d3c6;
+
+    --font: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-display: var(--font-fraunces), "Fraunces", "Iowan Old Style", Georgia, serif;
+
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --shadow-card: 0 2px 16px rgba(20, 48, 47, 0.05), 0 1px 4px rgba(20, 48, 47, 0.04);
+
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
+    font-family: var(--font);
+    color: var(--teal-ink);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    margin-bottom: 28px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+.eyebrow strong {
+    color: var(--teal-ink);
+    font-weight: 700;
+}
+
+.title {
+    font-size: 40px;
+    font-weight: 300;
+    color: var(--teal-ink);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+}
+.title em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold);
+}
+
+.subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 15px;
+    color: var(--ink-muted);
+    margin: 0;
+}
+
+/* ── Primary action button ─────────────────────────────────────────── */
+.primaryAction {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 22px;
+    background: var(--teal);
+    color: var(--cream);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease, transform 0.05s ease;
+    min-height: 44px;
+}
+.primaryAction:hover {
+    background: var(--teal-deep);
+}
+.primaryAction:active {
+    transform: translateY(1px);
+}
+.primaryAction:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* ── Filter tabs ───────────────────────────────────────────────────── */
+.filterTabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 22px;
+    padding: 6px;
+    background: rgba(184, 149, 74, 0.06);
+    border: 1px solid rgba(184, 149, 74, 0.14);
+    border-radius: 12px;
+    width: fit-content;
+}
+.filterTab {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 0;
+    color: var(--ink-muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.filterTab:hover {
+    color: var(--teal-ink);
+    background: rgba(255, 255, 255, 0.65);
+}
+.filterTabActive,
+.filterTabActive:hover {
+    background: #fff;
+    color: var(--teal-ink);
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.06);
+}
+.filterTab:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* ── Table card ────────────────────────────────────────────────────── */
+.tableWrap {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    overflow: visible;
+}
+.tableWrap::before {
+    content: "";
+    position: absolute;
+    inset: 0 14px auto 14px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 50%, rgba(184, 149, 74, 0.4) 100%);
+    z-index: 1;
+    border-radius: 1px;
+}
+.table tbody tr:first-child td:first-child {
+    border-top-left-radius: var(--radius-md);
+}
+.table tbody tr:first-child td:last-child {
+    border-top-right-radius: var(--radius-md);
+}
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: var(--radius-md);
+}
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: var(--radius-md);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.table thead th {
+    text-align: left;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border-light);
+    background: rgba(184, 149, 74, 0.04);
+}
+.table tbody tr {
+    border-bottom: 1px solid rgba(184, 149, 74, 0.1);
+    transition: background 0.15s ease;
+}
+.table tbody tr:last-child {
+    border-bottom: none;
+}
+.table tbody tr:hover {
+    background: rgba(184, 149, 74, 0.04);
+}
+.table td {
+    padding: 16px 20px;
+    vertical-align: middle;
+}
+
+.customerName {
+    font-weight: 600;
+    color: var(--teal-ink);
+    font-size: 14px;
+}
+.addrCell {
+    color: var(--ink-muted);
+    max-width: 320px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.muted {
+    color: var(--ink-faint);
+    font-size: 12px;
+}
+.numCol {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    color: var(--ink-muted);
+    font-weight: 500;
+}
+
+/* ── Status pills ──────────────────────────────────────────────────── */
+.statusPill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    background: rgba(184, 149, 74, 0.08);
+    color: var(--gold);
+    border: 1px solid rgba(184, 149, 74, 0.2);
+}
+.status_DRAFT {
+    background: rgba(184, 149, 74, 0.1);
+    color: #8a6b14;
+    border-color: rgba(184, 149, 74, 0.3);
+}
+.status_REVIEWED {
+    background: rgba(20, 48, 47, 0.08);
+    color: var(--teal-ink);
+    border-color: rgba(20, 48, 47, 0.18);
+}
+.status_SENT {
+    background: rgba(40, 80, 140, 0.08);
+    color: #2a4a8a;
+    border-color: rgba(40, 80, 140, 0.2);
+}
+.status_SIGNED {
+    background: rgba(46, 125, 91, 0.1);
+    color: #1e5a2e;
+    border-color: rgba(46, 125, 91, 0.22);
+}
+.status_ARCHIVED {
+    background: rgba(20, 48, 47, 0.04);
+    color: var(--ink-faint);
+    border-color: rgba(20, 48, 47, 0.12);
+}
+
+/* ── Empty state ───────────────────────────────────────────────────── */
+.empty {
+    padding: 72px 24px;
+    background: var(--paper);
+    border: 1px dashed var(--border-mid);
+    border-radius: var(--radius-md);
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 15px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+.empty p {
+    margin: 0;
+    max-width: 480px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink-muted);
+}
+.empty a {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+@media (max-width: 720px) {
+    .shell {
+        padding: 24px 16px 64px;
+    }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .title {
+        font-size: 32px;
+    }
+    .table thead {
+        display: none;
+    }
+    .table tbody tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 6px 12px;
+        padding: 14px 16px;
+    }
+    .table td {
+        padding: 0;
+    }
+    .addrCell {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .primaryAction,
+    .filterTab,
+    .table tbody tr {
+        transition: none;
+    }
+}

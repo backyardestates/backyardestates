@@ -8,6 +8,11 @@ import {
     type SanityFloorplan,
     type SanityStory,
     type SanityProperty,
+    type InclusionCategoryData,
+    type TaxTopicData,
+    type CityData,
+    type DiscountPresetData,
+    type AdminBroadcast,
 } from "@/lib/store/presentationStore";
 import { startPresenterSync } from "@/lib/sync/presentationSync";
 import { selectStory } from "@/lib/investment/storySelector";
@@ -15,46 +20,27 @@ import { selectStory } from "@/lib/investment/storySelector";
 import s from "./PrintClient.module.css";
 
 // Use the exact same slide registry the live presenter uses, so the PDF is a
-// 1:1 reflection of the deck order. Imports kept in sync with PresentClient.
-import { Slide1_Cover }            from "../slides/Slide1_Cover";
-import { Slide2_YourProperty }     from "../slides/Slide2_YourProperty";
-import { Slide3_YourOptions }      from "../slides/Slide3_YourOptions";
-import { Slide4_WhatsIncluded }    from "../slides/Slide4_WhatsIncluded";
-import { Slide5_CompletedBuilds }  from "../slides/Slide5_CompletedBuilds";
-import { Slide6_CustomerStories }  from "../slides/Slide6_CustomerStories";
-import { Slide7_HowItWorks }       from "../slides/Slide7_HowItWorks";
-import { Slide8_ROIComparison }    from "../slides/Slide8_ROIComparison";
-import { Slide9_ADUvsHouse }       from "../slides/Slide9_ADUvsHouse";
-import { Slide10_RentalAnalysis }  from "../slides/Slide10_RentalAnalysis";
-import { Slide11_WhatsNext }       from "../slides/Slide11_WhatsNext";
-import { Slide12_OurTeam }         from "../slides/Slide12_OurTeam";
-import { Slide12_TaxBenefits }     from "../slides/Slide12_TaxBenefits";
-import { Slide13_WhyBE }           from "../slides/Slide13_WhyBE";
-import { Slide14_PaymentSchedule } from "../slides/Slide14_PaymentSchedule";
+// 1:1 reflection of the deck order.
+import { V2_SLIDES } from "../slides/registry";
 
-// Mirror the live PresentClient SLIDES array.
-const SLIDES = [
-    { n: 1,  Component: Slide1_Cover },
-    { n: 2,  Component: Slide2_YourProperty },
-    { n: 3,  Component: Slide4_WhatsIncluded },
-    { n: 4,  Component: Slide3_YourOptions },
-    { n: 5,  Component: Slide5_CompletedBuilds },
-    { n: 6,  Component: Slide6_CustomerStories },
-    { n: 7,  Component: Slide7_HowItWorks },
-    { n: 8,  Component: Slide8_ROIComparison },
-    { n: 9,  Component: Slide9_ADUvsHouse },
-    { n: 10, Component: Slide10_RentalAnalysis },
-    { n: 11, Component: Slide14_PaymentSchedule },
-    { n: 12, Component: Slide12_TaxBenefits },
-    { n: 13, Component: Slide12_OurTeam },
-    { n: 14, Component: Slide11_WhatsNext },
-    { n: 15, Component: Slide13_WhyBE },
-] as const;
+const SLIDES = V2_SLIDES.map((sl) => ({ n: sl.n, Component: sl.Component }));
 
 interface Props {
     floorplans: SanityFloorplan[];
     stories: SanityStory[];
     completedProperties: SanityProperty[];
+    inclusionsCatalog?: InclusionCategoryData[];
+    inclusionsSidebar?: { deptPills: string[]; feeBullets: string[] } | null;
+    taxTopicsCatalog?: TaxTopicData[];
+    citiesCatalog?: CityData[];
+    discountsCatalog?: DiscountPresetData[];
+    /** By-id export mode: seed the store from this persisted payload and render
+     *  standalone (no BroadcastChannel/localStorage). When absent, the print
+     *  view hydrates from a live admin session via startPresenterSync(). */
+    initialBroadcast?: Partial<AdminBroadcast>;
+    /** Proposal id — enables "Save to Pipedrive" (upload the deck PDF + post a
+     *  note). Present in the by-id export route; absent in the live print view. */
+    proposalId?: string;
 }
 
 // How long to wait after mount before snapshotting. Long enough for every
@@ -69,9 +55,21 @@ type Phase =
     | { state: "done" }
     | { state: "error"; message: string };
 
-export function PrintClient({ floorplans, stories, completedProperties }: Props) {
+export function PrintClient({
+    floorplans,
+    stories,
+    completedProperties,
+    inclusionsCatalog,
+    inclusionsSidebar,
+    taxTopicsCatalog,
+    citiesCatalog,
+    discountsCatalog,
+    initialBroadcast,
+    proposalId,
+}: Props) {
     const {
         setSanityData,
+        setCatalogData,
         setPrintMode,
         setSelectedStory,
         customerMotivation,
@@ -83,6 +81,11 @@ export function PrintClient({ floorplans, stories, completedProperties }: Props)
     } = usePresentationStore();
 
     const [phase, setPhase] = useState<Phase>({ state: "loading" });
+    // "Save to Pipedrive" state — uploads the deck PDF + posts a note. Separate
+    // from `phase` (which drives the download flow + slide-capture progress).
+    const [pdSaveState, setPdSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+    const [pdNote, setPdNote] = useState<"posted" | "no-link" | "not-configured" | "failed" | null>(null);
+    const [pdError, setPdError] = useState<string | null>(null);
     // Slide numbers the user wants in the exported PDF. Default is every
     // slide in the deck; user can uncheck individual thumbnails.
     const [selectedSlides, setSelectedSlides] = useState<Set<number>>(
@@ -117,12 +120,39 @@ export function PrintClient({ floorplans, stories, completedProperties }: Props)
     useEffect(() => {
         if (syncStarted.current) return;
         syncStarted.current = true;
+        // By-id mode: seed once from the persisted payload and stay standalone so
+        // the export is a complete, deterministic snapshot (no dependency on a
+        // live admin tab / localStorage). Otherwise hydrate from the live session.
+        if (initialBroadcast) {
+            usePresentationStore.getState().syncFromAdmin(initialBroadcast);
+            return;
+        }
         return startPresenterSync();
-    }, []);
+    }, [initialBroadcast]);
 
     useEffect(() => {
         setSanityData({ floorplans, stories, completedProperties });
     }, [floorplans, stories, completedProperties, setSanityData]);
+
+    // Seed DB-backed catalog data (inclusions for Slide 4, tax topics, etc.) so
+    // the by-id export matches the standalone present-v2/[id] deck.
+    useEffect(() => {
+        if (
+            inclusionsCatalog !== undefined ||
+            inclusionsSidebar !== undefined ||
+            taxTopicsCatalog !== undefined ||
+            citiesCatalog !== undefined ||
+            discountsCatalog !== undefined
+        ) {
+            setCatalogData({
+                ...(inclusionsCatalog !== undefined ? { inclusionsCatalog } : {}),
+                ...(inclusionsSidebar !== undefined ? { inclusionsSidebar } : {}),
+                ...(taxTopicsCatalog !== undefined ? { taxTopicsCatalog } : {}),
+                ...(citiesCatalog !== undefined ? { citiesCatalog } : {}),
+                ...(discountsCatalog !== undefined ? { discountsCatalog } : {}),
+            });
+        }
+    }, [inclusionsCatalog, inclusionsSidebar, taxTopicsCatalog, citiesCatalog, discountsCatalog, setCatalogData]);
 
     useEffect(() => {
         setPrintMode(true);
@@ -144,7 +174,12 @@ export function PrintClient({ floorplans, stories, completedProperties }: Props)
         return () => clearTimeout(t);
     }, []);
 
-    async function exportPdf() {
+    async function exportPdf(target: "download" | "pipedrive" = "download") {
+        if (target === "pipedrive") {
+            setPdSaveState("saving");
+            setPdError(null);
+            setPdNote(null);
+        }
         // Build the capture list from the user's selection. Each entry pairs
         // the actual <div> with its slide-number metadata so we can still
         // restore inline styles to ALL slides (not just selected ones) in
@@ -294,14 +329,42 @@ export function PrintClient({ floorplans, stories, completedProperties }: Props)
                 .replace(/^-+|-+$/g, "")
                 .slice(0, 60) || "proposal";
             const filename = `BackyardEstates-${lastName}-${safeAddress}.pdf`;
-            pdf.save(filename);
 
-            setPhase({ state: "done" });
+            if (target === "pipedrive") {
+                // Upload the deck PDF + post a Pipedrive note via the API.
+                if (!proposalId) {
+                    setPdSaveState("error");
+                    setPdError("No proposal id — open from the proposal tool to save to Pipedrive.");
+                } else {
+                    const blob = pdf.output("blob");
+                    const fd = new FormData();
+                    fd.append("file", new File([blob], filename, { type: "application/pdf" }));
+                    const res = await fetch(`/api/proposals/${proposalId}/proposal-pdf`, {
+                        method: "POST",
+                        body: fd,
+                    });
+                    const d = await res.json().catch(() => ({}));
+                    if (!res.ok) {
+                        setPdSaveState("error");
+                        setPdError(d?.error || `Save failed (HTTP ${res.status})`);
+                    } else {
+                        setPdNote(d?.pipedriveNote ?? null);
+                        setPdSaveState("saved");
+                    }
+                }
+                // Return the deck preview to its ready state (not "in Downloads").
+                setPhase({ state: "ready" });
+            } else {
+                pdf.save(filename);
+                setPhase({ state: "done" });
+            }
         } catch (err) {
-            setPhase({
-                state: "error",
-                message: err instanceof Error ? err.message : String(err),
-            });
+            const message = err instanceof Error ? err.message : String(err);
+            setPhase({ state: "error", message });
+            if (target === "pipedrive") {
+                setPdSaveState("error");
+                setPdError(message);
+            }
         } finally {
             // Restore inline styles on each slide.
             slides.forEach((el, i) => {
@@ -349,7 +412,19 @@ export function PrintClient({ floorplans, stories, completedProperties }: Props)
                     <span className={s.counterNum}>{selectedSlides.size}</span>
                     <span>/ {SLIDES.length} selected</span>
                 </span>
-                <span className={s.status}>{statusText}</span>
+                <span className={s.status}>
+                    {pdSaveState === "error" && pdError
+                        ? pdError
+                        : pdSaveState === "saved" && pdNote === "no-link"
+                            ? "Saved — but no Pipedrive deal is linked to this proposal."
+                            : pdSaveState === "saved" && pdNote === "not-configured"
+                                ? "Saved — Pipedrive is not configured."
+                                : pdSaveState === "saved" && pdNote === "failed"
+                                    ? "Saved — but the Pipedrive note failed to post."
+                                    : pdSaveState === "saved" && pdNote === "posted"
+                                        ? "Saved & note posted to Pipedrive."
+                                        : statusText}
+                </span>
                 <div className={s.toolbarRight}>
                     <button
                         type="button"
@@ -378,12 +453,28 @@ export function PrintClient({ floorplans, stories, completedProperties }: Props)
                     <span className={s.toolbarSep} />
                     <button
                         type="button"
-                        className={s.printBtn}
-                        onClick={exportPdf}
-                        disabled={busy || selectedSlides.size === 0}
+                        className={s.toolbarBtn}
+                        onClick={() => exportPdf("download")}
+                        disabled={busy || pdSaveState === "saving" || selectedSlides.size === 0}
+                        title="Build the PDF and download it to this device"
                     >
-                        {phase.state === "done" ? "Export again" : `Save as PDF (${selectedSlides.size})`}
+                        {phase.state === "done" ? "Download again" : `Download PDF (${selectedSlides.size})`}
                     </button>
+                    {proposalId && (
+                        <button
+                            type="button"
+                            className={s.printBtn}
+                            onClick={() => exportPdf("pipedrive")}
+                            disabled={busy || pdSaveState === "saving" || selectedSlides.size === 0}
+                            title="Build the PDF, store it, and post a note with the link to the linked Pipedrive deal"
+                        >
+                            {pdSaveState === "saving"
+                                ? "Saving…"
+                                : pdSaveState === "saved"
+                                    ? (pdNote === "posted" ? "Saved + noted ✓" : "Saved ✓")
+                                    : "Save to Pipedrive"}
+                        </button>
+                    )}
                 </div>
             </div>
 

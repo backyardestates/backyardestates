@@ -2,6 +2,7 @@
 
 import React from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { unitNameParts } from "@/lib/units/displayName";
 import { resolveBeds, resolveBaths } from "@/lib/units/resolveUnitSpec";
 import { AduTypeBadge } from "../_components/AduTypeBadge";
 import s from "./Slide2.module.css";
@@ -16,6 +17,7 @@ export function Slide2_YourProperty() {
         comparedUnitIds,
         bedsByUnitId,
         bathsByUnitId,
+        labelByUnitId,
     } = usePresentationStore();
 
     const aduLabel = aduType
@@ -79,7 +81,19 @@ export function Slide2_YourProperty() {
                                 />
                                 <div className={s.unitMeta}>
                                     <div className={s.unitIndex}>Option {String(idx + 1).padStart(2, "0")}</div>
-                                    <div className={s.unitName}>The {fp.name}</div>
+                                    {(() => {
+                                        const nm = unitNameParts(fp.name, labelByUnitId?.[fp._id]);
+                                        return (
+                                            <div className={s.unitName}>
+                                                The {nm.base}
+                                                {nm.tag ? (
+                                                    <span className={s.unitNameTag}> · {nm.tag}</span>
+                                                ) : nm.dupNum ? (
+                                                    ` (${nm.dupNum})`
+                                                ) : null}
+                                            </div>
+                                        );
+                                    })()}
                                     {(() => {
                                         const beds = resolveBeds(fp, bedsByUnitId);
                                         const baths = resolveBaths(fp, bathsByUnitId);

@@ -4,6 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { isDropboxSignConfigured, sendSignatureRequest } from "@/lib/esign/dropboxSign";
 import { transitionEngagementStage } from "@/lib/engagement/stage";
+import { isPipedriveConfigured } from "@/lib/pipedrive/client";
+import { fetchPipedriveContact } from "@/lib/pipedrive/contact";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,23 +36,21 @@ export async function POST(
                 id: true,
                 customerName: true,
                 customerEmail: true,
+                pipedrivePersonId: true,
+                pipedriveDealId: true,
                 engagementId: true,
-                engagement: { select: { customerEmail: true, customerName: true } },
+                engagement: {
+                    select: {
+                        customerEmail: true,
+                        customerName: true,
+                        pipedrivePersonId: true,
+                        pipedriveDealId: true,
+                    },
+                },
             },
         });
         if (!proposal) {
             return NextResponse.json({ error: "Not found" }, { status: 404 });
-        }
-
-        const signerEmail =
-            proposal.customerEmail?.trim() || proposal.engagement?.customerEmail?.trim() || "";
-        const signerName =
-            proposal.customerName?.trim() || proposal.engagement?.customerName?.trim() || "Customer";
-        if (!signerEmail) {
-            return NextResponse.json(
-                { error: "No customer email on file to send the agreement to." },
-                { status: 400 },
-            );
         }
 
         const form = await req.formData();
@@ -57,6 +59,48 @@ export async function POST(
             return NextResponse.json({ error: "Missing agreement file" }, { status: 400 });
         }
         const buffer = Buffer.from(await file.arrayBuffer());
+
+        // Resolve the signer email, most-specific first:
+        //   1. explicit `to` from the request (rep typed it inline in the preview)
+        //   2. the proposal's own customer email
+        //   3. the linked engagement's customer email
+        //   4. last resort: the linked Pipedrive person's primary email
+        const toOverride = (form.get("to") as string | null)?.trim() || "";
+        let signerEmail =
+            toOverride ||
+            proposal.customerEmail?.trim() ||
+            proposal.engagement?.customerEmail?.trim() ||
+            "";
+
+        if (!signerEmail && isPipedriveConfigured()) {
+            const personId =
+                proposal.pipedrivePersonId || proposal.engagement?.pipedrivePersonId || null;
+            const dealId =
+                proposal.pipedriveDealId || proposal.engagement?.pipedriveDealId || null;
+            if (personId || dealId) {
+                const contact = await fetchPipedriveContact({
+                    personId: personId ? Number(personId) : null,
+                    dealId: dealId ? Number(dealId) : null,
+                }).catch(() => null);
+                if (contact?.customerEmail) signerEmail = contact.customerEmail.trim();
+            }
+        }
+
+        const signerName =
+            proposal.customerName?.trim() || proposal.engagement?.customerName?.trim() || "Customer";
+
+        if (!signerEmail) {
+            return NextResponse.json(
+                { error: "No customer email on file to send the agreement to. Add one in Step 1 of the proposal or enter it here." },
+                { status: 400 },
+            );
+        }
+        if (!EMAIL_RE.test(signerEmail)) {
+            return NextResponse.json(
+                { error: `"${signerEmail}" doesn't look like a valid email address.` },
+                { status: 400 },
+            );
+        }
 
         const { signatureRequestId } = await sendSignatureRequest({
             file: buffer,
@@ -72,7 +116,15 @@ export async function POST(
 
         await prisma.proposal.update({
             where: { id },
-            data: { signatureRequestId, status: ProposalStatus.SENT },
+            data: {
+                signatureRequestId,
+                status: ProposalStatus.SENT,
+                // Persist the email we actually sent to, so it's on file next time
+                // (covers the inline-entry and Pipedrive-fallback cases).
+                ...(proposal.customerEmail?.trim() !== signerEmail
+                    ? { customerEmail: signerEmail }
+                    : {}),
+            },
         });
 
         if (proposal.engagementId) {

@@ -1,171 +1,285 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { Role, ProposalStatus } from "@prisma/client";
+import { ArrowRight, ArrowUpRight, Inbox } from "lucide-react";
+import { EngagementStage } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { getDbUser } from "@/lib/auth";
-import { ProposalRowMenu } from "../_components/ProposalRowMenu";
+import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
+import { getPermissions } from "@/lib/rbac/getPermissions";
+import { stageLabel } from "@/lib/engagement/stage";
+import { ROLE_LABELS } from "@/types/roles";
+import {
+    visibleSections,
+    sectionByKey,
+    hasAnyPermission,
+    GROUP_ORDER,
+    type DashboardSection,
+} from "@/lib/dashboard/registry";
+import { sectionIcon } from "@/lib/dashboard/icons";
+import { loadGlances, type GlanceResult } from "@/lib/dashboard/loaders";
+import { StartEngagement } from "../engagements/StartEngagement";
+import { StartFpaFromDashboard, type ActiveEngagementOption } from "./StartFpaFromDashboard";
 import s from "./dashboard.module.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function UserDashboard({
-    searchParams,
-}: {
-    searchParams: Promise<{ status?: string }>;
-}) {
-    let me;
-    try {
-        me = await getDbUser();
-    } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        if (msg === "UNAUTHORIZED") redirect("/sign-in?redirect_url=/tools/dashboard");
-        throw err;
-    }
+export default async function DashboardPage() {
+    const { userId, organizationId, role } = await ensureProposalContext();
+    const perms = await getPermissions(role);
+    const can = (k: string) => perms.has(k);
 
-    const { status: rawStatus } = await searchParams;
-    const filter = rawStatus && (Object.values(ProposalStatus) as string[]).includes(rawStatus.toUpperCase())
-        ? (rawStatus.toUpperCase() as ProposalStatus)
-        : null;
+    const me = await prisma.user
+        .findUnique({ where: { id: userId }, select: { email: true } })
+        .catch(() => null);
+    const email = me?.email ?? null;
 
-    const [proposals, statusCounts] = await Promise.all([
-        prisma.proposal.findMany({
-            where: {
-                createdById: me.id,
-                ...(filter ? { status: filter } : {}),
-            },
-            orderBy: { updatedAt: "desc" },
-            select: {
-                id: true,
-                customerName: true,
-                addressLine1: true,
-                city: true,
-                state: true,
-                addressKey: true,
-                status: true,
-                updatedAt: true,
-                _count: { select: { lineItems: true, discounts: true } },
-            },
-        }),
-        prisma.proposal.groupBy({
-            by: ["status"],
-            where: { createdById: me.id },
-            _count: { _all: true },
-        }),
-    ]);
+    const tiles = visibleSections(perms).filter((sec) => sec.showAsTile);
+    const glances = await loadGlances(
+        tiles.map((t) => t.key),
+        { userId, organizationId, can },
+    );
 
-    const countBy: Record<string, number> = {};
-    for (const c of statusCounts) countBy[c.status] = c._count._all;
-    const total = Object.values(countBy).reduce((a, b) => a + b, 0);
+    // Quick-action permissions + data.
+    const canStartEngagement = can("engagements.start");
+    const canStartFpa = can("fpa.create");
 
-    const canBuild = me.role === Role.ARCHITECT || me.role === Role.ADMIN;
-    const displayName = me.email || me.id;
+    // Active engagements to pick from when starting an FPA from the dashboard.
+    const engScope = can("engagements.view_all")
+        ? {}
+        : { OR: [{ repId: userId }, { architectId: userId }] };
+    const activeEngagements: ActiveEngagementOption[] = canStartFpa
+        ? (
+              await prisma.engagement
+                  .findMany({
+                      where: {
+                          organizationId,
+                          ...engScope,
+                          stage: { notIn: [EngagementStage.SIGNED, EngagementStage.LOST] },
+                      },
+                      orderBy: { updatedAt: "desc" },
+                      take: 50,
+                      select: {
+                          id: true,
+                          customerName: true,
+                          addressLine1: true,
+                          city: true,
+                          state: true,
+                          stage: true,
+                      },
+                  })
+                  .catch(() => [])
+          ).map((e) => ({
+              id: e.id,
+              customerName: e.customerName || "(no name)",
+              address: [e.addressLine1, e.city, e.state].filter(Boolean).join(", ") || "(no address)",
+              stageLabel: stageLabel(e.stage),
+          }))
+        : [];
+
+    // Proposals shared with this customer's email (admin-granted). Read-only
+    // presentation only — never the internal builder, no internal costs.
+    const sharedProposals = email
+        ? await prisma.proposal
+              .findMany({
+                  where: {
+                      customerEmail: { equals: email, mode: "insensitive" },
+                      sharedWithCustomerAt: { not: null },
+                  },
+                  orderBy: { updatedAt: "desc" },
+                  select: {
+                      id: true,
+                      shareToken: true,
+                      customerName: true,
+                      addressLine1: true,
+                      city: true,
+                      state: true,
+                  },
+              })
+              .catch(() => [])
+        : [];
+
+    const greetName = email ? email.split("@")[0] : "there";
+    const roleLabel = (ROLE_LABELS as Record<string, string>)[role] ?? role;
+    const builderVisible = hasAnyPermission(perms, ["proposals.edit"]);
+    const builderHref = sectionByKey("proposalBuilder")?.href ?? "/tools/admin/master";
+    const isEmpty = tiles.length === 0 && sharedProposals.length === 0;
 
     return (
-        <div className={s.shell}>
-            <header className={s.header}>
-                <div>
-                    <div className={s.eyebrow}>Signed in as <strong>{displayName}</strong> · {me.role}</div>
-                    <h1 className={s.title}>Your <em>proposals</em></h1>
-                    <p className={s.subtitle}>
-                        {total} {total === 1 ? "proposal" : "proposals"} created by you
-                    </p>
+        <div className={s.page}>
+            <header className={s.hero}>
+                <div className={s.heroTop}>
+                    <div>
+                        <p className={s.eyebrow}>Dashboard</p>
+                        <h1 className={s.title}>
+                            Welcome back, <em>{greetName}</em>
+                        </h1>
+                        <p className={s.subtitle}>Jump straight to what needs you today.</p>
+                    </div>
+                    <span className={s.rolePill}>{roleLabel}</span>
                 </div>
-                {canBuild && (
-                    <Link href="/tools/admin/master" className={s.primaryAction}>
-                        + New proposal
-                    </Link>
-                )}
             </header>
 
-            {/* Filter tabs (only show if there are any proposals) */}
-            {total > 0 && (
-                <nav className={s.filterTabs}>
-                    <FilterTab label={`All (${total})`} value={null} active={filter === null} />
-                    {Object.values(ProposalStatus).map((st) => (
-                        <FilterTab
-                            key={st}
-                            label={`${st} (${countBy[st] ?? 0})`}
-                            value={st}
-                            active={filter === st}
-                        />
-                    ))}
-                </nav>
-            )}
-
-            {proposals.length === 0 ? (
-                <div className={s.empty}>
-                    {total === 0 ? (
-                        canBuild ? (
-                            <>
-                                <p>You haven&apos;t created any proposals yet.</p>
-                                <Link href="/tools/admin/master" className={s.primaryAction}>
-                                    Create your first proposal
-                                </Link>
-                            </>
-                        ) : (
-                            <p>You don&apos;t have any proposals yet. Ask an admin if you should have access to the proposal builder.</p>
-                        )
-                    ) : (
-                        <p>
-                            No proposals match this filter.{" "}
-                            <Link href="/tools/dashboard">Show all</Link>
-                        </p>
-                    )}
-                </div>
-            ) : (
-                <div className={s.tableWrap}>
-                    <table className={s.table}>
-                        <thead>
-                            <tr>
-                                <th>Customer</th>
-                                <th>Address</th>
-                                <th>Status</th>
-                                <th className={s.numCol}>Items</th>
-                                <th className={s.numCol}>Discounts</th>
-                                <th>Updated</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {proposals.map((p) => {
-                                const addr = [p.addressLine1, p.city, p.state].filter(Boolean).join(", ");
+            {GROUP_ORDER.map((group) => {
+                const groupTiles = tiles.filter((t) => t.group === group);
+                if (groupTiles.length === 0) return null;
+                return (
+                    <section key={group} className={s.group}>
+                        <h2 className={s.groupTitle}>{group}</h2>
+                        <div className={s.tileGrid}>
+                            {groupTiles.map((sec) => {
+                                let quickAction: ReactNode = null;
+                                if (sec.key === "engagements" && canStartEngagement) {
+                                    quickAction = (
+                                        <StartEngagement
+                                            label="Start new engagement"
+                                            className={s.primaryAction}
+                                        />
+                                    );
+                                } else if (sec.key === "fpa" && canStartFpa) {
+                                    quickAction = (
+                                        <StartFpaFromDashboard
+                                            engagements={activeEngagements}
+                                            allowNewEngagement={canStartEngagement}
+                                            label="Start new Formal Property Analysis"
+                                            className={s.primaryAction}
+                                        />
+                                    );
+                                } else if (sec.key === "proposals" && builderVisible) {
+                                    quickAction = (
+                                        <Link href={builderHref} className={s.primaryAction}>
+                                            + New proposal
+                                        </Link>
+                                    );
+                                }
                                 return (
-                                    <tr key={p.id}>
-                                        <td className={s.customerName}>{p.customerName || "(unnamed)"}</td>
-                                        <td className={s.addrCell}>{addr || <span className={s.muted}>—</span>}</td>
-                                        <td>
-                                            <span className={`${s.statusPill} ${s[`status_${p.status}`] ?? ""}`}>
-                                                {p.status}
-                                            </span>
-                                        </td>
-                                        <td className={s.numCol}>{p._count.lineItems}</td>
-                                        <td className={s.numCol}>{p._count.discounts}</td>
-                                        <td className={s.muted}>{p.updatedAt.toLocaleDateString()}</td>
-                                        <td>
-                                            <ProposalRowMenu
-                                                addressKey={p.addressKey}
-                                                customerName={p.customerName}
-                                                canBuild={canBuild}
-                                            />
-                                        </td>
-                                    </tr>
+                                    <Tile
+                                        key={sec.key}
+                                        section={sec}
+                                        glance={glances[sec.key]}
+                                        quickAction={quickAction}
+                                    />
                                 );
                             })}
-                        </tbody>
-                    </table>
+                        </div>
+                    </section>
+                );
+            })}
+
+            {sharedProposals.length > 0 && (
+                <section className={s.group}>
+                    <h2 className={s.groupTitle}>Your proposal</h2>
+                    <div className={s.tileGrid}>
+                        {sharedProposals.map((p) => {
+                            const addr =
+                                [p.addressLine1, p.city, p.state].filter(Boolean).join(", ") ||
+                                "Your ADU proposal";
+                            return (
+                                <article key={p.id} className={s.tile}>
+                                    <div className={s.tileHead}>
+                                        <span className={`${s.tileIcon} ${s.tileIconGold}`}>
+                                            <ArrowUpRight size={20} strokeWidth={1.75} />
+                                        </span>
+                                        <div className={s.tileHeadText}>
+                                            <h3 className={s.tileTitle}>{p.customerName || "Your proposal"}</h3>
+                                            <p className={s.tileBlurb}>{addr}</p>
+                                        </div>
+                                    </div>
+                                    <div className={s.tileFoot}>
+                                        <Link
+                                            href={`/present-v2/${p.shareToken ?? p.id}`}
+                                            className={s.primaryAction}
+                                        >
+                                            View presentation <ArrowRight size={15} strokeWidth={2} />
+                                        </Link>
+                                    </div>
+                                </article>
+                            );
+                        })}
+                    </div>
+                </section>
+            )}
+
+            {isEmpty && (
+                <div className={s.welcome}>
+                    <span className={s.welcomeIcon}>
+                        <Inbox size={28} strokeWidth={1.5} />
+                    </span>
+                    <h2 className={s.welcomeTitle}>Welcome to Backyard Estates</h2>
+                    <p className={s.welcomeText}>
+                        Your tools will appear here as access is granted. If you&apos;re expecting a
+                        proposal, your project lead will share it with you shortly.
+                    </p>
                 </div>
             )}
         </div>
     );
 }
 
-function FilterTab({ label, value, active }: { label: string; value: ProposalStatus | null; active: boolean }) {
+function Tile({
+    section,
+    glance,
+    quickAction,
+}: {
+    section: DashboardSection;
+    glance: GlanceResult | undefined;
+    quickAction?: ReactNode;
+}) {
+    const Icon = sectionIcon(section.icon);
+    const count = glance?.count ?? 0;
+    const queue = glance?.queue ?? [];
+    const secondary = glance?.secondary ?? [];
+
     return (
-        <Link
-            href={value === null ? "/tools/dashboard" : `/tools/dashboard?status=${value}`}
-            className={`${s.filterTab} ${active ? s.filterTabActive : ""}`}
-        >
-            {label}
-        </Link>
+        <article className={s.tile}>
+            <div className={s.tileHead}>
+                <span className={s.tileIcon}>
+                    <Icon size={20} strokeWidth={1.75} />
+                </span>
+                <div className={s.tileHeadText}>
+                    <h3 className={s.tileTitle}>{section.label}</h3>
+                    <p className={s.tileBlurb}>{section.blurb}</p>
+                </div>
+                {count > 0 && (
+                    <span className={s.countBadge} aria-label={`${count} need attention`}>
+                        {count}
+                    </span>
+                )}
+            </div>
+
+            {queue.length > 0 && (
+                <ul className={s.queue}>
+                    {queue.map((item) => (
+                        <li key={item.id}>
+                            <Link href={item.href} className={s.queueRow}>
+                                <span className={s.queueMain}>
+                                    <span className={s.queueTitle}>{item.title}</span>
+                                    {item.subtitle && (
+                                        <span className={s.queueSub}>{item.subtitle}</span>
+                                    )}
+                                </span>
+                                {item.meta && <span className={s.queueMeta}>{item.meta}</span>}
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            {secondary.length > 0 && (
+                <div className={s.secondaryRow}>
+                    {secondary.map((stat) => (
+                        <Link key={stat.label} href={stat.href} className={s.secondaryChip}>
+                            <span className={s.secondaryValue}>{stat.value}</span>
+                            <span className={s.secondaryLabel}>{stat.label}</span>
+                        </Link>
+                    ))}
+                </div>
+            )}
+
+            <div className={s.tileFoot}>
+                {quickAction}
+                <Link href={section.href} className={s.tileOpen}>
+                    Open {section.label} <ArrowRight size={15} strokeWidth={2} />
+                </Link>
+            </div>
+        </article>
     );
 }

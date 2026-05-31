@@ -91,9 +91,12 @@ type Phase =
     | { state: "ready" }
     | { state: "error"; message: string };
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export function AgreementPreviewClient({
     initialInput,
     proposalId,
+    initialEmail,
 }: {
     /** Phase 0b: when provided (by the /agreement/[id] route), the preview
      *  builds from this persisted input instead of the localStorage handoff
@@ -101,13 +104,23 @@ export function AgreementPreviewClient({
     initialInput?: AgreementBuildInput;
     /** Phase 6: present in by-id mode — enables "Send for signature". */
     proposalId?: string;
+    /** Customer email on file (proposal → engagement). When absent, the rep is
+     *  prompted to enter one inline before sending for signature. */
+    initialEmail?: string;
 } = {}) {
     const [phase, setPhase] = useState<Phase>({ state: "loading" });
     const [signState, setSignState] = useState<"idle" | "sending" | "sent" | "error">("idle");
     const [signError, setSignError] = useState<string | null>(null);
+    // Recipient email for e-signature. Seeded from what's on file; editable when
+    // missing so the rep never gets blocked at send time.
+    const [recipientEmail, setRecipientEmail] = useState(initialEmail ?? "");
     const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
     const [saveError, setSaveError] = useState<string | null>(null);
     const [savedUrl, setSavedUrl] = useState<string | null>(null);
+    /** Whether the post-save Pipedrive note landed — surfaced on the button so
+     *  the rep knows the deal record got the link (or why it didn't). */
+    const [pipedriveNote, setPipedriveNote] =
+        useState<"posted" | "no-link" | "not-configured" | "failed" | null>(null);
     const [html, setHtml] = useState<string>("");
     const [data, setData] = useState<AgreementTemplateData | null>(null);
     /** Original (un-edited) Blob, kept so the user can download the .docx
@@ -121,6 +134,17 @@ export function AgreementPreviewClient({
     /** Currently-active compared unit. Defaults to the admin's `selectedAduId`
      *  in the handoff, falls back to the first compared unit with a schedule. */
     const [selectedAduId, setSelectedAduId] = useState<string | null>(null);
+
+    /** Live sync: when on, the preview re-reads the admin tab's handoff and
+     *  rebuilds whenever the proposal changes (cross-tab `storage` event).
+     *  Available in BOTH flows — the admin tab keeps writing HANDOFF_KEY as the
+     *  rep edits, so even the by-id preview (opened with ?proposalId=) picks up
+     *  changes. When opened standalone (no admin tab editing), no events fire,
+     *  so it just sits idle. Defaults on; the rep can pause it while reading. */
+    const liveSyncAvailable = true;
+    const [liveSync, setLiveSync] = useState(true);
+    /** Bumped when a live update arrives — drives the "updated" flash. */
+    const [liveTick, setLiveTick] = useState(0);
 
     // Snapshot the comparable-unit options for the dropdown. Only units that
     // actually have a payment schedule are eligible — otherwise the agreement
@@ -148,10 +172,10 @@ export function AgreementPreviewClient({
                     setInput(initialInput);
                     setSelectedAduId(
                         initialInput.selectedAduId ??
-                            (initialInput.comparedUnitIds ?? []).find(
-                                (id) => initialInput.proposalPaymentSchedulesByAduId?.[id]
-                            ) ??
-                            null
+                        (initialInput.comparedUnitIds ?? []).find(
+                            (id) => initialInput.proposalPaymentSchedulesByAduId?.[id]
+                        ) ??
+                        null
                     );
                     return;
                 }
@@ -168,10 +192,10 @@ export function AgreementPreviewClient({
                     setInput(parsed);
                     setSelectedAduId(
                         parsed.selectedAduId ??
-                            (parsed.comparedUnitIds ?? []).find(
-                                (id) => parsed.proposalPaymentSchedulesByAduId?.[id]
-                            ) ??
-                            null
+                        (parsed.comparedUnitIds ?? []).find(
+                            (id) => parsed.proposalPaymentSchedulesByAduId?.[id]
+                        ) ??
+                        null
                     );
                     return; // the effect below will render once `input` + `selectedAduId` are set
                 }
@@ -236,6 +260,55 @@ export function AgreementPreviewClient({
         return () => { cancelled = true; };
     }, [input, selectedAduId]);
 
+    // ── Live sync — re-read the admin handoff when the proposal changes ──────
+    // The admin tab keeps `HANDOFF_KEY` fresh (debounced) as the rep edits.
+    // `storage` events fire in *other* tabs/windows, so this preview window
+    // hears every change. We swap in the new input (keeping the rep's chosen
+    // unit when it still exists); the rebuild effect above then regenerates.
+    useEffect(() => {
+        if (!liveSyncAvailable || !liveSync) return;
+        function onStorage(e: StorageEvent) {
+            if (e.key !== HANDOFF_KEY || !e.newValue) return;
+            let parsed: AgreementBuildInput;
+            try {
+                parsed = JSON.parse(e.newValue) as AgreementBuildInput;
+            } catch {
+                return; // ignore malformed mid-write values
+            }
+            // Guard against cross-proposal contamination: if this preview is
+            // pinned to a specific proposal (by-id mode), only accept a live
+            // update that's for the SAME property. Otherwise switching proposals
+            // in the admin tab would hijack this window.
+            const pinnedAddress = initialInput?.propertyAddress;
+            if (pinnedAddress && parsed.propertyAddress !== pinnedAddress) {
+                return;
+            }
+            setInput(parsed);
+            // Keep the current unit if it's still valid; otherwise fall back.
+            setSelectedAduId((cur) => {
+                const stillValid = cur && parsed.proposalPaymentSchedulesByAduId?.[cur];
+                if (stillValid) return cur;
+                return (
+                    parsed.selectedAduId ??
+                    (parsed.comparedUnitIds ?? []).find(
+                        (id) => parsed.proposalPaymentSchedulesByAduId?.[id]
+                    ) ??
+                    null
+                );
+            });
+            setLiveTick((t) => t + 1);
+        }
+        window.addEventListener("storage", onStorage);
+        return () => window.removeEventListener("storage", onStorage);
+    }, [liveSyncAvailable, liveSync, initialInput]);
+
+    // Clear the "updated" flash shortly after each live update.
+    useEffect(() => {
+        if (liveTick === 0) return;
+        const id = window.setTimeout(() => setLiveTick(0), 1600);
+        return () => window.clearTimeout(id);
+    }, [liveTick]);
+
     function handlePrint() {
         window.print();
     }
@@ -258,6 +331,12 @@ export function AgreementPreviewClient({
 
     async function handleSendForSignature() {
         if (!proposalId || !docxBlobRef.current) return;
+        const to = recipientEmail.trim();
+        if (!EMAIL_RE.test(to)) {
+            setSignError("Enter a valid customer email to send the agreement.");
+            setSignState("error");
+            return;
+        }
         setSignState("sending");
         setSignError(null);
         try {
@@ -271,6 +350,7 @@ export function AgreementPreviewClient({
                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 }),
             );
+            fd.append("to", to);
             const res = await fetch(`/api/proposals/${proposalId}/send-for-signature`, {
                 method: "POST",
                 body: fd,
@@ -341,6 +421,7 @@ export function AgreementPreviewClient({
             const d = await res.json();
             if (!res.ok) throw new Error(d.error || "Failed to save the PDF");
             setSavedUrl(d.pdfUrl ?? null);
+            setPipedriveNote(d.pipedriveNote ?? null);
             setSaveState("saved");
         } catch (err) {
             setSaveError(err instanceof Error ? err.message : String(err));
@@ -358,19 +439,44 @@ export function AgreementPreviewClient({
     return (
         <div className={s.root}>
             <div className={s.toolbar}>
+                {/* ── Identity + live status ─────────────────────────────── */}
                 <div className={s.toolbarLeft}>
-                    <span className={s.title}>Agreement Preview</span>
-                    {data && (
-                        <span className={s.subtitle}>
-                            {data.customerName || "—"} · {data.propertyAddress || "—"}
-                        </span>
+                    <div className={s.identity}>
+                        <span className={s.title}>Agreement Preview</span>
+                        {data && (
+                            <span className={s.subtitle}>
+                                {data.customerName || "—"} · {data.propertyAddress || "—"}
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Live-sync pill — a status indicator (distinct from the
+                        action buttons), only in the live "Edit Agreement" flow. */}
+                    {liveSyncAvailable && (
+                        <button
+                            type="button"
+                            className={`${s.livePill} ${liveSync ? s.liveOn : s.livePaused} ${liveTick > 0 ? s.liveFlash : ""}`}
+                            onClick={() => setLiveSync((v) => !v)}
+                            title={
+                                liveSync
+                                    ? "Live — this preview updates automatically as you edit the proposal. Click to pause."
+                                    : "Paused — click to resume live updates from the proposal."
+                            }
+                            aria-pressed={liveSync}
+                        >
+                            <span className={s.liveDot} aria-hidden />
+                            <span className={s.livePillText}>
+                                {liveSync ? (liveTick > 0 ? "Updated" : "Live") : "Paused"}
+                            </span>
+                        </button>
                     )}
+
                     <span className={s.status}>{statusText()}</span>
                 </div>
 
+                {/* ── Actions — grouped by tier, wraps gracefully ────────── */}
                 <div className={s.actions}>
-                    {/* Unit switcher — visible whenever the rebuild inputs are
-                        available and there's more than one compared unit. */}
+                    {/* Context: which unit drives the agreement. */}
                     {switchableUnits.length > 1 && (
                         <label className={s.unitSwitch}>
                             <span className={s.unitSwitchLabel}>Based on</span>
@@ -391,34 +497,45 @@ export function AgreementPreviewClient({
                         </label>
                     )}
 
-                    <button
-                        type="button"
-                        className={s.btn}
-                        onClick={handleDownloadDocx}
-                        disabled={phase.state !== "ready"}
-                        title="Downloads the editable Word document generated from your proposal data. Inline edits made in this preview are NOT included — use this when you want to keep editing in Microsoft Word."
-                    >
-                        <span className={s.btnLabel}>
-                            <span>Download .docx</span>
-                            <span className={s.btnHint}>editable in Word · no inline edits</span>
-                        </span>
-                    </button>
-                    <button
-                        type="button"
-                        className={`${s.btn} ${s.btnPrimary}`}
-                        onClick={handlePrint}
-                        disabled={phase.state !== "ready"}
-                        title="Opens the browser print dialog so you can save the agreement as a PDF. Any inline edits you've made in this preview ARE included — use this for the final version to send the customer."
-                    >
-                        <span className={s.btnLabel}>
-                            <span>Save as PDF</span>
-                            <span className={s.btnHint}>final · includes your inline edits</span>
-                        </span>
-                    </button>
+                    {/* Secondary: download outputs. */}
+                    <div className={s.btnGroup}>
+                        <button
+                            type="button"
+                            className={s.btn}
+                            onClick={handleDownloadDocx}
+                            disabled={phase.state !== "ready"}
+                            title="Downloads the editable Word document generated from your proposal data. Inline edits made in this preview are NOT included — use this when you want to keep editing in Microsoft Word."
+                        >
+                            <span className={s.btnIcon} aria-hidden>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
+                            </span>
+                            <span className={s.btnLabel}>
+                                <span>.docx</span>
+                                <span className={s.btnHint}>editable · no inline edits</span>
+                            </span>
+                        </button>
+                        <button
+                            type="button"
+                            className={s.btn}
+                            onClick={handlePrint}
+                            disabled={phase.state !== "ready"}
+                            title="Opens the browser print dialog so you can save the agreement as a PDF. Any inline edits you've made in this preview ARE included — use this for the final version to send the customer."
+                        >
+                            <span className={s.btnIcon} aria-hidden>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
+                            </span>
+                            <span className={s.btnLabel}>
+                                <span>PDF</span>
+                                <span className={s.btnHint}>final · includes edits</span>
+                            </span>
+                        </button>
+                    </div>
+
+                    {/* Save to the deal record (secondary, only when saved). */}
                     {proposalId && (
                         <button
                             type="button"
-                            className={`${s.btn} ${s.btnPrimary}`}
+                            className={`${s.btn} ${saveState === "saved" ? s.btnSuccess : ""}`}
                             onClick={handleSavePdf}
                             disabled={phase.state !== "ready" || saveState === "saving"}
                             title="Generates a PDF (with your inline edits) and stores it to the cloud so you — and the deal record — can open the latest agreement from any device."
@@ -426,48 +543,84 @@ export function AgreementPreviewClient({
                             <span className={s.btnLabel}>
                                 <span>
                                     {saveState === "saved"
-                                        ? "Saved to cloud ✓"
+                                        ? (pipedriveNote === "posted" ? "Saved + noted ✓" : "Saved ✓")
                                         : saveState === "saving"
-                                          ? "Saving…"
-                                          : "Save & store PDF"}
+                                            ? "Saving…"
+                                            : "Save to deal"}
                                 </span>
                                 <span className={s.btnHint}>
-                                    {saveState === "saved" && savedUrl ? (
-                                        <a href={savedUrl} target="_blank" rel="noopener noreferrer">
-                                            Open saved PDF
-                                        </a>
+                                    {saveState === "saved" ? (
+                                        <>
+                                            {savedUrl && (
+                                                <a href={savedUrl} target="_blank" rel="noopener noreferrer">
+                                                    Open saved PDF
+                                                </a>
+                                            )}
+                                            {pipedriveNote === "posted" && " · note added to Pipedrive"}
+                                            {pipedriveNote === "no-link" && " · no Pipedrive deal linked"}
+                                            {pipedriveNote === "failed" && " · Pipedrive note failed"}
+                                            {pipedriveNote === "not-configured" && " · Pipedrive not configured"}
+                                        </>
                                     ) : (
-                                        saveError ?? "stored · retrievable anywhere"
+                                        saveError ?? "stores PDF + posts link to Pipedrive"
                                     )}
                                 </span>
                             </span>
                         </button>
                     )}
+
+                    {/* Primary: the terminal action — send for signature. */}
                     {proposalId && (
-                        <button
-                            type="button"
-                            className={`${s.btn} ${s.btnPrimary}`}
-                            onClick={handleSendForSignature}
-                            disabled={
-                                phase.state !== "ready" ||
-                                signState === "sending" ||
-                                signState === "sent"
-                            }
-                            title="Send this agreement to the customer for e-signature via Dropbox Sign."
-                        >
-                            <span className={s.btnLabel}>
-                                <span>
-                                    {signState === "sent"
-                                        ? "Sent for signature ✓"
-                                        : signState === "sending"
-                                          ? "Sending…"
-                                          : "Send for signature"}
+                        <div className={s.primaryCluster}>
+                            <label className={s.recipient} title="The agreement is e-signed by this customer email.">
+                                <span className={s.recipientLabel}>Send to</span>
+                                <input
+                                    type="email"
+                                    className={s.recipientInput}
+                                    value={recipientEmail}
+                                    onChange={(e) => setRecipientEmail(e.target.value)}
+                                    placeholder="customer@example.com"
+                                    disabled={signState === "sending" || signState === "sent"}
+                                />
+                            </label>
+                            <button
+                                type="button"
+                                className={`${s.btn} ${s.btnPrimary}`}
+                                onClick={handleSendForSignature}
+                                disabled={
+                                    phase.state !== "ready" ||
+                                    signState === "sending" ||
+                                    signState === "sent" ||
+                                    !EMAIL_RE.test(recipientEmail.trim())
+                                }
+                                title="Send this agreement to the customer for e-signature via Dropbox Sign."
+                            >
+                                <span className={s.btnIcon} aria-hidden>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2l-7 20-4-9-9-4 20-7z" /></svg>
                                 </span>
-                                <span className={s.btnHint}>
-                                    {signError ?? "e-sign · Dropbox Sign"}
+                                <span className={s.btnLabel}>
+                                    <span>
+                                        {signState === "sent"
+                                            ? "Sent for signature ✓"
+                                            : signState === "sending"
+                                                ? "Sending…"
+                                                : "Send for signature"}
+                                    </span>
+                                    <span className={s.btnHint}>
+                                        {signError ??
+                                            (signState === "sent"
+                                                ? "signed copy saves automatically"
+                                                : "e-sign · Dropbox Sign")}
+                                    </span>
                                 </span>
-                            </span>
-                        </button>
+                            </button>
+                        </div>
+                    )}
+
+                    {!proposalId && phase.state === "ready" && (
+                        <span className={s.saveHint} title="The agreement couldn't be attached to a saved proposal.">
+                            Save the proposal to enable saving &amp; sending for signature.
+                        </span>
                     )}
                 </div>
             </div>

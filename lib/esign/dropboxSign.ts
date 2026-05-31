@@ -68,6 +68,35 @@ export async function sendSignatureRequest(
 }
 
 /**
+ * Download the executed (signed) PDF for a completed signature request.
+ *
+ * Right after the `all_signed` event the combined file can still be assembling;
+ * Dropbox Sign answers with 409 ("file not ready") in that window, so we retry a
+ * few times before giving up. Returns the raw PDF bytes.
+ */
+export async function downloadSignedPdf(signatureRequestId: string): Promise<Buffer> {
+    if (!process.env.DROPBOX_SIGN_API_KEY) {
+        throw new Error("DROPBOX_SIGN_API_KEY is not set.");
+    }
+    const url = `${API_BASE}/signature_request/files/${encodeURIComponent(
+        signatureRequestId,
+    )}?file_type=pdf`;
+
+    let lastErr = "";
+    for (let attempt = 0; attempt < 3; attempt++) {
+        const res = await fetch(url, { headers: { Authorization: authHeader() } });
+        if (res.ok) {
+            return Buffer.from(await res.arrayBuffer());
+        }
+        lastErr = `${res.status} ${await res.text().catch(() => "")}`.trim();
+        // 409 = still preparing; anything else is a hard failure.
+        if (res.status !== 409) break;
+        await new Promise((r) => setTimeout(r, 1500));
+    }
+    throw new Error(`Dropbox Sign file download failed: ${lastErr}`);
+}
+
+/**
  * Verify a Dropbox Sign event callback. The event_hash is HMAC-SHA256 of
  * (event_time + event_type) keyed by the API key.
  */

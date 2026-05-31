@@ -1,0 +1,86 @@
+/* Accessible numeric stepper — pill group with −/+ affordances.
+ * Shares Step 1's token language (green accent, beige borders). */
+
+.group {
+    --st-ink: var(--color-brand-dark-blue, #14302f);
+    --st-mute: rgba(20, 48, 47, 0.6);
+    --st-border: var(--color-brand-beige-A040, rgba(20, 48, 47, 0.16));
+    --st-soft: var(--color-brand-beige-A020, rgba(20, 48, 47, 0.09));
+    --st-accent: #2a7a52;
+    --st-accent-soft: rgba(42, 122, 82, 0.12);
+
+    display: inline-flex;
+    align-items: stretch;
+    height: 34px;
+    border: 1.5px solid var(--st-border);
+    border-radius: 9px;
+    background: #fff;
+    overflow: hidden;
+    font-family: 'Roboto', system-ui, sans-serif;
+    user-select: none;
+    transition: border-color 0.12s, box-shadow 0.12s;
+}
+
+.group.sm {
+    height: 28px;
+    border-radius: 7px;
+}
+
+.group:hover {
+    border-color: var(--st-mute);
+}
+
+.group:focus-visible {
+    outline: none;
+    border-color: var(--st-accent);
+    box-shadow: 0 0 0 3px var(--st-accent-soft);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    border: none;
+    background: transparent;
+    color: var(--st-mute);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, transform 0.06s;
+}
+
+.sm .btn {
+    width: 28px;
+}
+
+.btn:hover:not(:disabled) {
+    background: var(--st-accent-soft);
+    color: var(--st-accent);
+}
+
+.btn:active:not(:disabled) {
+    transform: scale(0.88);
+}
+
+.btn:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+}
+
+.value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    padding: 0 6px;
+    border-left: 1.5px solid var(--st-soft);
+    border-right: 1.5px solid var(--st-soft);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--st-ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.sm .value {
+    min-width: 30px;
+    font-size: 13px;
+}

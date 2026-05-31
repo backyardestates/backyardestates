@@ -80,9 +80,19 @@ interface Props {
     pipedrivePersonId: string | null;
     /** Current Pipedrive deal ID linked to this proposal. */
     pipedriveDealId: string | null;
-    onChange: (next: { personId: string | null; dealId: string | null }) => void;
+    onChange: (next: {
+        personId: string | null;
+        dealId: string | null;
+        /** Primary email from the linked person, when available — used to
+         *  auto-fill the proposal's customer email. */
+        email?: string | null;
+    }) => void;
     /** Seed value for the search input (e.g. customerName from Step 1). */
     seedQuery?: string;
+    /** Called when the linked record's primary email is resolved from Pipedrive
+     *  (covers deal links, where the email isn't in the search result, and
+     *  reopened proposals). The parent decides whether to apply it. */
+    onResolvedEmail?: (email: string) => void;
 }
 
 export function PipedriveLinkPanel({
@@ -90,6 +100,7 @@ export function PipedriveLinkPanel({
     pipedriveDealId,
     onChange,
     seedQuery,
+    onResolvedEmail,
 }: Props) {
     const [query, setQuery] = useState(seedQuery ?? "");
     const [results, setResults] = useState<SearchResult[]>([]);
@@ -131,12 +142,16 @@ export function PipedriveLinkPanel({
         if (pipedriveDealId) params.set("dealId", pipedriveDealId);
         fetch(`/api/pipedrive/lookup?${params.toString()}`, { signal: ctrl.signal })
             .then((res) => (res.ok ? res.json() : null))
-            .then((data: { person: { name: string } | null; deal: { title: string } | null } | null) => {
+            .then((data: { person: { name: string } | null; deal: { title: string } | null; email?: string | null } | null) => {
                 if (!data) return;
                 if (data.person?.name) setLinkedPersonName(data.person.name);
                 else if (!pipedrivePersonId) setLinkedPersonName(null);
                 if (data.deal?.title) setLinkedDealTitle(data.deal.title);
                 else if (!pipedriveDealId) setLinkedDealTitle(null);
+                // Surface the resolved email so the parent can auto-fill it. This
+                // is the path that makes deal-only links fill the email (the deal
+                // search result carries no email of its own).
+                if (data.email && data.email.trim()) onResolvedEmail?.(data.email.trim());
             })
             .catch(() => {
                 /* fail silently — banner just falls back to ID-only */
@@ -190,7 +205,7 @@ export function PipedriveLinkPanel({
     }
 
     function handleLinkPerson(r: PersonResult) {
-        onChange({ personId: String(r.id), dealId: pipedriveDealId });
+        onChange({ personId: String(r.id), dealId: pipedriveDealId, email: r.email });
         setLinkedPersonName(r.name);
         setSearchOpen(false);
     }
@@ -220,9 +235,7 @@ export function PipedriveLinkPanel({
             <div className={s.header}>
                 <span className={s.eyebrow}>Pipedrive</span>
                 <span className={s.helper}>
-                    Search your pipeline by name, phone, email, or address. Linking
-                    a person/deal will auto-post a proposal note to that record
-                    every time you save.
+                    Link a person/deal to auto-post a proposal note on save.
                 </span>
             </div>
 

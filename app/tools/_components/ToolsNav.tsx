@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SignInButton, SignOutButton } from "@clerk/nextjs";
 import type { Role } from "@prisma/client";
+import { DASHBOARD_SECTIONS, hasAnyPermission } from "@/lib/dashboard/registry";
 import { NotificationBell } from "./NotificationBell";
 import s from "./ToolsNav.module.css";
 
@@ -18,6 +19,10 @@ interface Props {
  *  whose output would otherwise carry the nav into a generated PDF). */
 const HIDE_ON_ROUTES = ["/tools/admin/master/agreement"];
 
+/** Hrefs that should only be "active" on an exact match (landing pages that are
+ *  prefixes of many child routes). */
+const EXACT_MATCH = new Set(["/tools/dashboard"]);
+
 export function ToolsNav({ signedIn, role, email, permissions }: Props) {
     const pathname = usePathname() ?? "";
 
@@ -26,12 +31,17 @@ export function ToolsNav({ signedIn, role, email, permissions }: Props) {
     }
 
     const perms = new Set(permissions);
-    const has = (...keys: string[]) => keys.some((k) => perms.has(k));
 
     function isActive(href: string): boolean {
-        if (href === "/tools/dashboard") return pathname === href;
+        if (EXACT_MATCH.has(href)) return pathname === href;
         return pathname === href || pathname.startsWith(href + "/");
     }
+
+    // Single source of truth: the dashboard registry drives both these links and
+    // the launchpad tiles, so the two never drift apart.
+    const navSections = DASHBOARD_SECTIONS.filter(
+        (sec) => sec.showInNav && hasAnyPermission(perms, sec.requiredPermissions),
+    );
 
     return (
         <nav className={s.nav} aria-label="Tools navigation">
@@ -43,34 +53,14 @@ export function ToolsNav({ signedIn, role, email, permissions }: Props) {
             <div className={s.links}>
                 {signedIn && (
                     <NavLink href="/tools/dashboard" active={isActive("/tools/dashboard")}>
-                        My Proposals
+                        Dashboard
                     </NavLink>
                 )}
-                {has("dashboard.admin") && (
-                    <NavLink href="/tools/admin/dashboard" active={isActive("/tools/admin/dashboard")}>
-                        Admin Dashboard
+                {navSections.map((sec) => (
+                    <NavLink key={sec.key} href={sec.href} active={isActive(sec.href)}>
+                        {sec.navLabel}
                     </NavLink>
-                )}
-                {has("engagements.view_own", "engagements.view_all") && (
-                    <NavLink href="/tools/engagements" active={isActive("/tools/engagements")}>
-                        Engagements
-                    </NavLink>
-                )}
-                {has("fpa.view_assigned", "fpa.view_all", "fpa.fill") && (
-                    <NavLink href="/tools/fpa" active={isActive("/tools/fpa")}>
-                        Formal Analysis
-                    </NavLink>
-                )}
-                {has("proposals.edit") && (
-                    <NavLink href="/tools/admin/master" active={isActive("/tools/admin/master")}>
-                        New / Edit Proposal
-                    </NavLink>
-                )}
-                {signedIn && (
-                    <NavLink href="/tools/feasibility" active={isActive("/tools/feasibility")}>
-                        Feasibility
-                    </NavLink>
-                )}
+                ))}
             </div>
 
             <div className={s.right}>

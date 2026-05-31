@@ -1,0 +1,14 @@
+/* ═══════════════════════════════════════
+   PRESENTER GLOBAL RESET (present-v2)
+   Page-level reset for the fullscreen deck + print/export route. Kept separate
+   from present.design.css so the design TOKENS can be imported elsewhere (the
+   admin slide-order thumbnails) without forcing this dark body / overflow lock
+   onto those pages. Imported only by the present-v2 layout.
+═══════════════════════════════════════ */
+html,
+body {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background: var(--p-dark);
+}

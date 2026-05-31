@@ -8,7 +8,7 @@
 import type { Floorplan } from "@/lib/rentcast/types";
 import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
 import type { SiteWorkLineItem, DiscountLineItem } from "@/lib/store/presentationStore";
-import { resolveBeds, resolveBaths, type AduType } from "@/lib/units/resolveUnitSpec";
+import { resolveBeds, resolveBaths, resolveAduType, aduTypeLabel, aduTypeInline, type AduType } from "@/lib/units/resolveUnitSpec";
 
 export interface AgreementBuildInput {
     customerName: string;
@@ -36,6 +36,10 @@ export interface AgreementBuildInput {
      *  the floorplan's own values when not present. */
     bedsByUnitId?: Record<string, number>;
     bathsByUnitId?: Record<string, number>;
+    /** Per-unit ADU type overrides (detached/attached/garage) from Step 1. */
+    aduTypeByUnitId?: Record<string, AduType>;
+    /** Proposal-level default ADU type — used when a unit has no override. */
+    aduType?: AduType | "";
 }
 
 /**
@@ -48,6 +52,8 @@ function buildUnitSwitchBullets(
     comparedUnitIds: string[],
     schedulesByAduId: Record<string, ProposalPaymentSchedule>,
     floorplans: Floorplan[],
+    aduTypeByUnitId: Record<string, AduType> | undefined,
+    globalAduType: AduType | "" | undefined,
 ): string[] {
     if (!activeAduId) return [];
     const activeTotal = schedulesByAduId[activeAduId]?.totalPrice;
@@ -65,8 +71,11 @@ function buildUnitSwitchBullets(
         if (delta > 0) phrase = `Savings of ${fmtMoney(delta)}`;
         else if (delta < 0) phrase = `Additional cost of ${fmtMoney(Math.abs(delta))}`;
         else phrase = `Same total cost`;
+        // Prefix the unit's ADU type so each bullet reads e.g.
+        // "Switch to detached Estate 750 (750 sqft): Savings of $25,000".
+        const typeLabel = aduTypeInline(resolveAduType(id, aduTypeByUnitId, globalAduType));
         const sqftLabel = fp.sqft ? ` (${fp.sqft.toLocaleString()} sqft)` : "";
-        bullets.push(`Switch to ${fp.name}${sqftLabel}: ${phrase}`);
+        bullets.push(`Switch to ${typeLabel} ${fp.name}${sqftLabel}: ${phrase}`);
     }
     return bullets;
 }
@@ -94,6 +103,13 @@ export interface AgreementTemplateData {
      *  preview client can highlight it in its switcher dropdown. */
     selectedAduId: string | null;
     aduName: string;
+    /** ADU type of the contracted unit. `aduType` = title case ("Detached ADU",
+     *  "Attached ADU", "Garage Conversion"); `aduTypeInline` = lowercase for
+     *  mid-sentence use ("detached", "attached", "garage conversion").
+     *  `aduNameWithType` = ready-to-drop phrase e.g. "detached Estate 750". */
+    aduType: string;
+    aduTypeInline: string;
+    aduNameWithType: string;
     aduSqft: string;          // already formatted: "850 sqft"
     aduSqftNumber: number;
     aduBeds: number;
@@ -253,8 +269,17 @@ export function buildAgreementData(input: AgreementBuildInput): AgreementTemplat
     // always appear at the top of the exclusions list and stay in sync with
     // whichever unit is currently driving the agreement.
     const switchBullets = buildUnitSwitchBullets(
-        aduId, comparedUnitIds, schedules, input.floorplans
+        aduId, comparedUnitIds, schedules, input.floorplans,
+        input.aduTypeByUnitId, input.aduType,
     );
+
+    // Resolve the contracted unit's ADU type for the sentence placeholders.
+    const activeType: AduType = aduId
+        ? resolveAduType(aduId, input.aduTypeByUnitId, input.aduType)
+        : (input.aduType === "attached" || input.aduType === "garage" ? input.aduType : "detached");
+    const activeTypeInline = aduTypeInline(activeType);
+    const aduNameValue = adu?.name ?? "—";
+    const aduNameWithType = adu ? `${activeTypeInline} ${aduNameValue}` : aduNameValue;
     const manualExclusions = normalizeExclusions(input.exclusions);
     const exclusions = [...switchBullets, ...manualExclusions].map((s) => ({ item: s }));
 
@@ -273,7 +298,10 @@ export function buildAgreementData(input: AgreementBuildInput): AgreementTemplat
         todayMonthYear: fmtMonthYear(today),
 
         selectedAduId: aduId,
-        aduName: adu?.name ?? "—",
+        aduName: aduNameValue,
+        aduType: aduTypeLabel(activeType),
+        aduTypeInline: activeTypeInline,
+        aduNameWithType,
         aduSqft: aduSqftNumber ? `${aduSqftNumber.toLocaleString()} sqft` : "—",
         aduSqftNumber,
         aduBeds: resolveBeds(adu, input.bedsByUnitId),

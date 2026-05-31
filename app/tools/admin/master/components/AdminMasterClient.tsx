@@ -8,24 +8,15 @@ import { AddressAutocomplete } from "./address/AddressAutocomplete";
 
 import { AdminHeader } from "../components/AdminHeader/AdminHeader";
 import { Step1Body } from "../components/Step1Body/Step1Body";
+import { UnitsBody } from "../components/UnitsBody/UnitsBody";
 import { StepSidebar } from "../components/StepSidebar/StepSidebar";
 
-// Step wrappers are tiny (just a StepCard + props) so they stay static.
-import { Step1_WhoAndWhere } from "../components/steps/Step1_WhoAndWhere";
-// Step2_ChooseUnits absorbed into Step 1 — kept as an import for now in case
-// other code paths reference it; remove once the renumber is complete.
-import { Step2_ChooseUnits } from "../components/steps/Step2_ChooseUnits";
-import { Step3_EstimateJob } from "../components/steps/Step3_EstimateJob";
-import { Step4_Discounts } from "../components/steps/Step4_Discounts";
-import { Step5_RentalMarket } from "../components/steps/Step5_RentalMarket";
-import { Step6_ReviewAndGenerate } from "../components/steps/Step6_ReviewAndGenerate";
+// All steps render through StepCard directly — the step number, title, kind,
+// and order all live in one place (the JSX below) so they can't drift out of
+// sync the way the old per-step wrapper components did.
+import { StepCard } from "../components/shared/StepCard";
+import { SitePhotoBody } from "../components/SitePhotoStep/SitePhotoBody";
 import { ExclusionsPanel } from "../components/ExclusionsPanel/ExclusionsPanel";
-import { Step7_FeatureBuilds } from "../components/steps/Step7_FeatureBuilds";
-import { Step8_FeatureStories } from "../components/steps/Step8_FeatureStories";
-import { Step9_FeatureRentals } from "../components/steps/Step9_FeatureRentals";
-import { Step10_SlideOrder } from "../components/steps/Step10_SlideOrder";
-import { Step11_Timeline } from "../components/steps/Step11_Timeline";
-import { Step12_PaymentSchedule } from "../components/steps/Step12_PaymentSchedule";
 
 import { CatalogDriftBanner } from "../components/CatalogDriftBanner/CatalogDriftBanner";
 import { detectCatalogDrift, type CatalogDriftReport } from "@/lib/investment/catalogDrift";
@@ -97,8 +88,9 @@ const PaymentSchedulePanel = dynamic(
 );
 
 import type { Floorplan } from "@/lib/rentcast/types";
-import type { SanityProperty, SanityStory, FeaturedRental, ProjectTimeline, CityData } from "@/lib/store/presentationStore";
+import type { SanityProperty, SanityStory, FeaturedRental, ProjectTimeline, CityData, ExclusionItem } from "@/lib/store/presentationStore";
 import type { ProposalPaymentSchedule, PaymentMilestoneDefData } from "@/lib/investment/proposalPaymentSchedule";
+import { generateBalloonSchedule, generateBalloonFromCatalogDefs } from "@/lib/investment/proposalPaymentSchedule";
 import type { DiscountsCatalogSummary } from "../page";
 import type { SiteWorkCatalogData } from "@/lib/investment/siteWorkItems";
 import {
@@ -116,16 +108,19 @@ import {
     type ProposalSnapshot,
     PROPOSAL_SCHEMA_VERSION,
 } from "@/lib/proposalSnapshot";
+import { scopedCompanionKey, readCompanion, writeCompanion, getCompanionScope } from "@/lib/admin/companionKeys";
 import { SavedProposals } from "../components/SavedProposals/SavedProposals";
 import { buildAgreementData } from "@/lib/agreement/buildAgreementData";
 import { useRentcastData } from "@/hooks/rentcast/useRentcastData";
 import { useAduModel } from "@/hooks/investment/useAduModel";
 import { money } from "@/lib/investment/format";
-import { DEFAULTS, type Defaults } from "@/lib/investment/types";
+import { rentalKey, toFeatured } from "@/lib/rentals/featured";
+import { type Defaults } from "@/lib/investment/types";
 import { usePresentationWire, openPresenterWindow } from "@/hooks/presentation/usePresentationWire";
 import { usePresentationStore } from "@/lib/store/presentationStore";
 import { buildAdminBroadcast } from "@/lib/sync/presentationSync";
 import { ArchitectFlagsPanel } from "./ArchitectFlagsPanel";
+import { RentHero } from "./RentHero/RentHero";
 import {
     ProposalPrefillModal,
     PrefillStatusBanner,
@@ -134,6 +129,11 @@ import {
 } from "./ProposalPrefillModal/ProposalPrefillModal";
 import type { ProposalPrefillPlan } from "@/lib/ai/proposalPrefill";
 import type { EstimatorState } from "@/lib/investment/siteWorkItems";
+
+/** 1-based step index in the wizard. There are 11 sequential steps; keep this
+ *  in sync with the StepSidebar STEPS list and the JSX render order below.
+ *  "Review & Generate" is NOT a step — it's a pinned control panel below them. */
+type StepNum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
 // Count of matchable items in a prefill plan (for the status banner).
 function prefillCount(p: ProposalPrefillPlan): number {
@@ -146,6 +146,37 @@ function prefillCount(p: ProposalPrefillPlan): number {
     n += p.costAdders?.length ?? 0;
     n += (p.featuredStoryIds?.value.length ?? 0) + (p.featuredPropertyIds?.value.length ?? 0);
     return n;
+}
+
+/** Stable-ish id for a freshly-created exclusion item. */
+function newExclusionId(): string {
+    return (typeof crypto !== "undefined" && "randomUUID" in crypto)
+        ? crypto.randomUUID()
+        : `excl_${Date.now()}_${Math.round(Math.random() * 1e6)}`;
+}
+
+/** Migrate a legacy free-text exclusions blob (one per line) into structured
+ *  items. Each line becomes an item's name with no price/note. */
+function legacyExclusionsToItems(text: string): ExclusionItem[] {
+    return text
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .map((name) => ({ id: newExclusionId(), name, price: 0, note: "" }));
+}
+
+/** Format structured exclusions into the agreement's bullet strings:
+ *  "Name ($price) — note" (price/note omitted when empty). */
+function exclusionsToAgreementLines(items: ExclusionItem[]): string[] {
+    return items
+        .filter((e) => e.name.trim().length > 0)
+        .map((e) => {
+            const price = e.price > 0
+                ? ` ($${e.price.toLocaleString("en-US")})`
+                : "";
+            const note = e.note.trim().length > 0 ? ` — ${e.note.trim()}` : "";
+            return `${e.name.trim()}${price}${note}`;
+        });
 }
 
 
@@ -182,6 +213,7 @@ export default function AdminMasterClient({
     const [address, setAddress] = useState("");
     const [owed, setOwed] = useState("");
     const [customerName, setCustomerName] = useState("");
+    const [customerEmail, setCustomerEmail] = useState("");
     const [propertyPhotoUrl, setPropertyPhotoUrl] = useState<string | null>(null);
     const [customerMotivation, setCustomerMotivation] = useState<import("@/lib/store/presentationStore").CustomerMotivation>(null);
     const [aduType, setAduType] = useState<"detached" | "attached" | "garage" | "">("detached");
@@ -207,6 +239,9 @@ export default function AdminMasterClient({
     const [aduTypeByUnitId, setAduTypeByUnitId] = useState<Record<string, "detached" | "attached" | "garage">>({});
     const [bedsByUnitId, setBedsByUnitId] = useState<Record<string, number>>({});
     const [bathsByUnitId, setBathsByUnitId] = useState<Record<string, number>>({});
+    // Optional custom tag per unit (e.g. "Hillside") that distinguishes duplicates
+    // in display without changing the underlying name. See lib/units/displayName.ts.
+    const [labelByUnitId, setLabelByUnitId] = useState<Record<string, string>>({});
     // Seed slide order from the DB catalog (empty array if not yet fetched —
     // applySnapshot() will overwrite on proposal load, so existing proposals
     // still keep their frozen copy).
@@ -224,22 +259,25 @@ export default function AdminMasterClient({
      *  the admin header. */
     const [agreementAduId] = useState<string | null>(null);
 
-    /** Manual exclusions text — one line per exclusion. Owned by the
-     *  proposal, persisted in the snapshot. The legacy global localStorage
-     *  key `agreement_exclusions_v1` is auto-migrated into a fresh draft on
-     *  first mount below (so a value entered before this field existed
-     *  isn't lost) and then cleared so it can't ghost future proposals. */
-    const [agreementExclusions, setAgreementExclusions] = useState<string>("");
+    /** Proposal-wide exclusions (structured line items: name + price + note).
+     *  Each is a carve-out shown on the comparison slide ("Not included") and
+     *  listed on the agreement. Owned by the proposal, persisted in the
+     *  snapshot. Superseded the legacy free-text `agreementExclusions` string
+     *  (migrated on load — see applySnapshot). */
+    const [exclusions, setExclusions] = useState<ExclusionItem[]>([]);
 
     /** One-time migration of the legacy browser-global exclusions key.
-     *  Runs once on mount: if there's a value in localStorage, copy it into
-     *  state (so the rep doesn't lose what they had typed) and clear the
-     *  legacy key (so it can't keep haunting every future proposal). */
+     *  Runs once on mount: if there's free-text in localStorage, convert each
+     *  non-empty line into a structured item (name only) so nothing is lost,
+     *  then clear the legacy key so it can't haunt future proposals. */
     useEffect(() => {
         try {
             const legacy = window.localStorage.getItem("agreement_exclusions_v1");
             if (legacy && legacy.trim().length > 0) {
-                setAgreementExclusions((current) => current || legacy);
+                const migrated = legacyExclusionsToItems(legacy);
+                if (migrated.length > 0) {
+                    setExclusions((current) => (current.length > 0 ? current : migrated));
+                }
             }
             // Always clear the legacy key, even when empty, so it can never
             // surprise a future build that reads from it.
@@ -270,7 +308,20 @@ export default function AdminMasterClient({
     const [currentFirstPmtMonthly, setCurrentFirstPmtMonthly] = useState("");
     const [siteWorkConfirmed, setSiteWorkConfirmed] = useState(false);
     const [driftReport, setDriftReport] = useState<CatalogDriftReport | null>(null);
-    const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11>(1);
+    const [activeStep, setActiveStep] = useState<StepNum>(1);
+
+    // "Review & Generate" is a control panel pinned below the steps, not a
+    // sequential step. It's collapsed by default; opened on demand from the
+    // sidebar shortcut or its own header so policy knobs can be edited live
+    // without gating the flow behind a "final review".
+    const [reviewOpen, setReviewOpen] = useState(false);
+    function openReviewPanel() {
+        setReviewOpen(true);
+        requestAnimationFrame(() => {
+            document.getElementById("review-generate-panel")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    }
 
     // ── Draft/canonical bundle for the currently loaded address ──────────────
     //
@@ -604,19 +655,19 @@ export default function AdminMasterClient({
         // Mirror the panel-owned per-unit localStorage overrides
         // (SiteWorkPanel + DiscountsPanel write here outside of React state).
         try {
-            const raw = localStorage.getItem("swp_custom");
+            const raw = readCompanion("swp_custom");
             const swp = raw ? JSON.parse(raw) : null;
             if (swp && typeof swp === "object" && sourceId in swp) {
                 swp[newId] = structuredClone(swp[sourceId]);
-                localStorage.setItem("swp_custom", JSON.stringify(swp));
+                writeCompanion("swp_custom", JSON.stringify(swp));
             }
         } catch { /* ignore malformed storage */ }
         try {
-            const raw = localStorage.getItem("dp_custom");
+            const raw = readCompanion("dp_custom");
             const dp = raw ? JSON.parse(raw) : null;
             if (dp && typeof dp === "object" && sourceId in dp) {
                 dp[newId] = structuredClone(dp[sourceId]);
-                localStorage.setItem("dp_custom", JSON.stringify(dp));
+                writeCompanion("dp_custom", JSON.stringify(dp));
             }
         } catch { /* ignore malformed storage */ }
 
@@ -629,30 +680,6 @@ export default function AdminMasterClient({
         setAduCompareIds((prev) => [...prev, newId]);
     }
 
-    /** Push a $10,000 "Additional bathroom" line into a unit's site-work
-     *  estimator. Called from the UnitsPanel inline confirm prompt when the
-     *  rep bumps a unit's bath count. Idempotent only on intent — each call
-     *  appends a new line so two confirmed bumps add $20k. */
-    function addBathroomUpcharge(unitId: string) {
-        adu.setEstimatorByAduId((prev) => {
-            const existing = prev[unitId] ?? { quantities: {}, overrides: {}, customItems: [] };
-            const newItem = {
-                id: `custom_bath_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-                catId: "interior",
-                label: "Additional bathroom",
-                qty: 1,
-                beCost: 10000,
-                markup: 1,
-            };
-            return {
-                ...prev,
-                [unitId]: {
-                    ...existing,
-                    customItems: [...(existing.customItems ?? []), newItem],
-                },
-            };
-        });
-    }
 
     // ── Step state model ──────────────────────────────────────────────────────
     // Two separate concepts:
@@ -661,46 +688,63 @@ export default function AdminMasterClient({
     // "Complete" = both true (so editing the data invalidates a prior Done).
     const [doneSteps, setDoneSteps] = useState<Set<number>>(new Set());
 
-    function markDone(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11) {
+    function markDone(n: StepNum) {
         setDoneSteps((prev) => {
             const next = new Set(prev);
             next.add(n);
             return next;
         });
-        if (n < 11) setActiveStep(((n + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11));
+        if (n < 11) setActiveStep(((n + 1) as StepNum));
     }
 
-    // Per-step required-data validation
-    // Step 1 now covers Who/Where + Choose Units in one panel.
-    // After merging Choose Units into Step 1, the steps are renumbered:
-    //   1: Who/Where/Units (was 1+2)   7: Feature Stories  (was 8)
-    //   2: Estimate Job   (was 3)      8: Feature Rentals  (was 9)
-    //   3: Discounts      (was 4)      9: Slide Order      (was 10)
-    //   4: Rental Market  (was 5)      10: Timeline        (was 11)
-    //   5: Review         (was 6)      11: Payment Sched   (was 12)
-    //   6: Feature Builds (was 7)
-    const step1HasData = address.length > 5 && aduCompareIds.length > 0;
-    const step2HasData = adu.selectedAdus.length > 0; // was step3
-    const step3HasData = true; // discounts (was step4)
-    const step4HasData = true; // rental market (was step5)
-    const step5HasData = true; // review (was step6)
-    const step6HasData = true; // feature builds (was step7)
-    const step7HasData = true; // feature stories (was step8)
-    const step8HasData = true; // feature rentals (was step9)
-    const step9HasData = true; // slide order (was step10)
-    const step10HasData = true; // timeline (was step11)
-    const step11HasData = true; // payment schedule (was step12)
-    const hasData = [step1HasData, step2HasData, step3HasData, step4HasData, step5HasData, step6HasData, step7HasData, step8HasData, step9HasData, step10HasData, step11HasData];
+    // Toggle a rental comp's "featured on slide" state from the Rental Market
+    // step's comps list (merged from the old Feature Rentals step). Adding
+    // preserves the featured editor's per-rental photo/order data; removing
+    // matches by the shared rentalKey. Capped at MAX_FEATURED_RENTALS.
+    const MAX_FEATURED_RENTALS = 4;
+    function toggleFeaturedRental(r: import("@/lib/rentcast/types").RentalListing) {
+        const key = rentalKey(r);
+        setFeaturedRentals((prev) => {
+            const existing = prev.find((f) => rentalKey(f) === key);
+            if (existing) return prev.filter((f) => rentalKey(f) !== key);
+            if (prev.length >= MAX_FEATURED_RENTALS) return prev;
+            return [...prev, toFeatured(r)];
+        });
+    }
 
-    const completions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => doneSteps.has(n) && hasData[n - 1]);
+    // Per-step required-data validation. Only two steps actually gate on
+    // required input; the rest are always satisfiable (optional / review).
+    // `hasUnits` is reused by the Estimate-the-Job step's needs-input check.
+    const hasUnits = adu.selectedAdus.length > 0;
+    const detailsHasData = address.length > 5; // Who & Where (Details)
+
+    // hasData[i] === "is step (i+1)'s required data present?" — indexed by the
+    // sidebar step number. Order MUST match the JSX render order + StepSidebar.
+    const hasData = [
+        detailsHasData, //  1 · Details (Who & Where)
+        hasUnits,       //  2 · Units (needs at least one unit)
+        true,           //  3 · Site Photo (optional)
+        hasUnits,       //  4 · Estimate the Job (needs at least one unit)
+        true,           //  5 · Discounts
+        true,           //  6 · Rental Market + Feature Rentals (review)
+        true,           //  7 · Project Timeline
+        true,           //  8 · Payment Schedule
+        true,           //  9 · Feature Builds
+        true,           // 10 · Feature Stories
+        true,           // 11 · Slide Order
+    ];
+
+    const ALL_STEPS: StepNum[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+    const completions = ALL_STEPS.map((n) => doneSteps.has(n) && hasData[n - 1]);
 
     const completedSteps = completions
         .map((done, i) => (done ? i + 1 : null))
         .filter((n): n is number => n !== null);
 
-    const needsInputSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].filter((n) => !hasData[n - 1]);
+    const needsInputSteps = ALL_STEPS.filter((n) => !hasData[n - 1]);
 
-    function stepState(n: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11) {
+    function stepState(n: StepNum) {
         const isComplete = completions[n - 1];
         return {
             isActive: activeStep === n,
@@ -709,6 +753,47 @@ export default function AdminMasterClient({
             onEdit: () => setActiveStep(n),
         };
     }
+
+    // ── Keep payment schedules in sync with live estate prices ──────────────
+    // Auto-(re)generate each compared unit's balloon schedule whenever its total
+    // price changes — even when the Payment Schedule step isn't the active card
+    // (StepCard unmounts inactive bodies, so the panel's own effect can't do
+    // this on its own). This keeps the contract total, the "Switch to …" deltas,
+    // and the schedule rows live across the whole tool + the agreement preview.
+    // Per the chosen behavior: regenerate the default split on drift (manual
+    // milestone edits reset). After a regen the stored total == the unit total,
+    // so the guard is false next render — no loop.
+    useEffect(() => {
+        const cols = adu.aduScenarios
+            .map((sc) => ({
+                id: sc.key.replace(/^adu_/, ""),
+                total: sc.finalAduPrice ?? sc.purchasePrice ?? 0,
+            }))
+            .filter((c) => c.total > 0);
+        if (cols.length === 0) return;
+
+        const gen = (total: number) =>
+            initialMilestoneDefs && initialMilestoneDefs.length > 0
+                ? generateBalloonFromCatalogDefs(total, initialMilestoneDefs)
+                : generateBalloonSchedule(total);
+
+        setProposalPaymentSchedulesByAduId((prev) => {
+            const next = { ...prev };
+            let mutated = false;
+            for (const col of cols) {
+                const existing = next[col.id];
+                const drifted = existing && Math.abs(existing.totalPrice - col.total) > 1;
+                if (!existing || drifted) {
+                    next[col.id] = { aduId: col.id, totalPrice: col.total, entries: gen(col.total) };
+                    mutated = true;
+                }
+            }
+            return mutated ? next : prev;
+        });
+        // Keyed on the per-unit totals so it only re-runs when a price actually
+        // moves. initialMilestoneDefs is stable (SSR prop).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [adu.aduScenarios.map((sc) => `${sc.key}|${sc.finalAduPrice ?? sc.purchasePrice ?? 0}`).join(",")]);
 
     // Derive the singular "primary" payment schedule from the per-ADU Record so
     // Slide 14 and buildAgreementData (which still read the singular field) keep
@@ -761,6 +846,7 @@ export default function AdminMasterClient({
                     ?? 0,
             ]),
         ),
+        labelByUnitId,
         floorplans,
         featuredPropertyIds,
         featuredStoryIds,
@@ -775,6 +861,7 @@ export default function AdminMasterClient({
         activeSnapshotByAduId: adu.activeSnapshotByAduId,
         discountLinesByAduId: adu.discountLinesByAduId,
         discountsCatalog: initialDiscountsCatalog,
+        exclusions,
     });
 
     // ── Snapshot build / apply ────────────────────────────────────────────────
@@ -790,6 +877,7 @@ export default function AdminMasterClient({
             addressKey: normalizeAddress(address),
 
             customerName,
+            customerEmail,
             address,
             owed,
             propertyPhotoUrl,
@@ -803,6 +891,7 @@ export default function AdminMasterClient({
             aduTypeByUnitId,
             bedsByUnitId,
             bathsByUnitId,
+            labelByUnitId,
 
             defaults: adu.defaults,
             estimatorByAduId: adu.estimatorByAduId,
@@ -825,7 +914,7 @@ export default function AdminMasterClient({
             pipedrivePersonId,
             pipedriveDealId,
 
-            agreementExclusions,
+            exclusions,
 
             activeStep,
             doneSteps: Array.from(doneSteps),
@@ -846,6 +935,7 @@ export default function AdminMasterClient({
 
         // Simple state
         setCustomerName(snap.customerName ?? "");
+        setCustomerEmail(snap.customerEmail ?? "");
         setAddress(snap.address ?? "");
         setOwed(snap.owed ?? "");
         setPropertyPhotoUrl(snap.propertyPhotoUrl ?? null);
@@ -865,6 +955,7 @@ export default function AdminMasterClient({
         setAduTypeByUnitId(snap.aduTypeByUnitId ?? {});
         setBedsByUnitId(snap.bedsByUnitId ?? {});
         setBathsByUnitId(snap.bathsByUnitId ?? {});
+        setLabelByUnitId(snap.labelByUnitId ?? {});
         // Block the "selected floorplan changed → recompute compare window" effect
         // from clobbering the loaded selection on the next render.
         lastSelectedIdRef.current = snap.floorplanId ?? null;
@@ -913,21 +1004,64 @@ export default function AdminMasterClient({
         setPipedrivePersonId(snap.pipedrivePersonId ?? null);
         setPipedriveDealId(snap.pipedriveDealId ?? null);
 
-        // Manual agreement exclusions (per-proposal — empty for snapshots
-        // saved before this field existed).
-        setAgreementExclusions(snap.agreementExclusions ?? "");
+        // Exclusions (per-proposal). Prefer the structured field; fall back to
+        // migrating the legacy free-text `agreementExclusions` blob so older
+        // snapshots still surface their carve-outs.
+        if (snap.exclusions && snap.exclusions.length > 0) {
+            setExclusions(snap.exclusions);
+        } else if (snap.agreementExclusions && snap.agreementExclusions.trim().length > 0) {
+            setExclusions(legacyExclusionsToItems(snap.agreementExclusions));
+        } else {
+            setExclusions([]);
+        }
 
         // Step status
-        setActiveStep((snap.activeStep ?? 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11);
+        setActiveStep((snap.activeStep ?? 1) as StepNum);
         setDoneSteps(new Set(snap.doneSteps ?? []));
 
         // Seed the autosave fingerprint with the just-loaded content so the
         // post-load autosave timer doesn't create a duplicate draft from a
         // snapshot the user hasn't edited yet.
         lastDraftFpRef.current = snapshotFingerprint(snap);
+        hydratedRef.current = true;
     }
 
-    function handleGenerateAgreement() {
+    // Build the FULL set of inputs the agreement preview needs to (re)render.
+    // The preview re-runs buildAgreementData on each unit switch + live update,
+    // so it gets the inputs, not the resolved template data. Returns null when
+    // the proposal isn't ready (no address / no payment schedule yet).
+    function buildAgreementInput() {
+        if (normalizeAddress(address).length === 0) return null;
+        if (Object.keys(proposalPaymentSchedulesByAduId).length === 0) return null;
+        return {
+            customerName,
+            propertyAddress: address,
+            proposalPaymentSchedulesByAduId,
+            comparedUnitIds: aduCompareIds,
+            selectedAduId: agreementAduId,
+            floorplans,
+            siteWorkByUnitId: adu.activeSnapshotByAduId
+                ? Object.fromEntries(
+                      Object.entries(adu.activeSnapshotByAduId).map(([id, items]) => [
+                          id,
+                          items.map((it) => ({
+                              label: it.label,
+                              category: it.catLabel,
+                              total: it.customerTotal,
+                          })),
+                      ])
+                  )
+                : {},
+            discountLinesByUnitId: adu.discountLinesByAduId,
+            exclusions: exclusionsToAgreementLines(exclusions),
+            bedsByUnitId,
+            bathsByUnitId,
+            aduTypeByUnitId,
+            aduType,
+        };
+    }
+
+    async function handleGenerateAgreement() {
         if (normalizeAddress(address).length === 0) {
             window.alert("Add a property address before opening the agreement.");
             return;
@@ -936,55 +1070,48 @@ export default function AdminMasterClient({
             window.alert("Configure the payment schedule (Step 12) before opening the agreement.");
             return;
         }
-        // Per-proposal manual exclusions edited in Step 6's ExclusionsPanel.
-        // (The previous design read from a browser-global localStorage key,
-        // which caused entries to ghost across every customer's agreement.)
-        const exclusionsRaw = agreementExclusions;
 
         try {
-            // Hand off the FULL set of inputs (not the resolved template
-            // data). The preview client renders a unit-switcher dropdown and
-            // re-runs buildAgreementData on each switch — so it needs to be
-            // able to rebuild on demand. The "selectedAduId" field lets the
-            // admin pre-select which unit drives the agreement on first open.
-            const input = {
-                customerName,
-                propertyAddress: address,
-                proposalPaymentSchedulesByAduId,
-                comparedUnitIds: aduCompareIds,
-                selectedAduId: agreementAduId,
-                floorplans,
-                siteWorkByUnitId: adu.activeSnapshotByAduId
-                    ? Object.fromEntries(
-                          Object.entries(adu.activeSnapshotByAduId).map(([id, items]) => [
-                              id,
-                              items.map((it) => ({
-                                  label: it.label,
-                                  category: it.catLabel,
-                                  total: it.customerTotal,
-                              })),
-                          ])
-                      )
-                    : {},
-                discountLinesByUnitId: adu.discountLinesByAduId,
-                exclusions: exclusionsRaw,
-                bedsByUnitId,
-                bathsByUnitId,
-            };
+            const input = buildAgreementInput()!;
 
             // Sanity-check: make sure the inputs actually produce a valid
             // agreement before opening the preview tab.
             buildAgreementData(input);
 
+            // Keep the localStorage handoff as an instant-render fallback.
             window.localStorage.setItem(
                 "be_agreement_preview_input_v2",
                 JSON.stringify(input)
             );
-            window.open(
-                "/tools/admin/master/agreement",
-                "be_agreement_preview",
-                "noopener"
-            );
+
+            // Commit the proposal so the agreement has a real record to attach
+            // to: this gives us a proposalId (which unlocks Save-PDF and
+            // Send-for-signature in the preview), links the engagement (→ the
+            // customer email the e-sign needs), and persists the agreement
+            // inputs so the contract can be reopened/sent from any device.
+            let proposalId: string | undefined;
+            try {
+                const snap = buildSnapshotRef.current();
+                const saved = await saveProposal(snap);
+                proposalId = saved?.id;
+                lastDraftFpRef.current = snapshotFingerprint(snap);
+                if (proposalId) {
+                    await fetch(`/api/proposals/${proposalId}/agreement`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ agreementInput: input }),
+                    }).catch(() => {});
+                }
+            } catch (e) {
+                // Non-fatal: the preview still opens from the localStorage handoff;
+                // only the save/send actions (which need an id) stay unavailable.
+                console.warn("[agreement] commit before preview failed", e);
+            }
+
+            const url = proposalId
+                ? `/tools/admin/master/agreement?proposalId=${encodeURIComponent(proposalId)}`
+                : "/tools/admin/master/agreement";
+            window.open(url, "be_agreement_preview", "noopener");
         } catch (err) {
             window.alert(
                 `Couldn't prepare the agreement:\n\n${err instanceof Error ? err.message : String(err)}`
@@ -1073,9 +1200,11 @@ export default function AdminMasterClient({
                               )
                             : {},
                         discountLinesByUnitId: adu.discountLinesByAduId,
-                        exclusions: agreementExclusions,
+                        exclusions: exclusionsToAgreementLines(exclusions),
                         bedsByUnitId,
                         bathsByUnitId,
+                        aduTypeByUnitId,
+                        aduType,
                     };
                     void fetch(`/api/proposals/${saved.id}/presenter-payload`, {
                         method: "POST",
@@ -1160,12 +1289,12 @@ export default function AdminMasterClient({
                 return fallback;
             }
         };
-        const master = readLS<EstimatorState>("swp_master", {
+        const master = readLS<EstimatorState>(scopedCompanionKey("swp_master"), {
             quantities: {},
             overrides: {},
             customItems: [],
         });
-        const custom = readLS<Record<string, EstimatorState | null>>("swp_custom", {});
+        const custom = readLS<Record<string, EstimatorState | null>>(scopedCompanionKey("swp_custom"), {});
 
         const mutate = (state: EstimatorState, a: PrefillDecisions["costAdders"][number]): EstimatorState => {
             if (a.itemId) {
@@ -1210,10 +1339,10 @@ export default function AdminMasterClient({
             }
         }
 
-        restoreCompanionStorage({
-            swp_master: JSON.stringify(nextMaster),
-            swp_custom: JSON.stringify(nextCustom),
-        });
+        // Targeted write — only the site-work keys. (restoreCompanionStorage is a
+        // full replace that would also clear the discount keys.)
+        writeCompanion("swp_master", JSON.stringify(nextMaster));
+        writeCompanion("swp_custom", JSON.stringify(nextCustom));
         setSwKey((k) => k + 1); // remount SiteWorkPanel so it re-reads localStorage
     }
 
@@ -1302,6 +1431,13 @@ export default function AdminMasterClient({
     // the API is unreachable (offline / dev outage). One-shot via a ref so
     // React StrictMode's double-invoke doesn't reload twice.
     const initialUrlLoadRef = React.useRef(false);
+    // Gates the debounced autosave until the initial URL-driven load has applied
+    // (or been determined to be a blank/new proposal). Prevents the first
+    // debounce from persisting half-hydrated state to the DB draft.
+    const hydratedRef = React.useRef(false);
+    // Set by an ?autoExport=1 deep link; the export runs from an effect once the
+    // loaded snapshot has settled into state (buildSnapshot needs settled state).
+    const [pendingAutoExport, setPendingAutoExport] = useState(false);
     useEffect(() => {
         if (initialUrlLoadRef.current) return;
         initialUrlLoadRef.current = true;
@@ -1342,6 +1478,7 @@ export default function AdminMasterClient({
                     } else {
                         if (data.customerName) setCustomerName(data.customerName);
                         if (data.addressKey) setAddress(data.addressKey);
+                        hydratedRef.current = true;
                     }
                     if (wantPrefill) {
                         if (data.prefillAppliedAt) {
@@ -1377,7 +1514,12 @@ export default function AdminMasterClient({
         }
 
         const addressKey = params.get("address");
-        if (!addressKey) return;
+        if (!addressKey) {
+            // Brand-new proposal (no URL params): nothing to hydrate, so allow the
+            // autosave to run as soon as the rep enters a valid address.
+            hydratedRef.current = true;
+            return;
+        }
 
         // Dashboard row-menu deep links pass these flags so the master tool
         // can chain into the presenter / export windows once hydration is done.
@@ -1455,17 +1597,17 @@ export default function AdminMasterClient({
                 applySnapshot(snap);
                 setCurrentView(appliedView);
 
-                // Give the presentation wire (~1 render) a moment to flush
-                // the freshly-applied snapshot into localStorage + the
-                // BroadcastChannel before opening any companion window.
+                // The presenter window now requests current state on connect and
+                // the admin replays it (see startAdminResponder / startPresenterSync),
+                // so no fixed delay is needed for live present.
                 if (autoPresent) {
-                    setTimeout(() => openPresenterWindow("v2"), 600);
+                    openPresenterWindow("v2");
                 }
+                // Export reads the persisted payload from the DB by id. Defer to
+                // an effect so buildSnapshot runs against settled state, not the
+                // pre-applySnapshot render.
                 if (autoExport) {
-                    setTimeout(
-                        () => window.open("/present-v2/print", "be_print_v2", "noopener"),
-                        600,
-                    );
+                    setPendingAutoExport(true);
                 }
 
                 // Strip the auto-* params so a manual refresh doesn't keep
@@ -1480,29 +1622,121 @@ export default function AdminMasterClient({
                     );
                 }
             }
+            // Whether or not a snapshot was found, hydration is now resolved —
+            // applySnapshot already flips this, but set it for the no-snapshot
+            // (offline / brand-new address) path too.
+            hydratedRef.current = true;
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    function handleLoad(addressKey: string) {
-        const snap = getProposal(addressKey);
-        if (!snap) {
-            window.alert("That saved proposal could not be loaded.");
-            return;
+    // Run a deep-link ?autoExport once the loaded snapshot has settled into
+    // state (so the flushed presenter payload reflects the full proposal).
+    useEffect(() => {
+        if (!pendingAutoExport) return;
+        if (normalizeAddress(address).length < 6) return;
+        setPendingAutoExport(false);
+        void exportProposalPdf();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pendingAutoExport, address]);
+
+    // Persist any unsaved edits to the CURRENT proposal before we navigate away.
+    // Switching proposals does a full page reload (so no stale React/localStorage
+    // state from one client can bleed into the next), which would otherwise drop
+    // an in-flight debounced autosave.
+    async function flushDraftBeforeLeaving() {
+        const key = normalizeAddress(address);
+        if (key.length < 6) return; // autosave is disabled below this threshold
+        const snap = buildSnapshotRef.current();
+        if (snapshotFingerprint(snap) === lastDraftFpRef.current) return; // nothing new
+        try {
+            await saveDraft(snap);
+        } catch {
+            /* best-effort; the localStorage mirror inside saveDraft already holds it */
         }
-        applySnapshot(snap);
     }
 
-    function handleLoadDraft(addressKey: string) {
-        const snap = getDraft(addressKey);
-        if (!snap) {
-            window.alert("That draft could not be loaded.");
-            return;
-        }
-        applySnapshot(snap);
+    // Persist the current presenter payload to the proposal row so the by-id
+    // present / export routes render a complete, deterministic snapshot from the
+    // DB — independent of the live BroadcastChannel.
+    async function flushPresenterPayload(proposalId: string) {
+        const presenterBroadcast = buildAdminBroadcast(usePresentationStore.getState(), {
+            includeCustomFloorplans: true,
+        });
+        await fetch(`/api/proposals/${proposalId}/presenter-payload`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ presenterBroadcast }),
+        });
     }
 
-    function handleNew() {
+    // Export reads from the DB by id (not the live broadcast): save the current
+    // snapshot + presenter payload, then open the standalone by-id print view.
+    // This makes the PDF reflect exactly what's on screen, with no dependency on
+    // the admin tab staying open or the broadcast having "warmed up".
+    async function exportProposalPdf() {
+        const key = normalizeAddress(address);
+        if (!key) {
+            window.alert("Add a property address before exporting.");
+            return;
+        }
+        try {
+            const snap = buildSnapshotRef.current();
+            const { id } = await saveDraft(snap);
+            // Block the pending autosave from re-saving identical content.
+            lastDraftFpRef.current = snapshotFingerprint(snap);
+            if (!id) {
+                // Couldn't resolve a proposal id — fall back to the live print view.
+                window.open(
+                    `/present-v2/print?scope=${encodeURIComponent(getCompanionScope())}`,
+                    "be_print_v2",
+                    "noopener",
+                );
+                return;
+            }
+            await flushPresenterPayload(id);
+            // Also persist the agreement build inputs so the deck's
+            // "Save to Pipedrive" note can list the compared units + totals.
+            // (Previously only the Generate-Agreement flow wrote this, so a
+            // proposal exported without ever opening the agreement produced a
+            // bare note.) Best-effort — never block the export.
+            try {
+                const agreementInput = buildAgreementInput();
+                if (agreementInput) {
+                    await fetch(`/api/proposals/${id}/agreement`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ agreementInput }),
+                    });
+                }
+            } catch (err) {
+                console.warn("[export] agreement input flush failed", err);
+            }
+            window.open(`/present-v2/${id}/print`, "be_print_v2", "noopener");
+        } catch (err) {
+            window.alert(
+                `Couldn't prepare the export: ${err instanceof Error ? err.message : String(err)}`,
+            );
+        }
+    }
+
+    // Loading another proposal navigates with a full reload. The mount loader
+    // rehydrates from `?address=` (server-first, draft-then-reviewed), and the
+    // per-proposal companion scope is re-resolved fresh — so prices/discounts
+    // from the previously-open client can never carry over.
+    async function handleLoad(addressKey: string) {
+        await flushDraftBeforeLeaving();
+        window.location.assign(`/tools/admin/master?address=${encodeURIComponent(addressKey)}`);
+    }
+
+    async function handleLoadDraft(addressKey: string) {
+        await flushDraftBeforeLeaving();
+        window.location.assign(`/tools/admin/master?address=${encodeURIComponent(addressKey)}`);
+    }
+
+    // Starting a new proposal reloads to the bare URL: a fresh companion scope
+    // (new_<uuid>) and a clean React tree, so no prior client's state survives.
+    async function handleNew() {
         const hasContent =
             address.trim().length > 0 ||
             customerName.trim().length > 0 ||
@@ -1513,73 +1747,8 @@ export default function AdminMasterClient({
             );
             if (!ok) return;
         }
-
-        // Form fields
-        setCustomerName("");
-        setAddress("");
-        setOwed("");
-        setPropertyPhotoUrl(null);
-        setCustomerMotivation(null);
-        setAduType("detached");
-        setCurrentFirstPmtMonthly("");
-        setSiteWorkConfirmed(false);
-        setDriftReport(null);
-
-        // Drop any custom floorplans from prior session
-        setFloorplans(initialFloorplans);
-        const firstFp = initialFloorplans?.[0]?._id ?? "";
-        setFloorplanId(firstFp);
-
-        // Reset comparisons; force the auto-seed effect to re-fire
-        setAduCompareIds([]);
-        setAduTypeByUnitId({});
-        setBedsByUnitId({});
-        setBathsByUnitId({});
-        lastSelectedIdRef.current = null;
-
-        // Investment model state
-        adu.setDefaults(DEFAULTS);
-        adu.setEstimatorByAduId({});
-        adu.setRentByAduId({});
-        adu.setBaseCostByAduId({});
-        adu.setSqftByAduId({});
-        adu.setDiscountAmountByAduId({});
-        adu.setDiscountLinesByAduId({});
-
-        // Rentcast API results
-        hydrateRentcast({ property: null, avm: null, rentals: [], market: null });
-
-        // Slide curation
-        setFeaturedPropertyIds([]);
-        setFeaturedStoryIds([]);
-        setFeaturedRentals([]);
-        setSlideOrder(initialSlideOrder ?? []);
-        // Re-arm auto-populate so the next address pulls fresh from the catalog.
-        projectTimelineTouchedRef.current = false;
-        setProjectTimeline(null);
-        setProposalPaymentSchedule(null);
-        setProposalPaymentSchedulesByAduId({});
-        setPipedrivePersonId(null);
-        setPipedriveDealId(null);
-        setAgreementExclusions("");
-
-        // Step navigation
-        setActiveStep(1);
-        setDoneSteps(new Set());
-
-        // Clear panel-owned localStorage so Step 3/4 don't bring back stale data
-        restoreCompanionStorage({
-            swp_master: null,
-            swp_custom: null,
-            dp_master: null,
-            dp_custom: null,
-        });
-
-        // Reset autosave fingerprint so the next edit (after the user enters a
-        // valid address) triggers a fresh draft save.
-        lastDraftFpRef.current = "";
-        setLoadedBundle(null);
-        setCurrentView(null);
+        await flushDraftBeforeLeaving();
+        window.location.assign("/tools/admin/master");
     }
 
     // ── Draft / canonical view switching ──────────────────────────────────────
@@ -1672,6 +1841,7 @@ export default function AdminMasterClient({
     function snapshotFingerprint(snap: ProposalSnapshot): string {
         return stableStringify({
             customerName: snap.customerName,
+            customerEmail: snap.customerEmail,
             address: snap.address,
             owed: snap.owed,
             propertyPhotoUrl: snap.propertyPhotoUrl,
@@ -1719,6 +1889,9 @@ export default function AdminMasterClient({
     }, []);
 
     useEffect(() => {
+        // Don't autosave until the initial load has hydrated — otherwise the
+        // first debounce could persist half-applied or cross-proposal state.
+        if (!hydratedRef.current) return;
         const addressKey = normalizeAddress(address);
         if (addressKey.length < 6) {
             setDraftStatus({ state: "idle", message: "Add address to enable autosave" });
@@ -1753,7 +1926,7 @@ export default function AdminMasterClient({
 
         return () => clearTimeout(t);
     }, [
-        address, customerName, owed, propertyPhotoUrl, customerMotivation, aduType,
+        address, customerName, customerEmail, owed, propertyPhotoUrl, customerMotivation, aduType,
         floorplanId, currentFirstPmtMonthly,
         aduCompareIds, floorplans,
         adu.defaults, adu.estimatorByAduId, adu.rentByAduId, adu.baseCostByAduId,
@@ -1761,8 +1934,36 @@ export default function AdminMasterClient({
         property, avm, rentals, market,
         featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder,
         projectTimeline, proposalPaymentSchedule, proposalPaymentSchedulesByAduId,
-        agreementExclusions,
+        exclusions,
         activeStep, doneSteps, siteWorkConfirmed,
+        companionVersion,
+    ]);
+
+    // ── Live agreement handoff ───────────────────────────────────────────────
+    // Keep the agreement preview's handoff (HANDOFF_KEY) fresh as the rep edits,
+    // so an open preview window picks up changes via its `storage` listener and
+    // re-renders live. Debounced; only writes when the proposal is contract-ready
+    // (address + at least one payment schedule). A `storage` event only fires in
+    // *other* tabs, so this never disturbs the admin tab itself.
+    const buildAgreementInputRef = React.useRef(buildAgreementInput);
+    buildAgreementInputRef.current = buildAgreementInput;
+    useEffect(() => {
+        const t = setTimeout(() => {
+            try {
+                const input = buildAgreementInputRef.current();
+                if (!input) return;
+                window.localStorage.setItem(
+                    "be_agreement_preview_input_v2",
+                    JSON.stringify(input),
+                );
+            } catch { /* quota / serialization issues are non-fatal */ }
+        }, 600);
+        return () => clearTimeout(t);
+    }, [
+        address, customerName, aduType, aduCompareIds, floorplans,
+        proposalPaymentSchedulesByAduId, agreementAduId,
+        adu.activeSnapshotByAduId, adu.discountLinesByAduId,
+        exclusions, bedsByUnitId, bathsByUnitId, aduTypeByUnitId,
         companionVersion,
     ]);
 
@@ -1773,13 +1974,7 @@ export default function AdminMasterClient({
                 onSave={handleSave}
                 onOpenSaved={() => setSavedModalOpen(true)}
                 onNew={handleNew}
-                onExportPdf={() => {
-                    // Opening the print window in a new tab gives the user a
-                    // dedicated context for the print dialog. The current admin
-                    // tab keeps broadcasting state via the wire so the new tab
-                    // hydrates from the latest snapshot.
-                    window.open("/present-v2/print", "be_print_v2", "noopener");
-                }}
+                onExportPdf={() => void exportProposalPdf()}
                 onGenerateAgreement={handleGenerateAgreement}
                 onAiMatch={
                     prefillProposalId
@@ -1839,7 +2034,8 @@ export default function AdminMasterClient({
                     activeStep={activeStep}
                     completedSteps={completedSteps}
                     needsInputSteps={needsInputSteps}
-                    onStepClick={(n) => setActiveStep(n as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11)}
+                    onStepClick={(n) => setActiveStep(n as StepNum)}
+                    onReviewClick={openReviewPanel}
                 />
 
                 <main className={styles.main}>
@@ -1884,27 +2080,27 @@ export default function AdminMasterClient({
                     {/* ── Architect findings (read-only; Phase 4) ──────────── */}
                     <ArchitectFlagsPanel addressKey={normalizeAddress(address)} />
 
-                    {/* ── Step 1 · Who & Where ─────────────────────────────── */}
-                    <Step1_WhoAndWhere
+                    {/* ── Step 1 · Who & Where (Details + property-data pull) ── */}
+                    <StepCard
+                        stepNumber={1}
+                        title="Who & Where"
                         {...stepState(1)}
                         kind="data"
-                        needsInput={!step1HasData}
-                        needsInputMessage="Enter the address and pick at least one unit to continue"
+                        needsInput={!detailsHasData}
+                        needsInputMessage="Enter the property address to continue"
                         doneLabel={loading ? "Pulling property data…" : "Pull property data"}
                         onDone={() => {
                             getApiData({ address, selectedFloorplan });
                             markDone(1);
                         }}
-                        completeSummary={
-                            address
-                                ? `${address}${aduCompareIds.length > 0 ? ` · ${aduCompareIds.length} unit${aduCompareIds.length > 1 ? "s" : ""}` : ""}`
-                                : "No address yet"
-                        }
+                        completeSummary={address || "No address yet"}
                     >
                         <Step1Body
                             // Customer
                             customerName={customerName}
                             setCustomerName={setCustomerName}
+                            customerEmail={customerEmail}
+                            setCustomerEmail={setCustomerEmail}
                             customerMotivation={customerMotivation}
                             setCustomerMotivation={setCustomerMotivation}
                             pipedrivePersonId={pipedrivePersonId}
@@ -1919,15 +2115,28 @@ export default function AdminMasterClient({
                             setOwed={setOwed}
                             currentFirstPmtMonthly={currentFirstPmtMonthly}
                             setCurrentFirstPmtMonthly={setCurrentFirstPmtMonthly}
-                            propertyPhotoUrl={propertyPhotoUrl}
-                            setPropertyPhotoUrl={setPropertyPhotoUrl}
                             loading={loading}
                             error={error}
-                            // Units
+                        />
+                    </StepCard>
+
+                    {/* ── Step 2 · Units ────────────────────────────────────── */}
+                    <StepCard
+                        stepNumber={2}
+                        title="Units"
+                        {...stepState(2)}
+                        kind="data"
+                        needsInput={!hasUnits}
+                        needsInputMessage="Pick at least one unit to continue"
+                        onDone={() => markDone(2)}
+                        completeSummary={
+                            aduCompareIds.length > 0
+                                ? `${aduCompareIds.length} unit${aduCompareIds.length > 1 ? "s" : ""} selected`
+                                : "No units selected"
+                        }
+                    >
+                        <UnitsBody
                             floorplans={floorplans}
-                            selectedFloorplan={selectedFloorplan}
-                            floorplanId={floorplanId}
-                            setFloorplanId={setFloorplanId}
                             aduCompareIds={aduCompareIds}
                             aduType={aduType}
                             setAduType={setAduType}
@@ -1937,28 +2146,48 @@ export default function AdminMasterClient({
                             setBedsByUnitId={setBedsByUnitId}
                             bathsByUnitId={bathsByUnitId}
                             setBathsByUnitId={setBathsByUnitId}
+                            labelByUnitId={labelByUnitId}
+                            setLabelByUnitId={setLabelByUnitId}
                             defaults={adu.defaults}
                             updateDefault={adu.updateDefault}
                             toggleAdu={adu.toggleAdu}
                             addCustomFloorplan={addCustomFloorplan}
                             removeCustomFloorplan={removeCustomFloorplan}
                             duplicateFloorplan={duplicateFloorplan}
-                            addBathroomUpcharge={addBathroomUpcharge}
+                            setBaseCostByAduId={adu.setBaseCostByAduId}
                         />
-                    </Step1_WhoAndWhere>
+                    </StepCard>
 
-                    {/* ── Step 3 · Estimate the Job ─────────────────────────── */}
-                    <Step3_EstimateJob
-                        {...stepState(2)}
+                    {/* ── Step 3 · Site Photo (drives Slide 2) ──────────────── */}
+                    <StepCard
+                        stepNumber={3}
+                        title="Site Photo"
+                        {...stepState(3)}
                         kind="data"
-                        needsInput={!step3HasData}
-                        needsInputMessage="Select units in Step 2 before estimating site work"
-                        onDone={() => { setSiteWorkConfirmed(true); markDone(2); }}
+                        onDone={() => markDone(3)}
+                        completeSummary={propertyPhotoUrl ? "Site photo attached" : "No photo (slide 2 hides the image)"}
+                    >
+                        <SitePhotoBody
+                            propertyPhotoUrl={propertyPhotoUrl}
+                            setPropertyPhotoUrl={setPropertyPhotoUrl}
+                            address={address}
+                        />
+                    </StepCard>
+
+                    {/* ── Step 4 · Estimate the Job ─────────────────────────── */}
+                    <StepCard
+                        stepNumber={4}
+                        title="Estimate the Job"
+                        {...stepState(4)}
+                        kind="data"
+                        needsInput={!hasUnits}
+                        needsInputMessage="Pick at least one unit in Step 2 before estimating site work"
+                        onDone={() => { setSiteWorkConfirmed(true); markDone(4); }}
                         completeSummary="Site work confirmed"
                     >
                         {adu.selectedAdus.length === 0 ? (
                             <div className={sectionStyles.emptyState}>
-                                Select one or more ADUs in Step 2 to enter site-specific work.
+                                Pick one or more units in Step 2 to enter site-specific work.
                             </div>
                         ) : (
                             <SiteWorkPanel
@@ -1969,13 +2198,21 @@ export default function AdminMasterClient({
                                 catalog={initialSiteWorkCatalogData}
                             />
                         )}
-                    </Step3_EstimateJob>
 
-                    {/* ── Step 4 · Discounts ────────────────────────────────── */}
-                    <Step4_Discounts
-                        {...stepState(3)}
+                        {/* Exclusions — proposal-wide carve-outs (name + price + note).
+                            Shown on the comparison slide as small "Not included" text
+                            and listed on the agreement. Lives here so it's set
+                            alongside the estimate; styled to stand out. */}
+                        <ExclusionsPanel value={exclusions} onChange={setExclusions} />
+                    </StepCard>
+
+                    {/* ── Step 5 · Discounts ────────────────────────────────── */}
+                    <StepCard
+                        stepNumber={5}
+                        title="Discounts"
+                        {...stepState(5)}
                         kind="data"
-                        onDone={() => markDone(3)}
+                        onDone={() => markDone(5)}
                         completeSummary="Discounts applied"
                     >
                         <DiscountsPanel
@@ -1983,38 +2220,35 @@ export default function AdminMasterClient({
                             setDiscountAmountByAduId={adu.setDiscountAmountByAduId}
                             setDiscountLinesByAduId={adu.setDiscountLinesByAduId}
                             discountsCatalog={initialDiscountsCatalog}
+                            addressKey={normalizeAddress(address)}
                         />
-                    </Step4_Discounts>
+                    </StepCard>
 
-                    {/* ── Step 5 · Rental Market ────────────────────────────── */}
-                    <Step5_RentalMarket
-                        {...stepState(4)}
+                    {/* ── Step 6 · Rental Market ────────────────────────────── */}
+                    <StepCard
+                        stepNumber={6}
+                        title="Rental Market"
+                        {...stepState(6)}
                         kind="review"
-                        onDone={() => markDone(4)}
+                        onDone={() => markDone(6)}
                         completeSummary="Rental market reviewed"
                     >
                         {adu.selectedAdus.length > 0 && (
-                            <div className={sectionStyles.rentRow}>
-                                {adu.selectedAdus.map((fp) => (
-                                    <div key={fp._id} className={sectionStyles.rentBadge}>
-                                        <span className={sectionStyles.rentBadgeLabel}>{fp.name}</span>
-                                        <input
-                                            type="number"
-                                            min={0}
-                                            step={50}
-                                            placeholder="Rent / mo"
-                                            className={sectionStyles.rentBadgeInput}
-                                            value={adu.rentByAduId[fp._id] ?? ""}
-                                            onChange={(e) =>
-                                                adu.setRentByAduId((prev) => ({ ...prev, [fp._id]: e.target.value }))
-                                            }
-                                        />
-                                    </div>
-                                ))}
-                            </div>
+                            <RentHero
+                                units={adu.selectedAdus}
+                                rentByAduId={adu.rentByAduId}
+                                setRentByAduId={adu.setRentByAduId}
+                                rentals={rentals}
+                                labelByUnitId={labelByUnitId}
+                            />
                         )}
+                        <div className={sectionStyles.compsIntro}>
+                            <span className={sectionStyles.compsIntroTitle}>Market comps</span>
+                            <span className={sectionStyles.compsIntroNote}>
+                                Supporting evidence for the rent above
+                            </span>
+                        </div>
                         <RentalsPanel
-                            styles={styles}
                             rentals={rentals}
                             targetSqft={selectedFloorplan?.sqft}
                             onRentPick={
@@ -2026,15 +2260,166 @@ export default function AdminMasterClient({
                                         }))
                                     : undefined
                             }
+                            selectedFeatured={featuredRentals}
+                            onToggleFeature={toggleFeaturedRental}
+                            maxFeatured={MAX_FEATURED_RENTALS}
                         />
-                    </Step5_RentalMarket>
 
-                    {/* ── Step 6 · Review & Generate ────────────────────────── */}
-                    <Step6_ReviewAndGenerate
-                        {...stepState(5)}
-                        kind="review"
-                        completeSummary="Ready to present"
+                        {/* Featured-rental order + photo editor (merged from the
+                            old standalone Feature Rentals step). The comps list
+                            above provides the ★ Feature toggles, so the editor's
+                            own "Available" column is hidden here. */}
+                        {featuredRentals.length > 0 && (
+                            <div className={sectionStyles.rentFeaturedEditor}>
+                                <div className={sectionStyles.rentFeaturedHead}>
+                                    Featured on the presentation · order &amp; photos
+                                </div>
+                                <FeatureRentalsPanel
+                                    rentals={rentals}
+                                    selected={featuredRentals}
+                                    onChange={setFeaturedRentals}
+                                    maxSelected={MAX_FEATURED_RENTALS}
+                                    showAvailable={false}
+                                />
+                            </div>
+                        )}
+                    </StepCard>
+
+                    {/* ── Step 7 · Project Timeline (Slide 7 source) ────────── */}
+                    <StepCard
+                        stepNumber={7}
+                        title="Project Timeline"
+                        {...stepState(7)}
+                        kind="data"
+                        onDone={() => markDone(7)}
+                        completeSummary={
+                            projectTimeline
+                                ? "Custom timeline entered"
+                                : "Using default timeline"
+                        }
                     >
+                        <TimelineEditorPanel
+                            value={projectTimeline}
+                            onChange={setProjectTimelineUserEdit}
+                            onReset={() => {
+                                // Reset is a "manual" event — disarm auto-populate so the
+                                // catalog doesn't immediately re-fill what the rep just cleared.
+                                projectTimelineTouchedRef.current = true;
+                                setProjectTimeline(null);
+                            }}
+                        />
+                    </StepCard>
+
+                    {/* ── Step 8 · Payment Schedule (drives the contract slide) ── */}
+                    <StepCard
+                        stepNumber={8}
+                        title="Payment Schedule"
+                        {...stepState(8)}
+                        kind="data"
+                        onDone={() => markDone(8)}
+                        completeSummary={
+                            Object.keys(proposalPaymentSchedulesByAduId).length > 0
+                                ? "Schedule entered"
+                                : "Not yet generated"
+                        }
+                    >
+                        <PaymentSchedulePanel
+                            selectedAdus={adu.selectedAdus}
+                            aduScenarios={adu.aduScenarios}
+                            value={proposalPaymentSchedulesByAduId}
+                            onChange={setProposalPaymentSchedulesByAduId}
+                            milestoneDefs={initialMilestoneDefs}
+                        />
+                    </StepCard>
+
+                    {/* ── Step 9 · Feature Builds (curate Slide 5) ──────────── */}
+                    <StepCard
+                        stepNumber={9}
+                        title="Feature Builds"
+                        {...stepState(9)}
+                        kind="data"
+                        onDone={() => markDone(9)}
+                        completeSummary={
+                            featuredPropertyIds.length > 0
+                                ? `${featuredPropertyIds.length} build${featuredPropertyIds.length > 1 ? "s" : ""} curated`
+                                : "Using Sanity featured"
+                        }
+                    >
+                        <FeaturePropertiesPanel
+                            properties={initialCompletedProperties}
+                            selectedIds={featuredPropertyIds}
+                            onChange={setFeaturedPropertyIds}
+                        />
+                    </StepCard>
+
+                    {/* ── Step 10 · Feature Stories (curate Slide 6) ─────────── */}
+                    <StepCard
+                        stepNumber={10}
+                        title="Feature Stories"
+                        {...stepState(10)}
+                        kind="data"
+                        onDone={() => markDone(10)}
+                        completeSummary={
+                            featuredStoryIds.length > 0
+                                ? `${featuredStoryIds.length} stor${featuredStoryIds.length > 1 ? "ies" : "y"} curated`
+                                : "Using Sanity featured"
+                        }
+                    >
+                        <FeatureStoriesPanel
+                            stories={initialStories}
+                            selectedIds={featuredStoryIds}
+                            onChange={setFeaturedStoryIds}
+                        />
+                    </StepCard>
+
+                    {/* ── Step 11 · Slide Order (drag-and-drop) ─────────────── */}
+                    <StepCard
+                        stepNumber={11}
+                        title="Slide Order"
+                        {...stepState(11)}
+                        kind="data"
+                        onDone={() => markDone(11)}
+                        completeSummary={
+                            slideOrder.length > 0
+                                ? "Custom slide order"
+                                : "Default slide order"
+                        }
+                    >
+                        <SlideOrderPanel
+                            value={slideOrder}
+                            onChange={setSlideOrder}
+                        />
+                    </StepCard>
+
+                    {/* ── Review & Generate — pinned control panel (not a step) ──
+                        Live, always-available surface: open it anytime to edit
+                        policy knobs / regenerate. Collapsed by default; no Done
+                        gate, so it never blocks the workflow. */}
+                    <section id="review-generate-panel" className={styles.reviewPanel}>
+                        <button
+                            type="button"
+                            className={styles.reviewPanelHeader}
+                            onClick={() => setReviewOpen((v) => !v)}
+                            aria-expanded={reviewOpen}
+                            aria-controls="review-generate-body"
+                        >
+                            <span className={styles.reviewPanelIcon} aria-hidden>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="3" />
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                                </svg>
+                            </span>
+                            <span className={styles.reviewPanelTitleWrap}>
+                                <span className={styles.reviewPanelTitle}>Proposal Controls</span>
+                                <span className={styles.reviewPanelSub}>
+                                    Comparison, financing &amp; live policy knobs · open anytime
+                                </span>
+                            </span>
+                            <span className={styles.reviewPanelChevron} data-open={reviewOpen} aria-hidden>▾</span>
+                        </button>
+
+                        {reviewOpen && (
+                        <div id="review-generate-body" className={styles.reviewPanelBody}>
                         <InvestmentCompareSummary
                             styles={styles}
                             adus={adu.aduScenarios}
@@ -2044,11 +2429,6 @@ export default function AdminMasterClient({
                             setSqftByAduId={adu.setSqftByAduId}
                             rentByAduId={adu.rentByAduId}
                             setRentByAduId={adu.setRentByAduId}
-                        />
-
-                        <ExclusionsPanel
-                            value={agreementExclusions}
-                            onChange={setAgreementExclusions}
                         />
 
                         <FinancingTable
@@ -2105,122 +2485,10 @@ export default function AdminMasterClient({
                                 <span className={tableStyles.footerLabel}>Debug tip:</span> If a value looks off, check the formula + inputs under that cell.
                             </div>
                         </details>
-                    </Step6_ReviewAndGenerate>
+                        </div>
+                        )}
+                    </section>
 
-                    {/* ── Step 7 · Feature Builds (curate Slide 5) ──────────── */}
-                    <Step7_FeatureBuilds
-                        {...stepState(6)}
-                        kind="data"
-                        onDone={() => markDone(6)}
-                        completeSummary={
-                            featuredPropertyIds.length > 0
-                                ? `${featuredPropertyIds.length} build${featuredPropertyIds.length > 1 ? "s" : ""} curated`
-                                : "Using Sanity featured"
-                        }
-                    >
-                        <FeaturePropertiesPanel
-                            properties={initialCompletedProperties}
-                            selectedIds={featuredPropertyIds}
-                            onChange={setFeaturedPropertyIds}
-                        />
-                    </Step7_FeatureBuilds>
-
-                    {/* ── Step 8 · Feature Stories (curate Slide 6) ─────────── */}
-                    <Step8_FeatureStories
-                        {...stepState(7)}
-                        kind="data"
-                        onDone={() => markDone(7)}
-                        completeSummary={
-                            featuredStoryIds.length > 0
-                                ? `${featuredStoryIds.length} stor${featuredStoryIds.length > 1 ? "ies" : "y"} curated`
-                                : "Using Sanity featured"
-                        }
-                    >
-                        <FeatureStoriesPanel
-                            stories={initialStories}
-                            selectedIds={featuredStoryIds}
-                            onChange={setFeaturedStoryIds}
-                        />
-                    </Step8_FeatureStories>
-
-                    {/* ── Step 9 · Feature Rentals (curate Slide 10) ────────── */}
-                    <Step9_FeatureRentals
-                        {...stepState(8)}
-                        kind="data"
-                        onDone={() => markDone(8)}
-                        completeSummary={
-                            featuredRentals.length > 0
-                                ? `${featuredRentals.length} rental${featuredRentals.length > 1 ? "s" : ""} curated`
-                                : "Using first 4 from RentCast"
-                        }
-                    >
-                        <FeatureRentalsPanel
-                            rentals={rentals}
-                            selected={featuredRentals}
-                            onChange={setFeaturedRentals}
-                            maxSelected={4}
-                        />
-                    </Step9_FeatureRentals>
-
-                    {/* ── Step 10 · Slide Order (drag-and-drop) ─────────────── */}
-                    <Step10_SlideOrder
-                        {...stepState(9)}
-                        kind="data"
-                        onDone={() => markDone(9)}
-                        completeSummary={
-                            slideOrder.length > 0
-                                ? "Custom slide order"
-                                : "Default slide order"
-                        }
-                    >
-                        <SlideOrderPanel
-                            value={slideOrder}
-                            onChange={setSlideOrder}
-                        />
-                    </Step10_SlideOrder>
-
-                    {/* ── Step 11 · Project Timeline (Slide 7 source) ───────── */}
-                    <Step11_Timeline
-                        {...stepState(10)}
-                        kind="data"
-                        onDone={() => markDone(10)}
-                        completeSummary={
-                            projectTimeline
-                                ? "Custom timeline entered"
-                                : "Using default timeline"
-                        }
-                    >
-                        <TimelineEditorPanel
-                            value={projectTimeline}
-                            onChange={setProjectTimelineUserEdit}
-                            onReset={() => {
-                                // Reset is a "manual" event — disarm auto-populate so the
-                                // catalog doesn't immediately re-fill what the rep just cleared.
-                                projectTimelineTouchedRef.current = true;
-                                setProjectTimeline(null);
-                            }}
-                        />
-                    </Step11_Timeline>
-
-                    {/* ── Step 12 · Payment Schedule (drives the future contract slide) ── */}
-                    <Step12_PaymentSchedule
-                        {...stepState(11)}
-                        kind="data"
-                        onDone={() => markDone(11)}
-                        completeSummary={
-                            Object.keys(proposalPaymentSchedulesByAduId).length > 0
-                                ? "Schedule entered"
-                                : "Not yet generated"
-                        }
-                    >
-                        <PaymentSchedulePanel
-                            selectedAdus={adu.selectedAdus}
-                            aduScenarios={adu.aduScenarios}
-                            value={proposalPaymentSchedulesByAduId}
-                            onChange={setProposalPaymentSchedulesByAduId}
-                            milestoneDefs={initialMilestoneDefs}
-                        />
-                    </Step12_PaymentSchedule>
 
                 </main>
             </div>

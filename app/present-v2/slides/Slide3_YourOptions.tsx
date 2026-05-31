@@ -2,15 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { unitNameParts } from "@/lib/units/displayName";
 import { AduTypeBadge } from "../_components/AduTypeBadge";
-import {
-    getDiscountLines,
-    createEmptyDiscountState,
-    catalogToPresets,
-    PRESETS,
-    type DiscountState,
-    type PresetLike,
-} from "@/lib/investment/discounts";
 import s from "./Slide3.module.css";
 
 function fmt$(n: number) {
@@ -92,20 +85,12 @@ export function Slide3_YourOptions() {
         customerName,
         siteWorkTagsByUnitId,
         discountLinesByUnitId,
+        exclusions,
+        labelByUnitId,
         currentSlide,
         isPrintMode,
-        discountsCatalog,
     } = usePresentationStore();
 
-    // Resolve presets from the DB-backed catalog when seeded; fall back to the
-    // legacy hardcoded list so the slide still renders if the catalog is empty.
-    const resolvedPresets: PresetLike[] = useMemo(() => {
-        if (discountsCatalog && discountsCatalog.length > 0) {
-            const fromCatalog = catalogToPresets(discountsCatalog);
-            if (fromCatalog.length > 0) return fromCatalog;
-        }
-        return PRESETS;
-    }, [discountsCatalog]);
     const active = currentSlide === 4 || isPrintMode;
 
     const units = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
@@ -130,23 +115,11 @@ export function Slide3_YourOptions() {
         return bySqft[Math.floor(bySqft.length / 2)]?._id ?? null;
     }, [displayUnits]);
 
-    const [lsDiscountLines, setLsDiscountLines] = useState<Record<string, { label: string; amount: number }[]>>({});
-    const comparedKey = comparedUnitIds.join(",");
-    useEffect(() => {
-        try {
-            const dpMaster: DiscountState = JSON.parse(localStorage.getItem("dp_master") ?? "null") ?? createEmptyDiscountState();
-            const dpCustom: Record<string, DiscountState | null> = JSON.parse(localStorage.getItem("dp_custom") ?? "null") ?? {};
-            const next: Record<string, { label: string; amount: number }[]> = {};
-            for (const id of comparedUnitIds) {
-                const effective = dpCustom[id] ?? dpMaster;
-                next[id] = getDiscountLines(effective, resolvedPresets);
-            }
-            setLsDiscountLines(next);
-        } catch { /* malformed */ }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [comparedKey, resolvedPresets]);
-
-    const discountLines = Object.keys(lsDiscountLines).length > 0 ? lsDiscountLines : discountLinesByUnitId;
+    // Read discount lines straight from the live broadcast store — the same way
+    // site work is read — so admin-side toggles reflect on the presenter
+    // immediately. (Previously this cached from localStorage and never re-synced,
+    // which is why discounts only refreshed on a full presenter reload.)
+    const discountLines = discountLinesByUnitId;
     const allDiscountLabels = Array.from(new Set(
         displayUnits.flatMap((fp) => (discountLines[fp._id] ?? []).map((d) => d.label))
     ));
@@ -167,7 +140,6 @@ export function Slide3_YourOptions() {
                     <h2 className="section-title">
                         Your <em>options</em>
                     </h2>
-                    {subhead && <span className={s.headSubhead}>{subhead}</span>}
                 </div>
             </div>
 
@@ -215,8 +187,20 @@ export function Slide3_YourOptions() {
 
                             {/* Plan header */}
                             <div className={s.planColHeader}>
-                                <div className={s.planEyebrow}>The Plan</div>
-                                <div className={s.planName}>{fp.name}</div>
+                                {/* <div className={s.planEyebrow}>The Plan</div> */}
+                                {(() => {
+                                    const nm = unitNameParts(fp.name, labelByUnitId?.[fp._id]);
+                                    return (
+                                        <div className={s.planName}>
+                                            {nm.base}
+                                            {nm.tag ? (
+                                                <span className={s.planNameTag}> · {nm.tag}</span>
+                                            ) : nm.dupNum ? (
+                                                ` (${nm.dupNum})`
+                                            ) : null}
+                                        </div>
+                                    );
+                                })()}
                                 <div className={s.planSqft}>
                                     {fp.sqft ? fp.sqft.toLocaleString() : "—"}
                                     <span className={s.planSqftLabel}>sqft</span>
@@ -272,22 +256,46 @@ export function Slide3_YourOptions() {
 
                             {/* Total — pinned footer strip */}
                             <div className={s.heroTotal}>
-                                <div className={s.heroTotalEyebrow}>Total · After Discounts</div>
+                                <div className={s.heroTotalEyebrow}>Total · After Discounts · Turnkey</div>
                                 <div className={s.heroTotalVal}>
                                     {total ? <AnimDollar n={total} active={active} delay={i * 80} /> : "—"}
                                 </div>
-                                <div className={s.heroTotalSub}>Turnkey · nothing due until each milestone is completed</div>
                             </div>
                         </div>
                     );
                 })}
             </div>
 
+
+
             {/* Footer */}
             <div className={s.footer}>
                 <span className={s.footerDisclaimer}>
                     Offer valid 15 days
                 </span>
+                {/* Exclusions — small "Not included" print under the comparison.
+                Sized to sit quietly below the columns without reshaping them. */}
+                {(exclusions?.length ?? 0) > 0 && (
+                    <div className={s.exclusions}>
+                        <span className={s.footerDisclaimer}>Not included: </span>
+                        <span className={s.exclusionsItems}>
+                            {exclusions
+                                .filter((e) => e.name && e.name.trim().length > 0)
+                                .map((e, i, arr) => (
+                                    <span key={e.id} className={s.footerDisclaimer}>
+                                        {e.name}
+                                        {e.price > 0 && (
+                                            <span className={s.exclusionPrice}> ({fmt$(e.price)})</span>
+                                        )}
+                                        {e.note && e.note.trim().length > 0 && (
+                                            <span className={s.exclusionNote}> — {e.note}</span>
+                                        )}
+                                        {i < arr.length - 1 && <span className={s.exclusionSep}> · </span>}
+                                    </span>
+                                ))}
+                        </span>
+                    </div>
+                )}
                 <span className={s.footerTagline}>We build for you.</span>
             </div>
         </div>

@@ -1,0 +1,222 @@
+/* Rental Market hero — the per-Estate-unit monthly rent, given the spotlight it
+ * deserves (it drives the whole ROI). Premium, focused, Apple-flavoured:
+ * generous space, one big editable focal number, soft layered depth, restrained
+ * green accent. Shares the admin-master palette (Roboto + green #2a7a52 + teal).
+ */
+
+.hero {
+    --rh-ink: #14302f;
+    --rh-ink-mute: rgba(20, 48, 47, 0.62);
+    --rh-ink-faint: rgba(20, 48, 47, 0.42);
+    --rh-accent: #2a7a52;
+    --rh-accent-dark: #1e5b3d;
+    --rh-accent-soft: rgba(42, 122, 82, 0.10);
+    --rh-gold: #b8954a;
+    --rh-surface: #ffffff;
+    --rh-border: rgba(20, 48, 47, 0.10);
+
+    position: relative;
+    margin-bottom: 24px;
+    padding: 28px 28px 30px;
+    border-radius: 24px;
+    background:
+        radial-gradient(130% 150% at 0% 0%, rgba(42, 122, 82, 0.07), transparent 55%),
+        linear-gradient(180deg, #fbfaf6 0%, #ffffff 68%);
+    border: 1px solid var(--rh-border);
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04), 0 22px 48px -30px rgba(20, 48, 47, 0.32);
+    overflow: hidden;
+    font-family: "Roboto", system-ui, sans-serif;
+    color: var(--rh-ink);
+}
+/* premium accent hairline across the top */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--rh-accent), var(--rh-gold) 92%);
+}
+
+.head {
+    max-width: 660px;
+    margin-bottom: 22px;
+}
+.eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--rh-accent);
+    margin-bottom: 9px;
+}
+.title {
+    margin: 0 0 7px;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.12;
+    color: var(--rh-ink);
+}
+.sub {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--rh-ink-mute);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(264px, 1fr));
+    gap: 16px;
+}
+
+/* ── Unit rent card ───────────────────────────────────────────────────────── */
+
+@keyframes rhIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 22px 18px;
+    background: var(--rh-surface);
+    border: 1.5px solid var(--rh-border);
+    border-radius: 18px;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
+    transition: border-color 0.2s ease, box-shadow 0.28s ease, transform 0.2s ease;
+    animation: rhIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px -24px rgba(20, 48, 47, 0.42);
+}
+.card:focus-within {
+    border-color: var(--rh-accent);
+    box-shadow: 0 0 0 4px var(--rh-accent-soft), 0 20px 40px -24px rgba(20, 48, 47, 0.42);
+}
+.cardFilled {
+    border-color: rgba(42, 122, 82, 0.4);
+}
+
+.cardName {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--rh-ink-mute);
+    margin-bottom: 4px;
+}
+.cardTag {
+    font-weight: 600;
+    color: var(--rh-accent-dark);
+}
+
+/* The focal value — big, editable, borderless. */
+.amountRow {
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    margin: 2px 0 4px;
+    cursor: text;
+}
+.currency {
+    font-size: 27px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--rh-ink);
+}
+.amountInput {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-family: inherit;
+    font-size: 46px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+    color: var(--rh-ink);
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    -moz-appearance: textfield;
+}
+.amountInput::-webkit-outer-spin-button,
+.amountInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.amountInput::placeholder { color: var(--rh-ink-faint); }
+
+.annual {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--rh-ink-mute);
+    font-variant-numeric: tabular-nums;
+    min-height: 18px;
+}
+.annual strong {
+    font-weight: 700;
+    color: var(--rh-ink);
+}
+.cardFilled .annual,
+.cardFilled .annual strong { color: var(--rh-accent-dark); }
+
+/* One-tap suggestion from the comps' median. */
+.suggest {
+    margin-top: 14px;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 5px 5px 12px;
+    border: 1px solid var(--rh-border);
+    border-radius: 999px;
+    background: var(--rh-surface);
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+.suggest:hover { border-color: var(--rh-accent); background: var(--rh-accent-soft); }
+.suggest:active { transform: scale(0.97); }
+.suggestLabel {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--rh-ink-faint);
+}
+.suggestValue {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--rh-ink);
+    font-variant-numeric: tabular-nums;
+}
+.suggestApply {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: var(--rh-accent);
+    border-radius: 999px;
+    padding: 3px 11px;
+}
+
+@media (max-width: 560px) {
+    .hero { padding: 22px 20px 24px; border-radius: 20px; }
+    .title { font-size: 23px; }
+    .amountInput { font-size: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .suggest {
+        transition: none;
+        animation: none;
+    }
+    .card:hover { transform: none; }
+}

@@ -23,28 +23,40 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    background: rgba(13, 31, 31, 0.97);
-    backdrop-filter: blur(6px);
+    background: linear-gradient(180deg, rgba(15, 36, 36, 0.98), rgba(11, 27, 27, 0.98));
+    backdrop-filter: blur(10px);
     color: #f7f5f0;
-    padding: 12px 24px;
+    padding: 12px 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    justify-content: space-between;
+    gap: 16px 20px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(184, 149, 74, 0.22);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 6px 20px -12px rgba(0, 0, 0, 0.6);
 }
 
+/* ── Left zone: identity + live status ──────────────────────────────────── */
 .toolbarLeft {
     display: flex;
     align-items: center;
     gap: 14px;
-    flex: 1;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.identity {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
     min-width: 0;
 }
 
 .title {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
 }
 
 .subtitle {
@@ -53,29 +65,141 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 42ch;
 }
 
+.status {
+    font-style: italic;
+    font-size: 12px;
+    color: rgba(247, 245, 240, 0.55);
+    white-space: nowrap;
+}
+
+.saveHint {
+    font-size: 11.5px;
+    color: rgba(245, 220, 160, 0.8);
+    max-width: 30ch;
+    line-height: 1.35;
+}
+
+/* ── Live-sync status pill (near the title, NOT among the buttons) ───────── */
+.livePill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 28px;
+    padding: 0 12px 0 11px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+
+.livePillText { line-height: 1; }
+
+.liveDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+    flex-shrink: 0;
+}
+
+.liveOn {
+    color: #6ee7a8;
+    border-color: rgba(110, 231, 168, 0.35);
+    background: rgba(110, 231, 168, 0.12);
+}
+
+.liveOn .liveDot {
+    animation: livePulse 1.8s ease-in-out infinite;
+}
+
+.livePaused {
+    color: #f0c869;
+    border-color: rgba(240, 200, 105, 0.35);
+    background: rgba(240, 200, 105, 0.10);
+}
+
+.liveFlash {
+    color: #aef5cb;
+    border-color: rgba(110, 231, 168, 0.7);
+    background: rgba(110, 231, 168, 0.28);
+    animation: liveFlashPop 0.4s ease;
+}
+
+@keyframes livePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(110, 231, 168, 0.5); }
+    50% { box-shadow: 0 0 0 4px rgba(110, 231, 168, 0); }
+}
+
+@keyframes liveFlashPop {
+    0% { transform: scale(0.94); }
+    60% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+}
+
+/* ── Right zone: actions, grouped by tier ───────────────────────────────── */
 .actions {
     display: flex;
-    gap: 8px;
-    flex-shrink: 0;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* Group of related secondary buttons sharing one pill background + a thin
+ * internal divider — reads as a single "downloads" cluster. */
+.btnGroup {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.btnGroup .btn {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+.btnGroup .btn + .btn {
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .btn {
     /* Tall enough to host a two-line label (primary action + helper text). */
-    min-height: 36px;
-    padding: 4px 16px;
-    border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    background: transparent;
+    min-height: 40px;
+    padding: 5px 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.02);
     color: #f7f5f0;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.08s;
     display: inline-flex;
     align-items: center;
+    gap: 9px;
+}
+
+.btnIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.85;
+    flex-shrink: 0;
 }
 
 .btnLabel {
@@ -90,40 +214,74 @@
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.01em;
-    color: rgba(247, 245, 240, 0.65);
+    color: rgba(247, 245, 240, 0.6);
     text-transform: none;
 }
 
-.btnPrimary .btnHint {
-    color: rgba(255, 247, 214, 0.75);
-}
-
 .btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.09);
     color: #fff;
-    border-color: rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.38);
 }
 
-.btnPrimary {
-    background: rgba(184, 149, 74, 0.18);
-    border-color: rgba(184, 149, 74, 0.55);
-    color: #f5dca0;
+.btn:active:not(:disabled) {
+    transform: translateY(1px);
 }
 
-.btnPrimary:hover:not(:disabled) {
-    background: rgba(184, 149, 74, 0.32);
-    color: #fff7d6;
+.btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(245, 220, 160, 0.45);
 }
 
 .btn:disabled {
-    opacity: 0.45;
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
-.status {
-    font-style: italic;
-    font-size: 12px;
-    color: rgba(247, 245, 240, 0.6);
+/* Saved-to-deal success accent (green tick state). */
+.btnSuccess {
+    background: rgba(110, 231, 168, 0.14);
+    border-color: rgba(110, 231, 168, 0.45);
+    color: #aef5cb;
+}
+
+.btnSuccess .btnHint { color: rgba(174, 245, 203, 0.8); }
+
+/* ── Primary cluster: the terminal action (Send for signature) ──────────── */
+.primaryCluster {
+    display: inline-flex;
+    align-items: stretch;
+    gap: 8px;
+    padding: 5px;
+    border-radius: 14px;
+    background: rgba(184, 149, 74, 0.10);
+    border: 1px solid rgba(184, 149, 74, 0.3);
+}
+
+.btnPrimary {
+    background: linear-gradient(180deg, #c8a55a, #b8954a);
+    border: 1px solid #b8954a;
+    color: #1a2e2e;
+    box-shadow: 0 2px 8px -2px rgba(184, 149, 74, 0.6);
+}
+
+.btnPrimary .btnIcon { opacity: 1; }
+
+.btnPrimary .btnHint {
+    color: rgba(26, 46, 46, 0.7);
+}
+
+.btnPrimary:hover:not(:disabled) {
+    background: linear-gradient(180deg, #d6b468, #c39f54);
+    border-color: #c8a55a;
+    color: #14302f;
+}
+
+.btnPrimary:disabled {
+    background: rgba(184, 149, 74, 0.2);
+    border-color: rgba(184, 149, 74, 0.3);
+    color: rgba(245, 220, 160, 0.5);
+    box-shadow: none;
 }
 
 .page {
@@ -395,4 +553,53 @@
         size: letter portrait;
         margin: 0;
     }
+}
+
+/* ── Recipient email (inside the primary cluster) ────────────────────────── */
+.recipient {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: 0 4px 0 8px;
+}
+
+.recipientLabel {
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(245, 220, 160, 0.75);
+}
+
+.recipientInput {
+    height: 26px;
+    width: 200px;
+    max-width: 38vw;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(184, 149, 74, 0.5);
+    background: rgba(0, 0, 0, 0.25);
+    color: #f7f5f0;
+    font: inherit;
+    font-size: 12px;
+}
+
+.recipientInput::placeholder {
+    color: rgba(247, 245, 240, 0.4);
+}
+
+.recipientInput:focus {
+    outline: none;
+    border-color: #c8a55a;
+    box-shadow: 0 0 0 3px rgba(200, 165, 90, 0.25);
+}
+
+.recipientInput:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+@media print {
+    .livePill { display: none; }
 }

@@ -3,6 +3,9 @@
 
 import React, { useMemo, useState } from "react";
 import type { RentalListing } from "@/lib/rentcast/types";
+import type { FeaturedRental } from "@/lib/store/presentationStore";
+import { rentalKey } from "@/lib/rentals/featured";
+import s from "./RentalsPanel.module.css";
 
 type Mode = "selected" | "adu_range";
 
@@ -63,7 +66,6 @@ function scoreListing(input: {
 }
 
 export function RentalsPanel({
-    styles,
     rentals,
     // pass selectedFloorplan?.sqft in from parent
     targetSqft,
@@ -71,13 +73,22 @@ export function RentalsPanel({
     defaultMode = "selected",
     defaultBandPct = 0.15,
     onRentPick,
+    // ── Feature-on-slide selection (merged from the old Feature Rentals step) ──
+    selectedFeatured,
+    onToggleFeature,
+    maxFeatured = 4,
 }: {
-    styles: any;
     rentals: RentalListing[];
     targetSqft?: number;
     defaultMode?: Mode;
     defaultBandPct?: number; // 0.15 = 15%
     onRentPick?: (rent: number) => void;
+    /** Currently-featured rentals — used to show which comps are on the slide. */
+    selectedFeatured?: FeaturedRental[];
+    /** Toggle a comp's featured state. When set, each row shows a ★ Feature button. */
+    onToggleFeature?: (r: RentalListing) => void;
+    /** Max number of featured rentals (default 4). */
+    maxFeatured?: number;
 }) {
 
     // ✅ Mode toggle
@@ -211,71 +222,85 @@ export function RentalsPanel({
 
         return items;
     }, [valid, requireSqft, sqftWindow.low, sqftWindow.high, recencyDays, sort, mode, targetSqft, medianPrice, sqftWindow.kind]);
+    // ── Featured-on-slide lookup (for the per-row ★ Feature toggle) ──
+    const featuredKeys = useMemo(
+        () => new Set((selectedFeatured ?? []).map(rentalKey)),
+        [selectedFeatured],
+    );
+    const featuredCount = selectedFeatured?.length ?? 0;
+
     const initialCount = 6;
     const visible = showAll ? filtered : filtered.slice(0, initialCount);
     const hiddenCount = Math.max(0, filtered.length - visible.length);
 
     return (
-        <div className={styles.rentalsPanel}>
+        <div className={s.rentalsPanel}>
             {/* KPIs */}
-            <div className={styles.rentalsKpis}>
-                <div className={styles.kpi}>
-                    <div className={styles.kpiLabel}>Listings</div>
-                    <div className={styles.kpiValue}>{filtered.length}</div>
+            <div className={s.rentalsKpis}>
+                <div className={s.kpi} title="How many comparable rentals match your current filters.">
+                    <div className={s.kpiLabel}>Comps found</div>
+                    <div className={s.kpiValue}>{filtered.length}</div>
                 </div>
-                <div className={styles.kpi}>
-                    <div className={styles.kpiLabel}>Median rent</div>
-                    <div className={styles.kpiValue}>{medianPrice != null ? money(medianPrice) : "—"}</div>
+                <div className={s.kpi} title="The middle rent of the comps — half rent for more, half for less.">
+                    <div className={s.kpiLabel}>Median rent</div>
+                    <div className={s.kpiValue}>{medianPrice != null ? money(medianPrice) : "—"}</div>
                 </div>
-                <div className={styles.kpi}>
-                    <div className={styles.kpiLabel}>25–75%</div>
-                    <div className={styles.kpiValue}>
+                <div className={s.kpi} title="Where the middle 50% of rents fall — most comps rent somewhere in this range.">
+                    <div className={s.kpiLabel}>Typical range</div>
+                    <div className={s.kpiValue}>
                         {p25p75.p25 != null && p25p75.p75 != null ? `${money(p25p75.p25)} – ${money(p25p75.p75)}` : "—"}
                     </div>
                 </div>
-                <div className={styles.kpi}>
-                    <div className={styles.kpiLabel}>Window</div>
-                    <div className={styles.kpiValue}>
+                <div className={s.kpi} title="The square-footage range of the rentals being shown.">
+                    <div className={s.kpiLabel}>Sizes shown</div>
+                    <div className={s.kpiValue}>
                         {`${num(Math.round(sqftWindow.low))}–${num(Math.round(sqftWindow.high))} sf`}
                     </div>
                 </div>
+                {onToggleFeature && (
+                    <div className={s.kpi} title="Rentals you've added to the presentation slide (max 4).">
+                        <div className={s.kpiLabel}>Featured</div>
+                        <div className={s.kpiValue}>{featuredCount} / {maxFeatured}</div>
+                    </div>
+                )}
             </div>
 
             {/* Controls */}
-            <div className={styles.rentalsControls}>
-                {/* Mode */}
-                <label className={styles.chip}>
-                    <input
-                        className={styles.chipInput}
-                        type="radio"
-                        name="rentalsMode"
-                        checked={mode === "selected"}
-                        onChange={() => setMode("selected")}
-                    />
-                    <span>Selected unit comps</span>
-                </label>
+            <div className={s.rentalsControls}>
+                {/* Primary: which rentals to compare against */}
+                <div className={s.field}>
+                    <span className={s.fieldLabel}>Compare against</span>
+                    <div className={s.seg} role="group" aria-label="Compare against">
+                        <button
+                            type="button"
+                            className={`${s.segBtn} ${mode === "selected" ? s.segBtnOn : ""}`}
+                            aria-pressed={mode === "selected"}
+                            onClick={() => setMode("selected")}
+                            title="Only show rentals close in size to the ADU you selected."
+                        >
+                            Similar to my ADU
+                        </button>
+                        <button
+                            type="button"
+                            className={`${s.segBtn} ${mode === "adu_range" ? s.segBtnOn : ""}`}
+                            aria-pressed={mode === "adu_range"}
+                            onClick={() => setMode("adu_range")}
+                            title="Show rentals across the full ADU size range, not just your unit's size."
+                        >
+                            All ADU sizes
+                        </button>
+                    </div>
+                </div>
 
-                <label className={styles.chip}>
-                    <input
-                        className={styles.chipInput}
-                        type="radio"
-                        name="rentalsMode"
-                        checked={mode === "adu_range"}
-                        onChange={() => setMode("adu_range")}
-                    />
-                    <span>All ADU-range listings</span>
-                </label>
-
-                {/* Require sqft */}
-                <label className={styles.chip}>
-                    <input className={styles.chipInput} type="checkbox" checked={requireSqft} onChange={(e) => setRequireSqft(e.target.checked)} />
-                    <span>Has sqft</span>
-                </label>
-
-                {/* Recency */}
-                <div className={styles.sortWrap}>
-                    <span className={styles.sortLabel}>Recency</span>
-                    <select className={styles.sortSelect} value={String(recencyDays)} onChange={(e) => setRecencyDays(Number(e.target.value))}>
+                {/* Listed within */}
+                <div className={s.field}>
+                    <span className={s.fieldLabel}>Listed within</span>
+                    <select
+                        className={s.sortSelect}
+                        value={String(recencyDays)}
+                        onChange={(e) => setRecencyDays(Number(e.target.value))}
+                        title="Only include rentals seen on the market within this many days."
+                    >
                         <option value="30">30 days</option>
                         <option value="60">60 days</option>
                         <option value="90">90 days</option>
@@ -284,76 +309,100 @@ export function RentalsPanel({
                     </select>
                 </div>
 
-                {/* Band */}
-                <div className={styles.sortWrap}>
-                    <span className={styles.sortLabel}>Sqft band</span>
-                    <select className={styles.sortSelect} value={String(sqftBandPct)} onChange={(e) => setSqftBandPct(clamp(Number(e.target.value), 0.15, 0.35))}>
-                        <option value="0.15">±15%</option>
-                        <option value="0.2">±20%</option>
-                        <option value="0.25">±25%</option>
-                        <option value="0.3">±30%</option>
-                        <option value="0.35">±35%</option>
+                {/* Size match (band) */}
+                <div className={s.field}>
+                    <span className={s.fieldLabel}>Size match</span>
+                    <select
+                        className={s.sortSelect}
+                        value={String(sqftBandPct)}
+                        onChange={(e) => setSqftBandPct(clamp(Number(e.target.value), 0.15, 0.35))}
+                        title="How close in size a rental must be to count as comparable. ±15% is strict; ±35% is loose."
+                    >
+                        <option value="0.15">Within ±15%</option>
+                        <option value="0.2">Within ±20%</option>
+                        <option value="0.25">Within ±25%</option>
+                        <option value="0.3">Within ±30%</option>
+                        <option value="0.35">Within ±35%</option>
                     </select>
                 </div>
 
-                {/* ADU range inputs */}
-                {mode === "adu_range" ? (
-                    <div className={styles.sortWrap}>
-                        <span className={styles.sortLabel}>ADU range</span>
-                        <input
-                            className={styles.sortSelect}
-                            type="number"
-                            value={aduMinSqft}
-                            onChange={(e) => setAduMinSqft(Number(e.target.value))}
-                            style={{ width: 90 }}
-                        />
-                        <span className={styles.sortLabel}>to</span>
-                        <input
-                            className={styles.sortSelect}
-                            type="number"
-                            value={aduMaxSqft}
-                            onChange={(e) => setAduMaxSqft(Number(e.target.value))}
-                            style={{ width: 90 }}
-                        />
+                {/* Size range — only when comparing across all ADU sizes */}
+                {mode === "adu_range" && (
+                    <div className={`${s.field} ${s.fieldReveal}`}>
+                        <span className={s.fieldLabel}>Size range (sq ft)</span>
+                        <div className={s.rangeRow} title="The smallest and largest square footage to include.">
+                            <input
+                                className={s.rangeInput}
+                                type="number"
+                                value={aduMinSqft}
+                                onChange={(e) => setAduMinSqft(Number(e.target.value))}
+                            />
+                            <span className={s.rangeDash}>–</span>
+                            <input
+                                className={s.rangeInput}
+                                type="number"
+                                value={aduMaxSqft}
+                                onChange={(e) => setAduMaxSqft(Number(e.target.value))}
+                            />
+                        </div>
                     </div>
-                ) : null}
+                )}
 
-                {/* Sort */}
-                <div className={styles.sortWrap} style={{ marginLeft: "auto" }}>
-                    <span className={styles.sortLabel}>Sort</span>
-                    <select className={styles.sortSelect} value={sort} onChange={(e) => setSort(e.target.value as any)}>
-                        <option value="best">Best signal</option>
+                {/* Has size listed — toggle switch */}
+                <label className={s.toggle} title="Hide rentals that don't report a square footage.">
+                    <input
+                        className={s.toggleInput}
+                        type="checkbox"
+                        checked={requireSqft}
+                        onChange={(e) => setRequireSqft(e.target.checked)}
+                    />
+                    <span className={s.toggleTrack}>
+                        <span className={s.toggleKnob} />
+                    </span>
+                    <span className={s.toggleText}>Has size listed</span>
+                </label>
+
+                {/* Sort — pushed to the right */}
+                <div className={`${s.field} ${s.fieldEnd}`}>
+                    <span className={s.fieldLabel}>Sort by</span>
+                    <select
+                        className={s.sortSelect}
+                        value={sort}
+                        onChange={(e) => setSort(e.target.value as any)}
+                        title="How the list below is ordered. “Best match” balances closest size, most recent, and typical price."
+                    >
+                        <option value="best">Best match</option>
                         <option value="recent">Most recent</option>
-                        <option value="price_desc">Rent high → low</option>
-                        <option value="price_asc">Rent low → high</option>
+                        <option value="price_desc">Rent: high to low</option>
+                        <option value="price_asc">Rent: low to high</option>
                         <option value="sqft_closest" disabled={mode !== "selected" || typeof targetSqft !== "number"}>
-                            Closest sqft (selected mode)
+                            Closest in size
                         </option>
                     </select>
                 </div>
             </div>
 
             {/* List */}
-            <div className={styles.compList}>
+            <div className={s.compList}>
                 {visible.map((r, i) => (
-                    <details key={`${r.formattedAddress ?? "r"}-${i}`} className={styles.compDetails}>
-                        <summary className={styles.compRow}>
-                            <div className={styles.compLeft}>
-                                <div className={styles.compPrice}>{money(r.price)}</div>
-                                <div className={styles.compSub}>
+                    <details key={`${r.formattedAddress ?? "r"}-${i}`} className={s.compDetails}>
+                        <summary className={s.compRow}>
+                            <div className={s.compLeft}>
+                                <div className={s.compPrice}>{money(r.price)}</div>
+                                <div className={s.compSub}>
                                     {typeof r.squareFootage === "number" ? `${num(r.squareFootage)} sf - ${r.bedrooms} Bed/${r.bathrooms} Bath` : "— sf"}
                                 </div>
                             </div>
 
-                            <div className={styles.compMid}>
-                                <div className={styles.compAddr}>{r.formattedAddress ?? "Listing"}</div>
+                            <div className={s.compMid}>
+                                <div className={s.compAddr}>{r.formattedAddress ?? "Listing"}</div>
                             </div>
 
-                            <div className={styles.compRight}>
+                            <div className={s.compRight}>
                                 {onRentPick && (
                                     <button
                                         type="button"
-                                        className={styles.useBtn}
+                                        className={s.useBtn}
                                         onClick={(e) => {
                                             e.preventDefault();
                                             onRentPick(r.price);
@@ -362,37 +411,62 @@ export function RentalsPanel({
                                         Use
                                     </button>
                                 )}
-                                <span className={styles.chev} aria-hidden>
+                                {onToggleFeature && (() => {
+                                    const isFeat = featuredKeys.has(rentalKey(r));
+                                    const atFeatLimit = !isFeat && featuredCount >= maxFeatured;
+                                    return (
+                                        <button
+                                            type="button"
+                                            className={`${s.featBtn} ${isFeat ? s.featBtnOn : ""}`}
+                                            disabled={atFeatLimit}
+                                            aria-pressed={isFeat}
+                                            title={
+                                                isFeat
+                                                    ? "Featured on the slide — click to remove"
+                                                    : atFeatLimit
+                                                        ? `Max ${maxFeatured} featured`
+                                                        : "Feature on the slide"
+                                            }
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                onToggleFeature(r as RentalListing);
+                                            }}
+                                        >
+                                            {isFeat ? "★ Featured" : "☆ Feature"}
+                                        </button>
+                                    );
+                                })()}
+                                <span className={s.chev} aria-hidden>
                                     ▾
                                 </span>
                             </div>
                         </summary>
 
-                        <div className={styles.compExpanded}>
-                            <div className={styles.expGrid}>
-                                <div className={styles.expItem}>
-                                    <div className={styles.expLabel}>Sqft window</div>
-                                    <div className={styles.expVal}>{sqftWindow.kind === "target" ? sqftWindow.label : sqftWindow.label}</div>
+                        <div className={s.compExpanded}>
+                            <div className={s.expGrid}>
+                                <div className={s.expItem}>
+                                    <div className={s.expLabel}>Size filter</div>
+                                    <div className={s.expVal}>{sqftWindow.label}</div>
                                 </div>
-                                <div className={styles.expItem}>
-                                    <div className={styles.expLabel}>Listed</div>
-                                    <div className={styles.expVal}>{r.listedDate ? new Date(r.listedDate).toLocaleDateString() : "—"}</div>
+                                <div className={s.expItem}>
+                                    <div className={s.expLabel}>Listed</div>
+                                    <div className={s.expVal}>{r.listedDate ? new Date(r.listedDate).toLocaleDateString() : "—"}</div>
                                 </div>
-                                <div className={styles.expItem}>
-                                    <div className={styles.expLabel}>Last seen</div>
-                                    <div className={styles.expVal}>{r.lastSeenDate ? new Date(r.lastSeenDate).toLocaleDateString() : "—"}</div>
+                                <div className={s.expItem}>
+                                    <div className={s.expLabel}>Last seen</div>
+                                    <div className={s.expVal}>{r.lastSeenDate ? new Date(r.lastSeenDate).toLocaleDateString() : "—"}</div>
                                 </div>
                             </div>
                         </div>
                     </details>
                 ))}
 
-                {!filtered.length ? <div className={styles.empty}>No rentals returned for the current filters.</div> : null}
+                {!filtered.length ? <div className={s.empty}>No rentals returned for the current filters.</div> : null}
             </div>
 
             {/* Show more */}
             {filtered.length > initialCount ? (
-                <button type="button" className={styles.showMore} onClick={() => setShowAll((v) => !v)}>
+                <button type="button" className={s.showMore} onClick={() => setShowAll((v) => !v)}>
                     {showAll ? "Show less" : `Show ${hiddenCount} more`}
                 </button>
             ) : null}

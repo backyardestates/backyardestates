@@ -1,26 +1,23 @@
-// Redesigned Step 1 body — replaces the stacked composition of DealForm +
-// PipedriveLinkPanel + InvestmentControls + UnitOverridesPanel with one
-// cohesive three-section layout (Customer → Property → Units).
+// Step 1 body — compact two-card layout.
 //
-// Notable simplifications:
-//   • Removed the *global* aduType chip strip from the form. It now lives
-//     inside the Units section as "Default type for new units" so it's
-//     contextual to where it's used — no longer a separate concern up top.
-//   • Removed the explicit "base floorplan" dropdown. floorplanId is auto-
-//     synced to the first compared unit, which is also what the rest of
-//     the codebase already assumes the "base" unit is.
-//   • Removed the property-photo uploader. Slide 1's cover image is hard-
-//     pinned to office.png anyway, so the field was vestigial.
-//   • PipedriveLinkPanel collapsed into a compact strip inside the Customer
-//     section — no longer a section of its own.
+//   Card 1 "Details" — customer + property + financing in ONE dense grid so
+//     the whole top of the form fits above the fold. Name + motivation share
+//     a row; address spans full width; mortgage + current payment share a
+//     row; the Pipedrive linker is a compact full-width strip.
+//   Card 2 "Units" — the comparison picker (the tall part), kept on its own
+//     so reps reach it with minimal scrolling.
+//
+// Notable details:
+//   • No tall per-section headers/dividers — each card uses a single slim
+//     eyebrow row, which reclaims a lot of vertical space vs the old
+//     three-card stack (Customer / Property / Units).
+//   • The global aduType chips live in the Units header as "Default type".
+//   • Site-photo uploader moved OUT into its own "Site Photo" step.
 
 "use client";
 
-import React, { useRef } from "react";
-import type { Floorplan } from "@/lib/rentcast/types";
+import React from "react";
 import type { CustomerMotivation } from "@/lib/store/presentationStore";
-import type { Defaults } from "@/lib/investment/types";
-import { UnitsPanel } from "../UnitsPanel/UnitsPanel";
 import { PipedriveLinkPanel } from "../PipedriveLinkPanel/PipedriveLinkPanel";
 import s from "./Step1Body.module.css";
 
@@ -30,16 +27,12 @@ const MOTIVATIONS: { value: NonNullable<CustomerMotivation>; label: string }[] =
     { value: "investment", label: "Investment" },
 ];
 
-const ADU_TYPES: { value: "detached" | "attached" | "garage"; label: string }[] = [
-    { value: "detached", label: "Detached" },
-    { value: "attached", label: "Attached" },
-    { value: "garage",   label: "Garage" },
-];
-
 interface Props {
     // Customer
     customerName: string;
     setCustomerName: (v: string) => void;
+    customerEmail: string;
+    setCustomerEmail: (v: string) => void;
     customerMotivation: CustomerMotivation;
     setCustomerMotivation: (m: CustomerMotivation) => void;
     pipedrivePersonId: string | null;
@@ -55,78 +48,57 @@ interface Props {
     setOwed: (v: string) => void;
     currentFirstPmtMonthly: string;
     setCurrentFirstPmtMonthly: (v: string) => void;
-    propertyPhotoUrl: string | null;
-    setPropertyPhotoUrl: (url: string | null) => void;
     loading: boolean;
     error: string | null;
-
-    // Units — picker + base + overrides
-    floorplans: Floorplan[];
-    selectedFloorplan: Floorplan | null;
-    floorplanId: string;
-    setFloorplanId: (v: string) => void;
-    aduCompareIds: string[];
-    aduType: "detached" | "attached" | "garage" | "";
-    setAduType: (v: "detached" | "attached" | "garage" | "") => void;
-    aduTypeByUnitId: Record<string, "detached" | "attached" | "garage">;
-    setAduTypeByUnitId: (
-        update: (prev: Record<string, "detached" | "attached" | "garage">) => Record<string, "detached" | "attached" | "garage">
-    ) => void;
-    bedsByUnitId: Record<string, number>;
-    setBedsByUnitId: (update: (prev: Record<string, number>) => Record<string, number>) => void;
-    bathsByUnitId: Record<string, number>;
-    setBathsByUnitId: (update: (prev: Record<string, number>) => Record<string, number>) => void;
-
-    defaults: Defaults;
-    updateDefault: <K extends keyof Defaults>(key: K, next: Defaults[K]) => void;
-    toggleAdu: (id: string) => void;
-    addCustomFloorplan: (input: {
-        name?: string;
-        sqft: number;
-        price: number;
-        bedrooms?: number;
-        bathrooms?: number;
-        imageUrl?: string;
-    }) => void;
-    removeCustomFloorplan: (id: string) => void;
-    duplicateFloorplan?: (id: string) => void;
-    addBathroomUpcharge: (unitId: string) => void;
 }
 
+// Details step body — customer + property + financing. Owns the property-data
+// pull (fired on address resolve via AddressAutocomplete). The unit comparison
+// picker is its own step now; see UnitsBody.
 export function Step1Body(props: Props) {
-    // NOTE: we deliberately do NOT sync `floorplanId` from `aduCompareIds[0]`
-    // here. A previous version of this component did, but it created a
-    // feedback loop with AdminMasterClient's selectedFloorplan-driven
-    // `pickCompareIdsWindow` effect — every time the rep removed the first
-    // unit, the window would re-seed and clobber their other selections.
-    // `floorplanId` stays at whatever the snapshot / initial seed set; the
-    // merged Step 1 manages comparison selection directly.
-
-    const photoInputRef = useRef<HTMLInputElement>(null);
-
-    function handlePhotoFile(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        // base64 (not blob:) so BroadcastChannel can ship it to the presenter tab.
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const result = ev.target?.result;
-            if (typeof result === "string") props.setPropertyPhotoUrl(result);
-        };
-        reader.readAsDataURL(file);
-    }
-
     return (
         <div className={s.root}>
-            {/* ── Customer ───────────────────────────────────────────── */}
-            <section className={s.section}>
-                <header className={s.sectionHeader}>
-                    <span className={s.sectionLabel}>Customer</span>
+            {/* ── Details: customer + property + financing ───────────── */}
+            <section className={s.card}>
+                <header className={s.cardHeader}>
+                    <span className={s.eyebrow}>Details</span>
+                    {props.loading && (
+                        <span className={s.headerHint}>
+                            <span className={s.spinner} aria-hidden /> Pulling property data…
+                        </span>
+                    )}
                 </header>
 
-                <div className={`${s.grid} ${s.grid2col}`}>
+                <div className={s.detailsGrid}>
+                    {/* Pipedrive — full width compact strip. Kept at the top so
+                        linking a person/deal first can auto-fill name + email
+                        below. */}
+                    <div className={s.span2}>
+                        <PipedriveLinkPanel
+                            pipedrivePersonId={props.pipedrivePersonId}
+                            pipedriveDealId={props.pipedriveDealId}
+                            seedQuery={props.customerName || props.address}
+                            onChange={({ personId, dealId, email }) => {
+                                props.setPipedrivePersonId(personId);
+                                props.setPipedriveDealId(dealId);
+                                // Auto-fill email from the linked person, but never
+                                // overwrite an address the rep already typed.
+                                if (email && email.trim() && !props.customerEmail.trim()) {
+                                    props.setCustomerEmail(email.trim());
+                                }
+                            }}
+                            // Fires after the linked record's email is resolved
+                            // from Pipedrive — covers deal-only links (the deal
+                            // result has no email) and reopened proposals.
+                            onResolvedEmail={(email) => {
+                                if (!props.customerEmail.trim()) props.setCustomerEmail(email);
+                            }}
+                        />
+                    </div>
+
+                    {/* Name */}
                     <div className={s.field}>
-                        <label className={s.label} htmlFor="step1-name">Name</label>
+                        <label className={s.label} htmlFor="step1-name">Customer name</label>
                         <input
                             id="step1-name"
                             className={s.input}
@@ -136,6 +108,7 @@ export function Step1Body(props: Props) {
                         />
                     </div>
 
+                    {/* Motivation */}
                     <div className={s.field}>
                         <label className={s.label}>Primary motivation</label>
                         <div className={s.chips} role="radiogroup" aria-label="Customer motivation">
@@ -158,49 +131,43 @@ export function Step1Body(props: Props) {
                             })}
                         </div>
                     </div>
-                </div>
 
-                <div className={s.pipedriveStrip}>
-                    <PipedriveLinkPanel
-                        pipedrivePersonId={props.pipedrivePersonId}
-                        pipedriveDealId={props.pipedriveDealId}
-                        seedQuery={props.customerName || props.address}
-                        onChange={({ personId, dealId }) => {
-                            props.setPipedrivePersonId(personId);
-                            props.setPipedriveDealId(dealId);
-                        }}
-                    />
-                </div>
-            </section>
+                    {/* Customer email — full width; drives the e-signature recipient */}
+                    <div className={`${s.field} ${s.span2}`}>
+                        <label className={s.label} htmlFor="step1-email">Customer email</label>
+                        <input
+                            id="step1-email"
+                            className={s.input}
+                            type="email"
+                            value={props.customerEmail}
+                            onChange={(e) => props.setCustomerEmail(e.target.value)}
+                            placeholder="sarah@example.com"
+                        />
+                        <span className={s.hint}>
+                            Used to send the agreement for e-signature. Auto-fills from a linked
+                            Pipedrive person — you can edit it.
+                        </span>
+                    </div>
 
-            {/* ── Property ───────────────────────────────────────────── */}
-            <section className={s.section}>
-                <header className={s.sectionHeader}>
-                    <span className={s.sectionLabel}>Property</span>
-                    {props.loading && (
-                        <span className={s.sectionHint}>Pulling property data…</span>
-                    )}
-                </header>
-
-                <div className={`${s.grid}`}>
-                    <div className={s.field}>
-                        <label className={s.label}>Address</label>
+                    {/* Address — full width */}
+                    <div className={`${s.field} ${s.span2}`}>
+                        <label className={s.label}>Property address</label>
                         <props.AddressAutocomplete
                             value={props.address}
                             onChange={(v: string) => props.setAddress(v)}
                             onResolved={(d: any) => props.setAddress(d.formattedAddress)}
+                            label=""
                         />
                     </div>
-                </div>
 
-                <div className={`${s.grid} ${s.grid2col}`} style={{ marginTop: 14 }}>
+                    {/* Mortgage balance */}
                     <div className={s.field}>
                         <label className={s.label} htmlFor="step1-owed">Mortgage balance</label>
                         <div className={s.moneyWrap}>
                             <span className={s.moneyPrefix}>$</span>
                             <input
                                 id="step1-owed"
-                                className={s.input}
+                                className={`${s.input} ${s.inputMoney}`}
                                 value={props.owed}
                                 onChange={(e) => props.setOwed(e.target.value)}
                                 placeholder="250,000"
@@ -209,13 +176,14 @@ export function Step1Body(props: Props) {
                         </div>
                     </div>
 
+                    {/* Current monthly payment */}
                     <div className={s.field}>
                         <label className={s.label} htmlFor="step1-pmt">Current monthly payment</label>
                         <div className={s.moneyWrap}>
                             <span className={s.moneyPrefix}>$</span>
                             <input
                                 id="step1-pmt"
-                                className={s.input}
+                                className={`${s.input} ${s.inputMoney}`}
                                 value={props.currentFirstPmtMonthly}
                                 onChange={(e) => props.setCurrentFirstPmtMonthly(e.target.value)}
                                 placeholder="1,000"
@@ -225,98 +193,7 @@ export function Step1Body(props: Props) {
                     </div>
                 </div>
 
-                <div className={s.photoRow}>
-                    <input
-                        ref={photoInputRef}
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        onChange={handlePhotoFile}
-                    />
-                    {props.propertyPhotoUrl ? (
-                        <>
-                            <img
-                                src={props.propertyPhotoUrl}
-                                alt="Property"
-                                className={s.photoThumb}
-                            />
-                            <span className={s.photoLabel}>Site photo attached</span>
-                            <button
-                                type="button"
-                                className={s.photoLink}
-                                onClick={() => photoInputRef.current?.click()}
-                            >
-                                Replace
-                            </button>
-                            <button
-                                type="button"
-                                className={s.photoLinkDanger}
-                                onClick={() => props.setPropertyPhotoUrl(null)}
-                            >
-                                Remove
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <span className={s.photoLabel}>Site photo</span>
-                            <span className={s.photoMeta}>Aerial or street view — shown on slide 2</span>
-                            <button
-                                type="button"
-                                className={s.photoLink}
-                                onClick={() => photoInputRef.current?.click()}
-                            >
-                                Upload
-                            </button>
-                        </>
-                    )}
-                </div>
-
                 {props.error && <div className={s.error} role="alert">{props.error}</div>}
-            </section>
-
-            {/* ── Units ──────────────────────────────────────────────── */}
-            <section className={s.section}>
-                <header className={s.sectionHeader}>
-                    <span className={s.sectionLabel}>Units</span>
-                    <div className={s.defaultTypeWrap}>
-                        <span className={s.defaultTypeLabel}>Default type:</span>
-                        <div className={s.chips}>
-                            {ADU_TYPES.map((t) => {
-                                const active = props.aduType === t.value;
-                                return (
-                                    <button
-                                        key={t.value}
-                                        type="button"
-                                        className={`${s.chip} ${active ? s.chipActive : ""}`}
-                                        onClick={() => props.setAduType(active ? "" : t.value)}
-                                        title="Applied to newly-added units; can be overridden per unit below"
-                                    >
-                                        {t.label}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </header>
-
-                <UnitsPanel
-                    allFloorplans={props.floorplans}
-                    aduCompareIds={props.aduCompareIds}
-                    toggleAdu={props.toggleAdu}
-                    defaults={props.defaults}
-                    updateDefault={props.updateDefault}
-                    globalAduType={props.aduType}
-                    aduTypeByUnitId={props.aduTypeByUnitId}
-                    setAduTypeByUnitId={props.setAduTypeByUnitId}
-                    bedsByUnitId={props.bedsByUnitId}
-                    setBedsByUnitId={props.setBedsByUnitId}
-                    bathsByUnitId={props.bathsByUnitId}
-                    setBathsByUnitId={props.setBathsByUnitId}
-                    onAddCustomFloorplan={props.addCustomFloorplan}
-                    onRemoveFloorplan={props.removeCustomFloorplan}
-                    onDuplicateFloorplan={props.duplicateFloorplan}
-                    onAddBathroomUpcharge={props.addBathroomUpcharge}
-                />
             </section>
         </div>
     );

@@ -21,7 +21,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { Floorplan } from "@/lib/rentcast/types";
 import type { Defaults } from "@/lib/investment/types";
 import { resolveBeds, resolveBaths, type AduType } from "@/lib/units/resolveUnitSpec";
+import { unitNameParts } from "@/lib/units/displayName";
 import { money, num } from "@/lib/investment/format";
+import { Stepper } from "../Stepper/Stepper";
 import s from "./UnitsPanel.module.css";
 
 const EXTRA_BATH_PREMIUM = 10_000;
@@ -101,6 +103,8 @@ interface Props {
     setBedsByUnitId: (update: (prev: Record<string, number>) => Record<string, number>) => void;
     bathsByUnitId: Record<string, number>;
     setBathsByUnitId: (update: (prev: Record<string, number>) => Record<string, number>) => void;
+    labelByUnitId: Record<string, string>;
+    setLabelByUnitId: (update: (prev: Record<string, string>) => Record<string, string>) => void;
 
     onAddCustomFloorplan?: (input: {
         name?: string;
@@ -112,9 +116,9 @@ interface Props {
     }) => void;
     onRemoveFloorplan?: (id: string) => void;
     onDuplicateFloorplan?: (sourceId: string) => void;
-    /** Called when the rep confirms the $10k upcharge prompt that fires
-     *  after increasing a unit's bathroom count. */
-    onAddBathroomUpcharge?: (unitId: string) => void;
+    /** Idempotently reprices a unit when its bath count changes: base price =
+     *  the floorplan's standard price + $10k per bath above its standard count. */
+    setBaseCostByAduId?: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
 // ── Component ───────────────────────────────────────────────────────────────
@@ -132,12 +136,13 @@ export function UnitsPanel({
     setBedsByUnitId,
     bathsByUnitId,
     setBathsByUnitId,
+    labelByUnitId,
+    setLabelByUnitId,
     onAddCustomFloorplan,
     onRemoveFloorplan,
     onDuplicateFloorplan,
-    onAddBathroomUpcharge,
+    setBaseCostByAduId,
 }: Props) {
-    const [bathPromptUnitId, setBathPromptUnitId] = useState<string | null>(null);
     const selectedUnits = useMemo(
         () => aduCompareIds
             .map((id) => allFloorplans.find((fp) => fp._id === id))
@@ -198,6 +203,10 @@ export function UnitsPanel({
     // catalog sqft → beds/baths). Once touched, we leave their value alone.
     const [customBedsTouched, setCustomBedsTouched] = useState(false);
     const [customBathsTouched, setCustomBathsTouched] = useState(false);
+    // Custom-unit price: auto-fills from the prorated value until the rep
+    // types their own, after which we leave their number alone.
+    const [customPriceRaw, setCustomPriceRaw] = useState("");
+    const [customPriceTouched, setCustomPriceTouched] = useState(false);
     // The user's explicit image choice (catalog URL or base64 upload). Empty
     // when they haven't picked anything; we fall back to the closest catalog
     // drawing inferred from sqft below.
@@ -224,7 +233,9 @@ export function UnitsPanel({
         [customSqft, allFloorplans]
     );
 
-    const finalPrice = proration?.price ?? 0;
+    // The rep can override the prorated price via the editable Price field.
+    const manualPrice = parseOptionalNumber(customPriceRaw);
+    const finalPrice = manualPrice ?? (proration?.price ?? 0);
 
     const anchorLabel = useMemo(() => {
         if (!proration || !proration.lowerUnit) return null;
@@ -268,6 +279,12 @@ export function UnitsPanel({
         if (!customBedsTouched) setCustomBeds(String(inferredBedsBaths.beds));
         if (!customBathsTouched) setCustomBaths(String(inferredBedsBaths.baths));
     }, [inferredBedsBaths, customBedsTouched, customBathsTouched]);
+
+    // Auto-fill the price field with the prorated value until the rep edits it.
+    useEffect(() => {
+        if (customPriceTouched) return;
+        setCustomPriceRaw(proration && proration.price > 0 ? String(proration.price) : "");
+    }, [proration, customPriceTouched]);
 
     // Closest-sqft catalog floorplan — used as the default drawing preview
     // when the rep hasn't picked or uploaded anything yet.
@@ -331,6 +348,8 @@ export function UnitsPanel({
         setCustomBaths("");
         setCustomBedsTouched(false);
         setCustomBathsTouched(false);
+        setCustomPriceRaw("");
+        setCustomPriceTouched(false);
         setCustomImageUrl("");
         setCustomImageSource(null);
     }
@@ -339,18 +358,21 @@ export function UnitsPanel({
     function changeType(unitId: string, value: AduType) {
         setAduTypeByUnitId((prev) => ({ ...prev, [unitId]: value }));
     }
-    function changeBeds(unitId: string, raw: string) {
-        const n = Number(raw);
-        if (!Number.isFinite(n)) return;
-        setBedsByUnitId((prev) => ({ ...prev, [unitId]: Math.max(0, Math.round(n)) }));
-    }
-    function changeBaths(unitId: string, raw: string, previous: number) {
-        const n = Number(raw);
-        if (!Number.isFinite(n)) return;
-        const next = Math.max(0, Math.round(n * 2) / 2);
-        setBathsByUnitId((prev) => ({ ...prev, [unitId]: next }));
-        if (next > previous && onAddBathroomUpcharge) {
-            setBathPromptUnitId(unitId);
+    // Set a unit's bath count and idempotently reprice it. Base price =
+    // the floorplan's standard price + $10k for every bath above the
+    // floorplan's standard count. It's recomputed from the baseline on
+    // every change, so lowering the count removes the premium and repeated
+    // edits never double-count (the old approach appended a $10k site-work
+    // line per click and never removed it).
+    function setBathsValue(unitId: string, next: number, fp: Floorplan) {
+        const v = Math.max(0, Math.round(next * 2) / 2);
+        setBathsByUnitId((prev) => ({ ...prev, [unitId]: v }));
+        if (setBaseCostByAduId) {
+            const baselineBaths = resolveBaths(fp, {});
+            const standardPrice = Number(fp.price) || 0;
+            const extraBaths = Math.max(0, v - baselineBaths);
+            const repriced = standardPrice + extraBaths * EXTRA_BATH_PREMIUM;
+            setBaseCostByAduId((prev) => ({ ...prev, [unitId]: String(repriced) }));
         }
     }
 
@@ -361,23 +383,24 @@ export function UnitsPanel({
                 <div className={s.zoneHead}>
                     <span className={s.zoneLabel}>Comparing</span>
                     <span className={s.zoneCount}>
-                        {selectedUnits.length} of {defaults.maxAduComparisons}
-                        <span style={{ marginLeft: 10 }}>
-                            <span className={s.maxHint}>
-                                Max&nbsp;
-                                <input
-                                    type="number"
-                                    min={1}
-                                    step={1}
-                                    value={defaults.maxAduComparisons}
-                                    onChange={(e) =>
-                                        updateDefault(
-                                            "maxAduComparisons",
-                                            Math.max(1, Math.round(Number(e.target.value) || 1)) as any
-                                        )
-                                    }
-                                />
-                            </span>
+                        <span className={s.zoneCountNum}>
+                            {selectedUnits.length} of {defaults.maxAduComparisons}
+                        </span>
+                        <span className={s.maxHint}>
+                            <span className={s.maxHintLabel}>Max</span>
+                            <Stepper
+                                value={defaults.maxAduComparisons}
+                                onChange={(n) =>
+                                    updateDefault(
+                                        "maxAduComparisons",
+                                        Math.max(1, Math.round(n)) as any
+                                    )
+                                }
+                                min={1}
+                                step={1}
+                                size="sm"
+                                ariaLabel="Maximum units to compare"
+                            />
                         </span>
                     </span>
                 </div>
@@ -398,28 +421,71 @@ export function UnitsPanel({
                             const beds = resolveBeds(fp, bedsByUnitId);
                             const baths = resolveBaths(fp, bathsByUnitId);
                             const imgSrc = fp.floorPlanUrl || fp.imageUrl || null;
-                            const promptOpen = bathPromptUnitId === fp._id;
+                            // Extra-bath premium baked into the base price (see setBathsValue).
+                            const baselineBaths = resolveBaths(fp, {});
+                            const bathPremium = Math.max(0, baths - baselineBaths) * EXTRA_BATH_PREMIUM;
+                            const nm = unitNameParts(fp.name, labelByUnitId[fp._id]);
 
                             return (
                                 <div key={fp._id} className={s.selectedCard}>
-                                    {imgSrc ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={imgSrc} alt={`${fp.name} thumbnail`} className={s.selectedThumb} />
-                                    ) : (
-                                        <div className={s.selectedThumbFallback}>{isCustom ? "Custom" : "Unit"}</div>
-                                    )}
+                                    <div className={s.selectedThumbWrap}>
+                                        <button
+                                            type="button"
+                                            className={s.removeCorner}
+                                            aria-label={isCustom ? `Remove ${fp.name} (custom unit)` : `Remove ${fp.name} from comparison`}
+                                            title={isCustom ? "Remove this custom unit" : "Remove from comparison"}
+                                            onClick={() => {
+                                                if (isCustom && onRemoveFloorplan) onRemoveFloorplan(fp._id);
+                                                else toggleAdu(fp._id);
+                                            }}
+                                        >
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                                                <path d="M6 6l12 12M18 6L6 18" />
+                                            </svg>
+                                        </button>
+                                        {imgSrc ? (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img src={imgSrc} alt={`${fp.name} thumbnail`} className={s.selectedThumb} />
+                                        ) : (
+                                            <div className={s.selectedThumbFallback}>{isCustom ? "Custom" : "Unit"}</div>
+                                        )}
+                                    </div>
 
                                     <div className={s.selectedBody}>
                                         <div className={s.selectedMeta}>
-                                            <span className={s.selectedName}>{fp.name}</span>
-                                            <span className={s.selectedSub}>
-                                                {num(fp.sqft)} SF · {money(fp.price)}
+                                            <span className={s.selectedName}>
+                                                {nm.base}
+                                                {nm.tag ? (
+                                                    <span className={s.selectedTag}> · {nm.tag}</span>
+                                                ) : nm.dupNum ? (
+                                                    ` (${nm.dupNum})`
+                                                ) : null}
                                             </span>
                                             {isCustom && <span className={s.customBadge}>custom</span>}
                                         </div>
+                                        <div className={s.selectedSub}>
+                                            {num(fp.sqft)} SF · {money(fp.price)}
+                                        </div>
+                                        <div className={s.labelField}>
+                                            <svg className={s.labelIcon} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                                                <line x1="7" y1="7" x2="7.01" y2="7" />
+                                            </svg>
+                                            <input
+                                                type="text"
+                                                className={s.labelInput}
+                                                placeholder="Add a label — e.g. Hillside"
+                                                value={labelByUnitId[fp._id] ?? ""}
+                                                maxLength={40}
+                                                onChange={(e) =>
+                                                    setLabelByUnitId((prev) => ({ ...prev, [fp._id]: e.target.value }))
+                                                }
+                                                aria-label={`Custom label for ${nm.base}`}
+                                            />
+                                        </div>
 
                                         <div className={s.controls}>
-                                            <div className={s.controlField}>
+                                            <div className={`${s.controlField} ${s.controlFieldWide}`}>
                                                 <label className={s.controlLabel}>Type</label>
                                                 <select
                                                     className={s.controlInput}
@@ -434,82 +500,52 @@ export function UnitsPanel({
 
                                             <div className={s.controlField}>
                                                 <label className={s.controlLabel}>Beds</label>
-                                                <input
-                                                    type="number"
+                                                <Stepper
+                                                    value={beds}
+                                                    onChange={(n) =>
+                                                        setBedsByUnitId((prev) => ({ ...prev, [fp._id]: Math.max(0, Math.round(n)) }))
+                                                    }
                                                     min={0}
                                                     step={1}
-                                                    className={s.controlInput}
-                                                    value={beds}
-                                                    onChange={(e) => changeBeds(fp._id, e.target.value)}
+                                                    ariaLabel={`${fp.name} bedrooms`}
                                                 />
                                             </div>
 
                                             <div className={s.controlField}>
-                                                <label className={s.controlLabel}>Baths</label>
-                                                <input
-                                                    type="number"
+                                                <label className={s.controlLabel}>
+                                                    Baths
+                                                    {bathPremium > 0 && (
+                                                        <span className={s.premiumTag} title="Added to this unit's base price for the extra bathroom(s)">
+                                                            +{money(bathPremium)}
+                                                        </span>
+                                                    )}
+                                                </label>
+                                                <Stepper
+                                                    value={baths}
+                                                    onChange={(n) => setBathsValue(fp._id, n, fp)}
                                                     min={0}
                                                     step={0.5}
-                                                    className={s.controlInput}
-                                                    value={baths}
-                                                    onChange={(e) => changeBaths(fp._id, e.target.value, baths)}
+                                                    ariaLabel={`${fp.name} bathrooms`}
                                                 />
                                             </div>
                                         </div>
 
-                                        {promptOpen && (
-                                            <div className={s.upcharge} role="alert">
-                                                <div className={s.upchargeBody}>
-                                                    <span className={s.upchargeTitle}>Add bathroom to site work?</span>
-                                                    <span className={s.upchargeMeta}>
-                                                        We typically charge an extra $10,000 for an additional bathroom — apply it to this unit&apos;s site-specific work?
-                                                    </span>
-                                                </div>
-                                                <div className={s.upchargeActions}>
-                                                    <button
-                                                        type="button"
-                                                        className={s.upchargeNo}
-                                                        onClick={() => setBathPromptUnitId(null)}
-                                                    >
-                                                        No, keep as-is
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className={s.upchargeYes}
-                                                        onClick={() => {
-                                                            onAddBathroomUpcharge?.(fp._id);
-                                                            setBathPromptUnitId(null);
-                                                        }}
-                                                    >
-                                                        Yes, add $10,000
-                                                    </button>
-                                                </div>
+                                        {onDuplicateFloorplan && (
+                                            <div className={s.cardFooter}>
+                                                <button
+                                                    type="button"
+                                                    className={s.duplicateBtn}
+                                                    title="Duplicate this unit — copies its site work & discounts"
+                                                    onClick={() => onDuplicateFloorplan(fp._id)}
+                                                >
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                        <rect x="9" y="9" width="11" height="11" rx="2" />
+                                                        <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+                                                    </svg>
+                                                    Duplicate
+                                                </button>
                                             </div>
                                         )}
-                                    </div>
-
-                                    <div className={s.selectedActions}>
-                                        {onDuplicateFloorplan && (
-                                            <button
-                                                type="button"
-                                                className={s.actionBtn}
-                                                title="Duplicate this unit — copies its site work & discounts"
-                                                onClick={() => onDuplicateFloorplan(fp._id)}
-                                            >
-                                                Duplicate
-                                            </button>
-                                        )}
-                                        <button
-                                            type="button"
-                                            className={`${s.actionBtn} ${s.actionRemove}`}
-                                            onClick={() => {
-                                                if (isCustom && onRemoveFloorplan) onRemoveFloorplan(fp._id);
-                                                else toggleAdu(fp._id);
-                                            }}
-                                            title={isCustom ? "Remove this custom unit" : "Remove from comparison"}
-                                        >
-                                            ✕ Remove
-                                        </button>
                                     </div>
                                 </div>
                             );
@@ -577,42 +613,47 @@ export function UnitsPanel({
             {onAddCustomFloorplan && (
                 <div className={s.customSection}>
                     <div className={s.customHead}>
-                        <span className={s.customLabel}>Add a custom size</span>
+                        <span className={s.customLabel}>Add a custom unit</span>
                         <span className={s.customHint}>
                             Price is prorated between the closest catalog sizes
                         </span>
                     </div>
 
                     <div className={s.customRow}>
-                        <div className={s.customSqftWrap}>
-                            <input
-                                type="number"
-                                className={s.customSqftInput}
-                                placeholder="700"
-                                min={1}
-                                step={10}
-                                value={customSqftRaw}
-                                onChange={(e) => setCustomSqftRaw(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-                            />
-                            <span className={s.customSqftSuffix}>SF</span>
+                        <div className={s.customField}>
+                            <label className={s.customFieldLabel}>Square footage</label>
+                            <div className={s.customSqftWrap}>
+                                <input
+                                    type="number"
+                                    className={s.customSqftInput}
+                                    placeholder="700"
+                                    min={1}
+                                    step={10}
+                                    value={customSqftRaw}
+                                    onChange={(e) => setCustomSqftRaw(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+                                />
+                                <span className={s.customSqftSuffix}>SF</span>
+                            </div>
                         </div>
 
-                        {proration && proration.price > 0 ? (
-                            <span className={s.customPrice}>{money(finalPrice)}</span>
-                        ) : (
-                            <span className={s.customPriceEmpty}>Enter square footage to preview price</span>
-                        )}
-
-                        <button
-                            type="button"
-                            className={s.customAddBtn}
-                            disabled={customSqft == null || atMax}
-                            onClick={handleAdd}
-                            title={atMax ? "Remove a unit first" : "Add custom unit"}
-                        >
-                            + Add unit
-                        </button>
+                        <div className={s.customField}>
+                            <label className={s.customFieldLabel}>Price</label>
+                            <div className={s.customMoneyWrap}>
+                                <span className={s.customMoneyPrefix}>$</span>
+                                <input
+                                    className={s.customPriceInput}
+                                    inputMode="numeric"
+                                    placeholder={proration && proration.price > 0 ? num(proration.price) : "—"}
+                                    value={customPriceRaw}
+                                    onChange={(e) => {
+                                        setCustomPriceTouched(true);
+                                        setCustomPriceRaw(e.target.value.replace(/[^0-9.]/g, ""));
+                                    }}
+                                    onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     {proration && proration.price > 0 && (
@@ -633,31 +674,29 @@ export function UnitsPanel({
 
                                 <div className={s.customField}>
                                     <label className={s.customFieldLabel}>Beds</label>
-                                    <input
-                                        type="number"
-                                        className={s.customInput}
+                                    <Stepper
+                                        value={Number(customBeds) || 0}
+                                        onChange={(n) => {
+                                            setCustomBedsTouched(true);
+                                            setCustomBeds(String(Math.max(0, Math.round(n))));
+                                        }}
                                         min={0}
                                         step={1}
-                                        value={customBeds}
-                                        onChange={(e) => {
-                                            setCustomBedsTouched(true);
-                                            setCustomBeds(e.target.value);
-                                        }}
+                                        ariaLabel="Custom unit bedrooms"
                                     />
                                 </div>
 
                                 <div className={s.customField}>
                                     <label className={s.customFieldLabel}>Baths</label>
-                                    <input
-                                        type="number"
-                                        className={s.customInput}
+                                    <Stepper
+                                        value={Number(customBaths) || 0}
+                                        onChange={(n) => {
+                                            setCustomBathsTouched(true);
+                                            setCustomBaths(String(Math.max(0, Math.round(n * 2) / 2)));
+                                        }}
                                         min={0}
                                         step={0.5}
-                                        value={customBaths}
-                                        onChange={(e) => {
-                                            setCustomBathsTouched(true);
-                                            setCustomBaths(e.target.value);
-                                        }}
+                                        ariaLabel="Custom unit bathrooms"
                                     />
                                 </div>
                             </div>
@@ -760,11 +799,31 @@ export function UnitsPanel({
                         </div>
                     )}
 
-                    {atMax && (
-                        <div className={s.warn}>
-                            Max comparisons reached — remove a unit before adding a new one.
-                        </div>
-                    )}
+                    <div className={s.customFooter}>
+                        {atMax ? (
+                            <span className={s.warn}>
+                                Max reached — remove a unit before adding another.
+                            </span>
+                        ) : (
+                            <span className={s.footerHint}>
+                                {customSqft == null
+                                    ? "Enter a square footage to enable"
+                                    : "Adds this unit to the comparison"}
+                            </span>
+                        )}
+                        <button
+                            type="button"
+                            className={s.customAddBtn}
+                            disabled={customSqft == null || atMax}
+                            onClick={handleAdd}
+                            title={atMax ? "Remove a unit first" : "Add custom unit"}
+                        >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
+                                <path d="M12 5v14M5 12h14" />
+                            </svg>
+                            Add unit
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

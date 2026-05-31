@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import {
     type TemplateTab,
     type TemplateField,
+    type ShowWhen,
     FIXTURE_ROWS,
     GAS_APPLIANCES,
     WATER_METER_FIELDS,
 } from "@/lib/fpa/template";
+import { evaluateSolarDiscount } from "@/lib/investment/solarDiscount";
 import s from "../fpa.module.css";
 
 export interface FlagEntry {
@@ -175,26 +177,56 @@ export function FpaForm({
         setFlags((p) => p.filter((_, j) => j !== i));
     }
 
+    // Conditional visibility: a field/section is shown only when the controlling
+    // field on the same tab holds a matching value. Render-time only — hidden
+    // fields keep their stored value and any flag (flagging logic untouched).
+    function matchShow(t: DataTab, sw?: ShowWhen): boolean {
+        if (!sw) return true;
+        const cur = tabValues(t)[sw.key];
+        const wanted = Array.isArray(sw.equals) ? sw.equals : [sw.equals];
+        return wanted.includes(cur as string);
+    }
+
+    // Whether a field currently holds a value — drives the filled/empty dot and
+    // the per-section "X of Y filled" count. Presentation only.
+    function isFilled(t: DataTab, f: TemplateField): boolean {
+        const v = tabValues(t)[f.key];
+        if (v == null) return false;
+        if (typeof v === "string") return v.trim() !== "";
+        if (typeof v === "number") return true;
+        if (typeof v === "object") {
+            const o = v as Record<string, unknown>;
+            if ("value" in o) return String(o.value ?? "").trim() !== "";
+            return Object.keys(o).length > 0;
+        }
+        return Boolean(v);
+    }
+
     function renderField(t: DataTab, f: TemplateField) {
         const v = tabValues(t)[f.key];
+        const set = (val: unknown) => setTabValue(t, f.key, val);
+
         if (f.kind === "textarea") {
             return (
                 <textarea
                     className={s.textarea}
                     style={{ minHeight: 68 }}
                     value={(v as string) ?? ""}
+                    placeholder={f.placeholder}
                     disabled={readOnly}
-                    onChange={(e) => setTabValue(t, f.key, e.target.value)}
+                    onChange={(e) => set(e.target.value)}
                 />
             );
         }
+
+        // Legacy three-state dropdown, kept for old `yn` keys.
         if (f.kind === "yn") {
             return (
                 <select
                     className={s.select}
                     value={(v as string) ?? ""}
                     disabled={readOnly}
-                    onChange={(e) => setTabValue(t, f.key, e.target.value)}
+                    onChange={(e) => set(e.target.value)}
                 >
                     <option value="">—</option>
                     <option value="yes">Yes</option>
@@ -203,15 +235,188 @@ export function FpaForm({
                 </select>
             );
         }
-        return (
+
+        // Segmented button group (toggle = 2-state, segmented = N-state).
+        if (f.kind === "toggle" || f.kind === "segmented") {
+            const opts =
+                f.options ?? [
+                    { value: "yes", label: "Yes" },
+                    { value: "no", label: "No" },
+                ];
+            return (
+                <div className={s.segmented} role="group">
+                    {opts.map((o) => {
+                        const on = v === o.value;
+                        return (
+                            <button
+                                key={o.value}
+                                type="button"
+                                disabled={readOnly}
+                                className={`${s.segBtn} ${on ? s.segBtnOn : ""}`}
+                                aria-pressed={on}
+                                onClick={() => set(on ? "" : o.value)}
+                            >
+                                {o.label}
+                            </button>
+                        );
+                    })}
+                </div>
+            );
+        }
+
+        // Dropdown, with an optional free-text "Other" escape stored at `${key}__other`.
+        if (f.kind === "select") {
+            const isOther = !!f.allowOther && v === "__other__";
+            return (
+                <>
+                    <select
+                        className={s.select}
+                        value={(v as string) ?? ""}
+                        disabled={readOnly}
+                        onChange={(e) => set(e.target.value)}
+                    >
+                        <option value="">—</option>
+                        {f.options?.map((o) => (
+                            <option key={o.value} value={o.value}>
+                                {o.label}
+                            </option>
+                        ))}
+                        {f.allowOther && <option value="__other__">Other…</option>}
+                    </select>
+                    {isOther && (
+                        <input
+                            className={s.input}
+                            style={{ marginTop: 8 }}
+                            placeholder="Specify…"
+                            disabled={readOnly}
+                            value={(tabValues(t)[`${f.key}__other`] as string) ?? ""}
+                            onChange={(e) => setTabValue(t, `${f.key}__other`, e.target.value)}
+                        />
+                    )}
+                </>
+            );
+        }
+
+        // Integer +/- stepper.
+        if (f.kind === "stepper") {
+            const num = Number(v) || 0;
+            const atMin = f.min != null && num <= f.min;
+            const atMax = f.max != null && num >= f.max;
+            return (
+                <div className={s.stepper}>
+                    <button
+                        type="button"
+                        className={s.stepBtn}
+                        disabled={readOnly || atMin}
+                        aria-label="Decrease"
+                        onClick={() => set(f.min != null ? Math.max(f.min, num - 1) : num - 1)}
+                    >
+                        −
+                    </button>
+                    <input
+                        className={s.stepInput}
+                        type="number"
+                        disabled={readOnly}
+                        min={f.min}
+                        max={f.max}
+                        value={v == null || v === "" ? "" : num}
+                        onChange={(e) => set(e.target.value === "" ? "" : Number(e.target.value))}
+                    />
+                    <button
+                        type="button"
+                        className={s.stepBtn}
+                        disabled={readOnly || atMax}
+                        aria-label="Increase"
+                        onClick={() => set(f.max != null ? Math.min(f.max, num + 1) : num + 1)}
+                    >
+                        +
+                    </button>
+                </div>
+            );
+        }
+
+        // Number paired with a unit dropdown — stored as { value, unit }.
+        if (f.kind === "numberUnit") {
+            const obj = v && typeof v === "object" ? (v as { value?: string; unit?: string }) : {};
+            const units = f.units ?? [];
+            return (
+                <div className={s.adorn}>
+                    <input
+                        className={s.input}
+                        type="number"
+                        disabled={readOnly}
+                        value={obj.value ?? ""}
+                        onChange={(e) => set({ ...obj, value: e.target.value })}
+                    />
+                    <select
+                        className={s.unitSelect}
+                        disabled={readOnly}
+                        value={obj.unit ?? units[0] ?? ""}
+                        onChange={(e) => set({ ...obj, unit: e.target.value })}
+                    >
+                        {units.map((u) => (
+                            <option key={u} value={u}>
+                                {u}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            );
+        }
+
+        // Currency with a leading $.
+        if (f.kind === "currency") {
+            return (
+                <div className={s.adorn}>
+                    <span className={s.adornPrefix}>$</span>
+                    <input
+                        className={`${s.input} ${s.inputPrefixed}`}
+                        type="number"
+                        disabled={readOnly}
+                        placeholder={f.placeholder}
+                        value={(v as string | number | undefined) ?? ""}
+                        onChange={(e) => set(e.target.value === "" ? "" : Number(e.target.value))}
+                    />
+                </div>
+            );
+        }
+
+        // Plain text-style inputs (text / number / tel / email / url / date),
+        // with an optional trailing unit suffix (PSI, ft, sq ft, …).
+        const type =
+            f.kind === "number"
+                ? "number"
+                : f.kind === "tel"
+                  ? "tel"
+                  : f.kind === "email"
+                    ? "email"
+                    : f.kind === "url"
+                      ? "url"
+                      : f.kind === "date"
+                        ? "date"
+                        : "text";
+        const input = (
             <input
                 className={s.input}
-                type={f.kind === "number" ? "number" : "text"}
+                type={type}
                 value={(v as string | number | undefined) ?? ""}
+                placeholder={f.placeholder}
+                step={f.step}
+                min={f.min}
+                max={f.max}
                 disabled={readOnly}
-                onChange={(e) => setTabValue(t, f.key, e.target.value)}
+                onChange={(e) => set(e.target.value)}
             />
         );
+        if (f.suffix) {
+            return (
+                <div className={s.adorn}>
+                    {input}
+                    <span className={s.adornSuffix}>{f.suffix}</span>
+                </div>
+            );
+        }
+        return input;
     }
 
     // The inline "flag for sales" panel shown beneath a flagged question.
@@ -269,37 +474,45 @@ export function FpaForm({
         );
     }
 
-    // A single flaggable question: label + flag toggle, response input, then the
-    // inline flag panel when flagged.
+    // A single flaggable question, laid out as a full-width row: a filled/empty
+    // status dot + label on the left, the input on the right — stacked below for
+    // textareas and wide fields. The flag toggle and its inline panel are
+    // unchanged; only the surrounding layout differs.
     function renderQuestion(t: DataTab, f: TemplateField) {
         const flag = flagFor(f.key);
-        const wide = f.kind === "textarea" || !!flag;
+        const filled = isFilled(t, f);
+        const stacked = f.kind === "textarea" || !!f.wide;
+        const flagButton = !readOnly && (
+            <button
+                type="button"
+                className={`${s.flagBtn} ${flag ? s.flagBtnActive : ""}`}
+                title={flag ? "Remove flag" : "Flag this item for the sales team"}
+                onClick={() =>
+                    flag ? removeFieldFlag(f.key) : addFieldFlag(f.key, f.label, t)
+                }
+            >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill={flag ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                    <line x1="4" y1="22" x2="4" y2="15" />
+                </svg>
+                {flag ? "Flagged" : "Flag"}
+            </button>
+        );
         return (
             <div
                 key={f.key}
-                className={`${s.field} ${wide ? s.fieldWide : ""} ${flag ? s.fieldFlagged : ""}`}
+                className={`${s.row} ${filled ? s.rowFilled : ""} ${flag ? s.rowFlagged : ""} ${stacked ? s.rowStacked : ""}`}
             >
-                <div className={s.fieldHead}>
-                    <label className={s.label}>{f.label}</label>
-                    {!readOnly && (
-                        <button
-                            type="button"
-                            className={`${s.flagBtn} ${flag ? s.flagBtnActive : ""}`}
-                            title={flag ? "Remove flag" : "Flag this item for the sales team"}
-                            onClick={() =>
-                                flag ? removeFieldFlag(f.key) : addFieldFlag(f.key, f.label, t)
-                            }
-                        >
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill={flag ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                                <line x1="4" y1="22" x2="4" y2="15" />
-                            </svg>
-                            {flag ? "Flagged" : "Flag"}
-                        </button>
-                    )}
+                <div className={s.rowHead}>
+                    <span className={s.rowDot} aria-hidden="true" />
+                    <div className={s.rowLabelWrap}>
+                        <label className={s.rowLabel}>{f.label}</label>
+                        {f.hint && <span className={s.hint}>{f.hint}</span>}
+                    </div>
+                    {!stacked && <div className={s.rowControl}>{renderField(t, f)}</div>}
+                    {flagButton}
                 </div>
-                {f.hint && <span className={s.hint}>{f.hint}</span>}
-                {renderField(t, f)}
+                {stacked && <div className={s.rowControlFull}>{renderField(t, f)}</div>}
                 {renderFlagPanel(f.key)}
             </div>
         );
@@ -358,20 +571,7 @@ export function FpaForm({
                                                 }
                                             />
                                         </td>
-                                        <td>
-                                            <input
-                                                className={`${s.input} ${s.cellNum}`}
-                                                type="number"
-                                                disabled={readOnly}
-                                                value={upf}
-                                                onChange={(e) =>
-                                                    setMatrix({
-                                                        ...matrix,
-                                                        unitsPerFixture: { ...matrix.unitsPerFixture, [r.key]: Number(e.target.value) },
-                                                    })
-                                                }
-                                            />
-                                        </td>
+                                        <td className={s.cellComputed}>{upf}</td>
                                         <td className={s.cellComputed}>{((Number(c.main) || 0) * upf).toFixed(1)}</td>
                                         <td>
                                             <input
@@ -409,27 +609,53 @@ export function FpaForm({
 
                 <h3 className={s.subhead}>Water meter design</h3>
                 <div className={s.fieldGrid}>
-                    {WATER_METER_FIELDS.map((f) => (
-                        <div key={f.key} className={`${s.field} ${f.kind === "textarea" ? s.fieldWide : ""}`}>
-                            <label className={s.label}>{f.label}</label>
-                            {f.kind === "textarea" ? (
-                                <textarea
-                                    className={s.textarea}
-                                    style={{ minHeight: 56 }}
-                                    disabled={readOnly}
-                                    value={matrix.waterMeter[f.key] ?? ""}
-                                    onChange={(e) => setMatrix({ ...matrix, waterMeter: { ...matrix.waterMeter, [f.key]: e.target.value } })}
-                                />
-                            ) : (
-                                <input
-                                    className={s.input}
-                                    disabled={readOnly}
-                                    value={matrix.waterMeter[f.key] ?? ""}
-                                    onChange={(e) => setMatrix({ ...matrix, waterMeter: { ...matrix.waterMeter, [f.key]: e.target.value } })}
-                                />
-                            )}
-                        </div>
-                    ))}
+                    {WATER_METER_FIELDS.map((f) => {
+                        // Design water pressure auto-computes as (water pressure − 3 PSI).
+                        if (f.key === "design_water_pressure") {
+                            const wp = Number(matrix.waterMeter.water_pressure);
+                            const design = matrix.waterMeter.water_pressure && !Number.isNaN(wp) ? `${wp - 3} PSI` : "—";
+                            return (
+                                <div key={f.key} className={s.field}>
+                                    <label className={s.label}>{f.label}</label>
+                                    <div className={s.computedField}>{design}</div>
+                                </div>
+                            );
+                        }
+                        const wide = f.kind === "textarea";
+                        return (
+                            <div key={f.key} className={`${s.field} ${wide ? s.fieldWide : ""}`}>
+                                <label className={s.label}>{f.label}</label>
+                                {f.kind === "textarea" ? (
+                                    <textarea
+                                        className={s.textarea}
+                                        style={{ minHeight: 56 }}
+                                        disabled={readOnly}
+                                        value={matrix.waterMeter[f.key] ?? ""}
+                                        onChange={(e) => setMatrix({ ...matrix, waterMeter: { ...matrix.waterMeter, [f.key]: e.target.value } })}
+                                    />
+                                ) : f.suffix ? (
+                                    <div className={s.adorn}>
+                                        <input
+                                            className={s.input}
+                                            type={f.kind === "number" ? "number" : "text"}
+                                            disabled={readOnly}
+                                            value={matrix.waterMeter[f.key] ?? ""}
+                                            onChange={(e) => setMatrix({ ...matrix, waterMeter: { ...matrix.waterMeter, [f.key]: e.target.value } })}
+                                        />
+                                        <span className={s.adornSuffix}>{f.suffix}</span>
+                                    </div>
+                                ) : (
+                                    <input
+                                        className={s.input}
+                                        type={f.kind === "number" ? "number" : "text"}
+                                        disabled={readOnly}
+                                        value={matrix.waterMeter[f.key] ?? ""}
+                                        onChange={(e) => setMatrix({ ...matrix, waterMeter: { ...matrix.waterMeter, [f.key]: e.target.value } })}
+                                    />
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
 
                 <h3 className={s.subhead}>Main house gas appliances</h3>
@@ -449,6 +675,79 @@ export function FpaForm({
                         );
                     })}
                 </div>
+            </div>
+        );
+    }
+
+    // ── Discounts checklist (live total) ─────────────────────────────────
+    function renderDiscounts(t: DataTab, items: { key: string; label: string; value: number }[]) {
+        const total = items.reduce(
+            (sum, it) => sum + (tabValues(t)[it.key] === "yes" ? it.value : 0),
+            0,
+        );
+        return (
+            <div>
+                <div className={s.checkGrid}>
+                    {items.map((it) => {
+                        const on = tabValues(t)[it.key] === "yes";
+                        return (
+                            <label key={it.key} className={`${s.checkChip} ${on ? s.checkChipOn : ""}`}>
+                                <input
+                                    type="checkbox"
+                                    disabled={readOnly}
+                                    checked={on}
+                                    onChange={(e) => setTabValue(t, it.key, e.target.checked ? "yes" : "")}
+                                />
+                                <span>{it.label}</span>
+                                <span className={s.discountVal}>{money(it.value)}</span>
+                            </label>
+                        );
+                    })}
+                </div>
+                <p className={s.matrixTotal}>
+                    Total discount: <strong>{money(total)}</strong>
+                </p>
+            </div>
+        );
+    }
+
+    // ── Solar-discount eligibility badge (computed, read-only) ────────────
+    // Derived live from the architect's ADU type, size and climate zone — the
+    // same evaluateSolarDiscount() the rep's DiscountsPanel uses. Display only.
+    function renderSolarBadge() {
+        const rawSqft = siteVisit.adu_sqft;
+        const solar = evaluateSolarDiscount({
+            sqft: rawSqft != null && rawSqft !== "" ? Number(rawSqft) : null,
+            aduType: (siteVisit.adu_type as string) || null,
+            climateZone: siteVisit.climate_zone ? Number(siteVisit.climate_zone) : null,
+        });
+        const tone =
+            solar.status === "eligible"
+                ? s.solarEligible
+                : solar.status === "ineligible"
+                  ? s.solarIneligible
+                  : s.solarPending;
+        const title =
+            solar.status === "eligible"
+                ? `Solar discount eligible · ${money(solar.amount)}`
+                : solar.status === "ineligible"
+                  ? "Solar discount — not eligible"
+                  : solar.status === "needs_zone"
+                    ? "Solar discount — climate zone needed"
+                    : "Solar discount — more info needed";
+        return (
+            <div className={`${s.solarBadge} ${tone}`}>
+                <div className={s.solarBadgeHead}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4" />
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                    </svg>
+                    <span className={s.solarBadgeTitle}>{title}</span>
+                    {solar.solarIncluded && (
+                        <span className={s.solarBadgePill}>Solar included</span>
+                    )}
+                </div>
+                <p className={s.solarBadgeReason}>{solar.reason}</p>
             </div>
         );
     }
@@ -662,40 +961,66 @@ export function FpaForm({
             {/* Template sections for the active data tab */}
             {(tab === "siteVisit" || tab === "cityInfo") && activeTabDef && (
                 <>
-                    {activeTabDef.sections.map((sec) => {
-                        const flaggedInSection = (sec.fields ?? []).filter((f) => flagFor(f.key)).length;
-                        return (
-                            <section key={sec.key} className={s.panel}>
-                                <div className={s.panelHead}>
-                                    <h2 className={s.panelTitle}>{sec.title}</h2>
-                                    {flaggedInSection > 0 && (
-                                        <span className={s.flagCount}>
-                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                                            </svg>
-                                            {flaggedInSection}
-                                        </span>
+                    {activeTabDef.sections
+                        .filter((sec) => matchShow(tab as DataTab, sec.showWhen))
+                        .map((sec) => {
+                            const flaggedInSection = (sec.fields ?? []).filter((f) => flagFor(f.key)).length;
+                            const visibleFields = (sec.fields ?? []).filter((f) =>
+                                matchShow(tab as DataTab, f.showWhen),
+                            );
+                            const isFieldSection = !sec.variant || sec.variant === "fields";
+                            const totalN = visibleFields.length;
+                            const filledN = visibleFields.filter((f) => isFilled(tab as DataTab, f)).length;
+                            const showCount = isFieldSection && totalN > 0;
+                            const allDone = showCount && filledN === totalN;
+                            return (
+                                <section key={sec.key} className={s.panel}>
+                                    <div className={s.panelHead}>
+                                        <h2 className={s.panelTitle}>{sec.title}</h2>
+                                        <div className={s.panelMeta}>
+                                            {showCount && (
+                                                <span className={`${s.filledCount} ${allDone ? s.filledCountDone : ""}`}>
+                                                    {allDone && (
+                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                            <path d="M20 6L9 17l-5-5" />
+                                                        </svg>
+                                                    )}
+                                                    {filledN} of {totalN} filled
+                                                </span>
+                                            )}
+                                            {flaggedInSection > 0 && (
+                                                <span className={s.flagCount}>
+                                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                                                    </svg>
+                                                    {flaggedInSection}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {sec.note && <p className={s.sectionNote}>{sec.note}</p>}
+                                    {sec.key === "adu_unit" && renderSolarBadge()}
+                                    {sec.variant === "reference" ? (
+                                        <div className={s.flagList}>
+                                            {sec.reference?.map((r, i) => (
+                                                <div key={i} className={s.kv}>
+                                                    <span className={s.kvLabel}>{r.label}</span>
+                                                    {r.value && <span className={s.kvVal}>{r.value}</span>}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : sec.variant === "discounts" ? (
+                                        renderDiscounts(tab as DataTab, sec.discounts ?? [])
+                                    ) : sec.variant === "fixtureMatrix" ? (
+                                        renderMatrix()
+                                    ) : (
+                                        <div className={s.fieldRows}>
+                                            {visibleFields.map((f) => renderQuestion(tab as DataTab, f))}
+                                        </div>
                                     )}
-                                </div>
-                                {sec.variant === "reference" ? (
-                                    <div className={s.flagList}>
-                                        {sec.reference?.map((r, i) => (
-                                            <div key={i} className={s.kv}>
-                                                <span className={s.kvLabel}>{r.label}</span>
-                                                {r.value && <span className={s.kvVal}>{r.value}</span>}
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : sec.variant === "fixtureMatrix" ? (
-                                    renderMatrix()
-                                ) : (
-                                    <div className={s.fieldGrid}>
-                                        {sec.fields?.map((f) => renderQuestion(tab as DataTab, f))}
-                                    </div>
-                                )}
-                            </section>
-                        );
-                    })}
+                                </section>
+                            );
+                        })}
                 </>
             )}
 

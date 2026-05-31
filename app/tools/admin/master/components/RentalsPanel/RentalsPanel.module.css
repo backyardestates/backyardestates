@@ -1,0 +1,504 @@
+/* Rental comps list — KPIs, filters, sort, and a ★ Feature toggle per comp.
+ * Shares the admin-master design language (Roboto + green #2a7a52 + teal-ink
+ * #14302f + beige surfaces) used by the Feature Builds / Feature Rentals panels.
+ */
+
+.rentalsPanel {
+    --r-ink: #14302f;
+    --r-ink-mute: rgba(20, 48, 47, 0.66);
+    --r-ink-faint: rgba(20, 48, 47, 0.44);
+    --r-border: rgba(20, 48, 47, 0.16);
+    --r-border-soft: rgba(20, 48, 47, 0.09);
+    --r-accent: #2a7a52;
+    --r-accent-dark: #1e5b3d;
+    --r-accent-soft: rgba(42, 122, 82, 0.10);
+    --r-accent-ring: rgba(42, 122, 82, 0.22);
+    --r-surface: #ffffff;
+    --r-surface-sunken: #f4f2ec;
+    --r-radius: 12px;
+    --r-radius-sm: 9px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-family: "Roboto", system-ui, sans-serif;
+    color: var(--r-ink);
+}
+
+/* ── KPIs ─────────────────────────────────────────────────────────────────── */
+
+.rentalsKpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    background: var(--r-surface);
+    border: 1.5px solid var(--r-border-soft);
+    border-radius: var(--r-radius-sm);
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
+}
+
+.kpiLabel {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--r-ink-faint);
+}
+
+.kpiValue {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--r-ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+/* ── Controls ─────────────────────────────────────────────────────────────── */
+
+.rentalsControls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px 20px;
+    padding: 16px 18px;
+    background: var(--r-surface-sunken);
+    border: 1px solid var(--r-border-soft);
+    border-radius: var(--r-radius);
+    animation: rIn 0.3s ease both;
+}
+
+/* Each control is a labelled field: small label on top, control below. */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+.fieldEnd { margin-left: auto; }
+.fieldLabel {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--r-ink-mute);
+}
+.fieldReveal { animation: revealIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes revealIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Primary segmented toggle — "Compare against". */
+.seg {
+    display: inline-flex;
+    width: fit-content;
+    padding: 3px;
+    gap: 2px;
+    background: var(--r-surface);
+    border: 1.5px solid var(--r-border);
+    border-radius: 11px;
+}
+.segBtn {
+    height: 30px;
+    padding: 0 15px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--r-ink-mute);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+.segBtn:hover { color: var(--r-ink); }
+.segBtnOn {
+    background: var(--r-accent);
+    color: #fff;
+    box-shadow: 0 2px 6px -1px rgba(42, 122, 82, 0.45);
+}
+.segBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--r-accent-soft);
+}
+
+/* Size range inputs. */
+.rangeRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.rangeInput {
+    height: 36px;
+    width: 84px;
+    padding: 0 10px;
+    border: 1.5px solid var(--r-border);
+    border-radius: var(--r-radius-sm);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--r-ink);
+    background: var(--r-surface);
+    font-variant-numeric: tabular-nums;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.rangeInput:hover { border-color: rgba(20, 48, 47, 0.28); }
+.rangeInput:focus {
+    outline: none;
+    border-color: var(--r-accent);
+    box-shadow: 0 0 0 3px var(--r-accent-soft);
+}
+.rangeDash {
+    color: var(--r-ink-faint);
+    font-weight: 700;
+}
+
+/* "Has size listed" switch. */
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    height: 36px;
+    cursor: pointer;
+    user-select: none;
+}
+.toggleInput {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+.toggleTrack {
+    position: relative;
+    width: 38px;
+    height: 22px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--r-border);
+    transition: background 0.2s ease, box-shadow 0.15s ease;
+}
+.toggleKnob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(20, 48, 47, 0.28);
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.toggleInput:checked + .toggleTrack { background: var(--r-accent); }
+.toggleInput:checked + .toggleTrack .toggleKnob { transform: translateX(16px); }
+.toggleInput:focus-visible + .toggleTrack { box-shadow: 0 0 0 3px var(--r-accent-soft); }
+.toggleText {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--r-ink-mute);
+    transition: color 0.15s ease;
+}
+.toggleInput:checked ~ .toggleText { color: var(--r-ink); }
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 14px;
+    border: 1.5px solid var(--r-border);
+    border-radius: 999px;
+    background: var(--r-surface);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--r-ink-mute);
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.chip:hover { border-color: var(--r-accent); color: var(--r-ink); }
+.chip:has(.chipInput:checked) {
+    background: var(--r-accent);
+    border-color: var(--r-accent);
+    color: #fff;
+}
+
+.chipInput {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: var(--r-accent);
+    cursor: pointer;
+}
+.chip:has(.chipInput:checked) .chipInput { accent-color: #fff; }
+
+.sortWrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.sortLabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--r-ink-faint);
+}
+
+.sortSelect {
+    height: 36px;
+    padding: 0 12px;
+    border: 1.5px solid var(--r-border);
+    border-radius: var(--r-radius-sm);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--r-ink);
+    background-color: var(--r-surface);
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+/* Native chevron only on the actual <select> (not the number inputs). */
+select.sortSelect {
+    padding-right: 30px;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2314302f' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+.sortSelect:hover { border-color: rgba(20, 48, 47, 0.28); }
+.sortSelect:focus {
+    outline: none;
+    border-color: var(--r-accent);
+    box-shadow: 0 0 0 3px var(--r-accent-soft);
+}
+
+/* ── Comp list ────────────────────────────────────────────────────────────── */
+
+@keyframes rIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.compList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.compDetails {
+    border: 1.5px solid var(--r-border-soft);
+    border-radius: var(--r-radius-sm);
+    background: var(--r-surface);
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
+    overflow: hidden;
+    transition: border-color 0.18s ease, box-shadow 0.22s ease, transform 0.18s ease;
+    animation: rIn 0.26s ease both;
+}
+.compDetails:hover {
+    border-color: rgba(42, 122, 82, 0.45);
+    box-shadow: 0 10px 24px -16px rgba(20, 48, 47, 0.34);
+    transform: translateY(-2px);
+}
+.compDetails[open] {
+    border-color: var(--r-accent-ring);
+    box-shadow: 0 0 0 1px var(--r-accent-soft);
+}
+
+.compRow {
+    display: grid;
+    grid-template-columns: minmax(120px, auto) 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    cursor: pointer;
+    list-style: none;
+}
+.compRow::-webkit-details-marker { display: none; }
+
+.compLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.compPrice {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--r-ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+.compSub {
+    font-size: 11.5px;
+    color: var(--r-ink-faint);
+}
+
+.compMid { min-width: 0; }
+.compAddr {
+    font-size: 13px;
+    color: var(--r-ink-mute);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.compRight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.useBtn {
+    height: 30px;
+    padding: 0 14px;
+    border: 1.5px solid var(--r-border);
+    border-radius: 999px;
+    background: var(--r-surface);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--r-ink-mute);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.useBtn:hover { border-color: var(--r-accent); color: var(--r-accent-dark); }
+.useBtn:active { transform: scale(0.96); }
+
+.featBtn {
+    height: 30px;
+    padding: 0 14px;
+    border: 1.5px solid var(--r-accent-ring);
+    border-radius: 999px;
+    background: var(--r-accent-soft);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--r-accent-dark);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.featBtn:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--r-accent) 18%, transparent);
+}
+.featBtn:active:not(:disabled) { transform: scale(0.96); }
+.featBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.featBtnOn {
+    background: var(--r-accent);
+    border-color: var(--r-accent);
+    color: #fff;
+    box-shadow: 0 2px 8px -2px rgba(42, 122, 82, 0.5);
+}
+.featBtnOn:hover:not(:disabled) { background: var(--r-accent-dark); }
+
+.chev {
+    color: var(--r-ink-faint);
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+.compDetails[open] .chev { transform: rotate(180deg); }
+
+.compExpanded {
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--r-border-soft);
+}
+.expGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    padding-top: 12px;
+}
+.expItem {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.expLabel {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--r-ink-faint);
+}
+.expVal {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--r-ink);
+}
+
+/* ── Empty + show more ────────────────────────────────────────────────────── */
+
+.empty {
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--r-ink-faint);
+    font-size: 14px;
+    background: var(--r-surface-sunken);
+    border: 1px dashed var(--r-border);
+    border-radius: var(--r-radius);
+}
+
+.showMore {
+    align-self: center;
+    height: 36px;
+    padding: 0 18px;
+    border: 1.5px solid var(--r-border);
+    border-radius: 999px;
+    background: var(--r-surface);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--r-ink-mute);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.showMore:hover {
+    border-color: var(--r-accent);
+    color: var(--r-ink);
+    background: var(--r-surface-sunken);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 560px) {
+    .rentalsControls { gap: 8px; padding: 12px; }
+    .compRow { grid-template-columns: 1fr auto; gap: 8px 12px; }
+    .compMid { grid-column: 1 / -1; }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .compDetails,
+    .useBtn,
+    .featBtn,
+    .chev,
+    .sortSelect,
+    .chip,
+    .showMore,
+    .rentalsControls,
+    .fieldReveal,
+    .segBtn,
+    .rangeInput,
+    .toggleTrack,
+    .toggleKnob,
+    .toggleText {
+        transition: none;
+        animation: none;
+    }
+    .compDetails:hover { transform: none; }
+}

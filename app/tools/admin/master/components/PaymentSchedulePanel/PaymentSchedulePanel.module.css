@@ -1,31 +1,58 @@
+/* Payment Schedule editor — matches the Feature Builds / Stories / Timeline
+ * design language (Roboto + green #2a7a52 + teal-ink #14302f + beige surfaces).
+ * A multi-column milestone table: 10 contract milestones × one column per ADU,
+ * every amount editable and auto-rebalancing.
+ */
+
 .panel {
+    --fb-ink: #14302f;
+    --fb-ink-mute: rgba(20, 48, 47, 0.66);
+    --fb-ink-faint: rgba(20, 48, 47, 0.44);
+    --fb-border: rgba(20, 48, 47, 0.16);
+    --fb-border-soft: rgba(20, 48, 47, 0.09);
+    --fb-accent: #2a7a52;
+    --fb-accent-dark: #1e5b3d;
+    --fb-accent-soft: rgba(42, 122, 82, 0.10);
+    --fb-surface: #ffffff;
+    --fb-surface-sunken: #f4f2ec;
+    --fb-radius: 12px;
+    --fb-radius-sm: 9px;
+
     display: flex;
     flex-direction: column;
     gap: 16px;
+    font-family: 'Roboto', system-ui, sans-serif;
+    color: var(--fb-ink);
 }
+
+/* ── Empty / warning ──────────────────────────────────────────────────────── */
 
 .empty {
-    padding: 24px;
-    background: #f7f5f0;
-    border: 1px dashed #d4c4a0;
-    border-radius: 12px;
-    color: #5a5550;
-    font-style: italic;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 48px 24px;
+    text-align: center;
+    background: var(--fb-surface-sunken);
+    border: 1px dashed var(--fb-border);
+    border-radius: var(--fb-radius);
+    color: var(--fb-ink-mute);
+    font-size: 14px;
+    font-weight: 500;
 }
 
-/* ── Warning band ── */
 .warning {
-    padding: 12px 16px;
+    padding: 14px 16px;
     background: #fff7e6;
     border: 1px solid #e8b87b;
-    border-radius: 8px;
+    border-radius: var(--fb-radius);
     color: #7a5a1f;
     font-size: 13px;
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-
 .warningList {
     margin: 0;
     padding-left: 18px;
@@ -33,35 +60,39 @@
     flex-direction: column;
     gap: 4px;
 }
-
 .linkBtn {
     background: none;
     border: 0;
-    color: #b8954a;
+    color: var(--fb-accent-dark);
+    font-family: inherit;
     font-weight: 700;
     cursor: pointer;
-    text-decoration: underline;
-    padding: 0 0 0 8px;
+    padding: 2px 8px;
+    margin-left: 6px;
+    border-radius: 6px;
     font-size: 13px;
+    transition: background 0.15s ease;
 }
+.linkBtn:hover { background: var(--fb-accent-soft); }
 
-/* ── Multi-column grid table ──
- * Columns are set inline via gridTemplateColumns since the count varies
- * with the number of ADUs. Each table cell is a separate grid child. */
+/* ── Multi-column grid table ──────────────────────────────────────────────────
+ * Columns are set inline (gridTemplateColumns) since the count varies with the
+ * number of ADUs. Each cell is a separate grid child. */
 .tableWrap {
     display: grid;
-    background: #fff;
-    border: 1px solid #e5e1d8;
-    border-radius: 10px;
+    background: var(--fb-surface);
+    border: 1.5px solid var(--fb-border);
+    border-radius: 14px;
     overflow: hidden;
     font-size: 14px;
     align-items: stretch;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
 }
 
 .cell {
-    padding: 10px 14px;
-    border-bottom: 1px solid #f0ede7;
-    color: #14302f;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--fb-border-soft);
+    color: var(--fb-ink);
     display: flex;
     align-items: center;
     min-width: 0;
@@ -70,13 +101,13 @@
 
 /* Header band — first row across all columns. */
 .headCell {
-    background: #f7f5f0;
-    color: #8a8278;
+    background: var(--fb-surface-sunken);
+    color: var(--fb-ink-faint);
     font-size: 11px;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     font-weight: 700;
-    border-bottom: 1px solid #e5e1d8;
+    border-bottom: 1px solid var(--fb-border);
 }
 
 .headAmount {
@@ -85,30 +116,30 @@
     gap: 2px;
     text-align: right;
 }
-
 .headAduName {
-    font-size: 12px;
-    color: #14302f;
-    font-style: italic;
-    letter-spacing: 0.02em;
+    font-size: 13px;
+    color: var(--fb-ink);
+    letter-spacing: -0.01em;
     text-transform: none;
-    font-family: Georgia, "Times New Roman", serif;
-    font-weight: 400;
+    font-weight: 700;
 }
-
 .headAduTotal {
-    font-size: 10px;
-    color: #b8954a;
-    letter-spacing: 0.18em;
+    font-size: 11px;
+    color: var(--fb-accent-dark);
+    letter-spacing: 0.02em;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 
 .triggerCell {
-    color: #5a5550;
-    font-size: 13px;
-    font-style: italic;
+    color: var(--fb-ink-faint);
+    font-size: 12.5px;
 }
+
+/* Zebra striping for readability across many milestone rows. The table is a
+ * flat grid, so we tint cells by row using nth-child on a fixed 3+N stride is
+ * impractical; instead a subtle hover row highlight aids scanning. */
+.cell:hover { background: rgba(42, 122, 82, 0.03); }
 
 /* Amount cells host the editable input + the % readout. */
 .amountCell {
@@ -121,60 +152,67 @@
 
 .amountInput {
     width: 100%;
-    padding: 6px 10px;
-    border: 1px solid #d4c4a0;
-    border-radius: 6px;
-    background: #fff;
+    padding: 7px 10px;
+    border: 1.5px solid var(--fb-border);
+    border-radius: var(--fb-radius-sm);
+    background: var(--fb-surface);
+    font-family: inherit;
     font-size: 14px;
-    color: #14302f;
+    font-weight: 600;
+    color: var(--fb-ink);
     text-align: right;
     font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
+    appearance: textfield;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-
+.amountInput::-webkit-outer-spin-button,
+.amountInput::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.amountInput:hover { border-color: rgba(20, 48, 47, 0.28); }
 .amountInput:focus {
-    outline: 2px solid #b8954a;
-    outline-offset: -1px;
+    outline: none;
+    border-color: var(--fb-accent);
+    box-shadow: 0 0 0 3px var(--fb-accent-soft);
 }
 
 .amountPct {
     text-align: right;
-    color: #8a8278;
+    color: var(--fb-ink-faint);
     font-size: 11px;
     font-variant-numeric: tabular-nums;
 }
 
 .amountMissing {
-    color: #c8c0b0;
+    color: var(--fb-ink-faint);
     justify-content: flex-end;
 }
 
 /* Bottom sum row. */
 .sumCell {
-    background: #f7f5f0;
-    font-weight: 600;
+    background: var(--fb-surface-sunken);
+    font-weight: 700;
     border-bottom: none;
 }
-
 .sumCell strong {
-    color: #14302f;
+    color: var(--fb-ink);
     font-variant-numeric: tabular-nums;
 }
 
 .varianceOk {
-    color: #1f7a4f;
+    color: var(--fb-accent-dark);
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     margin-top: 2px;
 }
-
 .varianceOff {
-    color: #b8503e;
+    color: #b3261e;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     margin-top: 2px;
 }
 
-/* ── Actions ── */
+/* ── Actions ──────────────────────────────────────────────────────────────── */
+
 .actions {
     display: flex;
     align-items: center;
@@ -184,26 +222,41 @@
 }
 
 .button {
-    padding: 10px 18px;
-    background: #14302f;
-    color: #f7f5f0;
+    height: 40px;
+    padding: 0 18px;
+    background: var(--fb-accent);
+    color: #fff;
     border: 0;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    border-radius: var(--fb-radius-sm);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
     cursor: pointer;
-    transition: background 0.15s ease;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px -2px rgba(42, 122, 82, 0.5);
+    transition: background 0.15s ease, transform 0.1s ease;
 }
-
-.button:hover {
-    background: #2d5f5f;
-}
+.button:hover { background: var(--fb-accent-dark); }
+.button:active { transform: scale(0.98); }
 
 .note {
     font-size: 12px;
-    color: #8a8278;
-    font-style: italic;
+    color: var(--fb-ink-faint);
     line-height: 1.5;
-    max-width: 60ch;
+    max-width: 64ch;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+    /* The table scrolls horizontally on small screens rather than crushing
+     * columns; wrap is provided by the inline grid + this min-width hint. */
+    .tableWrap { font-size: 13px; }
+    .cell { padding: 9px 10px; }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .amountInput, .button { transition: none; }
 }

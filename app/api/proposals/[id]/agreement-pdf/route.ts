@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { uploadAgreementPdf } from "@/lib/agreement/uploadAgreementPdf";
 import { isPipedriveConfigured, pipedriveFetch } from "@/lib/pipedrive/client";
+import { buildProposalNote } from "@/lib/pipedrive/proposalNote";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,7 +12,7 @@ export const dynamic = "force-dynamic";
 // POST /api/proposals/[id]/agreement-pdf
 // Body: multipart/form-data with the generated agreement PDF as `file`.
 // Stores it (Cloudinary → Sanity fallback), saves the URL + timestamp on the
-// proposal, and logs a dated note to the linked Pipedrive deal/person.
+// proposal, and logs a detailed note to the linked Pipedrive deal/person.
 export async function POST(
     req: Request,
     { params }: { params: Promise<{ id: string }> },
@@ -28,6 +29,9 @@ export async function POST(
                 customerName: true,
                 addressLine1: true,
                 city: true,
+                state: true,
+                zip: true,
+                agreementInput: true,
                 pipedrivePersonId: true,
                 pipedriveDealId: true,
                 engagement: { select: { pipedrivePersonId: true, pipedriveDealId: true } },
@@ -65,27 +69,56 @@ export async function POST(
             data: { pdfUrl: url, pdfStatus: "ready", pdfGeneratedAt: generatedAt },
         });
 
-        // Best-effort dated note to Pipedrive so the deal record carries the
-        // latest agreement link. Prefer the proposal's own ids, fall back to the
-        // engagement's.
+        // Detailed dated note to Pipedrive so the deal record identifies the
+        // agreement at a glance (units compared + totals + links). Prefer the
+        // proposal's own ids, fall back to the engagement's. Awaited so the UI
+        // can report whether the note actually landed.
         const personId = proposal.pipedrivePersonId || proposal.engagement?.pipedrivePersonId || null;
         const dealId = proposal.pipedriveDealId || proposal.engagement?.pipedriveDealId || null;
-        if (isPipedriveConfigured() && (personId || dealId)) {
+
+        let pipedriveNote: "posted" | "no-link" | "not-configured" | "failed" = "no-link";
+        if (!isPipedriveConfigured()) {
+            pipedriveNote = "not-configured";
+        } else if (personId || dealId) {
             const dateStr = generatedAt.toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
             });
-            const content = `Agreement PDF saved (${dateStr}) for ${proposal.customerName || "this customer"}: ${url}`;
+            const content = buildProposalNote(
+                {
+                    agreementInput: proposal.agreementInput,
+                    customerName: proposal.customerName,
+                    addressLine1: proposal.addressLine1,
+                    city: proposal.city,
+                    state: proposal.state,
+                    zip: proposal.zip,
+                },
+                {
+                    kind: "agreement",
+                    pdfUrl: url,
+                    toolUrl: `${new URL(req.url).origin}/tools/admin/master/agreement?proposalId=${proposal.id}`,
+                    date: dateStr,
+                },
+            );
             const body: Record<string, unknown> = { content };
             if (personId) body.person_id = Number(personId);
             if (dealId) body.deal_id = Number(dealId);
-            void pipedriveFetch("notes", { method: "POST", body }).catch((err) =>
-                console.error("[agreement-pdf] pipedrive note failed", err),
-            );
+            try {
+                await pipedriveFetch("notes", { method: "POST", body });
+                pipedriveNote = "posted";
+            } catch (err) {
+                console.error("[agreement-pdf] pipedrive note failed", err);
+                pipedriveNote = "failed";
+            }
         }
 
-        return NextResponse.json({ ok: true, pdfUrl: url, pdfGeneratedAt: generatedAt.toISOString() });
+        return NextResponse.json({
+            ok: true,
+            pdfUrl: url,
+            pdfGeneratedAt: generatedAt.toISOString(),
+            pipedriveNote,
+        });
     } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         if (msg === "UNAUTHORIZED") {

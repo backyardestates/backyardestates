@@ -209,7 +209,7 @@ export function AddressAutocomplete({
 
     return (
         <div className={styles.autocompleteRoot} ref={rootRef}>
-            <label className={styles.label}>{label}</label>
+            {label && <label className={styles.label}>{label}</label>}
 
             <input
                 ref={inputRef}

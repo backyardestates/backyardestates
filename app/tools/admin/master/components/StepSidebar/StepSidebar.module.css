@@ -194,3 +194,24 @@
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     margin: 8px 8px;
 }
+
+/* ── Pinned control-panel entry (Review & Generate) ────────────────────────── */
+
+.pinnedStep .stepLabel {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+}
+
+.pinnedStep:hover .stepLabel {
+    color: var(--be-gold-600);
+}
+
+.pinnedIcon {
+    background: rgba(184, 149, 74, 0.14);
+    color: var(--be-gold-600);
+    border-color: rgba(184, 149, 74, 0.3);
+}
+
+.pinnedStep:hover .pinnedIcon {
+    background: rgba(184, 149, 74, 0.22);
+}

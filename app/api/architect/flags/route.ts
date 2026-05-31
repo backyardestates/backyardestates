@@ -26,7 +26,7 @@ export async function GET(req: Request) {
                     where: { status: AnalysisStatus.COMPLETE },
                     orderBy: { completedAt: "desc" },
                     take: 1,
-                    select: { id: true, flagsJson: true, completedAt: true },
+                    select: { id: true, flagsJson: true, siteVisitJson: true, completedAt: true },
                 },
             },
         });
@@ -34,8 +34,21 @@ export async function GET(req: Request) {
         const analysis = engagement?.formalAnalyses?.[0] ?? null;
         const flags = Array.isArray(analysis?.flagsJson) ? analysis.flagsJson : [];
 
+        // Site conditions the rep tool needs to decide solar-discount eligibility.
+        // ADU type + climate zone are architect-observed (same for every unit at
+        // this address); the rep tool pairs them with each selected unit's sqft.
+        const sv = (analysis?.siteVisitJson ?? null) as Record<string, unknown> | null;
+        const climateZoneRaw = sv?.climate_zone;
+        const siteConditions = {
+            aduType: (sv?.adu_type as string | undefined) ?? null,
+            climateZone:
+                climateZoneRaw != null && climateZoneRaw !== "" ? Number(climateZoneRaw) : null,
+            aduSqft: sv?.adu_sqft != null && sv.adu_sqft !== "" ? Number(sv.adu_sqft) : null,
+        };
+
         return NextResponse.json({
             flags,
+            siteConditions,
             engagementId: engagement?.id ?? null,
             customerName: engagement?.customerName ?? null,
             submittedAt: analysis?.completedAt ?? null,

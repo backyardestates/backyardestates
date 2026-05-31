@@ -52,6 +52,11 @@
     user-select: none;
 }
 
+/* With previews on, insert a thumbnail column between the badge and the title. */
+.rowPreview {
+    grid-template-columns: 28px 32px 132px 1fr auto;
+}
+
 .row:hover {
     border-color: var(--so-border);
 }
@@ -192,4 +197,112 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+}
+
+/* ── Previews toggle ──────────────────────────────────────────────────────── */
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.switch {
+    position: relative;
+    width: 34px;
+    height: 20px;
+    border-radius: 999px;
+    border: none;
+    padding: 0;
+    background: var(--so-border);
+    cursor: pointer;
+    transition: background 0.15s;
+    flex-shrink: 0;
+}
+.switchOn {
+    background: var(--so-accent);
+}
+.switchKnob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s;
+}
+.switchOn .switchKnob {
+    transform: translateX(14px);
+}
+.switchText {
+    font-size: 12px;
+    color: var(--so-text2);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* ── Slide thumbnails ─────────────────────────────────────────────────────── */
+.thumbWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.thumb {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    border: 1px solid var(--so-border2);
+    background: #0d1f1f;
+    flex-shrink: 0;
+}
+
+/* Native 1920×1080 stage, scaled down via transform (set inline). Mirrors the
+   presenter's .slide-root so slides inherit the right font + tokens. */
+.thumbStage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    transform-origin: top left;
+    pointer-events: none;
+    font-family: var(--p-font);
+    -webkit-font-smoothing: antialiased;
+}
+
+.thumbFallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 9;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px dashed var(--so-border);
+    background: var(--so-bg2);
+    color: var(--so-text3);
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.25;
+}
+
+/* Hover-enlarge popover anchored to the right of the inline thumbnail. */
+.enlarge {
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    border-radius: 10px;
+    border: 1px solid var(--so-border);
+    box-shadow: 0 18px 50px rgba(54, 72, 75, 0.4);
+    background: #0d1f1f;
+    overflow: hidden;
+    pointer-events: none;
+}
+.enlarge .thumb {
+    border: none;
+    border-radius: 0;
 }

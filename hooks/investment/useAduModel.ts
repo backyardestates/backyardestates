@@ -30,6 +30,7 @@ import {
     type DiscountsCatalogSummary,
 } from "@/lib/investment/discounts";
 import type { RentcastMarketStats } from "@/hooks/rentcast/useRentcastData";
+import { scopedCompanionKey } from "@/lib/admin/companionKeys";
 
 
 export interface UseAduModelInput {
@@ -102,8 +103,8 @@ export function useAduModel({
     useEffect(() => {
         if (typeof window === "undefined") return;
         try {
-            const swMaster: EstimatorState = JSON.parse(localStorage.getItem("swp_master") ?? "null") ?? createEmptyState(resolvedSiteWorkCategories);
-            const swCustom: Record<string, EstimatorState | null> = JSON.parse(localStorage.getItem("swp_custom") ?? "null") ?? {};
+            const swMaster: EstimatorState = JSON.parse(localStorage.getItem(scopedCompanionKey("swp_master")) ?? "null") ?? createEmptyState(resolvedSiteWorkCategories);
+            const swCustom: Record<string, EstimatorState | null> = JSON.parse(localStorage.getItem(scopedCompanionKey("swp_custom")) ?? "null") ?? {};
             setEstimatorByAduId((prev) => {
                 const next = { ...prev };
                 for (const fp of selectedAdus) {
@@ -114,8 +115,8 @@ export function useAduModel({
         } catch { /* malformed */ }
 
         try {
-            const dpMaster: DiscountState = JSON.parse(localStorage.getItem("dp_master") ?? "null") ?? createEmptyDiscountState();
-            const dpCustom: Record<string, DiscountState | null> = JSON.parse(localStorage.getItem("dp_custom") ?? "null") ?? {};
+            const dpMaster: DiscountState = JSON.parse(localStorage.getItem(scopedCompanionKey("dp_master")) ?? "null") ?? createEmptyDiscountState();
+            const dpCustom: Record<string, DiscountState | null> = JSON.parse(localStorage.getItem(scopedCompanionKey("dp_custom")) ?? "null") ?? {};
             const amounts: Record<string, number> = {};
             const lines: Record<string, { label: string; amount: number }[]> = {};
             for (const fp of selectedAdus) {

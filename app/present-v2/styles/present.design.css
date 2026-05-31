@@ -141,14 +141,11 @@
 
 /* ═══════════════════════════════════════
    GLOBAL RESET
+   Moved to ./present.reset.css (imported by the present-v2 layout) so this
+   token sheet can be loaded outside the presenter — e.g. for the slide
+   thumbnails in the admin slide-order panel — without forcing the dark body
+   background + overflow lock onto those pages.
 ═══════════════════════════════════════ */
-html,
-body {
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  background: var(--p-dark);
-}
 
 /* ═══════════════════════════════════════
    SLIDE SHELL

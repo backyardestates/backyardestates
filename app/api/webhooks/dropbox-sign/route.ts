@@ -4,7 +4,8 @@ import {
     EngagementEventType,
 } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { verifyEventHash } from "@/lib/esign/dropboxSign";
+import { verifyEventHash, downloadSignedPdf } from "@/lib/esign/dropboxSign";
+import { uploadAgreementPdf } from "@/lib/agreement/uploadAgreementPdf";
 import { transitionEngagementStage } from "@/lib/engagement/stage";
 import { isPipedriveConfigured, pipedriveFetch } from "@/lib/pipedrive/client";
 
@@ -60,6 +61,23 @@ export async function POST(req: Request) {
                         where: { id: proposal.id },
                         data: { status: ProposalStatus.SIGNED },
                     });
+
+                    // Auto-capture the executed PDF so every closed deal has its
+                    // signed contract on file — no manual "Save PDF" step needed.
+                    // Best-effort: a failure here must not break the webhook ack.
+                    try {
+                        const pdf = await downloadSignedPdf(srId);
+                        const { url } = await uploadAgreementPdf(pdf, {
+                            proposalId: proposal.id,
+                            filename: `BackyardEstates-Agreement-signed-${proposal.id}.pdf`,
+                        });
+                        await prisma.proposal.update({
+                            where: { id: proposal.id },
+                            data: { pdfUrl: url, pdfStatus: "signed", pdfGeneratedAt: new Date() },
+                        });
+                    } catch (e) {
+                        console.error("[dropbox-sign] signed PDF capture failed", e);
+                    }
 
                     if (proposal.engagementId) {
                         await transitionEngagementStage({

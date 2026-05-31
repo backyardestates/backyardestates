@@ -14,17 +14,21 @@
     --gold-soft: #d4b074;
     --gold-bg: rgba(184, 149, 74, 0.1);
     --gold-border: rgba(184, 149, 74, 0.4);
-    --cream: #f7f5f0;
-    --paper: #faf6ec;
-    --ink: #1a1a1a;
-    --ink-muted: #5a5550;
-    --ink-faint: #8a8278;
+    --cream: #f0ebdf;
+    /* Panels lift to a warm near-white so cards separate from the cream page
+       (body is #F6F1E6); fields recess to a light cream so each input reads as a
+       distinct slot inside the white card. */
+    --paper: #fffdf8;
+    --field-bg: #f3efe4;
+    --ink: #161616;
+    --ink-muted: #514c46;
+    --ink-faint: #6f675b;
     --positive: #2e7d5b;
     --positive-bg: rgba(46, 125, 91, 0.08);
     --negative: #b85440;
     --negative-bg: rgba(226, 162, 132, 0.12);
-    --border-light: #e5e1d8;
-    --border-mid: #d9d3c6;
+    --border-light: #d8d0bf;
+    --border-mid: #c2b9a4;
 
     --font: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-display: var(--font-fraunces), "Fraunces", "Iowan Old Style", Georgia, serif;
@@ -232,6 +236,32 @@
     color: var(--teal-ink);
     margin: 0;
 }
+/* right-aligned cluster: "X of Y filled" + flag count */
+.panelMeta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.filledCount {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 11px;
+    border-radius: 999px;
+    background: rgba(45, 95, 95, 0.07);
+    border: 1px solid rgba(45, 95, 95, 0.16);
+    color: var(--ink-muted);
+    font-size: 12.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.filledCountDone {
+    background: var(--positive-bg);
+    border-color: rgba(46, 125, 91, 0.3);
+    color: var(--positive);
+}
 /* editorial accent — a hairline gold rule under the title group */
 .panelEyebrow {
     display: block;
@@ -268,6 +298,96 @@
 .fieldWide {
     grid-column: 1 / -1;
 }
+
+/* ── Single-column field rows (scannable, with filled/empty status dot) ────── */
+.fieldRows {
+    display: flex;
+    flex-direction: column;
+}
+.row {
+    border-bottom: 1px solid var(--border-light);
+}
+.row:last-child {
+    border-bottom: none;
+}
+.rowHead {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 4px;
+    min-height: 58px;
+}
+.rowStacked .rowHead {
+    align-items: flex-start;
+    min-height: 0;
+    padding-bottom: 6px;
+}
+/* status dot: hollow when empty, solid teal when filled */
+.rowDot {
+    flex-shrink: 0;
+    width: 9px;
+    height: 9px;
+    margin-top: 1px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-mid);
+    background: transparent;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+.rowStacked .rowDot {
+    margin-top: 7px;
+}
+.rowFilled .rowDot {
+    background: var(--teal);
+    border-color: var(--teal);
+}
+.rowFlagged .rowDot {
+    background: var(--gold);
+    border-color: var(--gold);
+}
+.rowLabelWrap {
+    flex: 1 1 42%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+.rowLabel {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--teal-ink);
+    line-height: 1.35;
+}
+.rowLabelWrap .hint {
+    margin: 1px 0 0;
+}
+.rowControl {
+    flex: 1 1 52%;
+    min-width: 0;
+}
+.rowControl > .input,
+.rowControl > .select,
+.rowControl > .adorn {
+    width: 100%;
+}
+/* segmented / stepper keep their natural width, left-aligned */
+.rowControl > .segmented,
+.rowControl > .stepper {
+    width: fit-content;
+}
+.rowControlFull {
+    padding: 0 4px 14px 33px;
+}
+
+@media (max-width: 640px) {
+    .rowHead {
+        flex-wrap: wrap;
+    }
+    .rowControl {
+        flex-basis: 100%;
+        order: 3;
+        padding-left: 23px;
+    }
+}
 .fieldHead {
     display: flex;
     align-items: center;
@@ -299,7 +419,7 @@
     font: inherit;
     font-size: 15px;
     color: var(--ink);
-    background: #fff;
+    background: var(--field-bg);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .input::placeholder,
@@ -338,6 +458,255 @@
     cursor: pointer;
 }
 
+/* ── Section note (context line under a panel title) ──────────────────────── */
+.sectionNote {
+    margin: -6px 0 16px;
+    color: var(--ink-muted);
+    font-size: 13.5px;
+    line-height: 1.5;
+}
+
+/* ── Segmented control (toggles & N-state pickers) ────────────────────────── */
+.segmented {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    width: fit-content;
+    max-width: 100%;
+}
+.segBtn {
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.segBtn:hover:not(:disabled) {
+    color: var(--teal-ink);
+    background: rgba(45, 95, 95, 0.07);
+}
+.segBtnOn,
+.segBtnOn:hover:not(:disabled) {
+    background: var(--teal-ink);
+    color: var(--cream);
+}
+.segBtn:disabled {
+    cursor: default;
+    opacity: 0.6;
+}
+.segBtn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* ── Integer stepper ──────────────────────────────────────────────────────── */
+.stepper {
+    display: inline-flex;
+    align-items: stretch;
+    width: fit-content;
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--field-bg);
+}
+.stepBtn {
+    border: none;
+    width: 40px;
+    background: var(--cream);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--teal-ink);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.stepBtn:hover:not(:disabled) {
+    background: rgba(45, 95, 95, 0.1);
+}
+.stepBtn:disabled {
+    color: var(--ink-faint);
+    cursor: default;
+}
+.stepInput {
+    width: 64px;
+    border: none;
+    border-left: 1px solid var(--border-mid);
+    border-right: 1px solid var(--border-mid);
+    text-align: center;
+    font: inherit;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    background: var(--field-bg);
+    -moz-appearance: textfield;
+}
+.stepInput::-webkit-outer-spin-button,
+.stepInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.stepInput:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px rgba(45, 95, 95, 0.2);
+}
+.stepInput:disabled {
+    background: var(--cream);
+    color: var(--ink-muted);
+}
+
+/* ── Adorned inputs (currency $, unit suffix, number+unit) ────────────────── */
+.adorn {
+    display: flex;
+    align-items: stretch;
+}
+.adorn > .input {
+    flex: 1;
+    min-width: 0;
+}
+.adorn > .input:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.adornPrefix {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 12px;
+    border: 1px solid var(--border-mid);
+    border-right: none;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    background: var(--cream);
+    color: var(--ink-muted);
+    font-size: 15px;
+    font-weight: 500;
+}
+.inputPrefixed {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.adornSuffix {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 13px;
+    border: 1px solid var(--border-mid);
+    border-left: none;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: var(--cream);
+    color: var(--ink-muted);
+    font-size: 13.5px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.unitSelect {
+    border: 1px solid var(--border-mid);
+    border-left: none;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: var(--cream);
+    padding: 0 30px 0 12px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235a5550' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+.unitSelect:disabled {
+    color: var(--ink-muted);
+}
+
+/* ── Computed / read-only derived value ───────────────────────────────────── */
+.computedField {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 11px 13px;
+    border: 1px dashed var(--border-mid);
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    color: var(--teal-ink);
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Solar-discount eligibility badge (computed, read-only) ───────────────── */
+.solarBadge {
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border: 1px solid var(--border-mid);
+    border-left: 3px solid var(--ink-faint);
+    border-radius: var(--radius-sm);
+    background: var(--field-bg);
+}
+.solarBadgeHead {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.solarBadgeTitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal-ink);
+}
+.solarBadgePill {
+    margin-left: auto;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgba(45, 95, 95, 0.1);
+    border: 1px solid rgba(45, 95, 95, 0.25);
+    color: var(--teal);
+}
+.solarBadgeReason {
+    margin: 7px 0 0;
+    padding-left: 25px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-muted);
+}
+/* Eligible — green */
+.solarEligible {
+    border-left-color: var(--positive);
+    background: var(--positive-bg);
+}
+.solarEligible .solarBadgeTitle {
+    color: var(--positive);
+}
+/* Pending (needs zone / more info) — gold */
+.solarPending {
+    border-left-color: var(--gold);
+    background: var(--gold-bg);
+}
+.solarPending .solarBadgeTitle {
+    color: var(--gold);
+}
+/* Not eligible — neutral grey (already the base) */
+.solarIneligible .solarBadgeTitle {
+    color: var(--ink-muted);
+}
+
+/* ── Discount checklist value chip ────────────────────────────────────────── */
+.discountVal {
+    margin-left: 4px;
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
 /* ── Inline flag affordance (gold = the brand's "flag for sales" accent) ──── */
 .flagBtn {
     flex-shrink: 0;
@@ -367,9 +736,17 @@
 }
 .fieldFlagged .input,
 .fieldFlagged .select,
-.fieldFlagged .textarea {
+.fieldFlagged .textarea,
+.rowFlagged .input,
+.rowFlagged .select,
+.rowFlagged .textarea {
     border-color: var(--gold-border);
     background: rgba(184, 149, 74, 0.05);
+}
+/* a flagged row gets a soft gold wash so it stands out in the list */
+.rowFlagged {
+    background: rgba(184, 149, 74, 0.045);
+    border-radius: var(--radius-sm);
 }
 .flagPanel {
     grid-column: 1 / -1;

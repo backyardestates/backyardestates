@@ -46,6 +46,18 @@ export function aduTypeLabel(t: AduType): string {
     return TYPE_LABELS[t];
 }
 
+/** Lowercase inline phrasing for sentence use, e.g.
+ *  "a custom <detached> Estate 750". */
+const TYPE_INLINE: Record<AduType, string> = {
+    detached: "detached",
+    attached: "attached",
+    garage: "garage conversion",
+};
+
+export function aduTypeInline(t: AduType): string {
+    return TYPE_INLINE[t];
+}
+
 /** Beds: per-unit override → floorplan.beds → floorplan.bed → 0. */
 export function resolveBeds(
     unit: FloorplanLike | null | undefined,

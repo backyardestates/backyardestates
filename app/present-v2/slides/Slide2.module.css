@@ -176,6 +176,18 @@
   letter-spacing: -0.015em;
   line-height: 0.95;
   margin: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unitNameTag {
+  font-size: 0.6em;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--p-cream);
+  letter-spacing: 0.01em;
 }
 
 .unitStats {

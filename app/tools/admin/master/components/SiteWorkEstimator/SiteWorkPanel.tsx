@@ -15,9 +15,7 @@ import { money } from "@/lib/investment/format";
 import { SiteWorkEstimator } from "./SiteWorkEstimator";
 import { SiteWorkSearch, type PresenceEntry } from "./SiteWorkSearch";
 import s from "./SiteWorkPanel.module.css";
-
-const LS_MASTER_KEY = "swp_master";
-const LS_CUSTOM_KEY = "swp_custom";
+import { scopedCompanionKey } from "@/lib/admin/companionKeys";
 
 function loadLS<T>(key: string, fallback: T): T {
     if (typeof window === "undefined") return fallback;
@@ -48,20 +46,20 @@ export function SiteWorkPanel({ selectedAdus, setEstimatorByAduId, catalog }: Pr
     }, [catalog]);
 
     const [masterEstimator, setMasterEstimator] = useState<EstimatorState>(() =>
-        loadLS<EstimatorState>(LS_MASTER_KEY, createEmptyState())
+        loadLS<EstimatorState>(scopedCompanionKey("swp_master"), createEmptyState())
     );
     // null = synced to master; EstimatorState = custom override
     const [customByAduId, setCustomByAduId] = useState<Record<string, EstimatorState | null>>(() =>
-        loadLS<Record<string, EstimatorState | null>>(LS_CUSTOM_KEY, {})
+        loadLS<Record<string, EstimatorState | null>>(scopedCompanionKey("swp_custom"), {})
     );
 
     // Persist to localStorage whenever state changes
     useEffect(() => {
-        try { localStorage.setItem(LS_MASTER_KEY, JSON.stringify(masterEstimator)); } catch { /* quota */ }
+        try { localStorage.setItem(scopedCompanionKey("swp_master"), JSON.stringify(masterEstimator)); } catch { /* quota */ }
     }, [masterEstimator]);
 
     useEffect(() => {
-        try { localStorage.setItem(LS_CUSTOM_KEY, JSON.stringify(customByAduId)); } catch { /* quota */ }
+        try { localStorage.setItem(scopedCompanionKey("swp_custom"), JSON.stringify(customByAduId)); } catch { /* quota */ }
     }, [customByAduId]);
     const [expandedAduId, setExpandedAduId] = useState<string | null>(null);
 

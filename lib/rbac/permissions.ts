@@ -83,5 +83,8 @@ export const ROLE_PERMISSION_DEFAULTS: Record<Role, string[]> = {
         "drip.manage",
     ],
     STAFF: ["engagements.view_all", "proposals.view_all", "fpa.view_all", "feasibility.use"],
-    CUSTOMER: [],
+    // Customers can run the self-serve feasibility questionnaire. Access to their
+    // own proposal presentation is granted per-proposal by an admin (matched on
+    // email + Proposal.sharedWithCustomerAt), not via a role permission.
+    CUSTOMER: ["feasibility.use"],
 };

@@ -6,6 +6,7 @@ import {
     PipedriveConfigError,
     isPipedriveConfigured,
 } from "@/lib/pipedrive/client";
+import { fetchPipedriveContact } from "@/lib/pipedrive/contact";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,6 +24,10 @@ type PdDealDetail = { id: number; title: string };
 export interface PipedriveLookupResponse {
     person: { id: number; name: string } | null;
     deal: { id: number; title: string } | null;
+    /** Primary customer email resolved from the linked person, or — when only a
+     *  deal is linked — from the deal's linked person. Null when unavailable.
+     *  Used to auto-fill the proposal's customer email on link. */
+    email: string | null;
 }
 
 export async function GET(req: Request) {
@@ -44,11 +49,11 @@ export async function GET(req: Request) {
     const dealId = url.searchParams.get("dealId")?.trim() || null;
 
     if (!personId && !dealId) {
-        return NextResponse.json({ person: null, deal: null } satisfies PipedriveLookupResponse);
+        return NextResponse.json({ person: null, deal: null, email: null } satisfies PipedriveLookupResponse);
     }
 
     try {
-        const [personRes, dealRes] = await Promise.all([
+        const [personRes, dealRes, contact] = await Promise.all([
             personId
                 ? pipedriveFetch<{ data: PdPersonDetail }>(`persons/${personId}`)
                       .then((d) => d.data)
@@ -59,11 +64,18 @@ export async function GET(req: Request) {
                       .then((d) => d.data)
                       .catch(() => null)
                 : Promise.resolve(null),
+            // Resolve the primary email. fetchPipedriveContact follows a deal to
+            // its linked person, so a deal-only link still yields an email.
+            fetchPipedriveContact({
+                personId: personId ? Number(personId) : null,
+                dealId: dealId ? Number(dealId) : null,
+            }).catch(() => null),
         ]);
 
         const body: PipedriveLookupResponse = {
             person: personRes ? { id: personRes.id, name: personRes.name } : null,
             deal: dealRes ? { id: dealRes.id, title: dealRes.title } : null,
+            email: contact?.customerEmail ?? null,
         };
         return NextResponse.json(body);
     } catch (err) {

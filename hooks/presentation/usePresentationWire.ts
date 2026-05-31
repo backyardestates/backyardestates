@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import { usePresentationStore, type CustomerMotivation } from "@/lib/store/presentationStore";
-import { broadcastAdminState } from "@/lib/sync/presentationSync";
+import { broadcastAdminState, startAdminResponder } from "@/lib/sync/presentationSync";
+import { getCompanionScope, scopedCompanionKey } from "@/lib/admin/companionKeys";
 import { calculatePaymentSchedule } from "@/lib/investment/paymentSchedule";
 import type { Scenario } from "@/lib/investment/types";
 import type { Floorplan, RentalListing } from "@/lib/rentcast/types";
@@ -18,7 +19,7 @@ import {
     type PresetLike,
     type DiscountsCatalogSummary,
 } from "@/lib/investment/discounts";
-import type { FeaturedRental, ProjectTimeline } from "@/lib/store/presentationStore";
+import type { FeaturedRental, ProjectTimeline, ExclusionItem } from "@/lib/store/presentationStore";
 import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
 
 interface WireInput {
@@ -32,6 +33,8 @@ interface WireInput {
     aduTypeByUnitId: Record<string, "detached" | "attached" | "garage">;
     bedsByUnitId: Record<string, number>;
     bathsByUnitId: Record<string, number>;
+    // Optional custom tag per unit (e.g. "Hillside") shown after the name on slides.
+    labelByUnitId?: Record<string, string>;
     // Full admin floorplan list (Sanity + admin-added custom units). The wire
     // filters out the custom ones and broadcasts them so the presenter can
     // merge them into its floorplans state.
@@ -49,6 +52,9 @@ interface WireInput {
     activeSnapshotByAduId?: Record<string, ActiveLineItem[]>;
     discountLinesByAduId?: Record<string, { label: string; amount: number }[]>;
     discountsCatalog?: DiscountsCatalogSummary;
+    /** Proposal-wide exclusions (name + price + note) — drives the comparison
+     *  slide's "Not included" block and the agreement bullets. */
+    exclusions?: ExclusionItem[];
 }
 
 // Convert an admin-shape Floorplan into the SanityFloorplan shape the presenter
@@ -122,6 +128,7 @@ export function usePresentationWire({
     aduTypeByUnitId,
     bedsByUnitId,
     bathsByUnitId,
+    labelByUnitId,
     floorplans,
     featuredPropertyIds,
     featuredStoryIds,
@@ -136,7 +143,13 @@ export function usePresentationWire({
     activeSnapshotByAduId,
     discountLinesByAduId,
     discountsCatalog,
+    exclusions,
 }: WireInput) {
+    // Answer "I just connected" requests from presenter / export windows by
+    // replaying the latest payload, so they render immediately on open instead
+    // of waiting for the next edit-triggered broadcast.
+    useEffect(() => startAdminResponder(), []);
+
     useEffect(() => {
         // Resolve presets from the DB catalog when available; otherwise fall
         // back to the legacy hardcoded PRESETS so totals stay correct even
@@ -154,25 +167,48 @@ export function usePresentationWire({
         }
 
         const paymentSchedules: Record<string, ReturnType<typeof calculatePaymentSchedule>> = {};
-        // Read discount lines from localStorage so discountLines in each scenario is always current,
-        // regardless of whether DiscountsPanel is currently mounted or the React state chain has resolved.
-        let lsDiscountLinesByUnitId: Record<string, { label: string; amount: number }[]> = {};
+
+        // Discount lines come straight from React state — the same source the
+        // totals and scenarios use — so a discount edit (including the auto solar
+        // discount, which lives outside the dp_master/dp_custom keys) broadcasts
+        // live, exactly like site work's activeSnapshotByAduId. Fall back to
+        // localStorage only when the prop is empty (e.g. a presenter window that
+        // opened before the panel ever computed).
+        // Per-unit discount line items. Prefer the live React-state lines (so an
+        // edit — including the auto solar discount, which lives outside the
+        // dp_master/dp_custom keys — broadcasts immediately), and fall back to
+        // localStorage per unit only when the prop has nothing for that unit.
+        const propDiscountLines = discountLinesByAduId ?? {};
+        let lsMaster: DiscountState | null = null;
+        let lsCustom: Record<string, DiscountState | null> = {};
         try {
-            const dpMaster: DiscountState = JSON.parse(localStorage.getItem("dp_master") ?? "null") ?? createEmptyDiscountState();
-            const dpCustom: Record<string, DiscountState | null> = JSON.parse(localStorage.getItem("dp_custom") ?? "null") ?? {};
-            for (const unitId of comparedUnitIds) {
-                const effective = dpCustom[unitId] ?? dpMaster;
-                lsDiscountLinesByUnitId[unitId] = getDiscountLines(effective, resolvedPresets);
-            }
+            lsMaster = JSON.parse(localStorage.getItem(scopedCompanionKey("dp_master")) ?? "null");
+            lsCustom = JSON.parse(localStorage.getItem(scopedCompanionKey("dp_custom")) ?? "null") ?? {};
         } catch { /* malformed localStorage */ }
+        const discountLinesByUnitId: Record<string, { label: string; amount: number }[]> = {};
+        for (const unitId of comparedUnitIds) {
+            const fromProp = propDiscountLines[unitId];
+            if (fromProp && fromProp.length > 0) {
+                discountLinesByUnitId[unitId] = fromProp;
+            } else {
+                const effective = lsCustom[unitId] ?? lsMaster ?? createEmptyDiscountState();
+                discountLinesByUnitId[unitId] = getDiscountLines(effective, resolvedPresets);
+            }
+        }
 
         // Strip the debug field — it contains React.ReactNode which is not structured-clone-safe
-        // (BroadcastChannel.postMessage uses structured clone and throws DataCloneError on Symbol keys)
+        // (BroadcastChannel.postMessage uses structured clone and throws DataCloneError on Symbol keys).
+        // Keep the scenario's own line items (built from React state, incl. solar)
+        // when present; only fall back to the resolved per-unit lines when empty.
         const serializableScenarios = scenarios.map(({ debug: _debug, ...rest }) => {
             const sc = rest as typeof scenarios[0];
             if (sc.kind === "adu") {
                 const unitId = sc.key.replace(/^adu_/, "");
-                return { ...sc, discountLines: lsDiscountLinesByUnitId[unitId] ?? sc.discountLines ?? [] };
+                const lines =
+                    sc.discountLines && sc.discountLines.length > 0
+                        ? sc.discountLines
+                        : discountLinesByUnitId[unitId] ?? [];
+                return { ...sc, discountLines: lines };
             }
             return sc;
         });
@@ -196,18 +232,6 @@ export function usePresentationWire({
             }
         }
 
-        // Read discount lines directly from localStorage (same keys DiscountsPanel uses)
-        // so the data is always current regardless of which step is active/mounted.
-        const discountLinesByUnitId: Record<string, { label: string; amount: number }[]> = {};
-        try {
-            const dpMaster: DiscountState = JSON.parse(localStorage.getItem("dp_master") ?? "null") ?? createEmptyDiscountState();
-            const dpCustom: Record<string, DiscountState | null> = JSON.parse(localStorage.getItem("dp_custom") ?? "null") ?? {};
-            for (const unitId of comparedUnitIds) {
-                const effective = dpCustom[unitId] ?? dpMaster;
-                discountLinesByUnitId[unitId] = getDiscountLines(effective, resolvedPresets);
-            }
-        } catch { /* malformed localStorage — leave empty */ }
-
         // Pluck the admin-added custom units and convert to the presenter's
         // SanityFloorplan shape; the store merges these into its floorplans list.
         // Pass the full floorplan list so custom units can inherit the
@@ -226,6 +250,7 @@ export function usePresentationWire({
             aduTypeByUnitId,
             bedsByUnitId,
             bathsByUnitId,
+            labelByUnitId: labelByUnitId ?? {},
             customFloorplans,
             featuredPropertyIds,
             featuredStoryIds,
@@ -241,6 +266,7 @@ export function usePresentationWire({
             siteWorkTagsByUnitId,
             siteWorkByUnitId,
             discountLinesByUnitId,
+            exclusions: exclusions ?? [],
         };
 
         // Sync local store (same-tab presenter state)
@@ -249,7 +275,7 @@ export function usePresentationWire({
         // Directly broadcast to presenter window — bypasses the fragile Zustand
         // subscription chain which breaks under React StrictMode's double-invoke
         broadcastAdminState(data);
-    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, aduTypeByUnitId, bedsByUnitId, bathsByUnitId, floorplans, featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder, projectTimeline, proposalPaymentSchedule, proposalPaymentSchedulesByAduId, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId, discountLinesByAduId, discountsCatalog]);
+    }, [customerName, propertyAddress, aduType, propertyPhotoUrl, customerMotivation, comparedUnitIds, aduTypeByUnitId, bedsByUnitId, bathsByUnitId, labelByUnitId, floorplans, featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder, projectTimeline, proposalPaymentSchedule, proposalPaymentSchedulesByAduId, scenarios, rentalComps, rentByUnitId, activeSnapshotByAduId, discountLinesByAduId, discountsCatalog, exclusions]);
 }
 
 export type PresenterVariant = "original" | "v2";
@@ -257,5 +283,8 @@ export type PresenterVariant = "original" | "v2";
 export function openPresenterWindow(variant: PresenterVariant = "original") {
     const path = variant === "v2" ? "/present-v2" : "/present";
     const name = variant === "v2" ? "be_presenter_v2" : "be_presenter";
-    window.open(path, name, "noopener");
+    // Carry this proposal's scope so the presenter reads the same per-proposal
+    // companion keys + sync channel the admin tab writes to.
+    const url = `${path}?scope=${encodeURIComponent(getCompanionScope())}`;
+    window.open(url, name, "noopener");
 }

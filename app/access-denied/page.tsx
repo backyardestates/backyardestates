@@ -8,10 +8,10 @@ import s from "./access-denied.module.css";
 
 export const dynamic = "force-dynamic";
 
-function dashboardForRole(role: Role | null): { href: string; label: string } {
-    if (role === Role.ADMIN) return { href: "/tools/admin/dashboard", label: "Admin dashboard" };
-    if (role === Role.ARCHITECT) return { href: "/tools/dashboard", label: "Your proposals" };
-    return { href: "/tools/dashboard", label: "Your dashboard" };
+function dashboardForRole(_role: Role | null): { href: string; label: string } {
+    // Every role lands on the same unified launchpad, which surfaces the right
+    // tools per role.
+    return { href: "/tools/dashboard", label: "your dashboard" };
 }
 
 function parseNeeded(raw: string | undefined): Role[] {

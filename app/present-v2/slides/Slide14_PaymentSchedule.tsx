@@ -85,6 +85,7 @@ export function Slide14_PaymentSchedule() {
         isPrintMode,
         aduType,
         aduTypeByUnitId,
+        labelByUnitId,
     } = usePresentationStore();
 
     const active = currentSlide === 11 || isPrintMode;
@@ -175,6 +176,7 @@ export function Slide14_PaymentSchedule() {
                     <div className={`${s.cell} ${s.thCol} ${s.thTrigger}`}>Trigger</div>
                     {columns.map((col) => {
                         const { titlePrefix, titleAccent, dupSuffix } = splitTitle(col.name);
+                        const tag = labelByUnitId?.[col.id]?.trim() || null;
                         return (
                             <div key={col.id} className={`${s.cell} ${s.thCol} ${s.thAmount}`}>
                                 {/* Type badge above the plan name. The total
@@ -188,7 +190,7 @@ export function Slide14_PaymentSchedule() {
                                 <div className={s.thAduName}>
                                     The {titlePrefix && <>{titlePrefix} </>}
                                     <span className={s.thAduAccent}>{titleAccent}</span>
-                                    {dupSuffix}
+                                    {tag ? <span className={s.thAduTag}> · {tag}</span> : dupSuffix}
                                 </div>
                             </div>
                         );

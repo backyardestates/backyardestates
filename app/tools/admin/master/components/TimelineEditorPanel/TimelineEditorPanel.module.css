@@ -1,210 +1,499 @@
+/* Project Timeline editor — Apple-grade comparison panel. Matches the Feature
+ * Builds / Stories design language (Roboto + green #2a7a52 + teal-ink #14302f +
+ * beige surfaces). A shared-scale BE-vs-city comparison with a "finish line"
+ * marker is the hero; phase cards carry the editable inputs.
+ */
+
 .panel {
-    --tep-bg: #ffffff;
-    --tep-bg2: var(--color-brand-beige-subtle);
-    --tep-text: var(--color-brand-dark-blue);
-    --tep-text2: rgba(54, 72, 75, 0.65);
-    --tep-text3: rgba(54, 72, 75, 0.42);
-    --tep-border: var(--color-brand-beige-A040);
-    --tep-border2: var(--color-brand-beige-A020);
-    --tep-gold: var(--color-brand-beige, #c9a96e);
-    --tep-radius: 10px;
+    --fb-ink: #14302f;
+    --fb-ink-mute: rgba(20, 48, 47, 0.66);
+    --fb-ink-faint: rgba(20, 48, 47, 0.44);
+    --fb-border: rgba(20, 48, 47, 0.16);
+    --fb-border-soft: rgba(20, 48, 47, 0.09);
+    --fb-accent: #2a7a52;
+    --fb-accent-dark: #1e5b3d;
+    --fb-accent-soft: rgba(42, 122, 82, 0.10);
+    --fb-surface: #ffffff;
+    --fb-surface-sunken: #f4f2ec;
+    --fb-radius: 14px;
+    --fb-radius-sm: 9px;
+
+    /* Phase swatch scale — sage → teal → deep ink. Each phase also carries a
+     * number + text label + legend, so meaning never rests on color alone. */
+    --sw1: #9ccbb0;
+    --sw2: #3f9069;
+    --sw3: #1d4d3c;
+
+    /* Shared motion language */
+    --ease-spring: cubic-bezier(0.34, 1.12, 0.5, 1);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    border: 1px solid var(--tep-border2);
-    border-radius: 14px;
-    background: var(--tep-bg2);
+    gap: 22px;
+    font-family: 'Roboto', system-ui, sans-serif;
+    color: var(--fb-ink);
 }
 
-/* ── header row ── */
-.tableHead {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr;
-    align-items: end;
-    gap: 12px;
-    padding: 6px 14px 10px;
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.headPhase {
+.heroLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
     font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--tep-text3);
-    font-weight: 600;
+    color: var(--fb-ink-faint);
+}
+.eyebrow::before {
+    content: "";
+    width: 16px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: var(--fb-accent);
 }
 
-.headCol {
+.heroTitle {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--fb-ink);
+}
+.heroAccent {
+    color: var(--fb-accent-dark);
+    /* Subtle highlight sweep under the key figure. */
+    background: linear-gradient(transparent 62%, var(--fb-accent-soft) 62%);
+    padding: 0 2px;
+}
+.heroSub {
+    font-size: 12.5px;
+    color: var(--fb-ink-mute);
+    line-height: 1.5;
+}
+
+/* Headline advantage chip — the single most important number. */
+.heroStat {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border-radius: 16px;
+    background:
+        radial-gradient(120% 140% at 0% 0%, rgba(42, 122, 82, 0.16), transparent 60%),
+        var(--fb-accent);
+    box-shadow: 0 10px 24px -12px rgba(42, 122, 82, 0.7);
+    animation: heroPop 0.5s var(--ease-spring) both;
+}
+@keyframes heroPop {
+    from { opacity: 0; transform: translateY(6px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.heroStatNum {
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+.heroStatMeta {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    text-align: center;
 }
-
-.headColTitle {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--tep-text);
-    letter-spacing: 0.01em;
-}
-
-.headColSub {
-    font-size: 10px;
+.heroStatUnit {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--tep-text3);
+    color: #fff;
+}
+.heroStatPct {
+    font-size: 12px;
     font-weight: 600;
+    color: rgba(255, 255, 255, 0.82);
+    font-variant-numeric: tabular-nums;
 }
 
-/* ── phase rows ── */
-.row {
+/* ── Shared-scale comparison ──────────────────────────────────────────────── */
+
+.compare {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 22px;
+    border-radius: var(--fb-radius);
+    background:
+        linear-gradient(180deg, #fbfaf7, var(--fb-surface-sunken));
+    border: 1px solid var(--fb-border-soft);
+}
+
+.compareRow {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-columns: 180px 1fr;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    background: var(--tep-bg);
-    border: 1.5px solid var(--tep-border2);
-    border-radius: var(--tep-radius);
+    gap: 16px;
 }
 
-.phaseCell {
+.compareLabel {
     display: flex;
     flex-direction: column;
     gap: 2px;
     min-width: 0;
 }
+.compareName {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fb-ink);
+}
+.compareNameLead { color: var(--fb-accent-dark); }
+.leadDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--fb-accent);
+    box-shadow: 0 0 0 3px var(--fb-accent-soft);
+}
+.compareTotal {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fb-ink-mute);
+}
+.compareDays {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--fb-ink);
+    font-variant-numeric: tabular-nums;
+}
+.compareMonths { color: var(--fb-ink-faint); font-variant-numeric: tabular-nums; }
 
+.barTrack {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    border-radius: 999px;
+    background: rgba(20, 48, 47, 0.05);
+    box-shadow: inset 0 1px 2px rgba(20, 48, 47, 0.06);
+    padding: 3px;
+    overflow: visible; /* let the finish-line flag sit above the track */
+}
+.barFill {
+    display: flex;
+    height: 100%;
+    gap: 2px;
+    border-radius: 999px;
+    overflow: hidden;
+    min-width: 0;
+    /* Reveal: width animates from 0 → target on mount + on edits. */
+    transition: width 0.85s var(--ease-out);
+}
+.barFillLead {
+    /* The faster bar gets a faint outer glow to draw the eye. */
+    box-shadow: 0 2px 10px -3px rgba(42, 122, 82, 0.5);
+}
+.barSeg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4px;
+    position: relative;
+    transition: width 0.6s var(--ease-out);
+}
+/* Soft top sheen on every segment for a premium, dimensional feel. */
+.barSeg::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 50% 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent);
+    pointer-events: none;
+}
+.barSegLabel {
+    position: relative;
+    z-index: 1;
+    font-size: 11px;
+    font-weight: 800;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* Swatch fills — shared by bar segments, card numbers, and legend dots. */
+.sw1 { background: var(--sw1); }
+.sw2 { background: var(--sw2); }
+.sw3 { background: var(--sw3); }
+.sw1 .barSegLabel { color: var(--fb-ink); text-shadow: none; } /* sage needs dark text */
+
+/* Finish line — vertical marker on the slow row where BE already finished. */
+.finishLine {
+    position: absolute;
+    top: -5px;
+    bottom: -5px;
+    width: 0;
+    border-left: 2px dashed var(--fb-accent-dark);
+    transition: left 0.85s var(--ease-out);
+    pointer-events: none;
+}
+.finishFlag {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--fb-accent-dark);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    box-shadow: 0 3px 8px -2px rgba(20, 48, 47, 0.4);
+    animation: flagIn 0.4s var(--ease-spring) 0.6s both;
+}
+@keyframes flagIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    padding-top: 4px;
+    border-top: 1px solid var(--fb-border-soft);
+}
+.legendItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fb-ink-mute);
+}
+.legendDot {
+    width: 11px;
+    height: 11px;
+    border-radius: 3px;
+}
+
+/* ── Phase cards ──────────────────────────────────────────────────────────── */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(264px, 1fr));
+    gap: 14px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 18px;
+    border: 1.5px solid var(--fb-border);
+    border-radius: var(--fb-radius);
+    background: var(--fb-surface);
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04);
+    transition: border-color 0.2s var(--ease-out), box-shadow 0.24s var(--ease-out), transform 0.2s var(--ease-out);
+    animation: cardIn 0.34s var(--ease-out) both;
+}
+.card:hover {
+    border-color: rgba(42, 122, 82, 0.4);
+    box-shadow: 0 14px 30px -18px rgba(20, 48, 47, 0.4);
+    transform: translateY(-3px);
+}
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.cardHead {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+.cardSwatch {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 2px 6px -2px rgba(20, 48, 47, 0.35);
+}
+.cardSwatch.sw1 { color: var(--fb-ink); } /* contrast on sage */
+.cardTitles {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
 .phaseLabel {
     font-size: 14px;
-    font-weight: 600;
-    color: var(--tep-text);
-    line-height: 1.2;
-}
-
-.phaseHelper {
-    font-size: 11px;
-    color: var(--tep-text2);
-    line-height: 1.3;
-}
-
-.inputCell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.input {
-    width: 84px;
-    padding: 8px 10px;
-    border: 1.5px solid var(--tep-border);
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    text-align: right;
-    color: var(--tep-text);
-    background: #ffffff;
-    font-variant-numeric: tabular-nums;
-    transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.input:focus {
-    outline: none;
-    border-color: var(--tep-gold);
-    box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.18);
-}
-
-/* hide the up/down number spinners for a cleaner look */
-.input::-webkit-outer-spin-button,
-.input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-.input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-.unit {
-    font-size: 11px;
-    color: var(--tep-text2);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-weight: 600;
-}
-
-/* ── totals row ── */
-.totalsRow {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 14px;
-    background: var(--tep-bg);
-    border: 1.5px solid var(--tep-gold);
-    border-radius: var(--tep-radius);
-    margin-top: 4px;
-}
-
-.totalsLabel {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    color: var(--tep-text3);
     font-weight: 700;
-}
-
-.totalCell {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 6px;
-    font-variant-numeric: tabular-nums;
-}
-
-.totalNum {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--tep-text);
+    color: var(--fb-ink);
     letter-spacing: -0.01em;
 }
-
-.totalUnit {
+.phaseHint {
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--fb-ink-faint);
+}
+.cardBadge {
+    flex: none;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--fb-accent-soft);
+    color: var(--fb-accent-dark);
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    color: var(--tep-text2);
-    font-weight: 600;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    align-self: flex-start;
 }
 
-.totalDays {
-    font-size: 11px;
-    color: var(--tep-text3);
-    margin-left: 4px;
-}
-
-/* ── actions ── */
-.actions {
+.cellRow {
     display: flex;
-    justify-content: flex-end;
-    padding: 4px 4px 0;
+    gap: 12px;
+    margin-top: auto;
 }
+.cell {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+.cellLabel {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fb-ink-faint);
+}
+.cellLead .cellLabel { color: var(--fb-accent-dark); }
 
-.resetBtn {
+.inputWrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 11px 0 13px;
+    border: 1.5px solid var(--fb-border);
+    border-radius: var(--fb-radius-sm);
+    background: var(--fb-surface);
+    transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out);
+}
+.cellLead .inputWrap {
+    border-color: rgba(42, 122, 82, 0.32);
+    background: linear-gradient(180deg, rgba(42, 122, 82, 0.04), transparent);
+}
+.inputWrap:focus-within {
+    border-color: var(--fb-accent);
+    box-shadow: 0 0 0 3px var(--fb-accent-soft);
+}
+.input {
+    width: 100%;
+    border: none;
     background: transparent;
-    border: 1px solid var(--tep-border);
-    color: var(--tep-text2);
-    padding: 6px 14px;
-    border-radius: 8px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fb-ink);
+    font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+.input:focus { outline: none; }
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.unit {
     font-size: 12px;
     font-weight: 600;
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    color: var(--fb-ink-faint);
 }
 
-.resetBtn:hover {
-    border-color: var(--tep-gold);
-    color: var(--tep-text);
-    background: rgba(201, 169, 110, 0.06);
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.footerNote { font-size: 12px; color: var(--fb-ink-faint); }
+
+.resetBtn {
+    border: 1.5px solid var(--fb-border);
+    background: var(--fb-surface);
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fb-ink-mute);
+    cursor: pointer;
+    border-radius: var(--fb-radius-sm);
+    transition: border-color 0.15s var(--ease-out), color 0.15s var(--ease-out), background 0.15s var(--ease-out);
+}
+.resetBtn:hover:not(:disabled) {
+    border-color: var(--fb-accent);
+    color: var(--fb-accent-dark);
+    background: var(--fb-accent-soft);
+}
+.resetBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+    .compareRow { grid-template-columns: 1fr; gap: 8px; }
+    .grid { grid-template-columns: 1fr; }
+    .heroTitle { font-size: 19px; }
+    .heroStatNum { font-size: 28px; }
+    .finishFlag { font-size: 9px; }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .barFill,
+    .barSeg,
+    .finishLine,
+    .inputWrap,
+    .resetBtn {
+        transition: none;
+        animation: none;
+    }
+    .heroStat,
+    .finishFlag { animation: none; }
+    .card:hover { transform: none; }
 }

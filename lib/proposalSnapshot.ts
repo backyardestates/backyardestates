@@ -11,6 +11,7 @@ import type { EstimatorState } from "@/lib/investment/siteWorkItems";
 import type { RentcastMarketStats } from "@/hooks/rentcast/useRentcastData";
 import type { CustomerMotivation, FeaturedRental, ProjectTimeline } from "@/lib/store/presentationStore";
 import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSchedule";
+import { readCompanion, writeCompanion } from "@/lib/admin/companionKeys";
 
 export const PROPOSAL_SCHEMA_VERSION = 1 as const;
 export const PROPOSALS_STORAGE_KEY = "be_admin_proposals_v1";
@@ -28,6 +29,10 @@ export interface ProposalSnapshot {
 
     // Step 1
     customerName: string;
+    /** Customer email (optional). Drives the agreement e-signature recipient;
+     *  auto-fills from a linked Pipedrive person but is rep-editable. Optional
+     *  for backward compatibility with snapshots saved before this field. */
+    customerEmail?: string;
     address: string;
     owed: string;
     propertyPhotoUrl: string | null;
@@ -44,6 +49,8 @@ export interface ProposalSnapshot {
     aduTypeByUnitId?: Record<string, "detached" | "attached" | "garage">;
     bedsByUnitId?: Record<string, number>;
     bathsByUnitId?: Record<string, number>;
+    // Optional custom tag per unit (e.g. "Hillside") distinguishing duplicates.
+    labelByUnitId?: Record<string, string>;
 
     // Investment model (Step 3, 4, 6)
     defaults: Defaults;
@@ -95,6 +102,11 @@ export interface ProposalSnapshot {
      *  kept this in browser-global localStorage). Optional for back-compat
      *  with snapshots saved before this field existed. */
     agreementExclusions?: string;
+
+    /** Structured proposal exclusions (name + price + note). Supersedes the
+     *  legacy free-text `agreementExclusions`; old snapshots are migrated on
+     *  load. Drives the comparison slide's "Not included" block + agreement. */
+    exclusions?: import("@/lib/store/presentationStore").ExclusionItem[];
 
     // Step status
     activeStep: number;
@@ -276,22 +288,24 @@ export function captureCompanionStorage(): Partial<Record<CompanionKey, string |
     if (typeof window === "undefined") return {};
     const out: Partial<Record<CompanionKey, string | null>> = {};
     for (const key of COMPANION_LS_KEYS) {
-        out[key] = window.localStorage.getItem(key);
+        out[key] = readCompanion(key);
     }
     return out;
 }
 
+/**
+ * Full replace of the panel-owned keys for the active proposal scope. ALWAYS
+ * clears every companion key first, even when `snap` is missing or partial — a
+ * blank or legacy proposal that carries no companionStorage must NOT inherit
+ * the previously-open proposal's site-work / discounts. (For a partial write
+ * that should leave other keys untouched, call `writeCompanion` directly.)
+ */
 export function restoreCompanionStorage(
     snap: Partial<Record<CompanionKey, string | null>> | undefined
 ): void {
-    if (typeof window === "undefined" || !snap) return;
+    if (typeof window === "undefined") return;
     for (const key of COMPANION_LS_KEYS) {
-        const value = snap[key];
-        if (value == null) {
-            window.localStorage.removeItem(key);
-        } else {
-            window.localStorage.setItem(key, value);
-        }
+        writeCompanion(key, snap?.[key] ?? null);
     }
 }
 

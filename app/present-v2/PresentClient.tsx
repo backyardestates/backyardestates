@@ -17,62 +17,19 @@ import { selectStory } from "@/lib/investment/storySelector";
 
 import s from "./present.module.css";
 
-import { Slide1_Cover }            from "./slides/Slide1_Cover";
-import { Slide2_YourProperty }      from "./slides/Slide2_YourProperty";
-import { Slide3_YourOptions }       from "./slides/Slide3_YourOptions";
-import { Slide4_WhatsIncluded }     from "./slides/Slide4_WhatsIncluded";
-import { Slide5_CompletedBuilds }   from "./slides/Slide5_CompletedBuilds";
-import { Slide6_CustomerStories }   from "./slides/Slide6_CustomerStories";
-import { Slide7_HowItWorks }        from "./slides/Slide7_HowItWorks";
-import { Slide8_ROIComparison }     from "./slides/Slide8_ROIComparison";
-import { Slide9_ADUvsHouse }        from "./slides/Slide9_ADUvsHouse";
-import { Slide10_RentalAnalysis }   from "./slides/Slide10_RentalAnalysis";
-import { Slide11_WhatsNext }        from "./slides/Slide11_WhatsNext";
-import { Slide12_OurTeam }          from "./slides/Slide12_OurTeam";
-import { Slide12_TaxBenefits }      from "./slides/Slide12_TaxBenefits";
-import { Slide13_WhyBE }            from "./slides/Slide13_WhyBE";
-import { Slide14_PaymentSchedule }  from "./slides/Slide14_PaymentSchedule";
+import { V2_SLIDES, V2_FLOW_COUNT } from "./slides/registry";
 
-// Slides 1-14 are in the standard flow; slide 15 is jump-only
-const FLOW_COUNT = 14;
+// Slides 1-14 are in the standard flow; slide 15 is jump-only.
+const FLOW_COUNT = V2_FLOW_COUNT;
 const CANVAS_W = 1920;
 const CANVAS_H = 1080;
 
-const SLIDES = [
-    Slide1_Cover,
-    Slide2_YourProperty,
-    Slide4_WhatsIncluded,
-    Slide3_YourOptions,
-    Slide5_CompletedBuilds,
-    Slide6_CustomerStories,
-    Slide7_HowItWorks,
-    Slide8_ROIComparison,
-    Slide9_ADUvsHouse,
-    Slide10_RentalAnalysis,
-    Slide14_PaymentSchedule,
-    Slide12_TaxBenefits,
-    Slide12_OurTeam,
-    Slide11_WhatsNext,
-    Slide13_WhyBE,
-] as const;
-
-const SLIDE_NAMES: Record<number, string> = {
-    1:  "Cover",
-    2:  "Your Property",
-    3:  "What's Included",
-    4:  "Your Options",
-    5:  "Completed Builds",
-    6:  "Customer Stories",
-    7:  "How It Works",
-    8:  "ROI Comparison",
-    9:  "ADU vs House",
-    10: "Rental Analysis",
-    11: "Payment Schedule",
-    12: "Tax Topics",
-    13: "Our Team",
-    14: "What's Next",
-    15: "Why Backyard Estates",
-};
+// Derived from the shared slide registry (single source of truth, also used by
+// the print/export view and the admin slide-order panel).
+const SLIDES = V2_SLIDES.map((sl) => sl.Component);
+const SLIDE_NAMES: Record<number, string> = Object.fromEntries(
+    V2_SLIDES.map((sl) => [sl.n, sl.name]),
+);
 
 interface Props {
     floorplans: SanityFloorplan[];

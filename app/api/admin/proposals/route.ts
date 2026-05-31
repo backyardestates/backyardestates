@@ -108,10 +108,16 @@ export async function POST(req: Request) {
                     where: { id: existing.id },
                     data: {
                         customerName: payload.customerName,
+                        customerEmail: payload.customerEmail,
                         addressLine1: payload.addressLine1,
                         city: payload.city,
                         state: payload.state,
                         zip: payload.zip,
+                        // Keep the Pipedrive linkage fresh on re-save so the
+                        // agreement-pdf "Save to deal" note targets the right
+                        // record (these were previously only set on create).
+                        pipedrivePersonId: payload.pipedrivePersonId,
+                        pipedriveDealId: payload.pipedriveDealId,
                         snapshotJson: payload.snapshotJson,
                         snapshotVersion: payload.snapshotVersion,
                     },
@@ -129,10 +135,16 @@ export async function POST(req: Request) {
                     where: { id: existingCanonical.id },
                     data: {
                         customerName: payload.customerName,
+                        customerEmail: payload.customerEmail,
                         addressLine1: payload.addressLine1,
                         city: payload.city,
                         state: payload.state,
                         zip: payload.zip,
+                        // Keep the Pipedrive linkage fresh on re-save so the
+                        // agreement-pdf "Save to deal" note targets the right
+                        // record (these were previously only set on create).
+                        pipedrivePersonId: payload.pipedrivePersonId,
+                        pipedriveDealId: payload.pipedriveDealId,
                         snapshotJson: payload.snapshotJson,
                         snapshotVersion: payload.snapshotVersion,
                         // Promoter becomes the new canonical owner. This makes

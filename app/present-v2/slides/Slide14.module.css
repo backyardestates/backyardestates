@@ -125,11 +125,23 @@
   letter-spacing: -0.005em;
   line-height: 1.05;
   text-transform: none;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .thAduAccent {
   color: var(--p-gold-bright);
   font-weight: 400;
+}
+
+.thAduTag {
+  font-size: 0.72em;
+  font-style: normal;
+  font-weight: 500;
+  color: rgba(247, 245, 240, 0.7);
+  letter-spacing: 0.01em;
 }
 
 .thAduTotal {

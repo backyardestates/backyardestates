@@ -110,14 +110,23 @@ export function PaymentSchedulePanel({
         [selectedAdus, aduScenarios],
     );
 
-    // Auto-seed a default balloon schedule for any ADU that doesn't already
-    // have one. Generator is stable-keyed on the catalog, so this won't loop.
+    // Auto-seed AND auto-resync each ADU's balloon schedule. A schedule is
+    // (re)generated for the default split whenever:
+    //   • the ADU has no schedule yet, or
+    //   • the ADU's total price has drifted from the schedule's stored total
+    //     (e.g. the rep changed site work / discounts / beds / baths)
+    // so the contract total, "Switch to …" deltas, and the schedule rows stay
+    // in sync with the live estate pricing. The effect is keyed on the per-ADU
+    // totals, so it re-runs on every price change; after a regen the stored
+    // total equals col.total, so the condition is false next render — no loop.
     useEffect(() => {
         if (aduColumns.length === 0) return;
         const next: Record<string, ProposalPaymentSchedule> = { ...value };
         let mutated = false;
         for (const col of aduColumns) {
-            if (!next[col.id]) {
+            const existing = next[col.id];
+            const drifted = existing && Math.abs(existing.totalPrice - col.total) > 1;
+            if (!existing || drifted) {
                 next[col.id] = {
                     aduId: col.id,
                     totalPrice: col.total,
@@ -194,7 +203,7 @@ export function PaymentSchedulePanel({
     if (aduColumns.length === 0) {
         return (
             <div className={s.empty}>
-                Pick at least one ADU in Step 2 and finalize its site work / discounts before
+                Pick at least one unit in Step 1 and finalize its site work / discounts before
                 building the payment schedule.
             </div>
         );

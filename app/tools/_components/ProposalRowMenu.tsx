@@ -11,6 +11,9 @@ interface Props {
     customerName?: string | null;
     /** When false, only View is offered (no edit / delete / present / export). */
     canBuild?: boolean;
+    /** Current customer-share state — toggles the "Share with customer" item.
+     *  Omit to default to a one-way "Share with customer" action. */
+    sharedWithCustomer?: boolean;
     /** Optional className applied to the wrapper, for layout overrides. */
     className?: string;
 }
@@ -27,7 +30,7 @@ interface Props {
  * Delete calls the existing DELETE /api/admin/proposals/[addressKey] for
  * both SAVED and DRAFT, then refreshes the route.
  */
-export function ProposalRowMenu({ addressKey, customerName, canBuild = true, className }: Props) {
+export function ProposalRowMenu({ addressKey, customerName, canBuild = true, sharedWithCustomer, className }: Props) {
     const [open, setOpen] = useState(false);
     const [busy, setBusy] = useState(false);
     const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -62,6 +65,31 @@ export function ProposalRowMenu({ addressKey, customerName, canBuild = true, cla
     function navTo(extra: Record<string, string>) {
         setOpen(false);
         router.push(buildUrl(extra));
+    }
+
+    async function handleShare() {
+        setOpen(false);
+        const next = !sharedWithCustomer;
+        setBusy(true);
+        try {
+            const res = await fetch(
+                `/api/admin/proposals/${encodeURIComponent(addressKey!)}/share`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ shared: next }),
+                },
+            );
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.error || `Request failed (${res.status})`);
+            }
+            router.refresh();
+        } catch (err) {
+            window.alert(`Couldn't update sharing: ${err instanceof Error ? err.message : String(err)}`);
+        } finally {
+            setBusy(false);
+        }
     }
 
     async function handleDelete() {
@@ -139,6 +167,15 @@ export function ProposalRowMenu({ addressKey, customerName, canBuild = true, cla
                     {canBuild && (
                         <>
                             <div className={s.divider} role="separator" />
+                            <button
+                                role="menuitem"
+                                type="button"
+                                className={s.item}
+                                onClick={handleShare}
+                            >
+                                <span className={s.itemIcon}>{sharedWithCustomer ? "🔒" : "🔗"}</span>
+                                {sharedWithCustomer ? "Stop customer access" : "Share with customer"}
+                            </button>
                             <button
                                 role="menuitem"
                                 type="button"

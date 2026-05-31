@@ -897,6 +897,13 @@ model Proposal {
     // webhook back to this proposal.
     signatureRequestId String? @unique
 
+    // Customer access grant. An admin/rep explicitly shares a proposal with the
+    // customer; the customer dashboard then surfaces the read-only present-v2
+    // deck for proposals matching the customer's email where this is non-null.
+    // Cleared to revoke. No internal costs are ever exposed via this path.
+    sharedWithCustomerAt   DateTime?
+    sharedWithCustomerById String?
+
     // Snapshot + versioning
     snapshotVersion Int   @default(1)
     pricingVersion  Int   @default(1)

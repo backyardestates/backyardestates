@@ -12,11 +12,12 @@ const isPublicRoute = createRouteMatcher([
     "/api/admin/users/role-link",
 ]);
 
-// Any-signed-in routes: feasibility flow + personal user dashboard +
-// the smart post-sign-in landing.
+// Any-signed-in routes: feasibility flow + unified launchpad + personal
+// proposals list + the smart post-sign-in landing.
 const isAnySignedInRoute = createRouteMatcher([
     "/tools/feasibility(.*)",
     "/tools/dashboard(.*)",
+    "/tools/proposals(.*)",
     "/tools/notifications(.*)",
     "/after-signin",
 ]);

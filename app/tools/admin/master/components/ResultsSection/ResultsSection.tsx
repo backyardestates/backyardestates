@@ -132,7 +132,6 @@ export function ResultsSection(props: {
             <div>
                 <Card styles={styles} title={`Rentals in ${cityState}`}>
                     <RentalsPanel
-                        styles={styles}
                         rentals={rentals}
                         targetSqft={selectedFloorplan?.sqft}
                     />

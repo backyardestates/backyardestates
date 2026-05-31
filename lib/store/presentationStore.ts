@@ -134,6 +134,7 @@ export type PresentationState = {
     aduTypeByUnitId: Record<string, "detached" | "attached" | "garage">;
     bedsByUnitId: Record<string, number>;
     bathsByUnitId: Record<string, number>;
+    labelByUnitId: Record<string, string>;
 
     // From Step 7 — admin-curated order for the Completed Builds gallery (Slide 5).
     // Empty = fall back to Sanity `featured` flag.
@@ -182,6 +183,10 @@ export type PresentationState = {
     siteWorkByUnitId: Record<string, SiteWorkLineItem[]>;
     // Discount line items per unit (named discounts with amounts)
     discountLinesByUnitId: Record<string, DiscountLineItem[]>;
+
+    // From Step 4 (Estimator) — proposal-wide exclusions (name + price + note).
+    // Shown on the comparison slide as "Not included" and on the agreement.
+    exclusions: ExclusionItem[];
 
     // Presenter controls
     isPresenting: boolean;
@@ -247,6 +252,19 @@ export type DiscountLineItem = {
     amount: number;
 };
 
+/** A structured proposal exclusion (carve-out). Shows on the comparison slide
+ *  as small "Not included" text and on the agreement as a bullet. Shared
+ *  across the whole proposal (not per-unit). */
+export type ExclusionItem = {
+    id: string;
+    /** Customer-facing name, e.g. "Solar panels". */
+    name: string;
+    /** Dollar value of the carve-out (0 = unpriced). */
+    price: number;
+    /** Short reason / note, e.g. "can be added later". */
+    note: string;
+};
+
 // ─── Project timeline (Step 11 — Slide 7) ────────────────────────────────────
 
 /** Day counts per phase. */
@@ -298,6 +316,7 @@ export type AdminBroadcast = {
     aduTypeByUnitId: Record<string, "detached" | "attached" | "garage">;
     bedsByUnitId: Record<string, number>;
     bathsByUnitId: Record<string, number>;
+    labelByUnitId: Record<string, string>;
     // Admin-added units (id starts with "custom_") — merged into the presenter's
     // floorplans list so custom comparisons render alongside Sanity units.
     customFloorplans: SanityFloorplan[];
@@ -319,6 +338,7 @@ export type AdminBroadcast = {
     siteWorkTagsByUnitId: Record<string, string[]>;
     siteWorkByUnitId: Record<string, SiteWorkLineItem[]>;
     discountLinesByUnitId: Record<string, DiscountLineItem[]>;
+    exclusions: ExclusionItem[];
 };
 
 // ─── Initial data ─────────────────────────────────────────────────────────────
@@ -336,6 +356,7 @@ const initialData = {
     aduTypeByUnitId: {} as Record<string, "detached" | "attached" | "garage">,
     bedsByUnitId: {} as Record<string, number>,
     bathsByUnitId: {} as Record<string, number>,
+    labelByUnitId: {} as Record<string, string>,
     featuredPropertyIds: [],
     featuredStoryIds: [],
     featuredRentals: [],
@@ -350,6 +371,7 @@ const initialData = {
     siteWorkTagsByUnitId: {},
     siteWorkByUnitId: {},
     discountLinesByUnitId: {},
+    exclusions: [] as ExclusionItem[],
     isPresenting: false,
     galleryPaused: false,
     isPrintMode: false,

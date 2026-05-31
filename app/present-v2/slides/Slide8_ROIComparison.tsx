@@ -45,7 +45,7 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export function Slide8_ROIComparison() {
-    const { scenarios, comparedUnitIds, floorplans, customerName, propertyAddress, aduType, aduTypeByUnitId } = usePresentationStore();
+    const { scenarios, comparedUnitIds, floorplans, customerName, propertyAddress, aduType, aduTypeByUnitId, labelByUnitId } = usePresentationStore();
 
     const aduScenarios = scenarios.filter((sc) => sc.kind === "adu");
 
@@ -153,6 +153,7 @@ export function Slide8_ROIComparison() {
                     const titleAccent = lastSpace > 0 ? baseName.slice(lastSpace + 1) : baseName;
 
                     const unitId = fpId(sc.key);
+                    const tag = labelByUnitId?.[unitId]?.trim() || null;
                     return (
                         <div key={sc.key} className={s.card}>
                             <AduTypeBadge
@@ -163,7 +164,7 @@ export function Slide8_ROIComparison() {
                             <div className={s.cardTitle}>
                                 The {titlePrefix && <>{titlePrefix} </>}
                                 <span className={s.cardTitleNum}>{titleAccent}</span>
-                                {dupSuffix}
+                                {tag ? <span className={s.cardTitleTag}> · {tag}</span> : dupSuffix}
                             </div>
 
                             <Section title="Investment">

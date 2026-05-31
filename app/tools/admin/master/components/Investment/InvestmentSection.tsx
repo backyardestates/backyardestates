@@ -428,7 +428,6 @@ export function InvestmentSection({
                     </div>
                 )}
                 <RentalsPanel
-                    styles={adminStyles}
                     rentals={rentals}
                     targetSqft={selectedFloorplan?.sqft}
                     onRentPick={

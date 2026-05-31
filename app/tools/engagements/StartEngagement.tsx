@@ -12,7 +12,15 @@ import type {
     PipedriveSearchDeal,
 } from "@/app/api/pipedrive/search/route";
 
-export function StartEngagement() {
+export function StartEngagement({
+    label = "+ Start engagement",
+    className,
+}: {
+    /** Trigger button text. */
+    label?: string;
+    /** Trigger button class (defaults to the engagements primaryAction). */
+    className?: string;
+} = {}) {
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [q, setQ] = useState("");
@@ -87,8 +95,8 @@ export function StartEngagement() {
 
     return (
         <>
-            <button className={s.primaryAction} onClick={() => setOpen(true)}>
-                + Start engagement
+            <button className={className ?? s.primaryAction} onClick={() => setOpen(true)}>
+                {label}
             </button>
 
             {open && (

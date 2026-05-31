@@ -1,23 +1,19 @@
 import { redirect } from "next/navigation";
-import { Role } from "@prisma/client";
 import { getDbUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Post-sign-in landing. Reads the user's effective role and bounces them to
- * the right place:
- *
- *   ADMIN     → /tools/admin/dashboard
- *   ARCHITECT → /tools/dashboard
- *   CUSTOMER  → /tools/dashboard
+ * Post-sign-in landing. Every role now lands on the unified, permission-driven
+ * launchpad at /tools/dashboard — it surfaces the right tools per role, so we no
+ * longer fan out to per-role homes.
  *
  * Configure Clerk's "after sign-in URL" (or NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL)
  * to /after-signin so users land here on every authentication.
  *
- * If you came here with ?returnTo=… (e.g. via a guard redirect), we honor
- * that destination instead — useful for "you tried to open X but had to sign
- * in first" flows.
+ * If you came here with ?returnTo=… (e.g. via a guard redirect), we honor that
+ * destination instead — useful for "you tried to open X but had to sign in
+ * first" flows.
  */
 export default async function AfterSigninPage({
     searchParams,
@@ -26,9 +22,8 @@ export default async function AfterSigninPage({
 }) {
     const { returnTo, redirect_url } = await searchParams;
 
-    let user;
     try {
-        user = await getDbUser();
+        await getDbUser();
     } catch {
         // Not signed in — kick back to sign-in. Middleware should have caught
         // this already, but be defensive.
@@ -42,16 +37,5 @@ export default async function AfterSigninPage({
         redirect(returnPath);
     }
 
-    switch (user.role) {
-        case Role.ADMIN:
-            redirect("/tools/admin/dashboard");
-        case Role.SALES_REP:
-        case Role.STAFF:
-            redirect("/tools/engagements");
-        case Role.ARCHITECT:
-            redirect("/tools/fpa");
-        case Role.CUSTOMER:
-        default:
-            redirect("/tools/dashboard");
-    }
+    redirect("/tools/dashboard");
 }

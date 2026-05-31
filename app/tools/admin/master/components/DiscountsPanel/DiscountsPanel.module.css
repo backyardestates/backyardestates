@@ -456,6 +456,45 @@
     color: var(--dp-green);
 }
 
+/* ─── Auto-default (editable) solar tag ───────────────────────────────────── */
+.autoTag {
+    margin-left: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--dp-text3);
+    border: 1px solid var(--dp-border2);
+    border-radius: 999px;
+    padding: 1px 7px;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.presetRowOn .autoTag {
+    color: var(--dp-green);
+    border-color: var(--dp-green-mid);
+}
+
+/* ─── Per-unit solar eligibility chip (on the unit summary cards) ──────────── */
+.solarChip {
+    align-self: flex-start;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 2px 9px;
+    white-space: nowrap;
+}
+.solarChipOn {
+    background: var(--dp-green-lt);
+    color: var(--dp-green);
+    border: 1px solid var(--dp-green-mid);
+}
+.solarChipOff {
+    background: var(--dp-bg3);
+    color: var(--dp-text3);
+    border: 1px solid var(--dp-border2);
+}
+
 /* ─── Custom rows ─────────────────────────────────────────────────────────── */
 
 .customList {

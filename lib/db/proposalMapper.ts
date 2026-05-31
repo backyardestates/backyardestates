@@ -52,6 +52,7 @@ export function snapshotToProposalCreate(
         status: ctx.status ?? ProposalStatus.REVIEWED,
 
         customerName: snapshot.customerName ?? "",
+        customerEmail: snapshot.customerEmail?.trim() || null,
         addressLine1,
         city,
         state,
@@ -93,6 +94,7 @@ export function proposalToSnapshot(row: Proposal): ProposalSnapshot | null {
         savedAt: row.updatedAt.toISOString(),
         addressKey: row.addressKey,
         customerName: row.customerName ?? "",
+        customerEmail: row.customerEmail ?? "",
         address: fullAddress,
         owed: "",
         propertyPhotoUrl: null,

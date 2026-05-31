@@ -231,6 +231,42 @@
     gap: 10px;
 }
 
+/* Framing for the comps list as supporting evidence beneath the rent hero. */
+.compsIntro {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 2px 2px 12px;
+}
+.compsIntroTitle {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-dark-blue, #14302f);
+}
+.compsIntroNote {
+    font-size: 12px;
+    color: rgba(20, 48, 47, 0.5);
+}
+
+/* Featured-rental order + photo editor, shown below the comps list in the
+ * merged Rental Market step once at least one comp is featured. */
+.rentFeaturedEditor {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-brand-beige-A040, rgba(20, 48, 47, 0.14));
+}
+
+.rentFeaturedHead {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-brand-dark-blue, #14302f);
+    margin-bottom: 12px;
+}
+
 .rentBadge {
     display: flex;
     flex-direction: column;

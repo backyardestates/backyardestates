@@ -649,17 +649,33 @@ export const PRESENTER_STORIES_QUERY = groq`
   }
 `
 
+// Completed builds for Slide 5 + the admin Feature Builds picker.
+//
+// There are TWO generations of `property` docs and we want BOTH (the public
+// /properties route already merges them via normalizeNewProperty /
+// normalizeLegacyProperty — this is the same idea, done in GROQ):
+//   • NEW    — Cloudinary images in `photos[]` (`photos[0].url`).
+//   • LEGACY — a single Cloudinary `thumbnail` object (`thumbnail.url`); no
+//              `photos`. Same field names otherwise (name/bed/bath/sqft/slug).
+//
+// The previous query required `defined(photos)`, which silently dropped every
+// legacy build. We now accept a build with EITHER a `photos` array OR a
+// `thumbnail`, and coalesce the image source so each result is the flat
+// SanityProperty shape the store + Feature Builds + Slide 5 already expect —
+// no client-side merge and no Slide 5 change needed. `images` (the gallery
+// Slide 5 prefers) is photos-only; legacy builds fall back to `thumbnailUrl`,
+// which Slide 5's buildImageList already handles.
 export const PRESENTER_COMPLETED_PROPERTIES_QUERY = groq`
   *[_type == "property"
     && !(_id in path("drafts.**"))
-    && defined(photos)
-    && count(photos) > 0]
-  | order(_createdAt desc) [0...50] {
+    && ((defined(photos) && count(photos) > 0) || defined(thumbnail))]
+  | order(featured desc, _createdAt desc) [0...100] {
     _id, name, slug, sqft, bed, bath,
     videoID, featured,
-    "thumbnailUrl": photos[0].url,
+    "thumbnailUrl": coalesce(photos[0].url, thumbnail.url),
     "images": photos[].url,
     "floorplanName": floorplan->name,
     "floorplanSqft": floorplan->sqft,
+    "location": coalesce(location, city),
   }
 `

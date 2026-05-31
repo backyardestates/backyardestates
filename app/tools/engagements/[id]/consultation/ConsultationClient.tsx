@@ -1,41 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLiveTranscription } from "./useLiveTranscription";
 import s from "../../engagements.module.css";
 
 type CaptureMode = "live" | "upload" | "paste";
-type Step = "capture" | "review" | "sent";
 type SaveStatus = "idle" | "saving" | "saved" | "error";
-
-interface ActionItem {
-    task: string;
-    owner: string;
-    priority: string;
-}
-interface MarketingAction {
-    title: string;
-    detail: string;
-    channel: string;
-}
-interface Analysis {
-    summary: string;
-    bulletPoints: string[];
-    actionItems: ActionItem[];
-    sentiment: { overall: string; rationale: string };
-    intent: { readiness: string; primaryMotivation: string; concerns: string[] };
-    nextStepsEmail: { subject: string; body: string };
-    marketingActions: MarketingAction[];
-}
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ConsultationClient({
     engagementId,
     customerName: _customerName,
-    customerEmail,
+    customerEmail: _customerEmail,
     existingConsultationId,
     existingTranscript,
 }: {
@@ -48,7 +24,6 @@ export function ConsultationClient({
     const router = useRouter();
     const lsKey = `consultation:transcript:${engagementId}`;
 
-    const [step, setStep] = useState<Step>("capture");
     const [mode, setMode] = useState<CaptureMode>("live");
     const [consent, setConsent] = useState(false);
 
@@ -70,11 +45,6 @@ export function ConsultationClient({
     const [busy, setBusy] = useState(false);
     const [busyLabel, setBusyLabel] = useState("");
     const [error, setError] = useState<string | null>(null);
-
-    const [analysis, setAnalysis] = useState<Analysis | null>(null);
-    const [recipientEmail, setRecipientEmail] = useState(customerEmail ?? "");
-    const [emailSubject, setEmailSubject] = useState("");
-    const [emailBody, setEmailBody] = useState("");
 
     const consultationIdRef = useRef<string | null>(existingConsultationId);
     const createPromiseRef = useRef<Promise<string> | null>(null);
@@ -138,7 +108,6 @@ export function ConsultationClient({
         } catch {
             /* quota / private mode — ignore, server save still runs */
         }
-        if (step !== "capture") return;
         if (!transcript.trim()) return;
         if (transcript === lastSavedRef.current) return;
         const t = setTimeout(() => {
@@ -206,7 +175,11 @@ export function ConsultationClient({
         }
     }
 
-    // ── Generate (separate step — transcript is already saved) ────
+    // ── Generate notes ────────────────────────────────────────────
+    // Persists the transcript, runs the AI analysis (which the API writes onto
+    // the consultation), then hands off to the canonical consultation detail
+    // page — the same view opened from the engagement — to review notes and
+    // send the next-steps email. No duplicate review UI lives here.
     async function generate() {
         setError(null);
         if (transcript.trim().length < 20) {
@@ -216,7 +189,6 @@ export function ConsultationClient({
         if (live.recording) stopLive();
         setBusy(true);
         try {
-            // Ensure the latest text is persisted before we spend AI on it.
             setBusyLabel("Saving transcript…");
             const id = await saveNow(transcript);
 
@@ -225,170 +197,24 @@ export function ConsultationClient({
             const aData = await aRes.json();
             if (!aRes.ok) throw new Error(aData.error || "Analysis failed");
 
-            const a: Analysis = aData.analysis;
-            setAnalysis(a);
-            setEmailSubject(a.nextStepsEmail.subject);
-            setEmailBody(a.nextStepsEmail.body);
-            setStep("review");
-        } catch (err) {
-            // Transcript stays saved (server + localStorage) — just retry.
-            setError(err instanceof Error ? err.message : String(err));
-        } finally {
-            setBusy(false);
-            setBusyLabel("");
-        }
-    }
-
-    async function sendEmail() {
-        const id = consultationIdRef.current;
-        if (!id) return;
-        const to = recipientEmail.trim();
-        if (!EMAIL_RE.test(to)) {
-            setError("Enter a valid recipient email before sending.");
-            return;
-        }
-        setError(null);
-        setBusy(true);
-        setBusyLabel("Sending email…");
-        try {
-            const res = await fetch(`/api/consultations/${id}/send-next-steps`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ to, subject: emailSubject, body: emailBody }),
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Failed to send email");
+            // Notes are persisted on the consultation — clear the local draft and
+            // open the detail page to review + send.
             try {
                 window.localStorage.removeItem(lsKey);
             } catch {
                 /* ignore */
             }
-            setStep("sent");
+            router.push(`/tools/engagements/${engagementId}/consultations/${id}`);
             router.refresh();
         } catch (err) {
+            // Transcript stays saved (server + localStorage) — just retry.
             setError(err instanceof Error ? err.message : String(err));
-        } finally {
             setBusy(false);
             setBusyLabel("");
         }
     }
 
-    // ── Render ────────────────────────────────────────────────
-    if (step === "sent") {
-        return (
-            <section className={s.panel}>
-                <p className={s.success}>Next-steps email sent.</p>
-                <p className={s.rowMuted} style={{ margin: "8px 0 16px" }}>
-                    The engagement has advanced to “Next-steps email sent”.
-                </p>
-                <Link className={s.primaryAction} href={`/tools/engagements/${engagementId}`}>
-                    Back to engagement
-                </Link>
-            </section>
-        );
-    }
-
-    if (step === "review" && analysis) {
-        const emailValid = EMAIL_RE.test(recipientEmail.trim());
-        return (
-            <div>
-                <section className={s.panel}>
-                    <h2 className={s.panelTitle}>Summary</h2>
-                    <p style={{ fontSize: 14, margin: 0 }}>{analysis.summary}</p>
-
-                    <h2 className={s.panelTitle} style={{ marginTop: 16 }}>Key points</h2>
-                    <ul className={s.aiList}>
-                        {analysis.bulletPoints.map((b, i) => (
-                            <li key={i}>{b}</li>
-                        ))}
-                    </ul>
-
-                    <h2 className={s.panelTitle}>Action items</h2>
-                    <ul className={s.aiList}>
-                        {analysis.actionItems.map((a, i) => (
-                            <li key={i}>
-                                {a.task} <span className={s.metaPill}>{a.owner}</span>{" "}
-                                <span className={s.metaPill}>{a.priority}</span>
-                            </li>
-                        ))}
-                    </ul>
-
-                    <h2 className={s.panelTitle}>Read</h2>
-                    <div className={s.pillRow}>
-                        <span className={s.metaPill}>sentiment: {analysis.sentiment.overall}</span>
-                        <span className={s.metaPill}>readiness: {analysis.intent.readiness}</span>
-                        <span className={s.metaPill}>{analysis.intent.primaryMotivation}</span>
-                    </div>
-                    {analysis.intent.concerns.length > 0 && (
-                        <p className={s.rowMuted}>Concerns: {analysis.intent.concerns.join("; ")}</p>
-                    )}
-                </section>
-
-                <section className={s.panel}>
-                    <h2 className={s.panelTitle}>Next-steps email (review &amp; edit before sending)</h2>
-                    <div className={s.field}>
-                        <label className={s.label}>To</label>
-                        <input
-                            className={s.input}
-                            type="email"
-                            placeholder="customer@example.com"
-                            value={recipientEmail}
-                            onChange={(e) => setRecipientEmail(e.target.value)}
-                        />
-                        {!customerEmail && (
-                            <p className={s.rowMuted} style={{ marginTop: 6 }}>
-                                No email was on file for this engagement — enter one to send. It’ll
-                                be saved to the engagement for next time.
-                            </p>
-                        )}
-                        {recipientEmail.trim() && !emailValid && (
-                            <p className={s.error}>That doesn’t look like a valid email address.</p>
-                        )}
-                    </div>
-                    <div className={s.field}>
-                        <label className={s.label}>Subject</label>
-                        <input
-                            className={s.input}
-                            value={emailSubject}
-                            onChange={(e) => setEmailSubject(e.target.value)}
-                        />
-                    </div>
-                    <div className={s.field}>
-                        <label className={s.label}>Body</label>
-                        <textarea
-                            className={s.textarea}
-                            style={{ minHeight: 220 }}
-                            value={emailBody}
-                            onChange={(e) => setEmailBody(e.target.value)}
-                        />
-                    </div>
-                    <button
-                        className={s.primaryAction}
-                        onClick={sendEmail}
-                        disabled={busy || !emailValid}
-                    >
-                        {busy ? busyLabel || "Sending…" : "Send next-steps email"}
-                    </button>
-                    {error && <p className={s.error}>{error}</p>}
-                </section>
-
-                <section className={s.panel}>
-                    <h2 className={s.panelTitle}>Marketing follow-up ideas</h2>
-                    {analysis.marketingActions.map((m, i) => (
-                        <div key={i} className={s.mktCard}>
-                            <div>
-                                <span className={s.mktTitle}>{m.title}</span>
-                                <span className={s.mktChannel}>{m.channel}</span>
-                            </div>
-                            <div className={s.mktDetail}>{m.detail}</div>
-                        </div>
-                    ))}
-                </section>
-            </div>
-        );
-    }
-
-    // step === "capture"
+    // ── Render (capture only) ─────────────────────────────────────
     const saveText =
         saveStatus === "saving"
             ? "Saving…"

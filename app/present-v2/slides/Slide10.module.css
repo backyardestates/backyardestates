@@ -97,6 +97,18 @@
   line-height: 1;
   letter-spacing: -0.005em;
   margin-top: 4px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rentUnitNameTag {
+  font-size: 0.6em;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--p-cream);
+  letter-spacing: 0.01em;
 }
 
 .rentSqft {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { RentalListing } from "@/lib/rentcast/types";
 import type { FeaturedRental } from "@/lib/store/presentationStore";
 import { proxiedImage } from "@/lib/cloudinary";
@@ -11,6 +11,10 @@ interface Props {
     selected: FeaturedRental[];
     onChange: (next: FeaturedRental[]) => void;
     maxSelected?: number;
+    /** When false, hides the left "Available" column — used in the merged
+     *  Rental Market step where the comps list already provides ★ Feature
+     *  toggles, so this panel only renders the order + photo editor. */
+    showAvailable?: boolean;
 }
 
 function rentalKey(r: Pick<FeaturedRental, "formattedAddress" | "price" | "squareFootage" | "bedrooms" | "bathrooms">) {
@@ -63,7 +67,7 @@ type FetchState = {
 
 type ManualUrlState = Record<string, string>;
 
-export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected = 4 }: Props) {
+export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected = 4, showAvailable = true }: Props) {
     const selectedKeys = useMemo(() => new Set(selected.map(rentalKey)), [selected]);
 
     // Per-row Zillow fetch state, keyed by the rental composite key.
@@ -128,6 +132,21 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
         }
     }
 
+    // Auto-fetch a Zillow photo the moment a rental is featured — when it has no
+    // image yet and we haven't already tried. The same loading + Try-again UI as
+    // a manual fetch is shown, so a failed auto-attempt can be retried by hand.
+    useEffect(() => {
+        for (let i = 0; i < selected.length; i++) {
+            const r = selected[i];
+            const key = rentalKey(r);
+            if (!r.imageUrl && r.formattedAddress && !fetchState[key]) {
+                void fetchFromZillow(i);
+            }
+        }
+        // Intentionally keyed on `selected` only — fetchState guards re-runs.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selected]);
+
     const available = useMemo(() => {
         return rentals.filter((r) => typeof r.price === "number" && !selectedKeys.has(rentalKey(r)));
     }, [rentals, selectedKeys]);
@@ -165,7 +184,7 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
         return (
             <div className={s.panel}>
                 <div className={s.empty}>
-                    No rental comps yet. Complete Step 1 (address) and Step 5 (rental market) first.
+                    No rental comps yet. Add a property address and pull property data first.
                 </div>
             </div>
         );
@@ -173,7 +192,8 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
 
     return (
         <div>
-            <div className={s.panel}>
+            <div className={`${s.panel} ${!showAvailable ? s.panelSolo : ""}`}>
+                {showAvailable && (
                 <div className={s.column}>
                     <div className={s.columnHeader}>
                         <span className={s.columnTitle}>Available · {available.length}</span>
@@ -211,23 +231,24 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
                         )}
                     </div>
                 </div>
+                )}
 
                 <div className={s.column}>
                     <div className={s.columnHeader}>
                         <span className={s.columnTitle}>Slide 10 order · {selected.length}</span>
                         <span className={s.limitChip}>Max {maxSelected}</span>
                     </div>
-                    <div className={s.list}>
+                    <div className={`${s.list} ${s.listFeatured}`}>
                         {selected.length === 0 ? (
                             <div className={s.listEmpty}>
-                                Nothing selected — Slide 10 will show the first {maxSelected} rentals
-                                from RentCast.
+                                Nothing featured yet — use <strong>★ Feature</strong> on a comp above to
+                                add it here. Otherwise the slide shows the first {maxSelected} rentals from RentCast.
                             </div>
                         ) : (
                             selected.map((r, i) => (
-                                <div key={rentalKey(r) + i} className={s.selectedItem}>
+                                <div key={rentalKey(r)} className={s.selectedItem}>
                                     <div className={s.selectedHead}>
-                                        <span className={s.order}>№ {String(i + 1).padStart(2, "0")}</span>
+                                        <span className={s.order}>{i + 1}</span>
                                         <div className={s.selectedMain}>
                                             <span className={s.price}>
                                                 {money(r.price)}<span className={s.priceMo}>/ mo</span>
@@ -269,18 +290,42 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
                                     </div>
 
                                     <div className={s.imageRow}>
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src={r.imageUrl ? proxiedImage(r.imageUrl) : "/images/rental-placeholder.svg"}
-                                            alt=""
-                                            className={s.imagePreview}
-                                            referrerPolicy="no-referrer"
-                                            onError={(e) => {
-                                                const img = e.currentTarget as HTMLImageElement;
-                                                if (img.src.endsWith("/images/rental-placeholder.svg")) return;
-                                                img.src = "/images/rental-placeholder.svg";
-                                            }}
-                                        />
+                                        <div className={s.imageWrap}>
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img
+                                                src={r.imageUrl ? proxiedImage(r.imageUrl) : "/images/rental-placeholder.svg"}
+                                                alt=""
+                                                className={s.imagePreview}
+                                                referrerPolicy="no-referrer"
+                                                onError={(e) => {
+                                                    const img = e.currentTarget as HTMLImageElement;
+                                                    if (img.src.endsWith("/images/rental-placeholder.svg")) return;
+                                                    img.src = "/images/rental-placeholder.svg";
+                                                }}
+                                            />
+                                            {fetchState[rentalKey(r)]?.loading && (
+                                                <div className={s.imageOverlay}>
+                                                    <span className={s.spinner} aria-hidden />
+                                                    <span>Loading from Zillow…</span>
+                                                </div>
+                                            )}
+                                            {!fetchState[rentalKey(r)]?.loading &&
+                                                fetchState[rentalKey(r)]?.error &&
+                                                !r.imageUrl && (
+                                                    <button
+                                                        type="button"
+                                                        className={s.imageRetry}
+                                                        onClick={() => {
+                                                            const manual = (manualUrls[rentalKey(r)] ?? "").trim();
+                                                            fetchFromZillow(i, manual || undefined);
+                                                        }}
+                                                        title="Retry fetching from Zillow"
+                                                    >
+                                                        <span className={s.imageRetryIcon} aria-hidden>↻</span>
+                                                        <span>Couldn&apos;t load — try again</span>
+                                                    </button>
+                                                )}
+                                        </div>
                                         <div className={s.imageControls}>
                                             <input
                                                 type="url"
@@ -308,7 +353,11 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
                                                     }}
                                                     disabled={fetchState[rentalKey(r)]?.loading}
                                                 >
-                                                    {fetchState[rentalKey(r)]?.loading ? "Fetching…" : "↓ Fetch from Zillow"}
+                                                    {fetchState[rentalKey(r)]?.loading
+                                                        ? "Fetching…"
+                                                        : fetchState[rentalKey(r)]?.error
+                                                          ? "↻ Try again"
+                                                          : "↓ Fetch from Zillow"}
                                                 </button>
                                                 {r.formattedAddress && (
                                                     <a
@@ -335,38 +384,47 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
                                                     {fetchState[rentalKey(r)]!.error}
                                                 </div>
                                             )}
-                                            {fetchState[rentalKey(r)]?.images && fetchState[rentalKey(r)]!.images.length > 0 && (
-                                                <div className={s.fetchMeta}>
-                                                    Photos from Zillow
-                                                    {fetchState[rentalKey(r)]!.source === "property" && <> · <em>property</em></>}
-                                                    {fetchState[rentalKey(r)]!.source === "search" && fetchState[rentalKey(r)]!.matchedType && (
-                                                        <> · <em>{fetchState[rentalKey(r)]!.matchedType}</em></>
-                                                    )}
-                                                </div>
-                                            )}
-                                            {fetchState[rentalKey(r)]?.images && fetchState[rentalKey(r)]!.images.length > 0 && (
-                                                <div className={s.thumbStrip}>
-                                                    {fetchState[rentalKey(r)]!.images.map((thumb) => (
-                                                        <button
-                                                            key={thumb}
-                                                            type="button"
-                                                            className={`${s.thumbBtn} ${r.imageUrl === thumb ? s.thumbBtnActive : ""}`}
-                                                            onClick={() => setImageUrl(i, thumb)}
-                                                            title="Use this photo"
-                                                        >
-                                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                            <img
-                                                                src={proxiedImage(thumb)}
-                                                                alt=""
-                                                                className={s.thumbBtnImg}
-                                                                referrerPolicy="no-referrer"
-                                                            />
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
+
+                                    {fetchState[rentalKey(r)]?.images && fetchState[rentalKey(r)]!.images.length > 0 && (
+                                        <div className={s.gallery}>
+                                            <div className={s.galleryHead}>
+                                                <span className={s.galleryCount}>
+                                                    {fetchState[rentalKey(r)]!.images.length} photo
+                                                    {fetchState[rentalKey(r)]!.images.length === 1 ? "" : "s"} from Zillow
+                                                </span>
+                                                {fetchState[rentalKey(r)]!.source === "property" && (
+                                                    <span className={s.galleryTag}>property</span>
+                                                )}
+                                                {fetchState[rentalKey(r)]!.source === "search" &&
+                                                    fetchState[rentalKey(r)]!.matchedType && (
+                                                        <span className={s.galleryTag}>
+                                                            {fetchState[rentalKey(r)]!.matchedType}
+                                                        </span>
+                                                    )}
+                                            </div>
+                                            <div className={s.thumbStrip}>
+                                                {fetchState[rentalKey(r)]!.images.map((thumb) => (
+                                                    <button
+                                                        key={thumb}
+                                                        type="button"
+                                                        className={`${s.thumbBtn} ${r.imageUrl === thumb ? s.thumbBtnActive : ""}`}
+                                                        onClick={() => setImageUrl(i, thumb)}
+                                                        title="Use this photo"
+                                                    >
+                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                        <img
+                                                            src={proxiedImage(thumb)}
+                                                            alt=""
+                                                            className={s.thumbBtnImg}
+                                                            referrerPolicy="no-referrer"
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         )}

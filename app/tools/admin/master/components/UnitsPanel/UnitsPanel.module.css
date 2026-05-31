@@ -1,29 +1,34 @@
-/* Unified ADU picker + per-unit customizer.
+/* Unified ADU picker + per-unit customizer — restyled to share Step 1's
+ * visual language (green-rail section heads, high-contrast labels, segmented
+ * controls, strong green primary actions).
  *
- * Two-zone layout: Selected (rich, customizable cards) + Available (compact
- * add buttons). The custom-size creator collapses to a one-line affordance
- * until the user enters a sqft, at which point it discloses the pricing
- * preview and optional name/beds/baths/image fields. */
+ * Three sub-zones inside the Units card:
+ *   • Comparing — rich selected cards with a green accent rail + tinted bg.
+ *   • Catalog   — compact "+ add" chips.
+ *   • Add a custom size — progressive-disclosure creator. */
 
 .root {
     --u-bg: #ffffff;
-    --u-surface: rgba(20, 48, 47, 0.025);
-    --u-surface-strong: rgba(20, 48, 47, 0.06);
+    --u-surface: var(--color-brand-beige-subtle, #faf6ee);
+    --u-surface-strong: rgba(20, 48, 47, 0.05);
+    --u-ink: var(--color-brand-dark-blue, #14302f);
     --u-text: var(--color-brand-dark-blue, #14302f);
-    --u-text-mute: rgba(20, 48, 47, 0.65);
-    --u-text-faint: rgba(20, 48, 47, 0.45);
-    --u-border: rgba(20, 48, 47, 0.14);
-    --u-border-soft: rgba(20, 48, 47, 0.08);
+    --u-text-mute: rgba(20, 48, 47, 0.72);
+    --u-text-faint: rgba(20, 48, 47, 0.46);
+    --u-border: var(--color-brand-beige-A040, rgba(20, 48, 47, 0.16));
+    --u-border-soft: var(--color-brand-beige-A020, rgba(20, 48, 47, 0.09));
     --u-accent: #2a7a52;
+    --u-accent-dark: #1e5b3d;
     --u-accent-soft: rgba(42, 122, 82, 0.10);
-    --u-accent-soft-strong: rgba(42, 122, 82, 0.18);
+    --u-accent-soft-strong: rgba(42, 122, 82, 0.16);
+    --u-gold: #b8954a;
     --u-danger: #7a1f1f;
     --u-radius: 12px;
-    --u-radius-field: 8px;
+    --u-radius-field: 9px;
 
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 20px;
     color: var(--u-text);
     font-family: 'Roboto', system-ui, sans-serif;
 }
@@ -32,31 +37,36 @@
 
 .zoneHead {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 9px;
+    border-bottom: 1px solid var(--u-border-soft);
 }
 
 .zoneLabel {
-    font-size: 11px;
-    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 11.5px;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--u-text-mute);
+    color: var(--u-ink);
 }
 
-.zoneCount {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    font-size: 11px;
-    color: var(--u-text-faint);
-    font-variant-numeric: tabular-nums;
+.zoneLabel::before {
+    content: "";
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--u-accent);
 }
 
 .zoneSubLabel {
-    margin-left: 10px;
-    font-size: 10px;
+    margin-left: 2px;
+    font-size: 10.5px;
     font-weight: 600;
     color: var(--u-text-faint);
     text-transform: none;
@@ -64,12 +74,22 @@
     font-style: italic;
 }
 
+.zoneCount {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--u-text-mute);
+    font-variant-numeric: tabular-nums;
+}
+
 .zoneAction {
     background: transparent;
     border: none;
     padding: 0;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 11.5px;
+    font-weight: 700;
     color: var(--u-accent);
     cursor: pointer;
     text-decoration: underline;
@@ -77,127 +97,238 @@
 }
 
 .zoneAction:hover {
-    color: #1e5b3d;
+    color: var(--u-accent-dark);
 }
 
 /* ── Selected cards ──────────────────────────────────────────────────── */
 
 .selectedList {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+    gap: 16px;
+}
+
+@keyframes uCardIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .selectedCard {
-    display: grid;
-    grid-template-columns: 56px minmax(0, 1fr) auto;
-    gap: 14px;
-    padding: 12px 14px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
     background: var(--u-bg);
     border: 1.5px solid var(--u-accent-soft-strong);
-    border-radius: var(--u-radius);
-    align-items: center;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(20, 48, 47, 0.04), 0 16px 34px -24px rgba(20, 48, 47, 0.32);
+    transition: border-color 0.2s ease, box-shadow 0.28s ease, transform 0.2s ease;
+    animation: uCardIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.selectedCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 26px 50px -28px rgba(20, 48, 47, 0.45);
+}
+.selectedCard:focus-within {
+    border-color: var(--u-accent);
+    box-shadow: 0 0 0 3px var(--u-accent-soft), 0 26px 50px -28px rgba(20, 48, 47, 0.45);
+}
+
+/* Green accent rail down the left edge marks the "selected" state clearly. */
+.selectedCard::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    z-index: 2;
+    background: var(--u-accent);
+}
+
+/* ── Image header — the floorplan gets real estate now ───────────────── */
+.selectedThumbWrap {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background:
+        radial-gradient(130% 130% at 50% 0%, rgba(42, 122, 82, 0.05), transparent 70%),
+        var(--u-surface);
+    border-bottom: 1px solid var(--u-border-soft);
+    overflow: hidden;
 }
 
 .selectedThumb {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
-    object-fit: cover;
-    background: var(--u-surface-strong);
-    border: 1px solid var(--u-border-soft);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 12px;
+    display: block;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
+.selectedCard:hover .selectedThumb { transform: scale(1.045); }
 
 .selectedThumbFallback {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
-    background: var(--u-surface-strong);
-    border: 1px dashed var(--u-border-soft);
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--u-text-faint);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
 .selectedBody {
-    display: grid;
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 15px 16px 16px;
     min-width: 0;
 }
 
 .selectedMeta {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 8px 12px;
+    align-items: center;
+    gap: 8px;
     min-width: 0;
 }
 
 .selectedName {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--u-text);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--u-ink);
+    letter-spacing: -0.015em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .selectedSub {
-    font-size: 12px;
+    margin-top: -8px;
+    font-size: 14px;
+    font-weight: 600;
     color: var(--u-text-mute);
     font-variant-numeric: tabular-nums;
-    white-space: nowrap;
+}
+
+/* Custom tag shown inline after the estate name (e.g. "· Hillside"). */
+.selectedTag {
+    color: var(--u-accent-dark);
+    font-weight: 700;
+}
+
+/* Inline label editor — quiet until focused/filled. */
+.labelField {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 11px;
+    border: 1.5px solid var(--u-border-soft);
+    border-radius: var(--u-radius-field);
+    background: var(--u-surface);
+    color: var(--u-text-faint);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.labelField:focus-within {
+    border-color: var(--u-accent);
+    background: #fff;
+    box-shadow: 0 0 0 3px var(--u-accent-soft);
+    color: var(--u-accent);
+}
+.labelIcon {
+    flex-shrink: 0;
+}
+.labelInput {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--u-ink);
+    outline: none;
+}
+.labelInput::placeholder {
+    color: var(--u-text-faint);
+    font-weight: 500;
 }
 
 .customBadge {
+    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     height: 18px;
-    padding: 0 6px;
-    border-radius: 4px;
-    background: var(--u-accent-soft);
-    color: var(--u-accent);
+    padding: 0 7px;
+    border-radius: 5px;
+    background: rgba(184, 149, 74, 0.16);
+    color: #8a6b14;
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 
 .controls {
     display: grid;
-    grid-template-columns: minmax(120px, 1.4fr) repeat(2, minmax(70px, 0.8fr));
-    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+    gap: 11px 12px;
+    align-items: end;
+}
+.controlFieldWide {
+    grid-column: 1 / -1;
 }
 
 .controlField {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 6px;
     min-width: 0;
 }
 
 .controlLabel {
+    display: inline-flex;
+    align-items: center;
     font-size: 10px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--u-text-faint);
 }
 
+/* "+$10k" premium chip shown beside the Baths label when baths exceed the
+ * floorplan's standard count (the amount baked into the unit's base price). */
+.premiumTag {
+    margin-left: 6px;
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: 5px;
+    background: var(--u-accent-soft);
+    color: var(--u-accent-dark);
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: none;
+    font-variant-numeric: tabular-nums;
+}
+
 .controlInput {
-    height: 32px;
-    padding: 0 8px;
-    background: var(--u-bg);
+    width: 100%;
+    height: 38px;
+    padding: 0 11px;
+    background: #fff;
     border: 1.5px solid var(--u-border);
-    border-radius: 6px;
+    border-radius: var(--u-radius-field);
     font-family: inherit;
     font-size: 13px;
-    color: var(--u-text);
+    font-weight: 500;
+    color: var(--u-ink);
     transition: border-color 0.12s, box-shadow 0.12s;
     min-width: 0;
 }
@@ -215,11 +346,11 @@
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    padding: 10px 12px;
-    background: rgba(201, 169, 110, 0.16);
-    border: 1px solid rgba(201, 169, 110, 0.55);
-    border-radius: 8px;
-    margin-top: 4px;
+    padding: 11px 13px;
+    background: rgba(184, 149, 74, 0.14);
+    border: 1px solid rgba(184, 149, 74, 0.5);
+    border-radius: 9px;
+    margin-top: 2px;
     flex-wrap: wrap;
 }
 
@@ -233,8 +364,8 @@
 
 .upchargeTitle {
     font-size: 13px;
-    font-weight: 700;
-    color: var(--u-text);
+    font-weight: 800;
+    color: var(--u-ink);
 }
 
 .upchargeMeta {
@@ -251,8 +382,8 @@
 
 .upchargeNo,
 .upchargeYes {
-    height: 32px;
-    padding: 0 14px;
+    height: 34px;
+    padding: 0 15px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
@@ -263,82 +394,140 @@
 }
 
 .upchargeNo {
-    background: transparent;
+    background: #fff;
     border-color: var(--u-border);
     color: var(--u-text-mute);
 }
 
 .upchargeNo:hover {
-    background: var(--u-bg);
-    color: var(--u-text);
+    color: var(--u-ink);
+    border-color: var(--u-text-faint);
 }
 
 .upchargeYes {
     background: var(--u-accent);
-    color: white;
+    color: #fff;
 }
 
 .upchargeYes:hover {
-    background: #1e5b3d;
+    background: var(--u-accent-dark);
 }
 
-.selectedActions {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: flex-end;
-}
+/* ── Remove (quiet corner ✕) ─────────────────────────────────────────── */
 
-.actionBtn {
-    background: transparent;
+.removeCorner {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
     border: none;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(20, 48, 47, 0.18);
     color: var(--u-text-mute);
-    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.1s, box-shadow 0.15s;
 }
 
-.actionBtn:hover {
-    background: var(--u-surface);
-    color: var(--u-text);
-}
-
-.actionRemove:hover {
-    background: rgba(176, 59, 59, 0.10);
+.removeCorner:hover {
+    background: #fff;
     color: var(--u-danger);
+    box-shadow: 0 4px 12px rgba(20, 48, 47, 0.22);
 }
 
-/* ── Available chips ─────────────────────────────────────────────────── */
+.removeCorner:active {
+    transform: scale(0.9);
+}
+
+/* ── Duplicate (footer, secondary additive action) ───────────────────── */
+
+.cardFooter {
+    display: flex;
+    margin-top: 2px;
+    padding-top: 13px;
+    border-top: 1px solid var(--u-border-soft);
+}
+
+.duplicateBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 7px;
+    height: 36px;
+    padding: 0 13px;
+    border: 1.5px solid var(--u-border-soft);
+    border-radius: var(--u-radius-field);
+    background: #fff;
+    color: var(--u-text-mute);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.06s;
+}
+.duplicateBtn:active {
+    transform: scale(0.985);
+}
+
+.duplicateBtn:hover {
+    background: var(--u-accent-soft);
+    border-color: var(--u-accent);
+    color: var(--u-accent-dark);
+}
+
+.duplicateBtn svg {
+    color: var(--u-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .selectedCard,
+    .selectedThumb,
+    .removeCorner,
+    .duplicateBtn {
+        animation: none;
+        transition: none;
+    }
+    .selectedCard:hover { transform: none; }
+    .selectedCard:hover .selectedThumb { transform: none; }
+}
+
+/* ── Catalog chips ───────────────────────────────────────────────────── */
 
 .availableList {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 7px;
 }
 
 .availableChip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    height: 32px;
-    padding: 0 12px;
-    background: var(--u-bg);
+    gap: 7px;
+    height: 36px;
+    padding: 0 14px 0 11px;
+    background: #fff;
     border: 1.5px solid var(--u-border);
     border-radius: 999px;
-    color: var(--u-text);
-    font-size: 12px;
+    color: var(--u-ink);
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.08s, box-shadow 0.12s;
 }
 
 .availableChip:hover:not(:disabled) {
     background: var(--u-accent-soft);
     border-color: var(--u-accent);
-    color: var(--u-accent);
+    color: var(--u-accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px -6px rgba(42, 122, 82, 0.5);
 }
 
 .availableChip:disabled {
@@ -352,7 +541,7 @@
 
 .availableChipSub {
     color: var(--u-text-faint);
-    font-weight: 500;
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
 }
 
@@ -362,18 +551,28 @@
 }
 
 .availableEmpty {
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--u-text-faint);
     font-style: italic;
 }
 
 .plus {
-    font-weight: 700;
-    color: var(--u-text-mute);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--u-accent-soft);
+    color: var(--u-accent);
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1;
 }
 
 .availableChip:hover:not(:disabled) .plus {
-    color: var(--u-accent);
+    background: var(--u-accent);
+    color: #fff;
 }
 
 /* ── Empty state ─────────────────────────────────────────────────────── */
@@ -382,24 +581,34 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 16px;
+    padding: 16px 18px;
     background: var(--u-surface);
-    border: 1px dashed var(--u-border-soft);
+    border: 1.5px dashed var(--u-border);
     border-radius: var(--u-radius);
-    font-size: 13px;
+    font-size: 13.5px;
+    font-weight: 500;
     color: var(--u-text-mute);
 }
 
 .emptyArrow {
-    color: var(--u-text-faint);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--u-accent-soft);
+    color: var(--u-accent);
+    font-weight: 800;
+    flex-shrink: 0;
 }
 
 /* ── Custom unit creator ─────────────────────────────────────────────── */
 
 .customSection {
-    border: 1px dashed var(--u-border);
+    border: 1.5px dashed var(--u-border);
     border-radius: var(--u-radius);
-    padding: 14px;
+    padding: 15px;
     background: var(--u-surface);
 }
 
@@ -408,15 +617,32 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .customLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.10em;
-    color: var(--u-text-mute);
+    color: var(--u-ink);
+}
+
+.customLabel::before {
+    content: "+";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--u-accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 .customHint {
@@ -427,9 +653,45 @@
 
 .customRow {
     display: grid;
-    grid-template-columns: 130px 1fr auto;
-    gap: 10px;
-    align-items: center;
+    grid-template-columns: minmax(150px, 200px) 1fr;
+    gap: 12px;
+    align-items: end;
+}
+
+/* Editable custom-unit price (money input). */
+.customMoneyWrap {
+    position: relative;
+}
+
+.customMoneyPrefix {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--u-text-faint);
+    pointer-events: none;
+}
+
+.customPriceInput {
+    width: 100%;
+    height: 38px;
+    padding: 0 12px 0 25px;
+    background: #fff;
+    border: 1.5px solid var(--u-border);
+    border-radius: var(--u-radius-field);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--u-ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.customPriceInput:focus {
+    outline: none;
+    border-color: var(--u-accent);
+    box-shadow: 0 0 0 3px var(--u-accent-soft);
 }
 
 .customSqftWrap {
@@ -438,15 +700,15 @@
 
 .customSqftInput {
     width: 100%;
-    height: 36px;
+    height: 38px;
     padding: 0 38px 0 12px;
-    background: var(--u-bg);
+    background: #fff;
     border: 1.5px solid var(--u-border);
     border-radius: var(--u-radius-field);
     font-family: inherit;
     font-size: 14px;
-    font-weight: 600;
-    color: var(--u-text);
+    font-weight: 700;
+    color: var(--u-ink);
     font-variant-numeric: tabular-nums;
 }
 
@@ -469,11 +731,11 @@
 }
 
 .customPrice {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 800;
     color: var(--u-accent);
     font-variant-numeric: tabular-nums;
-    text-align: left;
+    letter-spacing: -0.01em;
 }
 
 .customPriceEmpty {
@@ -482,72 +744,103 @@
     font-style: italic;
 }
 
+/* Footer: hint/warning on the left, primary CTA on the right. */
+.customFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 14px;
+    padding-top: 13px;
+    border-top: 1px dashed var(--u-border-soft);
+}
+
+.footerHint {
+    font-size: 12px;
+    color: var(--u-text-faint);
+}
+
 .customAddBtn {
-    height: 36px;
-    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 40px;
+    padding: 0 22px;
     border-radius: 999px;
     border: none;
     background: var(--u-accent);
-    color: white;
-    font-size: 13px;
-    font-weight: 700;
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: 800;
     cursor: pointer;
     white-space: nowrap;
-    transition: background 0.12s;
+    transition: background 0.12s, box-shadow 0.12s, transform 0.08s;
+    box-shadow: 0 2px 8px -2px rgba(42, 122, 82, 0.55);
 }
 
 .customAddBtn:hover:not(:disabled) {
-    background: #1e5b3d;
+    background: var(--u-accent-dark);
+    transform: translateY(-1px);
 }
 
 .customAddBtn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
 .customDetails {
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: 13px;
+    padding-top: 13px;
     border-top: 1px dashed var(--u-border-soft);
     display: grid;
-    gap: 8px;
+    gap: 10px;
 }
 
 .customAnchor {
-    font-size: 11px;
-    color: var(--u-text-faint);
+    font-size: 11.5px;
+    color: var(--u-text-mute);
     font-style: italic;
+    padding: 7px 10px;
+    background: #fff;
+    border: 1px solid var(--u-border-soft);
+    border-radius: 7px;
 }
 
+/* Name + Beds + Baths always on one line (name flexes, steppers size to
+ * content). Intentionally not collapsed on narrow widths. */
 .customDetailsGrid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 12px;
+    align-items: end;
 }
 
 .customField {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .customFieldLabel {
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 9.5px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.09em;
     color: var(--u-text-faint);
 }
 
 .customInput {
-    height: 32px;
-    padding: 0 10px;
-    background: var(--u-bg);
+    height: 34px;
+    padding: 0 11px;
+    background: #fff;
     border: 1.5px solid var(--u-border);
-    border-radius: 6px;
+    border-radius: 7px;
     font-family: inherit;
     font-size: 13px;
-    color: var(--u-text);
+    font-weight: 500;
+    color: var(--u-ink);
 }
 
 .customInput:focus {
@@ -572,10 +865,10 @@
 
 .imagePickerBody {
     display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 14px;
-    padding: 12px;
-    background: var(--u-bg);
+    grid-template-columns: minmax(240px, 1.5fr) minmax(190px, 1fr);
+    gap: 16px;
+    padding: 14px;
+    background: #fff;
     border: 1px solid var(--u-border-soft);
     border-radius: 10px;
 }
@@ -583,32 +876,34 @@
 .imagePreviewWrap {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    align-items: center;
+    gap: 8px;
+    align-items: stretch;
     text-align: center;
+    min-width: 0;
 }
 
 .imagePreview {
-    width: 140px;
-    height: 100px;
+    width: 100%;
+    height: 260px;
     object-fit: contain;
     background: var(--u-surface);
     border: 1px solid var(--u-border-soft);
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
 }
 
 .imagePreviewEmpty {
-    width: 140px;
-    height: 100px;
+    width: 100%;
+    height: 260px;
     background: var(--u-surface);
-    border: 1px dashed var(--u-border-soft);
-    border-radius: 8px;
+    border: 1.5px dashed var(--u-border);
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--u-text-faint);
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
 }
@@ -631,13 +926,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 48px;
-    padding: 0 14px;
+    flex: 1;
+    min-height: 88px;
+    padding: 10px 14px;
     border: 1.5px dashed var(--u-border);
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--u-surface);
     color: var(--u-text-mute);
-    font-size: 12px;
+    font-size: 12.5px;
     cursor: pointer;
     transition: background 0.12s, border-color 0.12s, color 0.12s;
     text-align: center;
@@ -666,7 +962,7 @@
     border: none;
     padding: 4px 0;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--u-text-mute);
     cursor: pointer;
     text-align: left;
@@ -674,7 +970,7 @@
 }
 
 .clearImageBtn:hover {
-    color: var(--u-text);
+    color: var(--u-ink);
     text-decoration: underline;
 }
 
@@ -688,39 +984,57 @@
 }
 
 .warn {
-    margin-top: 10px;
+    margin: 0;
+    padding: 7px 11px;
+    border-radius: 7px;
+    background: rgba(184, 149, 74, 0.14);
+    border: 1px solid rgba(184, 149, 74, 0.45);
     font-size: 12px;
-    color: #7a4d1f;
-    font-style: italic;
+    font-weight: 600;
+    color: #7a5a14;
 }
 
 /* ── Max-comparisons hint ────────────────────────────────────────────── */
 
-.maxHint {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--u-text-faint);
-}
-
-.maxHint input {
-    width: 44px;
-    height: 24px;
-    padding: 0 6px;
-    border-radius: 4px;
-    border: 1px solid var(--u-border);
-    background: var(--u-bg);
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--u-text);
-    text-align: center;
+.zoneCountNum {
     font-variant-numeric: tabular-nums;
 }
 
-.maxHint input:focus {
+.maxHint {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--u-text-faint);
+}
+
+.maxHintLabel {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+/* ── Shared focus-visible + press feedback for all buttons ───────────── */
+
+.zoneAction:focus-visible,
+.duplicateBtn:focus-visible,
+.removeCorner:focus-visible,
+.availableChip:focus-visible,
+.customAddBtn:focus-visible,
+.upchargeNo:focus-visible,
+.upchargeYes:focus-visible,
+.dropZone:focus-visible,
+.clearImageBtn:focus-visible {
     outline: none;
+    box-shadow: 0 0 0 3px var(--u-accent-soft);
     border-color: var(--u-accent);
+}
+
+.duplicateBtn:active,
+.upchargeNo:active,
+.upchargeYes:active {
+    transform: translateY(1px);
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────── */
@@ -729,18 +1043,10 @@
     .selectedCard {
         grid-template-columns: 1fr;
     }
-    .selectedActions {
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-end;
-    }
     .controls {
         grid-template-columns: 1fr 1fr 1fr;
     }
     .customRow {
         grid-template-columns: 1fr 1fr;
-    }
-    .customAddBtn {
-        grid-column: 1 / -1;
     }
 }

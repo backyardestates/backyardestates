@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { usePresentationStore } from "@/lib/store/presentationStore";
+import { unitNameParts } from "@/lib/units/displayName";
 import { AduTypeBadge } from "../_components/AduTypeBadge";
 import { proxiedImage } from "@/lib/cloudinary";
 import s from "./Slide10.module.css";
@@ -48,7 +49,7 @@ function cityFromAddress(addr: string) {
 }
 
 export function Slide10_RentalAnalysis() {
-    const { comparedUnitIds, floorplans, rentalComps, featuredRentals, rentByUnitId, customerName, propertyAddress, currentSlide, isPrintMode, aduType, aduTypeByUnitId } = usePresentationStore();
+    const { comparedUnitIds, floorplans, rentalComps, featuredRentals, rentByUnitId, customerName, propertyAddress, currentSlide, isPrintMode, aduType, aduTypeByUnitId, labelByUnitId } = usePresentationStore();
     const active = currentSlide === 10 || isPrintMode;
 
     const comparedUnits = floorplans.filter((fp) => comparedUnitIds.includes(fp._id));
@@ -61,7 +62,10 @@ export function Slide10_RentalAnalysis() {
     const dedupedComparedUnits = comparedUnits.filter((fp) => {
         const baseName = (fp.name ?? "").replace(/\s*\(\d+\)\s*$/, "").trim();
         const rent = rentByUnitId[fp._id] ?? 0;
-        const sig = `${baseName}|${rent}`;
+        // Include the custom tag so distinctly-labelled units (e.g. "Hillside" vs
+        // "Closer to gate") survive dedupe even when their rent matches.
+        const tag = (labelByUnitId?.[fp._id] ?? "").trim();
+        const sig = `${baseName}|${tag}|${rent}`;
         if (seenRentSignatures.has(sig)) return false;
         seenRentSignatures.add(sig);
         return true;
@@ -179,7 +183,19 @@ export function Slide10_RentalAnalysis() {
                                         corner="top-right"
                                     />
                                     <span className={s.rentEyebrow}>The Plan</span>
-                                    <div className={s.rentUnitName}>{fp.name}</div>
+                                    {(() => {
+                                        const nm = unitNameParts(fp.name, labelByUnitId?.[fp._id]);
+                                        return (
+                                            <div className={s.rentUnitName}>
+                                                {nm.base}
+                                                {nm.tag ? (
+                                                    <span className={s.rentUnitNameTag}> · {nm.tag}</span>
+                                                ) : nm.dupNum ? (
+                                                    ` (${nm.dupNum})`
+                                                ) : null}
+                                            </div>
+                                        );
+                                    })()}
                                     {fp.sqft && <div className={s.rentSqft}>{fp.sqft.toLocaleString()} sqft</div>}
 
                                     <div className={s.rentValRow}>

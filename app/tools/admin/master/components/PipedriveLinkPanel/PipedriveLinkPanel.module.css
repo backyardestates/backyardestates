@@ -1,8 +1,8 @@
 .panel {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 14px 16px;
+    gap: 10px;
+    padding: 11px 13px;
     background: #FBF7EE;
     border: 1px solid rgba(184, 149, 74, 0.20);
     border-radius: 10px;
@@ -10,8 +10,10 @@
 
 .header {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .eyebrow {
