@@ -5,7 +5,7 @@ import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
 import { canAccessEngagement } from "@/lib/engagement/access";
 import { logEngagementEvent } from "@/lib/engagement/stage";
 import { analyzeConsultation } from "@/lib/ai/consultationAnalysis";
-import { isAnthropicConfigured } from "@/lib/ai/claude";
+import { isAnthropicConfigured, describeAiError } from "@/lib/ai/claude";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -72,8 +72,8 @@ export async function POST(
                 where: { id },
                 data: { status: ConsultationStatus.FAILED },
             });
-            const msg = err instanceof Error ? err.message : String(err);
-            return NextResponse.json({ error: msg }, { status: 502 });
+            console.error("[POST /api/consultations/[id]/analyze] AI error", err);
+            return NextResponse.json({ error: describeAiError(err) }, { status: 502 });
         }
 
         const updated = await prisma.consultation.update({
