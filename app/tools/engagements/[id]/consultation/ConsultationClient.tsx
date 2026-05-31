@@ -188,15 +188,21 @@ export function ConsultationClient({
         }
         if (live.recording) stopLive();
         setBusy(true);
+        // Track which step fails so a surfaced error tells us client vs server
+        // and exactly where (save vs analyze vs navigate).
+        let stage = "init";
         try {
+            stage = "save";
             setBusyLabel("Saving transcript…");
             const id = await saveNow(transcript);
 
+            stage = "analyze";
             setBusyLabel("Generating notes with AI…");
             const aRes = await fetch(`/api/consultations/${id}/analyze`, { method: "POST" });
             const aData = await aRes.json();
             if (!aRes.ok) throw new Error(aData.error || "Analysis failed");
 
+            stage = "navigate";
             // Notes are persisted on the consultation — clear the local draft and
             // open the detail page to review + send.
             try {
@@ -208,7 +214,8 @@ export function ConsultationClient({
             router.refresh();
         } catch (err) {
             // Transcript stays saved (server + localStorage) — just retry.
-            setError(err instanceof Error ? err.message : String(err));
+            const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+            setError(`[gen:${stage}] ${detail}`);
             setBusy(false);
             setBusyLabel("");
         }
