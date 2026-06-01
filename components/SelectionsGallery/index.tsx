@@ -23,6 +23,17 @@ interface Category {
     types: Record<string, TypeGroup>;
 }
 
+// Types whose product shots are photographed on white and look best
+// "contained" (no crop) rather than cover-cropped.
+const CONTAIN_TYPES = new Set([
+    "Appliances",
+    "Cabinets",
+    "Kitchen Sinks",
+    "Faucets",
+    "Lighting Fixtures",
+    "Interior Finishes",
+]);
+
 export default function SelectionsGallery({
     data,
     variant = "catalog",
@@ -34,7 +45,6 @@ export default function SelectionsGallery({
     const [activeCategory, setActiveCategory] = useState(categories[0][0]);
 
     const activeData = data[activeCategory];
-    console.log("Active Data:", activeData);
 
     return (
         <section className={styles.wrapper}>
@@ -60,8 +70,9 @@ export default function SelectionsGallery({
 
                         <div className={styles.grid}>
                             {type.items.map((item) => {
-                                const shouldContain =
-                                    type.title === "Appliances" || type.title === "Cabinets" || type.title === "Kitchen Sinks" || type.title === "Faucets" || type.title === "Lighting Fixtures" || type.title === "Interior Finishes";
+                                const shouldContain = CONTAIN_TYPES.has(
+                                    type.title
+                                );
                                 return (
                                     <div key={item._id} className={styles.card}>
                                         {/* BADGE */}
@@ -93,26 +104,6 @@ export default function SelectionsGallery({
                                         {/* BODY */}
                                         <div className={styles.cardBody}>
                                             <span className={styles.itemTitle}>{item.title}</span>
-
-                                            {/* FINISH COLOR */}
-                                            {/* {item.finishColor && (
-                                                <div className={styles.finishRow}>
-                                                    <span
-                                                        className={styles.colorChip}
-                                                        data-color={item.finishColor}
-                                                    />
-                                                    <span className={styles.finishLabel}>
-                                                        {item.finishColor.replace("-", " ")}
-                                                    </span>
-                                                </div>
-                                            )} */}
-
-                                            {/* UPGRADE PRICE */}
-                                            {/* {!item.isStandard && item.upgradePrice && (
-                                                <span className={styles.upgradePrice}>
-                                                    +${item.upgradePrice}
-                                                </span>
-                                            )} */}
                                         </div>
                                     </div>
                                 );

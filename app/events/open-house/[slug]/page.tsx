@@ -1,27 +1,24 @@
-import { sanityFetch } from '@/sanity/live'
-import { OPEN_HOUSE_QUERY } from "@/sanity/queries";
-import EventDetails from "@/components/EventDetails";
-import OpenHouseFeaturesSection from "@/components/OpenHouseFeatures";
-import ConstructionTimeline from "@/components/ConstructionTimeline";
-import RsvpSection from "@/components/RsvpSection";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
+import AttentionCTA from '@/components/AttentionCTA';
 import Button from "@/components/Button";
-import styles from "./page.module.css";
-import { Home } from "lucide-react";
-import { notFound } from 'next/navigation';
+import ConstructionTimeline from "@/components/ConstructionTimeline";
+import EventDetails from "@/components/EventDetails";
+import Footer from "@/components/Footer";
+import Nav from "@/components/Nav";
+import OpenHouseFeaturesSection from "@/components/OpenHouseFeatures";
 import FloorPlanToggle from '@/components/OpenHouseFloorplans';
-import IncludedItems from '@/components/OpenHouseInclusions';
-import { seedIncludedItems } from '@/sanity/seed';
-import PropertyTimeline from '@/components/PropertyTimeline';
-import ScrollingBanner from '@/components/ScrollingBanner';
-import calculateWeeks from '@/utils/calculateWeeks';
-import GalleryModal from '@/components/GalleryModal';
 import { OpenHouseGallery } from '@/components/OpenHouseGallery';
+import PropertyTimeline from '@/components/PropertyTimeline';
+import RsvpSection from "@/components/RsvpSection";
+import ScrollingBanner from '@/components/ScrollingBanner';
 import SelectionsGallery from '@/components/SelectionsGallery';
 import SoftCTA from '@/components/SoftCTA';
 import { groupSelections } from '@/lib/groupSelections';
-import AttentionCTA from '@/components/AttentionCTA';
+import { sanityFetch } from '@/sanity/live';
+import { OPEN_HOUSE_QUERY } from "@/sanity/queries";
+import calculateWeeks from '@/utils/calculateWeeks';
+import { Home } from "lucide-react";
+import { notFound } from 'next/navigation';
+import styles from "./page.module.css";
 
 export default async function ADUOpenHouse({
     params,
@@ -39,7 +36,7 @@ export default async function ADUOpenHouse({
         notFound()
     }
 
-    const sqft = openHouse.data.sqft === 750 && openHouse.data.baths === 2 ? "750+" : openHouse.data.sqft
+    const sqft = openHouse.data.sqft
 
     const buildDuration = openHouse.data.constructionTimeline?.length ? `Built in ${openHouse.data.constructionTimeline.length} Weeks` : "TBD";
 

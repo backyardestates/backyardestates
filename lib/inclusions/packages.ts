@@ -106,7 +106,7 @@ export const INCLUSION_PACKAGES: Record<PackageKey, PackageDefinition> = {
         slots: {
             cabinets: "3627ffd7-8518-484a-9452-0e3c907b1e97", // Blue
             cabinetPulls: "5c442e06-18e4-483f-ac20-aa18abdec9fe", // Satin Nickel
-            countertops: "fcc3de73-eb27-42d8-8abb-155c2125d8af", // Fairy White
+            countertops: "730d0e2f-e80b-4170-8b1b-74452c9e446f", // Fantasy Gold
             interiorDoorHandles: "c8522dde-8d2a-42c9-bb62-9cda828cfe96", // Satin Nickel
             entryDoorHandset: "a524f16f-89f9-471c-8b87-316cff00a6c2", // Satin Nickel
             flooring: "14a22dfe-fa4d-4598-a5cc-5f078fd196a8", // Malibu

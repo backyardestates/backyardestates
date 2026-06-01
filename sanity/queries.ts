@@ -274,6 +274,53 @@ export const SELECTIONS_QUERY = `
   }
 } | order(category->title asc, type->title asc, title asc)
 `
+export const FLOORPLAN_ESTATES_QUERY = `
+*[
+  _type == "property" &&
+  // New completed units OR legacy units (old schema: a thumbnail, no photos array)
+  (completed == true || (defined(thumbnail) && !defined(photos))) &&
+  floorplan->slug.current == $slug
+]
+| order(defined(customFloorplanPicture) desc, coalesce(publishedAt, _createdAt) desc) {
+  _id,
+  name,
+  "slug": slug.current,
+  bed,
+  bath,
+  sqft,
+  aduType,
+  customFloorplan,
+  customFloorplanPicture,
+  "standardDrawing": floorplan->drawing,
+  address { city, state },
+  location,
+  "testimonial": testimonial->{ names, quote, portrait, "slug": slug.current }
+}
+`
+
+// Other floorplans (excluding the current one) for the bottom "keep exploring"
+// navigation strip on the floorplan detail page.
+export const OTHER_FLOORPLANS_QUERY = `*[
+  _type == "floorplan" &&
+  name != "Custom Estate" &&
+  slug.current != $slug
+]|order(orderID asc){
+  _id, name, "slug": slug.current, bed, bath, sqft, price, drawing
+}`
+
+// Pool of every testimonial across all properties, used to top a floorplan up
+// to 3 quotes when its own estates don't supply enough.
+export const TESTIMONIALS_POOL_QUERY = `
+*[
+  _type == "property" &&
+  defined(testimonial)
+]{
+  address { city },
+  location,
+  "testimonial": testimonial->{ names, quote, portrait, "slug": slug.current }
+}
+`
+
 export const RELATED_PROPERTIES_QUERY = `
 *[
   _type == "property" &&

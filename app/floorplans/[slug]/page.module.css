@@ -1,147 +1,207 @@
 .main {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    padding: 8rem 0;
+    gap: clamp(4rem, 8vw, 6rem);
+    padding: 6rem 0;
     align-items: center;
     justify-content: center;
     width: 100%;
 }
 
-.content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: center;
-    width: 80%;
-}
+/* Hero styles now live in components/FloorplanHero/FloorplanHero.module.css */
 
-.content h1 {
-    color: var(--color-black);
-    font-family: var(--font-serif);
-    font-size: 2.75rem;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-}
-
-.linkGroup {
-    display: flex;
-    gap: 2rem;
-}
-
-.mark {
-    background-color: yellow;
-}
-
-.price {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0 0 1rem 0;
-    padding: 0;
-}
-
-.intro {
-    color: var(--color-neutral-500);
-    text-align: center;
+/* ---------- Shared section heading pattern ---------- */
+.eyebrow {
     font-family: var(--font-sans);
-    font-size: 1.5rem;
-    font-style: normal;
-    font-weight: 300;
-    line-height: 1.5em;
-    max-width: 37.5rem;
-}
-
-.information {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 0.5rem 0 1rem 0;
-    padding: 0;
-    font-family: var(--font-sans);
-    list-style: none;
-    color: var(--color-neutral-500);
-    line-height: 0.75rem;
-}
-
-.information li {
-    margin: 0;
-    padding: 0;
-}
-
-.subhead {
-    color: var(--color-neutral-500, #787878);
-    /* text-align: center; */
-    leading-trim: both;
-    text-edge: cap;
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    font-style: normal;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
     font-weight: 500;
-    line-height: 1.5rem;
-    /* 150% */
-    font-variant: all-small-caps;
-    letter-spacing: 0.1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige);
 }
 
-.price {
-    color: var(--color-black);
-    /* text-align: center; */
+.sectionTitle {
     font-family: var(--font-serif);
-    font-size: 2rem;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-}
-
-.videoAndImage {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.15;
     margin: 0;
-    padding: 0 1.5rem;
-    min-width: 100vw;
-    overflow: auto;
-    justify-content: center;
-    /* border: 3px solid green; */
+    color: var(--color-brand-dark-blue);
 }
 
-.image {
-    border-radius: var(--radius);
-    max-width: calc(100vw - 3rem);
+.sectionLede {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    font-weight: 300;
+    line-height: 1.6;
+    margin: 0;
+    color: rgba(0, 0, 0, 0.55);
 }
 
-.links {
+.sectionIntro {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    align-items: center;
+    text-align: center;
+    max-width: 42rem;
+    margin: 0 auto;
 }
 
-/* fixed */
-@media only screen and (min-width: 1400px) {
-    .videoAndImage {
-        /* display: flex; */
-        min-width: 0;
-        flex-direction: row;
-        gap: 2rem;
-        /* width: 100%; */
-    }
+/* ---------- Value props (Goal 1) ---------- */
+.valueProps {
+    width: 100%;
+    max-width: 72rem;
+    box-sizing: border-box;
+    padding: 0 clamp(1.5rem, 3vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
 
-    .image {
-        /* border-radius: var(--radius); */
-        flex: 1;
-        /* aspect-ratio: 16 / 9; */
-    }
+.valuePropsIntro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    text-align: center;
+}
 
-    .video {
-        flex: 1;
-    }
+.valueGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+}
 
-    .links {
-        display: flex;
-        flex-direction: row;
-        gap: 2rem;
+.valueCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    border-radius: 1.6rem;
+    background: var(--color-white);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+    animation: riseIn 1.2s ease;
+}
+
+.valueIcon {
+    width: 40px;
+    height: 40px;
+    color: var(--color-brand-beige);
+    margin-bottom: 0.25rem;
+}
+
+.stepNumber {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--color-brand-dark-blue);
+    color: var(--color-white);
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.timelineStrip {
+    margin: 0.5rem auto 0;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+.valueCard h3 {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--color-brand-dark-blue);
+}
+
+.valueCard p {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.55;
+    margin: 0;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+.valueProof {
+    width: 100%;
+    margin-top: auto;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--color-neutral-100);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--color-brand-beige);
+}
+
+/* ---------- Included + selections (Goal 3) ---------- */
+.included,
+.selections,
+.story {
+    width: 100%;
+    max-width: 72rem;
+    box-sizing: border-box;
+    padding: 0 clamp(1.5rem, 3vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* ---------- Motion ---------- */
+.fadeInUp {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeInUp 0.7s ease-out forwards;
+}
+
+@keyframes riseIn {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .valueGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .valueCard,
+    .fadeInUp {
+        animation: none;
+        opacity: 1;
+        transform: none;
     }
 }

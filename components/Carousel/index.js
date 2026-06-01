@@ -57,15 +57,27 @@ export default function Carousel(content) {
 
     return (
         <div className={style.base}>
-            {buttonLeftVisible && (
-                <div className={style.buttonLeft} onMouseUp={moveLeft}>
-                    <ArrowButton direction="left" />
-                </div>
-            )}
-            {buttonRightVisible && (
-                <div className={style.buttonRight} onMouseUp={moveRight}>
-                    <ArrowButton direction="right" />
-                </div>
+            {imageCount > 1 && (
+                <>
+                    <button
+                        type="button"
+                        className={style.buttonLeft}
+                        onClick={moveLeft}
+                        disabled={!buttonLeftVisible}
+                        aria-label="Previous image"
+                    >
+                        <ArrowButton direction="left" />
+                    </button>
+                    <button
+                        type="button"
+                        className={style.buttonRight}
+                        onClick={moveRight}
+                        disabled={!buttonRightVisible}
+                        aria-label="Next image"
+                    >
+                        <ArrowButton direction="right" />
+                    </button>
+                </>
             )}
             <div ref={slidesViewerRef} className={style.slideViewer}>
                 <div ref={slidesRef} className={style.slides}>
@@ -75,15 +87,15 @@ export default function Carousel(content) {
                                 src={image.secure_url}
                                 width="640"
                                 height="360"
-                                alt={`Image of ADU`}
+                                alt={`Photo ${index + 1} of ${imageCount}`}
                                 className={style.image}
+                                loading="lazy"
                             />
                         </div>
                     ))}
                 </div>
             </div>
             <div className={style.content}>
-                <p>Floor plans designed for optimal space utilization.</p>
                 <p className={style.folio}>
                     {position} / {imageCount}
                 </p>

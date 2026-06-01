@@ -1,153 +1,35 @@
+// Canonical inclusions, sourced from the Backyard Estates ADU proposal
+// ("What's Included"). Organized into the six categories shown to customers.
+// `getInclusions(solarIncluded)` returns the same data with the Construction
+// energy line phrased for the specific floorplan (PV solar is included on
+// 2-bedroom plans and larger — Estate 500 through Estate 1200).
 export const ROOMS = [
     {
         title: 'Kitchen',
         features: [
             {
-                image: 'cabinets.png',
                 header: 'Cabinets',
-                text: 'Wood construction cabinets with soft-close shaker style wooden doors and face frames',
+                text: 'Wood shaker cabinets, soft-close · pantry · lazy susan · spice and trash roll-outs',
                 options: ['light', 'dark', 'blue', 'monochrome', 'olive'],
             },
             {
-                image: 'countertops.png',
-                header: 'Counter tops',
-                text: 'Quartz with 4” backsplash and beveled edge',
+                header: 'Countertops',
+                text: 'Quartz with 4″ backsplash and mitered edge',
                 options: [],
             },
             {
-                image: 'kitchen-appliances.png',
                 header: 'Appliances',
-                text: 'Stainless steel 36” fridge, 30” range, 24” dishwasher, over-the range microwave',
+                text: 'Stainless steel 30″ fridge, range, dishwasher, and over-range microwave',
                 options: [],
             },
             {
-                image: 'kitchen-sink.png',
-                header: 'Sink',
-                text: '33” stainless steel single cell undermount sink with garbage disposal',
+                header: 'Sink & faucet',
+                text: 'Undermount stainless steel sink with garbage disposal and Delta® Antony pulldown faucet',
                 options: [],
             },
             {
-                image: 'kitchen-faucet.png',
-                header: 'Faucet',
-                text: 'Single-handle faucet with pulldown sprayer',
-                options: ['Pewter', 'Black'],
-            },
-            {
-                image: 'kitchen-lighting.png',
                 header: 'Lighting',
-                text: '4″ LED recessed lights (2-4 per plan)',
-                options: [],
-            },
-        ],
-    },
-    {
-        title: 'Living Room',
-        features: [
-            {
-                image: 'hose-bib.png',
-                header: 'Ceilings',
-                text: 'Vaulted ceilings in great room and over kitchen where possible per plan',
-                options: [],
-            },
-            {
-                image: 'floors.png',
-                header: 'Flooring',
-                text: 'Luxury vinyl plank flooring throughout',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Interior doors',
-                text: 'Shaker-style passage doors throughout',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Door hardware',
-                text: 'Passage or privacy door lever sets, plus matching entry door handle sets with deadbolts',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Paint',
-                text: 'PPG paint colors',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Trimwork',
-                text: '1x2.5” straight profile door casing, baseboard 1x4” straight profile throughout',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Lighting',
-                text: '4″ LED recessed lights in main living space (2-4 per plan)',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Electrical',
-                text: 'Rocker-style light switches with matching style wall outlets every 12′, flat screen TV connections at living area & bedrooms, prewired data/internet lines (coax & CAT 6) to one central location/hub',
-                options: [],
-            },
-        ],
-    },
-    {
-        title: 'Bedroom',
-        features: [
-            {
-                image: 'hose-bib.png',
-                header: 'Ceilings',
-                text: '?',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Flooring',
-                text: 'Luxury vinyl plank flooring throughout',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Interior doors',
-                text: 'Shaker-style passage doors throughout',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Door hardware',
-                text: 'Passage or privacy door lever sets, plus matching entry door handle sets with deadbolts',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Paint',
-                text: 'PPG paint colors',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Trimwork',
-                text: '1x2.5” straight profile door casing, baseboard 1x4” straight profile throughout',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Lighting',
-                text: '4″ LED recessed lights in main living space (2-4 per plan), ceiling fans in bedrooms',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Electrical',
-                text: 'Rocker-style light switches with matching style wall outlets every 12′, flat screen TV connections at living area & bedrooms, prewired data/internet lines (coax & CAT 6) to one central location/hub',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Closets',
-                text: 'Mirrored closet doors in bedrooms with shelf and pole',
+                text: '4″ LED recessed lighting (4–8 per plan)',
                 options: [],
             },
         ],
@@ -156,120 +38,189 @@ export const ROOMS = [
         title: 'Bathroom',
         features: [
             {
-                image: 'hose-bib.png',
                 header: 'Shower',
-                text: '60” molded fiberglass stall shower or tub/shower with integrated shelves',
+                text: '60″ fiberglass pan or tub with subway-tile walls and Delta® Portwood trim',
                 options: [],
             },
             {
-                image: 'hose-bib.png',
-                header: 'Shower head',
-                text: 'Shower/tub single-handle faucet with pressure balance volume control',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
                 header: 'Vanity',
-                text: '30” wood construction with soft-close doors and square white undermount sink',
+                text: '30″ wood vanity, soft-close, with undermount sink and quartz top',
                 options: ['light', 'dark', 'blue', 'monochrome', 'olive'],
             },
             {
-                image: 'hose-bib.png',
-                header: 'Counter tops',
-                text: 'Quartz with 4” backsplash and beveled edge',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Sink faucet',
-                text: '4” widespread dual handle faucet',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Accessories',
-                text: 'Mirror above the sink, towel bar, towel ring, paper holder',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
-                header: 'Lighting',
-                text: '3-light fixture above mirror, quiet series ceiling exhaust fan with external venting',
-                options: [],
-            },
-            {
-                image: 'hose-bib.png',
                 header: 'Toilet',
-                text: 'Low-flow water-saving toilet',
+                text: 'Elongated low-flow, water-saving toilet',
+                options: [],
+            },
+            {
+                header: 'Accessories',
+                text: 'Mirror · towel bar · towel ring · paper holder · widespread faucet',
+                options: [],
+            },
+            {
+                header: 'Lighting',
+                text: '3-light vanity fixture · 2 recessed lights · Nutone® quiet exhaust fan',
                 options: [],
             },
         ],
     },
     {
-        title: 'Exterior features',
+        title: 'Interior',
         features: [
             {
-                image: 'feature-fpo.png',
-                header: 'Siding',
-                text: 'Stucco',
+                header: 'Ceilings',
+                text: 'Vaulted 8′–10′ ceilings in the great room · 8′ ceilings in bedrooms',
                 options: [],
             },
             {
-                image: 'roof-shingles.png',
-                header: 'Roofing',
-                text: '30 year asphalt shingles in standard colors',
+                header: 'Floors & doors',
+                text: 'Luxury vinyl plank throughout · shaker 6′8″ passage doors with lever sets',
                 options: [],
             },
             {
-                image: 'entry-door-with-windows.png',
-                header: 'Exterior doors',
-                text: '36” fiberglass insulated entry door with windows',
+                header: 'Paint & trim',
+                text: 'Dunn-Edwards SuperPaint® · 1×2.5″ casing · 1×4″ baseboard',
                 options: [],
             },
             {
-                image: 'hardboard-fascia.png',
-                header: 'Trimwork',
-                text: '8” hardboard fascia, 4” corner, and window trim',
+                header: 'Electrical',
+                text: 'Decora® dimmers · outlets every 12′ · prewired data hub (CAT 6 & coax)',
                 options: [],
             },
             {
-                image: 'exterior-light.png',
-                header: 'Lighting',
-                text: 'Exterior dawn-todusk light at door',
+                header: 'Closets',
+                text: 'Mirrored wardrobe doors with shelf and pole',
+                options: [],
+            },
+        ],
+    },
+    {
+        title: 'Exterior',
+        features: [
+            {
+                header: 'Siding & roof',
+                text: 'Stucco 16/20 · 30-year asphalt shingles · 8″ Windsor fascia',
                 options: [],
             },
             {
-                image: 'gfc-exterior-outlets.png',
-                header: 'Outlets',
-                text: '(2) exterior GFCI protected patio outlets',
+                header: 'Windows',
+                text: 'White vinyl dual-pane Low-E · Title 24 compliant · 2″ faux-wood blinds',
                 options: [],
             },
             {
-                image: 'hose-bib-clipped.png',
-                header: 'Hose bib',
+                header: 'Door',
+                text: '36″ Masonite® fiberglass entry door, prehung and primed',
+                options: [],
+            },
+            {
+                header: 'Electrical',
+                text: 'Dawn-to-dusk light · (2) GFCI patio outlets · EV charger prep',
+                options: [],
+            },
+            {
+                header: 'Plumbing',
                 text: '1 exterior hose bib',
                 options: [],
             },
         ],
     },
     {
-        title: 'Construction specifications',
+        title: 'Construction',
         features: [
             {
-                image: 'concrete-foundation.png',
-                header: 'Construction',
-                text: '<ul><li>Permanent slab-on-grade concrete foundation</li><li>Concrete entry stoop</li><li>2” x 4” exterior, plumbing and interior walls</li><li>5/8” fire rated drywall ceilings</li><li>R19 Insulated Walls</li><li>R30 Insulated roof</li><li>Drywall texture: light orange peel</li><li>CA Title 24 Energy Compliant</li><li>Photovoltaic System (included with detached 2bed+ units)</li></ul>',
+                header: 'Structure',
+                text: 'Wood-framed · slab-on-grade foundation · 2×4 walls · 5/8″ fire-rated drywall',
                 options: [],
             },
             {
-                image: 'mini-split.png',
-                header: 'Utilities',
-                text: '<ul><li>Energy-efficient 40 gallon water heater with enclosure (powered by electric heat pump)</li><li>Mini-Split Heating and HVAC system</li><li>PEX water lines with water shutoff valves at all sinks and toilets</li><li>External venting on all exhaust fans</li></ul>',
+                header: 'Insulation',
+                text: 'R15 walls + R30 roof · interior and exterior walls insulated',
+                options: [],
+            },
+            {
+                // Solar phrasing is rewritten per-floorplan by getInclusions().
+                header: 'Energy',
+                text: 'CA Title 24 compliant · PV solar system included on 2-bedroom plans and larger',
+                solar: true,
+                options: [],
+            },
+            {
+                header: 'Roof',
+                text: 'Gabled roof · 20″ front/rear overhang · 3×3 concrete patio stoop',
+                options: [],
+            },
+        ],
+    },
+    {
+        title: 'Systems & Utilities',
+        features: [
+            {
+                header: 'Water heater',
+                text: 'High-efficiency 50-gallon heat-pump water heater (3.24 EF) with enclosure',
+                options: [],
+            },
+            {
+                header: 'HVAC',
+                text: 'Mini-split system with flush cassettes · one head per bedroom · heating and cooling',
+                options: [],
+            },
+            {
+                header: 'Plumbing',
+                text: 'PEX water lines · shutoff valves at every fixture · external exhaust venting',
+                options: [],
+            },
+            {
+                header: 'Electrical',
+                text: '200A panel + 225 busbar · 100A ADU sub-panel · CAT 6 and coax',
                 options: [],
             },
         ],
     },
 ]
+
+// Returns the inclusion categories with the Construction → Energy line phrased
+// for a specific floorplan. PV solar is included on 2-bedroom plans and larger.
+export function getInclusions(solarIncluded) {
+    return ROOMS.map((room) => {
+        if (room.title !== 'Construction') return room
+        return {
+            ...room,
+            features: room.features.map((feature) =>
+                feature.solar
+                    ? {
+                          ...feature,
+                          text: solarIncluded
+                              ? 'CA Title 24 compliant · PV solar system — included'
+                              : 'CA Title 24 compliant · PV solar system available',
+                      }
+                    : feature
+            ),
+        }
+    })
+}
+
+// The city departments Backyard Estates coordinates and the fees included in
+// every all-in price (proposal: "We coordinate 11 departments + all city fees").
+export const SERVICES = {
+    departments: [
+        'Planning',
+        'Building',
+        'Engineering',
+        'Public Works',
+        'Waste',
+        'City / County Fire',
+        'Recorder',
+        'Water',
+        'Electric Provider',
+        'School Districts',
+        'CA ADU Law',
+    ],
+    fees: [
+        'Address, plan-check, and building fees — admin, inspection, sub-panel, fire',
+        'School fees · notarization · permit pull · plan-checker follow-up',
+        'Corrections review · state compliance · dedicated PM + superintendent',
+    ],
+}
 
 export const COLLECTIONS = [
     {
