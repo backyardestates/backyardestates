@@ -24,6 +24,7 @@ import { resolveBeds, resolveBaths, type AduType } from "@/lib/units/resolveUnit
 import { unitNameParts } from "@/lib/units/displayName";
 import { money, num } from "@/lib/investment/format";
 import { Stepper } from "../Stepper/Stepper";
+import { fileToDownscaledDataUrl } from "@/lib/admin/imageDownscale";
 import s from "./UnitsPanel.module.css";
 
 const EXTRA_BATH_PREMIUM = 10_000;
@@ -314,15 +315,12 @@ export function UnitsPanel({
 
     function readFileAsDataUrl(file: File) {
         if (!file.type.startsWith("image/")) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const result = ev.target?.result;
-            if (typeof result === "string") {
-                setCustomImageUrl(result);
-                setCustomImageSource(`Uploaded: ${file.name}`);
-            }
-        };
-        reader.readAsDataURL(file);
+        // Downscale before storing — a raw upload bloats the proposal snapshot
+        // past the server body limit.
+        void fileToDownscaledDataUrl(file).then((dataUrl) => {
+            setCustomImageUrl(dataUrl);
+            setCustomImageSource(`Uploaded: ${file.name}`);
+        });
     }
 
     function handleDrop(e: React.DragEvent<HTMLLabelElement>) {

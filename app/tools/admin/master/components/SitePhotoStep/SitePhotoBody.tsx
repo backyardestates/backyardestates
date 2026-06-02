@@ -10,6 +10,7 @@
 
 import React, { useRef, useState } from "react";
 import s from "./SitePhotoBody.module.css";
+import { fileToDownscaledDataUrl } from "@/lib/admin/imageDownscale";
 
 interface Props {
     propertyPhotoUrl: string | null;
@@ -22,16 +23,12 @@ export function SitePhotoBody({ propertyPhotoUrl, setPropertyPhotoUrl, address }
     const inputRef = useRef<HTMLInputElement>(null);
     const [dragOver, setDragOver] = useState(false);
 
-    // Read a File as a base64 data URL (not blob:) so the BroadcastChannel
-    // wire can ship it intact to the presenter tab / persisted snapshot.
+    // Read a File as a downscaled base64 data URL (not blob:) so the
+    // BroadcastChannel wire can ship it intact to the presenter tab / persisted
+    // snapshot. Downscaling keeps the snapshot under the server body limit.
     function readFile(file: File) {
         if (!file.type.startsWith("image/")) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const result = ev.target?.result;
-            if (typeof result === "string") setPropertyPhotoUrl(result);
-        };
-        reader.readAsDataURL(file);
+        void fileToDownscaledDataUrl(file).then(setPropertyPhotoUrl);
     }
 
     function handleInput(e: React.ChangeEvent<HTMLInputElement>) {

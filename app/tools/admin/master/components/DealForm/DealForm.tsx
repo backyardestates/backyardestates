@@ -4,6 +4,7 @@
 import React, { useRef } from "react";
 import type { Floorplan } from "@/lib/rentcast/types";
 import type { CustomerMotivation } from "@/lib/store/presentationStore";
+import { fileToDownscaledDataUrl } from "@/lib/admin/imageDownscale";
 import df from "./DealForm.module.css";
 
 type Motivation = NonNullable<CustomerMotivation>;
@@ -69,14 +70,10 @@ export function DealForm(props: {
     function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
         if (!file) return;
-        // Use FileReader to get a base64 data URL — blob: URLs are tab-scoped
-        // and cannot be transferred via BroadcastChannel to the presenter window.
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const result = ev.target?.result;
-            if (typeof result === "string") setPropertyPhotoUrl(result);
-        };
-        reader.readAsDataURL(file);
+        // Downscale to a base64 data URL — blob: URLs are tab-scoped and cannot
+        // be transferred via BroadcastChannel to the presenter window, and a
+        // raw photo would blow the snapshot past the server body limit.
+        void fileToDownscaledDataUrl(file).then(setPropertyPhotoUrl);
     }
 
     return (
