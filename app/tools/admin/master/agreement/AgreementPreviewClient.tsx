@@ -376,31 +376,49 @@ export function AgreementPreviewClient({
                 import("jspdf"),
             ]);
             const el = editorRef.current;
+            // scale:2 over a long agreement produces a multi-MB JPEG that pushes
+            // the upload past the server's 4.5 MB body limit (413). 1.5 stays
+            // crisp on letter-size print while roughly halving the pixel count.
             const canvas = await html2canvas(el, {
-                scale: 2,
+                scale: 1.5,
                 backgroundColor: "#ffffff",
                 useCORS: true,
             });
-            const pdf = new jsPDF({ unit: "pt", format: "letter" });
-            const pageW = pdf.internal.pageSize.getWidth();
-            const pageH = pdf.internal.pageSize.getHeight();
-            const margin = 36;
-            const imgW = pageW - margin * 2;
-            const imgH = (canvas.height * imgW) / canvas.width;
-            const imgData = canvas.toDataURL("image/jpeg", 0.92);
 
-            let heightLeft = imgH;
-            let position = margin;
-            pdf.addImage(imgData, "JPEG", margin, position, imgW, imgH, undefined, "FAST");
-            heightLeft -= pageH - margin * 2;
-            while (heightLeft > 0) {
-                position = margin - (imgH - heightLeft);
-                pdf.addPage();
+            // Build the paged PDF at a given JPEG quality. jsPDF caches the
+            // identical image across pages, so size is dominated by the single
+            // full-document JPEG — adaptively step quality down until the PDF
+            // fits a safe budget under the platform body limit.
+            const buildPdf = (quality: number): Blob => {
+                const pdf = new jsPDF({ unit: "pt", format: "letter" });
+                const pageW = pdf.internal.pageSize.getWidth();
+                const pageH = pdf.internal.pageSize.getHeight();
+                const margin = 36;
+                const imgW = pageW - margin * 2;
+                const imgH = (canvas.height * imgW) / canvas.width;
+                const imgData = canvas.toDataURL("image/jpeg", quality);
+
+                let heightLeft = imgH;
+                let position = margin;
                 pdf.addImage(imgData, "JPEG", margin, position, imgW, imgH, undefined, "FAST");
                 heightLeft -= pageH - margin * 2;
-            }
+                while (heightLeft > 0) {
+                    position = margin - (imgH - heightLeft);
+                    pdf.addPage();
+                    pdf.addImage(imgData, "JPEG", margin, position, imgW, imgH, undefined, "FAST");
+                    heightLeft -= pageH - margin * 2;
+                }
+                return pdf.output("blob");
+            };
 
-            const blob = pdf.output("blob");
+            // Keep the request comfortably under Vercel's ~4.5 MB body limit.
+            const MAX_PDF_BYTES = 3.5 * 1024 * 1024;
+            let quality = 0.85;
+            let blob = buildPdf(quality);
+            while (blob.size > MAX_PDF_BYTES && quality > 0.45) {
+                quality -= 0.15;
+                blob = buildPdf(quality);
+            }
             const lastName = data?.customerLastName || "Customer";
             const safeAddress =
                 (data?.propertyAddress ?? "")

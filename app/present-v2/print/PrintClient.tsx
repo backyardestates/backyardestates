@@ -255,15 +255,14 @@ export function PrintClient({
         try {
             setPhase({ state: "rendering", current: 0, total: SLIDES.length });
 
-            // 13.333in × 7.5in is exactly 16:9 — matches the slide aspect.
-            const pdf = new jsPDF({
-                orientation: "landscape",
-                unit: "in",
-                format: [13.333, 7.5],
-                compress: true,
-            });
             const pageW = 13.333;
             const pageH = 7.5;
+
+            // Capture every slide to a canvas first, then encode the PDF in a
+            // separate pass. This lets us adaptively step JPEG quality down to
+            // fit the upload budget without re-rasterizing (html2canvas is the
+            // expensive part; toDataURL re-encoding is cheap).
+            const canvases: HTMLCanvasElement[] = [];
 
             for (let i = 0; i < slides.length; i++) {
                 const el = slides[i];
@@ -301,8 +300,11 @@ export function PrintClient({
                 // height (including overflow) and then squash/clip into the
                 // requested size, which is what was chopping bottoms.
                 // eslint-disable-next-line no-await-in-loop
+                // scale:2 across ~10 slides yields a multi-MB PDF that exceeds
+                // the server's 4.5 MB body limit (413). 1.5 stays sharp on a
+                // 1920×1080 slide while cutting the pixel count by ~44%.
                 const canvas = await html2canvas(el, {
-                    scale: 2,
+                    scale: 1.5,
                     backgroundColor: null,    // use the slideFrame's bg (set above)
                     useCORS: true,
                     allowTaint: true,
@@ -310,18 +312,33 @@ export function PrintClient({
                     windowWidth: 1920,
                     windowHeight: 1080,
                 });
-
-                const imgData = canvas.toDataURL("image/jpeg", 0.92);
-                if (i > 0) pdf.addPage([pageW, pageH], "landscape");
-                // Use the canvas's actual aspect ratio to derive width. If
-                // the canvas came back slightly off-ratio for any reason we
-                // letterbox by width so nothing is cropped vertically.
-                const imgRatio = canvas.width / canvas.height;
-                const fitH = pageH;
-                const fitW = Math.min(pageW, fitH * imgRatio);
-                const offsetX = (pageW - fitW) / 2;
-                pdf.addImage(imgData, "JPEG", offsetX, 0, fitW, fitH, undefined, "FAST");
+                canvases.push(canvas);
             }
+
+            // 13.333in × 7.5in is exactly 16:9 — matches the slide aspect.
+            const buildDeckPdf = (quality: number) => {
+                const pdf = new jsPDF({
+                    orientation: "landscape",
+                    unit: "in",
+                    format: [13.333, 7.5],
+                    compress: true,
+                });
+                canvases.forEach((canvas, i) => {
+                    const imgData = canvas.toDataURL("image/jpeg", quality);
+                    if (i > 0) pdf.addPage([pageW, pageH], "landscape");
+                    // Use the canvas's actual aspect ratio to derive width. If
+                    // the canvas came back slightly off-ratio for any reason we
+                    // letterbox by width so nothing is cropped vertically.
+                    const imgRatio = canvas.width / canvas.height;
+                    const fitH = pageH;
+                    const fitW = Math.min(pageW, fitH * imgRatio);
+                    const offsetX = (pageW - fitW) / 2;
+                    pdf.addImage(imgData, "JPEG", offsetX, 0, fitW, fitH, undefined, "FAST");
+                });
+                return pdf;
+            };
+
+            const pdf = buildDeckPdf(0.9);
 
             const lastName = (customerName.trim().split(/\s+/).pop() ?? "Customer");
             const safeAddress = propertyAddress
@@ -336,7 +353,15 @@ export function PrintClient({
                     setPdSaveState("error");
                     setPdError("No proposal id — open from the proposal tool to save to Pipedrive.");
                 } else {
-                    const blob = pdf.output("blob");
+                    // Keep the upload comfortably under Vercel's ~4.5 MB body
+                    // limit; step quality down if the deck is still too big.
+                    const MAX_PDF_BYTES = 3.5 * 1024 * 1024;
+                    let quality = 0.9;
+                    let blob = pdf.output("blob");
+                    while (blob.size > MAX_PDF_BYTES && quality > 0.45) {
+                        quality -= 0.15;
+                        blob = buildDeckPdf(quality).output("blob");
+                    }
                     const fd = new FormData();
                     fd.append("file", new File([blob], filename, { type: "application/pdf" }));
                     const res = await fetch(`/api/proposals/${proposalId}/proposal-pdf`, {
