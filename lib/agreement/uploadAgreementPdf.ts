@@ -23,6 +23,25 @@ function cloudinaryConfigured(): boolean {
     return !!(CLOUD_NAME && API_KEY && API_SECRET);
 }
 
+/** Some Cloudinary vars set but not all — almost always a half-finished
+ *  deployment config. We surface this rather than silently falling back to
+ *  Sanity, because the fallback token may be read-only and the resulting
+ *  error ("permission 'create' required") gives no hint about the real cause. */
+function cloudinaryPartiallyConfigured(): boolean {
+    const present = [CLOUD_NAME, API_KEY, API_SECRET].filter(Boolean).length;
+    return present > 0 && present < 3;
+}
+
+function missingCloudinaryVars(): string {
+    return [
+        !CLOUD_NAME && "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME",
+        !API_KEY && "CLOUDINARY_API_KEY",
+        !API_SECRET && "CLOUDINARY_API_SECRET",
+    ]
+        .filter(Boolean)
+        .join(", ");
+}
+
 async function uploadToCloudinary(bytes: Buffer, proposalId: string, filename: string): Promise<string> {
     const timestamp = Math.floor(Date.now() / 1000);
     const publicId = `proposal-${proposalId}`;
@@ -69,6 +88,28 @@ export async function uploadAgreementPdf(
         const url = await uploadToCloudinary(bytes, opts.proposalId, opts.filename);
         return { url, provider: "cloudinary" };
     }
-    const url = await uploadToSanity(bytes, opts.filename);
-    return { url, provider: "sanity" };
+
+    // Half-configured Cloudinary → don't quietly fall through to Sanity; the
+    // intent was clearly to use Cloudinary. Point at the missing var(s).
+    if (cloudinaryPartiallyConfigured()) {
+        throw new Error(
+            `PDF storage misconfigured: Cloudinary is partially set up — missing ${missingCloudinaryVars()}. ` +
+                `Add the missing var(s) to use Cloudinary, or unset NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME to use the Sanity fallback.`,
+        );
+    }
+
+    // Cloudinary not configured at all → Sanity fallback (feasibility-PDF path).
+    try {
+        const url = await uploadToSanity(bytes, opts.filename);
+        return { url, provider: "sanity" };
+    } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (/permission|insufficient/i.test(msg)) {
+            throw new Error(
+                `PDF storage failed: the Sanity write token lacks create permission, and Cloudinary isn't configured. ` +
+                    `Set CLOUDINARY_API_KEY + CLOUDINARY_API_SECRET, or use a Sanity token with Editor/write access. (${msg})`,
+            );
+        }
+        throw err;
+    }
 }

@@ -120,6 +120,10 @@
 }
 
 .saveBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
     height: 30px;
     padding: 0 14px;
     border-radius: 999px;
@@ -149,6 +153,27 @@
     background: rgba(42, 122, 82, 0.22);
     border-color: rgba(42, 122, 82, 0.55);
     color: #b3e3c5;
+}
+
+.saveBtnError {
+    background: rgba(217, 119, 119, 0.18);
+    border-color: rgba(217, 119, 119, 0.55);
+    color: #f0b4b4;
+}
+
+/* In-button loading spinner shown while a save round-trip is in flight. */
+.spinner {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(230, 201, 138, 0.35);
+    border-top-color: #e6c98a;
+    animation: saveSpin 0.6s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes saveSpin {
+    to { transform: rotate(360deg); }
 }
 
 .draftStatus {

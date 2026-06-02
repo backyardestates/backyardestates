@@ -293,7 +293,11 @@ export default function AdminMasterClient({
 
     // ── Save / Saved Proposals ────────────────────────────────────────────────
     const [savedModalOpen, setSavedModalOpen] = useState(false);
-    const [justSaved, setJustSaved] = useState(false);
+    // Explicit-save lifecycle for the header Save button. "saving" shows a
+    // spinner while the server round-trip is in flight (DB upsert + materialize)
+    // so the button never looks frozen; "saved"/"error" auto-revert to idle.
+    const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+    const saveResetRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
     type DraftStatus =
         | { state: "idle"; message?: string }
@@ -1131,6 +1135,10 @@ export default function AdminMasterClient({
             );
             if (!ok) return;
         }
+        // Flip the button to "Saving…" immediately so the (potentially slow)
+        // server round-trip gives instant feedback instead of looking frozen.
+        if (saveResetRef.current) clearTimeout(saveResetRef.current);
+        setSaveStatus("saving");
         try {
             const snap = buildSnapshot();
             // Await server persistence so a quota error or network blip
@@ -1144,8 +1152,8 @@ export default function AdminMasterClient({
             // Block the pending autosave (and any future one) from re-creating
             // an identical draft until the user actually edits something.
             lastDraftFpRef.current = snapshotFingerprint(snap);
-            setJustSaved(true);
-            setTimeout(() => setJustSaved(false), 1800);
+            setSaveStatus("saved");
+            saveResetRef.current = setTimeout(() => setSaveStatus("idle"), 1800);
 
             // Pipedrive: if this proposal is linked to a person or deal,
             // post a "proposal saved" note back to the CRM with a deep link
@@ -1218,6 +1226,8 @@ export default function AdminMasterClient({
                 }
             }
         } catch (err) {
+            setSaveStatus("error");
+            saveResetRef.current = setTimeout(() => setSaveStatus("idle"), 5000);
             window.alert(
                 `Failed to save proposal: ${err instanceof Error ? err.message : String(err)}`
             );
@@ -1988,7 +1998,7 @@ export default function AdminMasterClient({
                 saveDisabled={normalizeAddress(address).length === 0}
                 exportDisabled={normalizeAddress(address).length === 0}
                 agreementDisabled={normalizeAddress(address).length === 0 || !proposalPaymentSchedule}
-                justSaved={justSaved}
+                saveStatus={saveStatus}
                 draftStatus={draftStatus}
             />
             <SavedProposals

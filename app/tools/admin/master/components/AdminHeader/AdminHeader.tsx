@@ -24,8 +24,9 @@ interface AdminHeaderProps {
     saveDisabled?: boolean;
     exportDisabled?: boolean;
     agreementDisabled?: boolean;
-    /** Briefly switches the Save button to a "Saved ✓" affordance. */
-    justSaved?: boolean;
+    /** Drives the Save button affordance: spinner while saving, then a brief
+     *  "Saved ✓" / "Save failed" confirmation before reverting to "Save". */
+    saveStatus?: "idle" | "saving" | "saved" | "error";
     draftStatus?: DraftStatus;
 }
 
@@ -92,7 +93,7 @@ export function AdminHeader({
     saveDisabled = false,
     exportDisabled = false,
     agreementDisabled = false,
-    justSaved = false,
+    saveStatus = "idle",
     draftStatus,
 }: AdminHeaderProps) {
     const [open, setOpen] = useState(false);
@@ -174,12 +175,30 @@ export function AdminHeader({
                 {onSave && (
                     <button
                         type="button"
-                        className={`${styles.saveBtn} ${justSaved ? styles.saveBtnSaved : ""}`}
+                        className={`${styles.saveBtn} ${
+                            saveStatus === "saved" ? styles.saveBtnSaved : ""
+                        } ${saveStatus === "error" ? styles.saveBtnError : ""}`}
                         onClick={onSave}
-                        disabled={saveDisabled}
-                        title={saveDisabled ? "Enter an address to save" : "Save proposal to this browser"}
+                        disabled={saveDisabled || saveStatus === "saving"}
+                        aria-busy={saveStatus === "saving"}
+                        title={
+                            saveDisabled
+                                ? "Enter an address to save"
+                                : saveStatus === "error"
+                                  ? "Save failed — click to retry"
+                                  : "Save proposal"
+                        }
                     >
-                        {justSaved ? "Saved ✓" : "Save"}
+                        {saveStatus === "saving" && (
+                            <span className={styles.spinner} aria-hidden="true" />
+                        )}
+                        {saveStatus === "saving"
+                            ? "Saving…"
+                            : saveStatus === "saved"
+                              ? "Saved ✓"
+                              : saveStatus === "error"
+                                ? "Save failed — retry"
+                                : "Save"}
                     </button>
                 )}
                 {onExportPdf && (
