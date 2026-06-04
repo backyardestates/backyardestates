@@ -722,3 +722,39 @@
     flex-direction: column;
     gap: 16px;
 }
+
+/* ── Autosave failure banner ─────────────────────────────────────────────── */
+
+.autosaveErrorBanner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 10px 16px 0;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #fdecec;
+    border: 1px solid #e8b4b4;
+    color: #8c2f2f;
+    font-size: 13px;
+}
+
+.autosaveErrorDetail {
+    color: #a35050;
+}
+
+.autosaveErrorRetry {
+    margin-left: auto;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid #c96a6a;
+    background: #fff;
+    color: #8c2f2f;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.autosaveErrorRetry:hover {
+    background: #fbe0e0;
+}

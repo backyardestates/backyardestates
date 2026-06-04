@@ -56,6 +56,11 @@ export interface ProposalSnapshot {
     defaults: Defaults;
     estimatorByAduId: Record<string, EstimatorState>;
     rentByAduId: Record<string, string>;
+    /** Rep override for the MAIN HOUSE monthly rent shown on the "ADU vs
+     *  buying a house" slide. Empty/absent = use the automatic estimate
+     *  (Zillow rentZestimate → median-scaled fallback). Optional for
+     *  back-compat with older snapshots. */
+    houseRentOverride?: string;
     baseCostByAduId: Record<string, string>;
     sqftByAduId: Record<string, string>;
     discountAmountByAduId: Record<string, number>;
@@ -230,12 +235,31 @@ export function hasProposal(addressKey: string): boolean {
     return getProposal(addressKey) !== null;
 }
 
+/** Thrown by saveProposal when someone else saved a newer canonical since
+ *  this editor loaded — the caller decides whether to overwrite (force) or
+ *  back off and load the latest. */
+export class ProposalConflictError extends Error {
+    conflict: { savedBy: string | null; savedAt: string };
+    constructor(conflict: { savedBy: string | null; savedAt: string }) {
+        super("A newer version of this proposal was saved by someone else.");
+        this.name = "ProposalConflictError";
+        this.conflict = conflict;
+    }
+}
+
 /** Save a proposal. The DB is the source of truth — the server upsert kicks
  *  off first so a localStorage quota error can never prevent persistence.
  *  Returns the awaitable server promise so callers can show "saving… → saved"
- *  based on server reality. The LS write is best-effort + quota-safe. */
-export function saveProposal(snapshot: ProposalSnapshot): Promise<{ id?: string }> {
-    const serverPromise = serverUpsertProposal(snapshot, "SAVED");
+ *  based on server reality. The LS write is best-effort + quota-safe.
+ *
+ *  `baseSavedAt` = the canonical's savedAt at load time. The server rejects
+ *  with 409 (→ ProposalConflictError) when the canonical moved past it,
+ *  unless `force` is set. */
+export function saveProposal(
+    snapshot: ProposalSnapshot,
+    opts?: { baseSavedAt?: string | null; force?: boolean }
+): Promise<{ id?: string; savedAt?: string }> {
+    const serverPromise = serverUpsertProposal(snapshot, "SAVED", null, opts);
     const store = readStore(PROPOSALS_STORAGE_KEY);
     store[snapshot.addressKey] = snapshot;
     writeStore(PROPOSALS_STORAGE_KEY, store);
@@ -265,9 +289,16 @@ export function hasDraft(addressKey: string): boolean {
 }
 
 /** Same shape as saveProposal — server-first, LS-best-effort. Returns the
- *  server promise so the autosave UI can show real persistence status. */
-export function saveDraft(snapshot: ProposalSnapshot): Promise<{ id?: string }> {
-    const serverPromise = serverUpsertProposal(snapshot, "DRAFT");
+ *  server promise so the autosave UI can show real persistence status.
+ *
+ *  `draftId` pins the server row: when present, the server updates that draft
+ *  BY ID (the address can change freely without forking a second draft).
+ *  Callers should store the returned id and pass it on every subsequent save. */
+export function saveDraft(
+    snapshot: ProposalSnapshot,
+    opts?: { draftId?: string | null }
+): Promise<{ id?: string }> {
+    const serverPromise = serverUpsertProposal(snapshot, "DRAFT", opts?.draftId ?? null);
     const store = readStore(DRAFTS_STORAGE_KEY);
     store[snapshot.addressKey] = snapshot;
     writeStore(DRAFTS_STORAGE_KEY, store);
@@ -280,6 +311,33 @@ export function deleteDraft(addressKey: string): Promise<void> {
     delete store[addressKey];
     writeStore(DRAFTS_STORAGE_KEY, store);
     return serverPromise;
+}
+
+/**
+ * Fire-and-forget draft save for tab close / tab hide. `keepalive: true` lets
+ * the browser finish the request after the page unloads (the regular debounced
+ * autosave is simply dropped in that case — this was a real data-loss path).
+ *
+ * Note: browsers cap keepalive bodies around 64KB; an oversized snapshot may
+ * be rejected, but the localStorage mirror below always captures it locally
+ * and the next regular autosave will sync it.
+ */
+export function saveDraftKeepalive(snapshot: ProposalSnapshot, draftId?: string | null): void {
+    if (typeof window === "undefined") return;
+    try {
+        const draftParam = draftId ? `&draftId=${encodeURIComponent(draftId)}` : "";
+        void fetch(`/api/admin/proposals?status=DRAFT${draftParam}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(snapshot),
+            keepalive: true,
+        }).catch(() => {});
+    } catch {
+        /* never block unload */
+    }
+    const store = readStore(DRAFTS_STORAGE_KEY);
+    store[snapshot.addressKey] = snapshot;
+    writeStore(DRAFTS_STORAGE_KEY, store);
 }
 
 // ── Companion-key (panel-owned) localStorage helpers ─────────────────────────
@@ -320,25 +378,39 @@ type ServerStatus = "SAVED" | "DRAFT";
 
 async function serverUpsertProposal(
     snapshot: ProposalSnapshot,
-    status: ServerStatus
-): Promise<{ id?: string }> {
+    status: ServerStatus,
+    draftId?: string | null,
+    opts?: { baseSavedAt?: string | null; force?: boolean }
+): Promise<{ id?: string; savedAt?: string }> {
     if (typeof window === "undefined") return {};
     // Throws on network errors AND on non-2xx server responses so callers
     // can surface "saving… → saved/error". Callers that don't care can
     // .catch() the promise — see `void saveDraft(snap).catch(...)` callsites.
-    const res = await fetch(`/api/admin/proposals?status=${status}`, {
+    const params = new URLSearchParams({ status });
+    if (draftId) params.set("draftId", draftId);
+    if (opts?.baseSavedAt) params.set("baseSavedAt", opts.baseSavedAt);
+    if (opts?.force) params.set("force", "1");
+    const res = await fetch(`/api/admin/proposals?${params.toString()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(snapshot),
     });
+    if (res.status === 409) {
+        const data = (await res.json().catch(() => ({}))) as {
+            conflict?: { savedBy: string | null; savedAt: string };
+        };
+        throw new ProposalConflictError(
+            data.conflict ?? { savedBy: null, savedAt: new Date().toISOString() }
+        );
+    }
     if (!res.ok) {
         const text = await res.text().catch(() => "");
         throw new Error(`Server save failed (${res.status})${text ? `: ${text}` : ""}`);
     }
     // Surface the saved proposal id so callers (e.g. the REVIEWED save) can
     // attach presenter payloads for by-id rendering. Best-effort parse.
-    const data = (await res.json().catch(() => ({}))) as { id?: string };
-    return { id: data.id };
+    const data = (await res.json().catch(() => ({}))) as { id?: string; savedAt?: string };
+    return { id: data.id, savedAt: data.savedAt };
 }
 
 async function serverDeleteProposal(
@@ -357,73 +429,35 @@ async function serverDeleteProposal(
 }
 
 /**
- * One-shot sync: pull the user's proposals + drafts from the server and merge
- * into localStorage. Server entries win on conflict (treated as the source of
- * truth). Call once on admin-tool mount so a new device sees existing work.
+ * Fetch the server-side proposal index (metadata only — no snapshot blobs).
+ * The DB is the source of truth; this powers the Saved & Drafts picker. Full
+ * snapshots load one-at-a-time when a proposal is actually opened.
+ *
+ * (This replaces the old `syncFromServer`, which pulled EVERY snapshot blob
+ * in the org into localStorage and then re-uploaded the local cache — a
+ * multi-MB pull plus ~20 sequential heavy writes on every admin-tool mount.
+ * That traffic was the root cause of production 504s on proposal load.)
  */
-export async function syncFromServer(): Promise<{
-    pulledProposals: number;
-    pulledDrafts: number;
-    pushedProposals: number;
-    pushedDrafts: number;
-}> {
-    if (typeof window === "undefined") {
-        return { pulledProposals: 0, pulledDrafts: 0, pushedProposals: 0, pushedDrafts: 0 };
-    }
+export async function fetchProposalIndex(
+    status: ServerStatus
+): Promise<ProposalIndexEntry[]> {
+    if (typeof window === "undefined") return [];
+    const res = await fetch(`/api/admin/proposals?status=${status}`);
+    if (!res.ok) throw new Error(`Index fetch failed (${res.status})`);
+    const data = (await res.json()) as { proposals: ProposalIndexEntry[] };
+    return (data.proposals ?? []).filter((e) => !!e?.addressKey);
+}
 
-    let pulledProposals = 0;
-    let pulledDrafts = 0;
-    let pushedProposals = 0;
-    let pushedDrafts = 0;
-
-    // ── Pull: fetch server proposals, merge into localStorage ────────────────
-    try {
-        const [proposalsRes, draftsRes] = await Promise.all([
-            fetch("/api/admin/proposals?status=SAVED"),
-            fetch("/api/admin/proposals?status=DRAFT"),
-        ]);
-
-        if (proposalsRes.ok) {
-            const data = (await proposalsRes.json()) as { proposals: ProposalSnapshot[] };
-            const store = readStore(PROPOSALS_STORAGE_KEY);
-            for (const snap of data.proposals ?? []) {
-                if (!snap?.addressKey) continue;
-                store[snap.addressKey] = snap;
-                pulledProposals += 1;
-            }
-            writeStore(PROPOSALS_STORAGE_KEY, store);
-        }
-
-        if (draftsRes.ok) {
-            const data = (await draftsRes.json()) as { proposals: ProposalSnapshot[] };
-            const store = readStore(DRAFTS_STORAGE_KEY);
-            for (const snap of data.proposals ?? []) {
-                if (!snap?.addressKey) continue;
-                store[snap.addressKey] = snap;
-                pulledDrafts += 1;
-            }
-            writeStore(DRAFTS_STORAGE_KEY, store);
-        }
-    } catch (err) {
-        console.warn("[proposalSnapshot] pull failed", err);
-    }
-
-    // ── Push: any localStorage entries that the server didn't have come up ───
-    // This is the migration path for existing offline-only proposals.
-    try {
-        const localProposals = Object.values(readStore(PROPOSALS_STORAGE_KEY));
-        for (const snap of localProposals) {
-            await serverUpsertProposal(snap, "SAVED");
-            pushedProposals += 1;
-        }
-        const localDrafts = Object.values(readStore(DRAFTS_STORAGE_KEY));
-        for (const snap of localDrafts) {
-            await serverUpsertProposal(snap, "DRAFT");
-            pushedDrafts += 1;
-        }
-    } catch (err) {
-        console.warn("[proposalSnapshot] push failed", err);
-    }
-
-    return { pulledProposals, pulledDrafts, pushedProposals, pushedDrafts };
+/** Fetch the caller's own server draft for an address (full snapshot). Used
+ *  by the picker's "Save as Proposal" when the draft isn't in the LS cache. */
+export async function fetchDraftFromServer(
+    addressKey: string
+): Promise<ProposalSnapshot | null> {
+    if (typeof window === "undefined") return null;
+    const res = await fetch(
+        `/api/admin/proposals/${encodeURIComponent(addressKey)}?status=DRAFT`
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as { proposal: ProposalSnapshot | null };
+    return data.proposal ?? null;
 }

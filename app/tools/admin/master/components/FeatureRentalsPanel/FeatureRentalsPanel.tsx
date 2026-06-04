@@ -74,7 +74,44 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
     const [fetchState, setFetchState] = useState<Record<string, FetchState>>({});
     const [manualUrls, setManualUrls] = useState<ManualUrlState>({});
 
-    async function fetchFromZillow(idx: number, zillowUrl?: string) {
+    // Latest props via refs so async photo uploads can update by KEY after
+    // awaits without clobbering concurrent edits to other rows.
+    const selectedRef = React.useRef(selected);
+    selectedRef.current = selected;
+    const onChangeRef = React.useRef(onChange);
+    onChangeRef.current = onChange;
+
+    function setImageUrlByKey(key: string, imageUrl: string) {
+        const cur = selectedRef.current;
+        const idx = cur.findIndex((r) => rentalKey(r) === key);
+        if (idx === -1) return;
+        const copy = [...cur];
+        copy[idx] = { ...copy[idx], imageUrl: imageUrl || undefined };
+        onChangeRef.current(copy);
+    }
+
+    // Re-host a picked photo on Cloudinary so it survives Zillow's CDN URLs
+    // expiring (saved proposals reopened weeks later had broken photos).
+    // Falls back to the raw URL if the upload fails — same behavior as before.
+    async function persistImage(key: string, rawUrl: string) {
+        setImageUrlByKey(key, rawUrl); // show immediately
+        if (!/^https?:\/\//i.test(rawUrl) || rawUrl.includes("res.cloudinary.com")) return;
+        try {
+            const res = await fetch("/api/admin/rental-photo", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: rawUrl }),
+            });
+            const data = (await res.json().catch(() => ({}))) as { url?: string };
+            if (res.ok && data.url && data.url !== rawUrl) {
+                setImageUrlByKey(key, data.url);
+            }
+        } catch {
+            /* keep the raw URL — proxiedImage still renders it while it lives */
+        }
+    }
+
+    async function fetchFromZillow(idx: number, zillowUrl?: string, opts?: { replaceImage?: boolean }) {
         const r = selected[idx];
         if (!r) return;
         if (!r.formattedAddress && !zillowUrl) return;
@@ -116,9 +153,11 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
                         : undefined,
                 },
             }));
-            // Auto-pick the first image if none chosen yet
-            if (images.length > 0 && !r.imageUrl) {
-                setImageUrl(idx, images[0]);
+            // Auto-pick the first image if none chosen yet (or when replacing a
+            // dead legacy URL after an onError self-heal). Persisted via
+            // Cloudinary so the photo survives Zillow CDN expiry.
+            if (images.length > 0 && (!r.imageUrl || opts?.replaceImage)) {
+                void persistImage(key, images[0]);
             }
         } catch (err) {
             setFetchState((prev) => ({
@@ -301,6 +340,13 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
                                                     const img = e.currentTarget as HTMLImageElement;
                                                     if (img.src.endsWith("/images/rental-placeholder.svg")) return;
                                                     img.src = "/images/rental-placeholder.svg";
+                                                    // Legacy snapshots stored raw Zillow CDN URLs that
+                                                    // expire — self-heal by refetching fresh photos and
+                                                    // re-hosting the pick on Cloudinary.
+                                                    const key = rentalKey(r);
+                                                    if (r.imageUrl && r.formattedAddress && !fetchState[key]) {
+                                                        void fetchFromZillow(i, undefined, { replaceImage: true });
+                                                    }
                                                 }}
                                             />
                                             {fetchState[rentalKey(r)]?.loading && (
@@ -333,6 +379,12 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
                                                 placeholder="Paste image URL (e.g. from Zillow)"
                                                 value={r.imageUrl ?? ""}
                                                 onChange={(e) => setImageUrl(i, e.target.value)}
+                                                onBlur={(e) => {
+                                                    // Re-host pasted URLs on Cloudinary once the rep
+                                                    // is done typing (not per keystroke).
+                                                    const v = e.target.value.trim();
+                                                    if (v) void persistImage(rentalKey(r), v);
+                                                }}
                                             />
                                             <input
                                                 type="url"
@@ -410,7 +462,7 @@ export function FeatureRentalsPanel({ rentals, selected, onChange, maxSelected =
                                                         key={thumb}
                                                         type="button"
                                                         className={`${s.thumbBtn} ${r.imageUrl === thumb ? s.thumbBtnActive : ""}`}
-                                                        onClick={() => setImageUrl(i, thumb)}
+                                                        onClick={() => void persistImage(rentalKey(r), thumb)}
                                                         title="Use this photo"
                                                     >
                                                         {/* eslint-disable-next-line @next/next/no-img-element */}

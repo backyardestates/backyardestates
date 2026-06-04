@@ -99,17 +99,19 @@ import {
     hasProposal,
     saveProposal,
     saveDraft,
+    saveDraftKeepalive,
     deleteDraft,
+    ProposalConflictError,
     normalizeAddress,
     captureCompanionStorage,
     restoreCompanionStorage,
     companionStorageFingerprint,
-    syncFromServer,
     type ProposalSnapshot,
     PROPOSAL_SCHEMA_VERSION,
 } from "@/lib/proposalSnapshot";
 import { scopedCompanionKey, readCompanion, writeCompanion, getCompanionScope } from "@/lib/admin/companionKeys";
 import { SavedProposals } from "../components/SavedProposals/SavedProposals";
+import { ProposalHistory } from "../components/ProposalHistory/ProposalHistory";
 import { buildAgreementData } from "@/lib/agreement/buildAgreementData";
 import { useRentcastData } from "@/hooks/rentcast/useRentcastData";
 import { useAduModel } from "@/hooks/investment/useAduModel";
@@ -293,6 +295,7 @@ export default function AdminMasterClient({
 
     // ── Save / Saved Proposals ────────────────────────────────────────────────
     const [savedModalOpen, setSavedModalOpen] = useState(false);
+    const [historyModalOpen, setHistoryModalOpen] = useState(false);
     // Explicit-save lifecycle for the header Save button. "saving" shows a
     // spinner while the server round-trip is in flight (DB upsert + materialize)
     // so the button never looks frozen; "saved"/"error" auto-revert to idle.
@@ -338,8 +341,8 @@ export default function AdminMasterClient({
     // refreshed on save. `currentView` tracks which snapshot is currently
     // *applied* to the form state.
     type LoadedBundle = {
-        reviewed: { snapshot: ProposalSnapshot; ownedBy: { id: string; email: string | null }; savedAt: string } | null;
-        myDraft: { snapshot: ProposalSnapshot; savedAt: string } | null;
+        reviewed: { id: string; snapshot: ProposalSnapshot; ownedBy: { id: string; email: string | null }; savedAt: string } | null;
+        myDraft: { id: string; snapshot: ProposalSnapshot; savedAt: string } | null;
         otherDrafts: Array<{ userId: string; email: string | null; savedAt: string }>;
     };
     type CurrentView =
@@ -351,21 +354,29 @@ export default function AdminMasterClient({
     const [currentView, setCurrentView] = useState<CurrentView>(null);
     const [diffOpen, setDiffOpen] = useState(false);
 
+    // Server id of MY draft row for the open proposal. Pinning the id means
+    // autosaves update one row in place even while the address is being typed
+    // — previously each new normalized address prefix forked a fresh draft
+    // ("10 drafts per proposal" bug). Seeded from the load bundle; set from
+    // the first autosave's response; cleared on Save (draft promoted) / New.
+    const draftIdRef = React.useRef<string | null>(null);
+
+    // Canonical updatedAt this editor is based on — sent with REVIEWED saves
+    // so the server can 409 when a colleague saved a newer version meanwhile
+    // (the client then asks before overwriting). Seeded from the load bundle;
+    // refreshed from each successful save's response.
+    const baseReviewedSavedAtRef = React.useRef<string | null>(null);
+
     useEffect(() => {
         setFloorplans(initialFloorplans);
         setFloorplanId((prev) => prev || initialFloorplans?.[0]?._id || "");
     }, [initialFloorplans]);
 
-    // ── One-shot sync with server on mount ──────────────────────────────────
-    // Pulls any proposals/drafts saved on other devices into localStorage and
-    // pushes any local-only entries up to the server. Runs once per admin
-    // session; fails silently so the tool still works fully offline.
-    const didSyncRef = React.useRef(false);
-    useEffect(() => {
-        if (didSyncRef.current) return;
-        didSyncRef.current = true;
-        void syncFromServer();
-    }, []);
+    // NOTE: the old mount-time `syncFromServer()` is gone on purpose. It pulled
+    // every org snapshot blob and re-uploaded the localStorage cache on every
+    // mount — saturating the DB while the ?address= load below was in flight
+    // (the production 504s). The Saved & Drafts picker now fetches a lightweight
+    // server index on open, and loads hit the by-address API directly.
 
     // ── Auto-populate Step 11 timeline from the city catalog ────────────────
     // When the address contains a city we have data for, seed `projectTimeline`
@@ -900,6 +911,7 @@ export default function AdminMasterClient({
             defaults: adu.defaults,
             estimatorByAduId: adu.estimatorByAduId,
             rentByAduId: adu.rentByAduId,
+            houseRentOverride: adu.houseRentOverride,
             baseCostByAduId: adu.baseCostByAduId,
             sqftByAduId: adu.sqftByAduId,
             discountAmountByAduId: adu.discountAmountByAduId,
@@ -968,6 +980,7 @@ export default function AdminMasterClient({
         adu.setDefaults(snap.defaults);
         adu.setEstimatorByAduId(snap.estimatorByAduId ?? {});
         adu.setRentByAduId(snap.rentByAduId ?? {});
+        adu.setHouseRentOverride(snap.houseRentOverride ?? "");
         adu.setBaseCostByAduId(snap.baseCostByAduId ?? {});
         adu.setSqftByAduId(snap.sqftByAduId ?? {});
         adu.setDiscountAmountByAduId(snap.discountAmountByAduId ?? {});
@@ -1096,8 +1109,26 @@ export default function AdminMasterClient({
             let proposalId: string | undefined;
             try {
                 const snap = buildSnapshotRef.current();
-                const saved = await saveProposal(snap);
+                let saved: { id?: string; savedAt?: string };
+                try {
+                    saved = await saveProposal(snap, {
+                        baseSavedAt: baseReviewedSavedAtRef.current,
+                    });
+                } catch (err) {
+                    if (err instanceof ProposalConflictError) {
+                        const who = err.conflict.savedBy || "Another user";
+                        const overwrite = window.confirm(
+                            `${who} saved a newer version of this proposal (${new Date(err.conflict.savedAt).toLocaleString()}).\n\n` +
+                                `OK = overwrite with YOUR version and open the agreement.\nCancel = stop here.`,
+                        );
+                        if (!overwrite) return;
+                        saved = await saveProposal(snap, { force: true });
+                    } else {
+                        throw err;
+                    }
+                }
                 proposalId = saved?.id;
+                if (saved?.savedAt) baseReviewedSavedAtRef.current = saved.savedAt;
                 lastDraftFpRef.current = snapshotFingerprint(snap);
                 if (proposalId) {
                     await fetch(`/api/proposals/${proposalId}/agreement`, {
@@ -1144,11 +1175,40 @@ export default function AdminMasterClient({
             // Await server persistence so a quota error or network blip
             // surfaces as an alert instead of a silent loss. The LS mirror
             // is best-effort and won't throw.
-            const saved = await saveProposal(snap);
+            let saved: { id?: string; savedAt?: string };
+            try {
+                saved = await saveProposal(snap, {
+                    baseSavedAt: baseReviewedSavedAtRef.current,
+                });
+            } catch (err) {
+                if (err instanceof ProposalConflictError) {
+                    // Someone saved a newer canonical while this was being
+                    // edited. Ask before overwriting — their version stays
+                    // recoverable from History either way.
+                    const who = err.conflict.savedBy || "Another user";
+                    const when = new Date(err.conflict.savedAt).toLocaleString();
+                    const overwrite = window.confirm(
+                        `${who} saved a newer version of this proposal (${when}).\n\n` +
+                            `OK = overwrite with YOUR version (theirs stays in History).\n` +
+                            `Cancel = keep theirs — reload the page to see it.`,
+                    );
+                    if (!overwrite) {
+                        setSaveStatus("idle");
+                        return;
+                    }
+                    saved = await saveProposal(snap, { force: true });
+                } else {
+                    throw err;
+                }
+            }
+            if (saved.savedAt) baseReviewedSavedAtRef.current = saved.savedAt;
             // The draft for this address has been promoted to a proposal —
             // remove it so the dashboard doesn't show a duplicate entry.
             // Fire-and-forget; the user doesn't need to wait.
             void deleteDraft(key);
+            // The pinned draft row is gone (promotion deletes it server-side);
+            // the next autosave starts a fresh draft for any post-save edits.
+            draftIdRef.current = null;
             // Block the pending autosave (and any future one) from re-creating
             // an identical draft until the user actually edits something.
             lastDraftFpRef.current = snapshotFingerprint(snap);
@@ -1435,11 +1495,10 @@ export default function AdminMasterClient({
 
     // ── Load proposal from `?proposalId=` or `?address=` URL param ───────────
     // Dashboards link "Open →" to /tools/admin/master?address=<key>. We hit
-    // the proposal API directly rather than waiting on the bulk
-    // `syncFromServer()` pull to finish (which races against this mount
-    // effect and would leave the form empty). Falls back to localStorage if
-    // the API is unreachable (offline / dev outage). One-shot via a ref so
-    // React StrictMode's double-invoke doesn't reload twice.
+    // the by-address proposal API directly (single snapshot, no bulk sync).
+    // Falls back to localStorage if the API is unreachable (offline / dev
+    // outage). One-shot via a ref so React StrictMode's double-invoke doesn't
+    // reload twice.
     const initialUrlLoadRef = React.useRef(false);
     // Gates the debounced autosave until the initial URL-driven load has applied
     // (or been determined to be a blank/new proposal). Prevents the first
@@ -1589,6 +1648,17 @@ export default function AdminMasterClient({
                 }
             }
 
+            // Whatever view ends up applied, pin MY draft's server id so the
+            // autosave updates that row in place instead of forking by address.
+            if (bundle?.myDraft?.id) {
+                draftIdRef.current = bundle.myDraft.id;
+            }
+            // …and the canonical timestamp this session is based on, for the
+            // save-time conflict check.
+            if (bundle?.reviewed?.savedAt) {
+                baseReviewedSavedAtRef.current = bundle.reviewed.savedAt;
+            }
+
             if (!snap && bundle?.myDraft) {
                 snap = bundle.myDraft.snapshot;
                 appliedView = { kind: "my-draft", savedAt: bundle.myDraft.savedAt };
@@ -1660,7 +1730,7 @@ export default function AdminMasterClient({
         const snap = buildSnapshotRef.current();
         if (snapshotFingerprint(snap) === lastDraftFpRef.current) return; // nothing new
         try {
-            await saveDraft(snap);
+            await saveDraft(snap, { draftId: draftIdRef.current });
         } catch {
             /* best-effort; the localStorage mirror inside saveDraft already holds it */
         }
@@ -1692,9 +1762,23 @@ export default function AdminMasterClient({
         }
         try {
             const snap = buildSnapshotRef.current();
-            const { id } = await saveDraft(snap);
-            // Block the pending autosave from re-saving identical content.
-            lastDraftFpRef.current = snapshotFingerprint(snap);
+            const fp = snapshotFingerprint(snap);
+
+            // Skip the redundant draft save when nothing changed since the last
+            // save — exporting twice in a row used to re-POST the full snapshot
+            // every time. Reuse the pinned draft id (or the canonical's id when
+            // viewing a saved proposal untouched).
+            let id: string | undefined;
+            if (fp === lastDraftFpRef.current) {
+                id = draftIdRef.current ?? loadedBundle?.reviewed?.id ?? undefined;
+            }
+            if (!id) {
+                const res = await saveDraft(snap, { draftId: draftIdRef.current });
+                id = res.id;
+                if (res.id) draftIdRef.current = res.id;
+                // Block the pending autosave from re-saving identical content.
+                lastDraftFpRef.current = fp;
+            }
             if (!id) {
                 // Couldn't resolve a proposal id — fall back to the live print view.
                 window.open(
@@ -1704,23 +1788,29 @@ export default function AdminMasterClient({
                 );
                 return;
             }
-            await flushPresenterPayload(id);
-            // Also persist the agreement build inputs so the deck's
-            // "Save to Pipedrive" note can list the compared units + totals.
-            // (Previously only the Generate-Agreement flow wrote this, so a
-            // proposal exported without ever opening the agreement produced a
-            // bare note.) Best-effort — never block the export.
-            try {
-                const agreementInput = buildAgreementInput();
-                if (agreementInput) {
-                    await fetch(`/api/proposals/${id}/agreement`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ agreementInput }),
-                    });
+            // Presenter payload + agreement inputs are independent writes — run
+            // them in parallel instead of back-to-back round-trips. Both are
+            // required-ish for a complete export, but the agreement flush stays
+            // best-effort (a failure shouldn't block the deck PDF).
+            const agreementInput = (() => {
+                try {
+                    return buildAgreementInput();
+                } catch {
+                    return null;
                 }
-            } catch (err) {
-                console.warn("[export] agreement input flush failed", err);
+            })();
+            const [presenterResult] = await Promise.allSettled([
+                flushPresenterPayload(id),
+                agreementInput
+                    ? fetch(`/api/proposals/${id}/agreement`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ agreementInput }),
+                      })
+                    : Promise.resolve(null),
+            ]);
+            if (presenterResult.status === "rejected") {
+                console.warn("[export] presenter payload flush failed", presenterResult.reason);
             }
             window.open(`/present-v2/${id}/print`, "be_print_v2", "noopener");
         } catch (err) {
@@ -1839,43 +1929,35 @@ export default function AdminMasterClient({
     }
 
     /**
-     * Fingerprint only the *user-editable* fields. Excluded:
-     *   - savedAt           — bookkeeping, not content.
-     *   - activeStep/doneSteps/siteWorkConfirmed — UI navigation, not data.
-     *   - rentcast          — refreshed from the API in the background; not
-     *                         a user edit, would falsely mark the proposal
-     *                         as "changed" the moment the API responds.
-     *   - companionStorage  — duplicates of in-state estimator/discount data
-     *                         which are already fingerprinted.
+     * Fingerprint the WHOLE snapshot except known-volatile fields.
+     *
+     * This used to be a hand-picked allowlist of fields — and every field that
+     * fell out of the list (per-unit beds/baths/type/label overrides,
+     * exclusions, pipedrive linkage…) was silently dropped by the autosave's
+     * "nothing changed" check: the effect would fire, the fingerprint wouldn't
+     * move, and the edit never reached the server. Production data loss.
+     * Fingerprinting by exclusion means new snapshot fields are saved by
+     * default and can never silently fall out again.
+     *
+     * Excluded:
+     *   - savedAt           — bookkeeping; changes on every build.
+     *   - rentcast          — refreshed from the API in the background; not a
+     *                         user edit, would falsely mark the proposal as
+     *                         "changed" the moment the API responds.
+     *   - activeStep/doneSteps/siteWorkConfirmed — step navigation; saving on
+     *                         every step click would mark untouched proposals
+     *                         as "unsaved changes".
      */
     function snapshotFingerprint(snap: ProposalSnapshot): string {
-        return stableStringify({
-            customerName: snap.customerName,
-            customerEmail: snap.customerEmail,
-            address: snap.address,
-            owed: snap.owed,
-            propertyPhotoUrl: snap.propertyPhotoUrl,
-            customerMotivation: snap.customerMotivation,
-            aduType: snap.aduType,
-            floorplanId: snap.floorplanId,
-            currentFirstPmtMonthly: snap.currentFirstPmtMonthly,
-            customFloorplans: snap.customFloorplans,
-            aduCompareIds: snap.aduCompareIds,
-            defaults: snap.defaults,
-            estimatorByAduId: snap.estimatorByAduId,
-            rentByAduId: snap.rentByAduId,
-            baseCostByAduId: snap.baseCostByAduId,
-            sqftByAduId: snap.sqftByAduId,
-            discountAmountByAduId: snap.discountAmountByAduId,
-            discountLinesByAduId: snap.discountLinesByAduId,
-            featuredPropertyIds: snap.featuredPropertyIds,
-            featuredStoryIds: snap.featuredStoryIds,
-            featuredRentals: snap.featuredRentals,
-            slideOrder: snap.slideOrder,
-            projectTimeline: snap.projectTimeline,
-            proposalPaymentSchedule: snap.proposalPaymentSchedule,
-            proposalPaymentSchedulesByAduId: snap.proposalPaymentSchedulesByAduId,
-        });
+        const {
+            savedAt: _savedAt,
+            rentcast: _rentcast,
+            activeStep: _activeStep,
+            doneSteps: _doneSteps,
+            siteWorkConfirmed: _siteWorkConfirmed,
+            ...content
+        } = snap;
+        return stableStringify(content);
     }
 
     // The SiteWorkPanel (Step 3) and DiscountsPanel (Step 4) write straight to
@@ -1898,6 +1980,55 @@ export default function AdminMasterClient({
         return () => clearInterval(id);
     }, []);
 
+    // ── Shared draft-persist path ─────────────────────────────────────────────
+    // Used by the debounced effect, the safety interval, and failure retries.
+    // Reads the latest state via refs so a single implementation serves all
+    // triggers. On failure, retries with backoff (network blips, cold starts)
+    // instead of silently dropping the edit.
+    const autosaveRetryRef = React.useRef<{
+        attempts: number;
+        timer: ReturnType<typeof setTimeout> | null;
+    }>({ attempts: 0, timer: null });
+    const persistDraftIfChangedRef = React.useRef<() => Promise<void>>(async () => {});
+
+    async function persistDraftIfChanged(): Promise<void> {
+        if (!hydratedRef.current) return;
+        const snap = buildSnapshotRef.current();
+        if (snap.addressKey.length < 6) return;
+        const fp = snapshotFingerprint(snap);
+        if (fp === lastDraftFpRef.current) {
+            // Nothing actually changed (e.g. just after Save/Load/New).
+            setDraftStatus((prev) => (prev.state === "pending" ? { state: "idle" } : prev));
+            return;
+        }
+        // saveDraft fires the server upsert immediately and returns its
+        // promise. The localStorage mirror is best-effort and won't throw
+        // here (it has its own quota-safe handling). We await the server
+        // promise so the "saved" state reflects real DB persistence.
+        try {
+            const res = await saveDraft(snap, { draftId: draftIdRef.current });
+            if (res.id) draftIdRef.current = res.id;
+            lastDraftFpRef.current = fp;
+            autosaveRetryRef.current.attempts = 0;
+            setDraftStatus({ state: "saved", at: new Date() });
+        } catch (err) {
+            setDraftStatus({
+                state: "error",
+                message: err instanceof Error ? err.message : "Save failed",
+            });
+            const retry = autosaveRetryRef.current;
+            if (retry.attempts < 3) {
+                const delay = [5_000, 15_000, 30_000][retry.attempts];
+                retry.attempts += 1;
+                if (retry.timer) clearTimeout(retry.timer);
+                retry.timer = setTimeout(() => {
+                    void persistDraftIfChangedRef.current();
+                }, delay);
+            }
+        }
+    }
+    persistDraftIfChangedRef.current = persistDraftIfChanged;
+
     useEffect(() => {
         // Don't autosave until the initial load has hydrated — otherwise the
         // first debounce could persist half-applied or cross-proposal state.
@@ -1909,29 +2040,8 @@ export default function AdminMasterClient({
         }
 
         setDraftStatus({ state: "pending" });
-        const t = setTimeout(async () => {
-            const snap = buildSnapshotRef.current();
-            const fp = snapshotFingerprint(snap);
-            if (fp === lastDraftFpRef.current) {
-                // Nothing actually changed (e.g. just after Save/Load/New).
-                // Don't touch the draft store or the visible status.
-                setDraftStatus((prev) => prev.state === "pending" ? { state: "idle" } : prev);
-                return;
-            }
-            // saveDraft fires the server upsert immediately and returns its
-            // promise. The localStorage mirror is best-effort and won't throw
-            // here (it has its own quota-safe handling). We await the server
-            // promise so the "saved" state reflects real DB persistence.
-            try {
-                await saveDraft(snap);
-                lastDraftFpRef.current = fp;
-                setDraftStatus({ state: "saved", at: new Date() });
-            } catch (err) {
-                setDraftStatus({
-                    state: "error",
-                    message: err instanceof Error ? err.message : "Save failed",
-                });
-            }
+        const t = setTimeout(() => {
+            void persistDraftIfChangedRef.current();
         }, 1500);
 
         return () => clearTimeout(t);
@@ -1939,7 +2049,9 @@ export default function AdminMasterClient({
         address, customerName, customerEmail, owed, propertyPhotoUrl, customerMotivation, aduType,
         floorplanId, currentFirstPmtMonthly,
         aduCompareIds, floorplans,
-        adu.defaults, adu.estimatorByAduId, adu.rentByAduId, adu.baseCostByAduId,
+        aduTypeByUnitId, bedsByUnitId, bathsByUnitId, labelByUnitId,
+        adu.defaults, adu.estimatorByAduId, adu.rentByAduId, adu.houseRentOverride,
+        adu.baseCostByAduId,
         adu.sqftByAduId, adu.discountAmountByAduId, adu.discountLinesByAduId,
         property, avm, rentals, market,
         featuredPropertyIds, featuredStoryIds, featuredRentals, slideOrder,
@@ -1948,6 +2060,52 @@ export default function AdminMasterClient({
         activeStep, doneSteps, siteWorkConfirmed,
         companionVersion,
     ]);
+
+    // Safety net: the dep array above has historically drifted out of sync with
+    // buildSnapshot() (per-unit overrides were missing for months — silent data
+    // loss). This interval re-checks the fingerprint every 5s, so a change that
+    // slips past the deps becomes a 5-second delay instead of a lost edit.
+    useEffect(() => {
+        const id = setInterval(() => {
+            void persistDraftIfChangedRef.current();
+        }, 5_000);
+        return () => {
+            clearInterval(id);
+            const retry = autosaveRetryRef.current;
+            if (retry.timer) clearTimeout(retry.timer);
+        };
+    }, []);
+
+    // Flush on tab close / tab hide. The 1.5s debounce + 5s interval both die
+    // with the page; `keepalive` lets the final POST complete after unload.
+    // This was the "edited site work, closed the tab, changes gone" bug.
+    useEffect(() => {
+        function flush() {
+            if (!hydratedRef.current) return;
+            try {
+                const snap = buildSnapshotRef.current();
+                if (snap.addressKey.length < 6) return;
+                const fp = snapshotFingerprint(snap);
+                if (fp === lastDraftFpRef.current) return;
+                saveDraftKeepalive(snap, draftIdRef.current);
+                // Optimistic: if the keepalive POST loses the race, the LS
+                // mirror still holds the data and the next session syncs it.
+                lastDraftFpRef.current = fp;
+            } catch {
+                /* never block unload */
+            }
+        }
+        function onVisibility() {
+            if (document.hidden) flush();
+        }
+        window.addEventListener("pagehide", flush);
+        document.addEventListener("visibilitychange", onVisibility);
+        return () => {
+            window.removeEventListener("pagehide", flush);
+            document.removeEventListener("visibilitychange", onVisibility);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // ── Live agreement handoff ───────────────────────────────────────────────
     // Keep the agreement preview's handoff (HANDOFF_KEY) fresh as the rep edits,
@@ -1983,6 +2141,8 @@ export default function AdminMasterClient({
                 onOpenPresenter={openPresenterWindow}
                 onSave={handleSave}
                 onOpenSaved={() => setSavedModalOpen(true)}
+                onOpenHistory={() => setHistoryModalOpen(true)}
+                historyDisabled={normalizeAddress(address).length < 6}
                 onNew={handleNew}
                 onExportPdf={() => void exportProposalPdf()}
                 onGenerateAgreement={handleGenerateAgreement}
@@ -2007,6 +2167,37 @@ export default function AdminMasterClient({
                 onLoadProposal={handleLoad}
                 onLoadDraft={handleLoadDraft}
             />
+            <ProposalHistory
+                open={historyModalOpen}
+                addressKey={normalizeAddress(address)}
+                onClose={() => setHistoryModalOpen(false)}
+                onRestore={(snap) => {
+                    // Apply the restored snapshot, then persist it as the live
+                    // draft right away (applySnapshot re-fingerprints, so force
+                    // the save by clearing the fingerprint first).
+                    applySnapshot(snap);
+                    lastDraftFpRef.current = "";
+                    void persistDraftIfChangedRef.current();
+                }}
+            />
+
+            {/* Prominent autosave failure banner — the small header indicator was
+                easy to miss, and reps kept editing assuming their work was safe. */}
+            {draftStatus.state === "error" && (
+                <div className={styles.autosaveErrorBanner} role="alert">
+                    <strong>Autosave failed — your latest changes are not saved to the server.</strong>
+                    <span className={styles.autosaveErrorDetail}>
+                        {draftStatus.message || "Check your connection."} Retrying automatically.
+                    </span>
+                    <button
+                        type="button"
+                        className={styles.autosaveErrorRetry}
+                        onClick={() => void persistDraftIfChangedRef.current()}
+                    >
+                        Retry now
+                    </button>
+                </div>
+            )}
 
             <PrefillStatusBanner
                 status={prefillOpen ? "idle" : prefillStatus}
@@ -2250,6 +2441,9 @@ export default function AdminMasterClient({
                                 setRentByAduId={adu.setRentByAduId}
                                 rentals={rentals}
                                 labelByUnitId={labelByUnitId}
+                                houseRentOverride={adu.houseRentOverride}
+                                setHouseRentOverride={adu.setHouseRentOverride}
+                                houseRentAuto={adu.houseRentAuto}
                             />
                         )}
                         <div className={sectionStyles.compsIntro}>

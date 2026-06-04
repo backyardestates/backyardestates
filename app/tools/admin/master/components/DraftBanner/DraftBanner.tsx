@@ -88,6 +88,17 @@ export function DraftBanner({
     const isViewingOther = view.kind === "other-draft";
     const isViewingCanonical = view.kind === "reviewed";
 
+    // Multi-user guard: the rep is editing a draft that's OLDER than the
+    // canonical someone else saved since. Without this warning, saving the
+    // stale draft silently clobbers the newer work (it stays recoverable in
+    // History, but the rep should know before it happens).
+    const reviewedNewerThanDraft =
+        isViewingDraft &&
+        !!bundle.reviewed &&
+        !!bundle.myDraft &&
+        new Date(bundle.reviewed.savedAt).getTime() >
+            new Date(bundle.myDraft.savedAt).getTime();
+
     return (
         <div className={`${s.banner} ${isViewingDraft ? s.bannerDraft : isViewingOther ? s.bannerOther : s.bannerCanonical}`}>
             <div className={s.left}>
@@ -109,6 +120,12 @@ export function DraftBanner({
                 {isViewingOther && (
                     <span className={s.ownerNote}>
                         your edits will save to <strong>your own draft</strong>, not theirs
+                    </span>
+                )}
+                {reviewedNewerThanDraft && bundle.reviewed && (
+                    <span className={s.staleWarning}>
+                        ⚠ {bundle.reviewed.ownedBy.email ?? "Someone"} saved a newer
+                        version {relTime(bundle.reviewed.savedAt)} — this draft is older
                     </span>
                 )}
             </div>

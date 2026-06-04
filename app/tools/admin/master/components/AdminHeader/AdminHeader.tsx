@@ -15,6 +15,9 @@ interface AdminHeaderProps {
     onOpenPresenter?: (variant: PresenterVariant) => void;
     onSave?: () => void;
     onOpenSaved?: () => void;
+    /** Open the version-history modal for the current proposal. */
+    onOpenHistory?: () => void;
+    historyDisabled?: boolean;
     onNew?: () => void;
     onExportPdf?: () => void;
     onGenerateAgreement?: () => void;
@@ -85,6 +88,8 @@ export function AdminHeader({
     onOpenPresenter,
     onSave,
     onOpenSaved,
+    onOpenHistory,
+    historyDisabled = false,
     onNew,
     onExportPdf,
     onGenerateAgreement,
@@ -170,6 +175,21 @@ export function AdminHeader({
                         title="Browse saved proposals"
                     >
                         Saved
+                    </button>
+                )}
+                {onOpenHistory && (
+                    <button
+                        type="button"
+                        className={styles.ghostBtn}
+                        onClick={onOpenHistory}
+                        disabled={historyDisabled}
+                        title={
+                            historyDisabled
+                                ? "Enter an address to see its history"
+                                : "Version history — restore an earlier checkpoint"
+                        }
+                    >
+                        History
                     </button>
                 )}
                 {onSave && (

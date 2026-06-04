@@ -489,3 +489,26 @@
         grid-column: 1 / -1;
     }
 }
+
+/* Collapsed overflow for legacy draft piles (>2 drafts on one address). */
+.chipMore {
+    display: inline-block;
+}
+
+.chipMore > summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+.chipMore > summary::-webkit-details-marker {
+    display: none;
+}
+
+.chipMore[open] > summary {
+    opacity: 0.6;
+}
+
+.chipMore > div {
+    margin-top: 6px;
+}

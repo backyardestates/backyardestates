@@ -466,7 +466,7 @@ model FeasibilityReport {
 model FeasibilityAnswer {
     id       String            @id @default(cuid())
     reportId String
-    report   FeasibilityReport @relation(fields: [reportId], references: [id])
+    report   FeasibilityReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
 
     workItemId String
     workItem   WorkItem @relation(fields: [workItemId], references: [id])
@@ -489,11 +489,11 @@ model FormalAnalysis {
     // a formal analysis can be created directly from an Engagement (paid FPA)
     // with no prior self-serve feasibility report.
     reportId String?
-    report   FeasibilityReport? @relation(fields: [reportId], references: [id])
+    report   FeasibilityReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
 
     // The engagement this analysis belongs to (the pipeline spine).
     engagementId String?
-    engagement   Engagement? @relation(fields: [engagementId], references: [id])
+    engagement   Engagement? @relation(fields: [engagementId], references: [id], onDelete: SetNull)
 
     architectId String?
     architect   User?   @relation("ArchitectAssignments", fields: [architectId], references: [id])
@@ -525,7 +525,7 @@ model FormalAnalysis {
 model FormalAnswer {
     id               String         @id @default(cuid())
     formalAnalysisId String
-    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id])
+    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id], onDelete: Cascade)
 
     workItemId String
     workItem   WorkItem @relation(fields: [workItemId], references: [id])
@@ -549,7 +549,7 @@ model FormalAnswer {
 model EvidenceFile {
     id               String         @id @default(cuid())
     formalAnalysisId String
-    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id])
+    formalAnalysis   FormalAnalysis @relation(fields: [formalAnalysisId], references: [id], onDelete: Cascade)
 
     workItemId String?
     workItem   WorkItem? @relation(fields: [workItemId], references: [id])
@@ -844,11 +844,11 @@ model Proposal {
 
     // Optional link to FormalAnalysis
     formalAnalysisId String?         @unique
-    formalAnalysis   FormalAnalysis? @relation(fields: [formalAnalysisId], references: [id])
+    formalAnalysis   FormalAnalysis? @relation(fields: [formalAnalysisId], references: [id], onDelete: SetNull)
 
     // Optional link to the Engagement pipeline spine.
     engagementId String?
-    engagement   Engagement? @relation(fields: [engagementId], references: [id])
+    engagement   Engagement? @relation(fields: [engagementId], references: [id], onDelete: SetNull)
 
     status ProposalStatus @default(DRAFT)
 
@@ -945,6 +945,7 @@ model Proposal {
     outputs    ProposalComputedOutput?
     events     ProposalEvent[]
     uploads    ProposalUpload[]
+    revisions  ProposalRevision[]
 
     @@index([organizationId, createdAt])
     @@index([status, createdAt])
@@ -957,10 +958,36 @@ model Proposal {
     @@index([engagementId])
 }
 
+enum ProposalRevisionKind {
+    SAVE // explicit Save (REVIEWED promotion) — captures the promoted snapshot
+    AUTOSAVE // periodic checkpoint of a draft (at most one per 10 min)
+    PROMOTE // the displaced canonical, captured right before it was overwritten
+    RESTORE // a snapshot re-applied from history
+}
+
+/**
+ * Automatic version history for proposals ("one draft with internal history").
+ * Capped at REVISION_CAP per proposal (oldest pruned on insert) — see
+ * lib/db/proposalRevisions.ts. Restorable from the master tool's History modal.
+ */
+model ProposalRevision {
+    id         String   @id @default(cuid())
+    proposalId String
+    proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+    createdById String
+    kind        ProposalRevisionKind
+    snapshotJson Json
+
+    createdAt DateTime @default(now())
+
+    @@index([proposalId, createdAt])
+}
+
 model ProposalFloorplanSelection {
     id         String   @id @default(cuid())
     proposalId String
-    proposal   Proposal @relation(fields: [proposalId], references: [id])
+    proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 
     aduType AduType
 
@@ -984,7 +1011,7 @@ model ProposalFloorplanSelection {
 model ProposalLineItem {
     id         String   @id @default(cuid())
     proposalId String
-    proposal   Proposal @relation(fields: [proposalId], references: [id])
+    proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 
     kind LineItemKind @default(SITE_WORK)
 
@@ -1024,7 +1051,7 @@ model ProposalLineItem {
 model ProposalDiscount {
     id         String   @id @default(cuid())
     proposalId String
-    proposal   Proposal @relation(fields: [proposalId], references: [id])
+    proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 
     discountType DiscountType
 
@@ -1046,7 +1073,7 @@ model ProposalDiscount {
 model ProposalComputedOutput {
     id         String   @id @default(cuid())
     proposalId String   @unique
-    proposal   Proposal @relation(fields: [proposalId], references: [id])
+    proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 
     rentEstimateMonthly    Int?
     paymentEstimateMonthly Int?
@@ -1070,7 +1097,7 @@ model ProposalComputedOutput {
 model ProposalEvent {
     id         String   @id @default(cuid())
     proposalId String
-    proposal   Proposal @relation(fields: [proposalId], references: [id])
+    proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 
     type    ProposalEventType
     actorId String?
@@ -1087,7 +1114,7 @@ model ProposalEvent {
 model ProposalUpload {
     id         String   @id @default(cuid())
     proposalId String
-    proposal   Proposal @relation(fields: [proposalId], references: [id])
+    proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 
     kind String // e.g. "CAN_I_BUILD_SCREENSHOT"
     url  String
@@ -1169,7 +1196,7 @@ model Engagement {
 model EngagementEvent {
     id           String     @id @default(cuid())
     engagementId String
-    engagement   Engagement @relation(fields: [engagementId], references: [id])
+    engagement   Engagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 
     type    EngagementEventType
     actorId String?
@@ -1191,7 +1218,7 @@ model EngagementEvent {
 model Consultation {
     id           String     @id @default(cuid())
     engagementId String
-    engagement   Engagement @relation(fields: [engagementId], references: [id])
+    engagement   Engagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 
     source ConsultationSource @default(RECORDED)
     status ConsultationStatus @default(DRAFT)
@@ -1232,7 +1259,7 @@ model Notification {
     user   User   @relation("UserNotifications", fields: [userId], references: [id])
 
     engagementId String?
-    engagement   Engagement? @relation(fields: [engagementId], references: [id])
+    engagement   Engagement? @relation(fields: [engagementId], references: [id], onDelete: SetNull)
 
     type    NotificationType @default(GENERIC)
     title   String
@@ -1255,7 +1282,7 @@ model Notification {
 model DripEnrollment {
     id           String     @id @default(cuid())
     engagementId String
-    engagement   Engagement @relation(fields: [engagementId], references: [id])
+    engagement   Engagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 
     status DripStatus @default(ACTIVE)
 
@@ -1271,7 +1298,7 @@ model DripEnrollment {
 model DripMessage {
     id           String         @id @default(cuid())
     enrollmentId String
-    enrollment   DripEnrollment @relation(fields: [enrollmentId], references: [id])
+    enrollment   DripEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 
     stepIndex Int
     channel   DripChannel @default(EMAIL)

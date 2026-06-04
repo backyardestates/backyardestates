@@ -92,6 +92,10 @@ export function useAduModel({
     const [discountLinesByAduId, setDiscountLinesByAduId] = useState<Record<string, { label: string; amount: number }[]>>({});
     const [defaults, setDefaults] = useState<Defaults>({ ...DEFAULTS, ...(defaultsProp ?? {}) });
     const [showDebug, setShowDebug] = useState(false);
+    // Rep override for the MAIN HOUSE monthly rent (drives the house column on
+    // the "ADU vs buying a house" slide). Empty string = use the automatic
+    // estimate (Zillow rentZestimate → median-scaled fallback).
+    const [houseRentOverride, setHouseRentOverride] = useState<string>("");
 
     const selectedAdus = useMemo(() => {
         const map = new Map(allFloorplans.map((f) => [f._id, f]));
@@ -176,7 +180,9 @@ export function useAduModel({
         };
     }, [propertyAddress]);
 
-    const houseRentEstimate = useMemo(() => {
+    // Automatic main-house rent estimate (no override applied) — also surfaced
+    // to the UI so the rep sees what "auto" would be while overriding.
+    const houseRentAuto = useMemo(() => {
         // Prefer Zillow's rentZestimate for the main house.
         if (zillowRentEstimate && zillowRentEstimate > 0) return zillowRentEstimate;
         // Fall back to the median-scaled calculation when Zillow is unavailable.
@@ -184,6 +190,13 @@ export function useAduModel({
         const ratio = clamp(subjectSqft / selectedFloorplan.sqft, 1.2, 2.2);
         return rentalMedian * ratio;
     }, [zillowRentEstimate, rentalMedian, subjectSqft, selectedFloorplan?.sqft]);
+
+    // Effective value fed into the scenarios: rep override wins when set.
+    const houseRentEstimate = useMemo(() => {
+        const override = asNumber(houseRentOverride);
+        if (override !== undefined && override > 0) return override;
+        return houseRentAuto;
+    }, [houseRentOverride, houseRentAuto]);
 
     const scenarios = useMemo<Scenario[]>(
         () =>
@@ -316,6 +329,7 @@ export function useAduModel({
         baseCostByAduId, setBaseCostByAduId,
         sqftByAduId, setSqftByAduId,
         rentByAduId, setRentByAduId,
+        houseRentOverride, setHouseRentOverride, houseRentAuto,
         // discounts
         discountAmountByAduId, setDiscountAmountByAduId,
         discountLinesByAduId, setDiscountLinesByAduId,

@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { ProposalStatus, Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ensureProposalContext } from "@/lib/db/ensureProposalContext";
-import { proposalToSnapshot } from "@/lib/db/proposalMapper";
+import { proposalToSnapshot, PROPOSAL_SNAPSHOT_SELECT } from "@/lib/db/proposalMapper";
 import type { ProposalSnapshot } from "@/lib/proposalSnapshot";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 function parseStatus(raw: string | null): ProposalStatus | null {
     if (!raw) return null;
@@ -48,9 +49,11 @@ export async function GET(
 
         // ── Targeted reads ────────────────────────────────────────────────
         if (status === ProposalStatus.REVIEWED) {
-            // Canonical is org-wide.
+            // Canonical is org-wide. Select only the snapshot columns — the row
+            // also carries presenterBroadcast/agreementInput blobs we never read.
             const row = await prisma.proposal.findFirst({
                 where: { addressKey, status: ProposalStatus.REVIEWED },
+                select: PROPOSAL_SNAPSHOT_SELECT,
             });
             return NextResponse.json({ proposal: row ? proposalToSnapshot(row) : null });
         }
@@ -62,6 +65,7 @@ export async function GET(
             }
             const row = await prisma.proposal.findFirst({
                 where: { addressKey, status: ProposalStatus.DRAFT, createdById: targetUserId },
+                select: PROPOSAL_SNAPSHOT_SELECT,
             });
             return NextResponse.json({ proposal: row ? proposalToSnapshot(row) : null });
         }
@@ -70,10 +74,16 @@ export async function GET(
         const [reviewed, myDraft, otherDrafts] = await Promise.all([
             prisma.proposal.findFirst({
                 where: { addressKey, status: ProposalStatus.REVIEWED },
-                include: { createdBy: { select: { id: true, email: true } } },
+                select: {
+                    ...PROPOSAL_SNAPSHOT_SELECT,
+                    id: true,
+                    createdById: true,
+                    createdBy: { select: { id: true, email: true } },
+                },
             }),
             prisma.proposal.findFirst({
                 where: { addressKey, status: ProposalStatus.DRAFT, createdById: userId },
+                select: { ...PROPOSAL_SNAPSHOT_SELECT, id: true },
             }),
             // Other users' drafts — admin only. Architects get an empty array
             // so they don't even see that other people have drafts on this
@@ -104,6 +114,7 @@ export async function GET(
         return NextResponse.json({
             reviewed: reviewed
                 ? {
+                    id: reviewed.id,
                     snapshot: proposalToSnapshot(reviewed) as ProposalSnapshot | null,
                     ownedBy: {
                         id: reviewed.createdBy?.id ?? reviewed.createdById,
@@ -114,6 +125,7 @@ export async function GET(
                 : null,
             myDraft: myDraft
                 ? {
+                    id: myDraft.id,
                     snapshot: proposalToSnapshot(myDraft) as ProposalSnapshot | null,
                     savedAt: myDraft.updatedAt.toISOString(),
                 }

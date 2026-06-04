@@ -70,12 +70,40 @@ export function snapshotToProposalCreate(
     };
 }
 
+/** The subset of Proposal columns `proposalToSnapshot` actually reads. Routes
+ *  should `select` exactly these so Postgres never ships the unrelated large
+ *  blobs (presenterBroadcast, agreementInput, prefillJson) on read paths. */
+export type ProposalSnapshotSource = Pick<
+    Proposal,
+    | "snapshotJson"
+    | "addressKey"
+    | "updatedAt"
+    | "customerName"
+    | "customerEmail"
+    | "addressLine1"
+    | "city"
+    | "state"
+    | "zip"
+>;
+
+export const PROPOSAL_SNAPSHOT_SELECT = {
+    snapshotJson: true,
+    addressKey: true,
+    updatedAt: true,
+    customerName: true,
+    customerEmail: true,
+    addressLine1: true,
+    city: true,
+    state: true,
+    zip: true,
+} as const;
+
 /**
  * Pull a ProposalSnapshot back out of a Proposal row. We prefer
  * `snapshotJson` (the full source-of-truth blob), and only fall back to the
  * structured columns when the JSON is missing or malformed.
  */
-export function proposalToSnapshot(row: Proposal): ProposalSnapshot | null {
+export function proposalToSnapshot(row: ProposalSnapshotSource): ProposalSnapshot | null {
     const json = row.snapshotJson;
     if (json && typeof json === "object") {
         return json as unknown as ProposalSnapshot;

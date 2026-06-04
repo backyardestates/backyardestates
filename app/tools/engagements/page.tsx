@@ -32,6 +32,7 @@ export default async function EngagementsPage() {
                 ...(viewAll ? {} : { OR: [{ repId: userId }, { architectId: userId }] }),
             },
             orderBy: { updatedAt: "desc" },
+            take: 300,
             include: {
                 _count: {
                     select: { consultations: true, formalAnalyses: true, proposals: true },

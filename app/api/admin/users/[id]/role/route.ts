@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { requireDbRole } from "@/lib/auth";
+import { requireDbRole, bustUserMemo } from "@/lib/auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -90,6 +90,10 @@ export async function PUT(
                 phone: phone ?? undefined,
             },
         });
+
+        // Drop the per-instance user memo so the new role takes effect on the
+        // target's next request served by this instance (others converge by TTL).
+        bustUserMemo(targetUserId);
 
         return NextResponse.json({
             id: updated.id,

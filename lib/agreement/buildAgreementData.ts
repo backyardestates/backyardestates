@@ -10,9 +10,24 @@ import type { ProposalPaymentSchedule } from "@/lib/investment/proposalPaymentSc
 import type { SiteWorkLineItem, DiscountLineItem } from "@/lib/store/presentationStore";
 import { resolveBeds, resolveBaths, resolveAduType, aduTypeLabel, aduTypeInline, type AduType } from "@/lib/units/resolveUnitSpec";
 
+/** Inline edits the rep made in the agreement preview's contentEditable view.
+ *  Persisted inside the proposal's `agreementInput` JSON under `__edits` so
+ *  reopening the agreement restores them instead of regenerating defaults.
+ *  `baseFingerprint` is a hash of the generated baseline HTML the edits were
+ *  made on — when the underlying proposal data changes, the fingerprints stop
+ *  matching and the preview asks "apply my edits / regenerate?" */
+export interface AgreementEdits {
+    html: string;
+    editedAt: string; // ISO timestamp
+    baseFingerprint: string;
+}
+
 export interface AgreementBuildInput {
     customerName: string;
     propertyAddress: string;
+    /** Saved inline edits (see AgreementEdits). Written by the agreement
+     *  preview; preserved by every server path that rewrites agreementInput. */
+    __edits?: AgreementEdits | null;
     /** Per-unit payment schedules keyed by ADU id. The active schedule is
      *  chosen by `selectedAduId` (falling back to the first compared unit
      *  that has a schedule). Carries the same data as the legacy single

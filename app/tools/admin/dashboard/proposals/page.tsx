@@ -50,6 +50,7 @@ export default async function ProposalsListPage({
     const allRows = await prisma.proposal.findMany({
         where: { addressKey: { not: null } },
         orderBy: { updatedAt: "desc" },
+        take: 300, // newest 300 rows — matches the API index cap
         select: {
             id: true,
             customerName: true,
@@ -212,8 +213,11 @@ function GroupRow({ row: g }: { row: GroupedRow }) {
                 {g.drafts.length === 0 ? (
                     <span className={s.muted}>—</span>
                 ) : (
+                    // One draft per user per address is the norm now; collapse
+                    // anything beyond the first two behind a disclosure so a
+                    // legacy fork pile can't flood the row.
                     <div className={s.chipsRow}>
-                        {g.drafts.map((d) => (
+                        {g.drafts.slice(0, 2).map((d) => (
                             <Link
                                 key={d.userId}
                                 href={`/tools/admin/master?address=${encodeURIComponent(g.addressKey)}&asDraftOf=${encodeURIComponent(d.userId)}`}
@@ -224,6 +228,26 @@ function GroupRow({ row: g }: { row: GroupedRow }) {
                                 <span className={s.chipLabel}>{d.email || "Unknown"}</span>
                             </Link>
                         ))}
+                        {g.drafts.length > 2 && (
+                            <details className={s.chipMore}>
+                                <summary className={s.chip} title="Show remaining drafts">
+                                    +{g.drafts.length - 2} more
+                                </summary>
+                                <div className={s.chipsRow}>
+                                    {g.drafts.slice(2).map((d) => (
+                                        <Link
+                                            key={d.userId}
+                                            href={`/tools/admin/master?address=${encodeURIComponent(g.addressKey)}&asDraftOf=${encodeURIComponent(d.userId)}`}
+                                            className={s.chip}
+                                            title={`Open ${d.email || "this rep"}'s draft (saved ${d.updatedAt.toLocaleString()})`}
+                                        >
+                                            <span className={s.chipAvatar}>{initials(d.email)}</span>
+                                            <span className={s.chipLabel}>{d.email || "Unknown"}</span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </details>
+                        )}
                     </div>
                 )}
             </td>

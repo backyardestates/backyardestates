@@ -34,13 +34,27 @@ export async function POST(
 
         const existing = await prisma.proposal.findUnique({
             where: { id },
-            select: { id: true, shareToken: true },
+            select: { id: true, shareToken: true, agreementInput: true },
         });
         if (!existing) {
             return NextResponse.json({ error: "Not found" }, { status: 404 });
         }
 
         const shareToken = existing.shareToken ?? randomUUID();
+
+        // The admin tool rebuilds agreementInput from proposal state on every
+        // REVIEWED save — but the rep's inline agreement edits (`__edits`) live
+        // inside that same JSON and would be wiped. Carry them over.
+        let agreementInput = body.agreementInput as Record<string, unknown> | undefined;
+        if (agreementInput && typeof agreementInput === "object") {
+            const existingEdits =
+                existing.agreementInput && typeof existing.agreementInput === "object"
+                    ? (existing.agreementInput as Record<string, unknown>).__edits
+                    : undefined;
+            if (existingEdits !== undefined && agreementInput.__edits === undefined) {
+                agreementInput = { ...agreementInput, __edits: existingEdits };
+            }
+        }
 
         await prisma.proposal.update({
             where: { id },
@@ -49,8 +63,8 @@ export async function POST(
                 ...(body.presenterBroadcast !== undefined
                     ? { presenterBroadcast: body.presenterBroadcast as Prisma.InputJsonValue }
                     : {}),
-                ...(body.agreementInput !== undefined
-                    ? { agreementInput: body.agreementInput as Prisma.InputJsonValue }
+                ...(agreementInput !== undefined
+                    ? { agreementInput: agreementInput as Prisma.InputJsonValue }
                     : {}),
             },
         });

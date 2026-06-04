@@ -16,7 +16,7 @@ import { NextResponse } from "next/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { requireDbRole } from "@/lib/auth";
+import { requireDbRole, bustUserMemo } from "@/lib/auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -102,6 +102,7 @@ export async function DELETE(
         if (dbUser) {
             await prisma.user.delete({ where: { id: targetUserId } });
         }
+        bustUserMemo(targetUserId);
 
         return NextResponse.json({ ok: true, id: targetUserId });
     } catch (err: any) {

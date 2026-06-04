@@ -13,6 +13,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import type { Role } from "@prisma/client";
 import { verifyRoleLink } from "@/lib/auth/signedRoleLink";
+import { bustUserMemo } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -95,6 +96,8 @@ export async function GET(req: Request) {
             update: { role: newRole, email: email ?? undefined, phone: phone ?? undefined },
             create: { id: u, role: newRole, email: email ?? undefined, phone: phone ?? undefined },
         });
+        // Make the new role visible to this instance's request path immediately.
+        bustUserMemo(u);
     } catch (err) {
         return renderResultPage({
             ok: false,

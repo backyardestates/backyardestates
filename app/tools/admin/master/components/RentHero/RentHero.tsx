@@ -28,12 +28,22 @@ export function RentHero({
     setRentByAduId,
     rentals,
     labelByUnitId,
+    houseRentOverride,
+    setHouseRentOverride,
+    houseRentAuto,
 }: {
     units: Floorplan[];
     rentByAduId: Record<string, string>;
     setRentByAduId: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     rentals?: RentalListing[];
     labelByUnitId?: Record<string, string>;
+    /** Main-house monthly rent override ("" = automatic). Shown on the
+     *  "ADU vs buying a house" slide as the house's rental value. */
+    houseRentOverride?: string;
+    setHouseRentOverride?: (value: string) => void;
+    /** The automatic estimate (Zillow rentZestimate → median-scaled fallback)
+     *  shown as the placeholder / reset target while overriding. */
+    houseRentAuto?: number;
 }) {
     const medianRent = useMemo(() => {
         const prices = (rentals ?? [])
@@ -124,6 +134,70 @@ export function RentHero({
                         </div>
                     );
                 })}
+
+                {/* Main house rent — the house column of the "ADU vs buying a
+                    house" slide. Auto-estimated (Zillow → median-scaled), but
+                    fully editable here just like the ADU rents. */}
+                {setHouseRentOverride && (
+                    (() => {
+                        const overrideNum = Number(houseRentOverride ?? "") || 0;
+                        const overriding = (houseRentOverride ?? "").trim() !== "" && overrideNum > 0;
+                        const effective = overriding ? overrideNum : Math.round(houseRentAuto ?? 0);
+                        return (
+                            <div
+                                className={`${s.card} ${s.cardHouse} ${effective > 0 ? s.cardFilled : ""}`}
+                                style={{ animationDelay: `${orderedUnits.length * 60}ms` }}
+                            >
+                                <div className={s.cardName}>
+                                    Main house
+                                    <span className={s.cardTag}> · ADU vs. buying slide</span>
+                                </div>
+
+                                <label className={s.amountRow}>
+                                    <span className={s.currency}>$</span>
+                                    <input
+                                        className={s.amountInput}
+                                        type="number"
+                                        inputMode="numeric"
+                                        min={0}
+                                        step={50}
+                                        placeholder={houseRentAuto ? String(Math.round(houseRentAuto)) : "0"}
+                                        value={houseRentOverride ?? ""}
+                                        onChange={(e) => setHouseRentOverride(e.target.value)}
+                                        aria-label="Monthly rent for the customer's main house"
+                                    />
+                                </label>
+
+                                <div className={s.annual}>
+                                    {overriding ? (
+                                        <>
+                                            per month · <strong>{fmtMoney(overrideNum * 12)}</strong> / year · custom
+                                        </>
+                                    ) : houseRentAuto ? (
+                                        <>
+                                            auto estimate · <strong>{fmtMoney(Math.round(houseRentAuto))}</strong> / mo
+                                        </>
+                                    ) : (
+                                        "Enter the main house's market rent"
+                                    )}
+                                </div>
+
+                                {overriding && houseRentAuto != null && (
+                                    <button
+                                        type="button"
+                                        className={s.suggest}
+                                        onClick={() => setHouseRentOverride("")}
+                                        title="Clear the override and go back to the automatic estimate"
+                                    >
+                                        <span className={s.suggestLabel}>Auto estimate</span>
+                                        <span className={s.suggestValue}>{fmtMoney(Math.round(houseRentAuto))}</span>
+                                        <span className={s.suggestApply}>Reset</span>
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })()
+                )}
             </div>
         </section>
     );

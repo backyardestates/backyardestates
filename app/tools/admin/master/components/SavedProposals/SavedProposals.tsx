@@ -7,8 +7,9 @@ import {
     deleteProposal,
     deleteDraft,
     getDraft,
-    hasProposal,
     saveProposal,
+    fetchProposalIndex,
+    fetchDraftFromServer,
     type ProposalIndexEntry,
 } from "@/lib/proposalSnapshot";
 import s from "./SavedProposals.module.css";
@@ -37,13 +38,41 @@ function formatSavedAt(iso: string) {
     }
 }
 
+/** Server index wins; local-only entries (offline work the server hasn't seen)
+ *  are appended. Sorted newest-first. */
+function mergeIndex(
+    server: ProposalIndexEntry[],
+    local: ProposalIndexEntry[]
+): ProposalIndexEntry[] {
+    const seen = new Set(server.map((e) => e.addressKey));
+    return [...server, ...local.filter((e) => !seen.has(e.addressKey))].sort(
+        (a, b) => (a.savedAt < b.savedAt ? 1 : -1)
+    );
+}
+
 export function SavedProposals({ open, onClose, onLoadProposal, onLoadDraft }: Props) {
     const [drafts, setDrafts] = useState<ProposalIndexEntry[]>([]);
     const [proposals, setProposals] = useState<ProposalIndexEntry[]>([]);
+    const [syncing, setSyncing] = useState(false);
 
     function refresh() {
+        // Local cache renders instantly; the server index (metadata only, no
+        // snapshot blobs) replaces it when it lands. Offline keeps the cache.
         setDrafts(listDrafts());
         setProposals(listProposals());
+        setSyncing(true);
+        void Promise.allSettled([
+            fetchProposalIndex("SAVED"),
+            fetchProposalIndex("DRAFT"),
+        ]).then(([saved, draft]) => {
+            if (saved.status === "fulfilled") {
+                setProposals(mergeIndex(saved.value, listProposals()));
+            }
+            if (draft.status === "fulfilled") {
+                setDrafts(mergeIndex(draft.value, listDrafts()));
+            }
+            setSyncing(false);
+        });
     }
 
     useEffect(() => {
@@ -59,15 +88,19 @@ export function SavedProposals({ open, onClose, onLoadProposal, onLoadDraft }: P
         return () => window.removeEventListener("keydown", onKey);
     }, [open, onClose]);
 
-    function handleDeleteProposal(addressKey: string, address: string) {
+    async function handleDeleteProposal(addressKey: string, address: string) {
         if (!window.confirm(`Delete saved proposal for "${address}"? This cannot be undone.`)) return;
-        void deleteProposal(addressKey);
+        // Drop the row immediately, then re-sync once the server delete lands
+        // (refreshing earlier would race and resurrect the deleted entry).
+        setProposals((prev) => prev.filter((p) => p.addressKey !== addressKey));
+        await deleteProposal(addressKey);
         refresh();
     }
 
-    function handleDeleteDraft(addressKey: string, address: string) {
+    async function handleDeleteDraft(addressKey: string, address: string) {
         if (!window.confirm(`Delete draft for "${address}"? This cannot be undone.`)) return;
-        void deleteDraft(addressKey);
+        setDrafts((prev) => prev.filter((d) => d.addressKey !== addressKey));
+        await deleteDraft(addressKey);
         refresh();
     }
 
@@ -81,23 +114,34 @@ export function SavedProposals({ open, onClose, onLoadProposal, onLoadDraft }: P
         onClose();
     }
 
-    function handlePromote(addressKey: string, address: string) {
-        const snap = getDraft(addressKey);
-        if (!snap) return;
-        if (hasProposal(addressKey)) {
+    async function handlePromote(addressKey: string, address: string) {
+        // The LS cache only holds drafts edited on this device — fall back to
+        // the server copy so promotion also works for drafts from other devices.
+        const snap = getDraft(addressKey)
+            ?? (await fetchDraftFromServer(addressKey).catch(() => null));
+        if (!snap) {
+            window.alert(`Couldn't load the draft for "${address}". Check your connection and try again.`);
+            return;
+        }
+        if (proposals.some((p) => p.addressKey === addressKey)) {
             const ok = window.confirm(
                 `There is an existing proposal with the same address saved. Are you sure you want to override it and save this draft as a proposal?`
             );
             if (!ok) return;
         }
-        void saveProposal({ ...snap, savedAt: new Date().toISOString() });
-        void deleteDraft(addressKey);
+        setDrafts((prev) => prev.filter((d) => d.addressKey !== addressKey));
+        await Promise.allSettled([
+            saveProposal({ ...snap, savedAt: new Date().toISOString() }),
+            deleteDraft(addressKey),
+        ]);
         refresh();
     }
 
     if (!open) return null;
 
-    const totalLabel = `${drafts.length + proposals.length} item${drafts.length + proposals.length === 1 ? "" : "s"} in this browser`;
+    const totalLabel = syncing
+        ? "Syncing…"
+        : `${drafts.length + proposals.length} item${drafts.length + proposals.length === 1 ? "" : "s"}`;
 
     return (
         <div className={s.overlay} onClick={onClose} role="dialog" aria-modal="true">
@@ -149,7 +193,7 @@ export function SavedProposals({ open, onClose, onLoadProposal, onLoadDraft }: P
                                             <button
                                                 type="button"
                                                 className={s.promoteBtn}
-                                                onClick={() => handlePromote(e.addressKey, e.address)}
+                                                onClick={() => void handlePromote(e.addressKey, e.address)}
                                                 title="Save this draft as a proposal"
                                             >
                                                 Save as Proposal
@@ -157,7 +201,7 @@ export function SavedProposals({ open, onClose, onLoadProposal, onLoadDraft }: P
                                             <button
                                                 type="button"
                                                 className={s.deleteBtn}
-                                                onClick={() => handleDeleteDraft(e.addressKey, e.address)}
+                                                onClick={() => void handleDeleteDraft(e.addressKey, e.address)}
                                                 aria-label={`Delete draft ${e.address}`}
                                                 title="Delete draft"
                                             >
@@ -206,7 +250,7 @@ export function SavedProposals({ open, onClose, onLoadProposal, onLoadDraft }: P
                                             <button
                                                 type="button"
                                                 className={s.deleteBtn}
-                                                onClick={() => handleDeleteProposal(e.addressKey, e.address)}
+                                                onClick={() => void handleDeleteProposal(e.addressKey, e.address)}
                                                 aria-label={`Delete proposal ${e.address}`}
                                                 title="Delete proposal"
                                             >
@@ -221,8 +265,8 @@ export function SavedProposals({ open, onClose, onLoadProposal, onLoadDraft }: P
                 </div>
 
                 <div className={s.footer}>
-                    <span>Stored locally in this browser only.</span>
-                    <span>Sharing across machines coming soon.</span>
+                    <span>Synced with your account.</span>
+                    <span>Available on any device.</span>
                 </div>
             </div>
         </div>

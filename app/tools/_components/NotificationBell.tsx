@@ -29,10 +29,35 @@ export function NotificationBell() {
         }
     }
 
+    // Poll only while the tab is visible — a backgrounded tab used to keep
+    // hitting /api/notifications every 60s all day. On refocus, refresh
+    // immediately and resume.
     useEffect(() => {
-        load();
-        const t = setInterval(load, 60_000);
-        return () => clearInterval(t);
+        let t: ReturnType<typeof setInterval> | null = null;
+        const start = () => {
+            if (!t) t = setInterval(load, 60_000);
+        };
+        const stop = () => {
+            if (t) {
+                clearInterval(t);
+                t = null;
+            }
+        };
+        const onVis = () => {
+            if (document.hidden) {
+                stop();
+            } else {
+                void load();
+                start();
+            }
+        };
+        void load();
+        if (!document.hidden) start();
+        document.addEventListener("visibilitychange", onVis);
+        return () => {
+            stop();
+            document.removeEventListener("visibilitychange", onVis);
+        };
     }, []);
 
     // Close on outside click.

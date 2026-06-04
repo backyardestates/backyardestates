@@ -6,9 +6,21 @@ import { generateAgreement, triggerDownload } from "@/lib/agreement/generateAgre
 import {
     buildAgreementData,
     type AgreementBuildInput,
+    type AgreementEdits,
     type AgreementTemplateData,
 } from "@/lib/agreement/buildAgreementData";
 import s from "./AgreementPreviewClient.module.css";
+
+/** Cheap, stable string hash (djb2) — fingerprints the generated baseline
+ *  HTML so saved inline edits know which version of the data they were made
+ *  on. Not cryptographic; collision odds are irrelevant at this scale. */
+function hashString(input: string): string {
+    let h = 5381;
+    for (let i = 0; i < input.length; i++) {
+        h = ((h << 5) + h + input.charCodeAt(i)) | 0;
+    }
+    return (h >>> 0).toString(36);
+}
 
 const HANDOFF_KEY = "be_agreement_preview_input_v2";
 // Legacy v1 handoff was the resolved AgreementTemplateData. Read it for
@@ -127,6 +139,67 @@ export function AgreementPreviewClient({
      *  even after editing the HTML inline. */
     const docxBlobRef = useRef<Blob | null>(null);
     const editorRef = useRef<HTMLDivElement | null>(null);
+
+    // ── Inline-edit persistence ────────────────────────────────────────────
+    // Edits used to live ONLY in the contentEditable DOM: reopening the
+    // agreement regenerated defaults and every change was silently lost.
+    // Now: edits are captured on input (debounced), saved to the proposal's
+    // agreementInput.__edits, and restored on open when the underlying data
+    // hasn't changed (fingerprint match). On mismatch the rep chooses.
+    const editsRef = useRef<AgreementEdits | null>(initialInput?.__edits ?? null);
+    /** Hash of the CURRENT generated baseline — what new edits are based on. */
+    const baselineHashRef = useRef<string>("");
+    const editDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [editsState, setEditsState] = useState<"baseline" | "applied" | "stale">("baseline");
+    const [editSaveState, setEditSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+    async function persistEdits(edits: AgreementEdits | null): Promise<void> {
+        editsRef.current = edits;
+        if (!proposalId) return; // standalone preview without a saved proposal
+        setEditSaveState("saving");
+        try {
+            const res = await fetch(`/api/proposals/${proposalId}/agreement`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ edits }),
+            });
+            if (!res.ok) {
+                const d = (await res.json().catch(() => ({}))) as { error?: string };
+                throw new Error(d.error || `Save failed (${res.status})`);
+            }
+            setEditSaveState("saved");
+        } catch (err) {
+            console.warn("[agreement] edit save failed", err);
+            setEditSaveState("error");
+        }
+    }
+
+    /** Capture the live DOM into editsRef + persist. Used by the debounce and
+     *  as a synchronous flush before "Save to deal". */
+    function captureAndPersistEdits(): Promise<void> {
+        const el = editorRef.current;
+        if (!el) return Promise.resolve();
+        const current = el.innerHTML;
+        return persistEdits({
+            html: current,
+            editedAt: new Date().toISOString(),
+            baseFingerprint: baselineHashRef.current,
+        });
+    }
+
+    function handleEditorInput() {
+        setEditsState("applied");
+        if (editDebounceRef.current) clearTimeout(editDebounceRef.current);
+        editDebounceRef.current = setTimeout(() => {
+            void captureAndPersistEdits();
+        }, 1000);
+    }
+
+    useEffect(() => {
+        return () => {
+            if (editDebounceRef.current) clearTimeout(editDebounceRef.current);
+        };
+    }, []);
 
     /** The full rebuild inputs handed off by the admin tab. Null when running
      *  on the legacy v1 handoff (no rebuild possible — switcher hidden). */
@@ -247,7 +320,24 @@ export function AgreementPreviewClient({
                 const arrayBuffer = await blob.arrayBuffer();
                 const result = await mammoth.convertToHtml({ arrayBuffer });
                 if (cancelled) return;
-                setHtml(postProcessHtml(result.value));
+
+                // Restore saved inline edits when they match this exact
+                // baseline (i.e. the proposal data hasn't changed since they
+                // were made). On mismatch, render fresh data and offer the
+                // saved edits via the choice bar instead of silently picking.
+                const baseline = postProcessHtml(result.value);
+                baselineHashRef.current = hashString(baseline);
+                const edits = editsRef.current;
+                if (edits?.html && edits.baseFingerprint === baselineHashRef.current) {
+                    setHtml(edits.html);
+                    setEditsState("applied");
+                } else if (edits?.html) {
+                    setHtml(baseline);
+                    setEditsState("stale");
+                } else {
+                    setHtml(baseline);
+                    setEditsState("baseline");
+                }
                 setPhase({ state: "ready" });
             } catch (err) {
                 if (cancelled) return;
@@ -371,6 +461,13 @@ export function AgreementPreviewClient({
         setSaveState("saving");
         setSaveError(null);
         try {
+            // Persist the inline edits FIRST so the Pipedrive note (built
+            // server-side from agreementInput) and any reopen reflect exactly
+            // what's being saved as the PDF.
+            if (editsState === "applied") {
+                if (editDebounceRef.current) clearTimeout(editDebounceRef.current);
+                await captureAndPersistEdits();
+            }
             const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
                 import("html2canvas"),
                 import("jspdf"),
@@ -449,7 +546,18 @@ export function AgreementPreviewClient({
 
     function statusText() {
         if (phase.state === "loading") return "Generating from your proposal…";
-        if (phase.state === "ready") return "Editable. Click any text to make changes.";
+        if (phase.state === "ready") {
+            if (editsState === "applied") {
+                if (!proposalId) return "Editable — save the proposal to persist your edits.";
+                if (editSaveState === "saving") return "Saving your edits…";
+                if (editSaveState === "error")
+                    return "Couldn't save your edits — they exist only in this window.";
+                if (editSaveState === "saved")
+                    return "Edits saved — they'll be restored when you reopen.";
+                return "Editable. Your changes save automatically.";
+            }
+            return "Editable. Click any text to make changes.";
+        }
         if (phase.state === "error") return "Couldn't generate the agreement.";
         return "";
     }
@@ -643,6 +751,47 @@ export function AgreementPreviewClient({
                 </div>
             </div>
 
+            {/* Saved edits exist but the proposal data changed since they were
+                made — let the rep choose instead of silently discarding either. */}
+            {phase.state === "ready" && editsState === "stale" && editsRef.current && (
+                <div className={s.staleEditsBar} role="alert">
+                    <span>
+                        You have saved agreement edits from{" "}
+                        {new Date(editsRef.current.editedAt).toLocaleString()}, but the
+                        proposal data has changed since. Showing the latest data.
+                    </span>
+                    <span className={s.staleEditsActions}>
+                        <button
+                            type="button"
+                            className={s.staleEditsBtn}
+                            onClick={() => {
+                                const edits = editsRef.current;
+                                if (!edits) return;
+                                setHtml(edits.html);
+                                setEditsState("applied");
+                                // Re-base the edits on the current data version.
+                                void persistEdits({
+                                    ...edits,
+                                    baseFingerprint: baselineHashRef.current,
+                                });
+                            }}
+                        >
+                            Use my edited version
+                        </button>
+                        <button
+                            type="button"
+                            className={s.staleEditsBtnGhost}
+                            onClick={() => {
+                                setEditsState("baseline");
+                                void persistEdits(null);
+                            }}
+                        >
+                            Discard saved edits
+                        </button>
+                    </span>
+                </div>
+            )}
+
             <div className={s.page}>
                 {phase.state === "error" ? (
                     <div className={s.errorBox}>{phase.message}</div>
@@ -655,6 +804,7 @@ export function AgreementPreviewClient({
                         contentEditable
                         suppressContentEditableWarning
                         spellCheck
+                        onInput={handleEditorInput}
                         dangerouslySetInnerHTML={{ __html: html }}
                     />
                 )}

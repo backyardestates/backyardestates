@@ -1,9 +1,4 @@
-import { client } from "@/sanity/client";
-import {
-    PRESENTER_COMPLETED_PROPERTIES_QUERY,
-    PRESENTER_ALL_FLOORPLANS_QUERY,
-    PRESENTER_STORIES_QUERY,
-} from "@/sanity/queries";
+import { getPresenterSanityCatalog } from "@/lib/presenter/sanityCatalog";
 import type {
     SanityFloorplan,
     SanityStory,
@@ -22,10 +17,13 @@ import { PresentClient } from "./PresentClient";
 export type { SanityFloorplan, SanityStory, SanityProperty };
 
 export default async function PresentPage() {
-    const [floorplans, stories, completedProperties, inclusions, sidebar, taxTopics, cities, discounts] = await Promise.all([
-        client.fetch<SanityFloorplan[]>(PRESENTER_ALL_FLOORPLANS_QUERY).catch(() => []),
-        client.fetch<SanityStory[]>(PRESENTER_STORIES_QUERY).catch(() => []),
-        client.fetch<SanityProperty[]>(PRESENTER_COMPLETED_PROPERTIES_QUERY).catch(() => []),
+    const [sanityCatalog, inclusions, sidebar, taxTopics, cities, discounts] = await Promise.all([
+        // Cached (5 min) — see lib/presenter/sanityCatalog.ts.
+        getPresenterSanityCatalog().catch(() => ({
+            floorplans: [] as SanityFloorplan[],
+            stories: [] as SanityStory[],
+            completedProperties: [] as SanityProperty[],
+        })),
         // DB-backed catalogs. If they fail (e.g. dev DB down), the slides fall
         // back to the legacy hardcoded constants — never blocks the deck.
         listInclusions().catch(() => []),
@@ -34,6 +32,7 @@ export default async function PresentPage() {
         listCities().catch(() => []),
         listDiscounts().catch(() => []),
     ]);
+    const { floorplans, stories, completedProperties } = sanityCatalog;
 
     // Strip non-serializable fields from the Prisma rows before crossing the
     // server→client boundary.

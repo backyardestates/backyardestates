@@ -64,13 +64,21 @@ async function handle(req: Request) {
     }
 
     // Complete enrollments that have no SCHEDULED messages left.
-    for (const enrollmentId of touchedEnrollments) {
-        const remaining = await prisma.dripMessage.count({
-            where: { enrollmentId, status: DripMessageStatus.SCHEDULED },
+    // One groupBy + one updateMany instead of a count+update per enrollment.
+    const touched = [...touchedEnrollments];
+    if (touched.length > 0) {
+        const stillScheduled = await prisma.dripMessage.groupBy({
+            by: ["enrollmentId"],
+            where: {
+                enrollmentId: { in: touched },
+                status: DripMessageStatus.SCHEDULED,
+            },
         });
-        if (remaining === 0) {
-            await prisma.dripEnrollment.update({
-                where: { id: enrollmentId },
+        const stillActive = new Set(stillScheduled.map((g) => g.enrollmentId));
+        const completed = touched.filter((id) => !stillActive.has(id));
+        if (completed.length > 0) {
+            await prisma.dripEnrollment.updateMany({
+                where: { id: { in: completed }, status: DripStatus.ACTIVE },
                 data: { status: DripStatus.COMPLETED },
             });
         }

@@ -22,13 +22,38 @@ interface Props {
 export function SitePhotoBody({ propertyPhotoUrl, setPropertyPhotoUrl, address }: Props) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [dragOver, setDragOver] = useState(false);
+    const [uploading, setUploading] = useState(false);
 
-    // Read a File as a downscaled base64 data URL (not blob:) so the
-    // BroadcastChannel wire can ship it intact to the presenter tab / persisted
-    // snapshot. Downscaling keeps the snapshot under the server body limit.
+    // Downscale client-side, then upload to Cloudinary and store the URL.
+    // Storing a URL (instead of embedding the base64 data URL in the snapshot)
+    // keeps every autosave POST small — oversized snapshots used to 413 and
+    // the photo silently never persisted. If the upload fails (offline / env
+    // not configured), fall back to the legacy data-URL behavior so the rep
+    // never loses the photo locally.
     function readFile(file: File) {
         if (!file.type.startsWith("image/")) return;
-        void fileToDownscaledDataUrl(file).then(setPropertyPhotoUrl);
+        setUploading(true);
+        void (async () => {
+            const dataUrl = await fileToDownscaledDataUrl(file);
+            try {
+                const blob = await (await fetch(dataUrl)).blob();
+                const form = new FormData();
+                form.append("file", blob, file.name || "site-photo.jpg");
+                const res = await fetch("/api/admin/site-photo", { method: "POST", body: form });
+                const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
+                if (res.ok && data.url) {
+                    setPropertyPhotoUrl(data.url);
+                    return;
+                }
+                console.warn("[site-photo] upload failed, falling back to inline image", data.error);
+                setPropertyPhotoUrl(dataUrl);
+            } catch (err) {
+                console.warn("[site-photo] upload failed, falling back to inline image", err);
+                setPropertyPhotoUrl(dataUrl);
+            } finally {
+                setUploading(false);
+            }
+        })();
     }
 
     function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
@@ -61,7 +86,7 @@ export function SitePhotoBody({ propertyPhotoUrl, setPropertyPhotoUrl, address }
                     <figcaption className={s.previewCaption}>
                         <span className={s.previewMeta}>
                             <span className={s.previewDot} aria-hidden />
-                            Site photo · shown on slide 2
+                            {uploading ? "Uploading replacement…" : "Site photo · shown on slide 2"}
                         </span>
                         <span className={s.previewActions}>
                             <button
@@ -85,6 +110,7 @@ export function SitePhotoBody({ propertyPhotoUrl, setPropertyPhotoUrl, address }
                 <button
                     type="button"
                     className={`${s.dropzone} ${dragOver ? s.dropzoneActive : ""}`}
+                    disabled={uploading}
                     onClick={() => inputRef.current?.click()}
                     onDragOver={(e) => {
                         e.preventDefault();
@@ -100,7 +126,9 @@ export function SitePhotoBody({ propertyPhotoUrl, setPropertyPhotoUrl, address }
                             <path d="m21 15-5-5L5 21" />
                         </svg>
                     </span>
-                    <span className={s.dropTitle}>Drop a site photo here, or click to upload</span>
+                    <span className={s.dropTitle}>
+                        {uploading ? "Uploading photo…" : "Drop a site photo here, or click to upload"}
+                    </span>
                     <span className={s.dropHint}>
                         Aerial or street view of the property — appears on slide 2 of the presentation
                     </span>

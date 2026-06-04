@@ -603,3 +603,57 @@
 @media print {
     .livePill { display: none; }
 }
+
+/* ── Stale-edits choice bar ──────────────────────────────────────────────── */
+
+.staleEditsBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 10px auto 0;
+    max-width: 880px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #fdf0d9;
+    border: 1px solid #e4c27a;
+    color: #8a6116;
+    font-size: 13px;
+}
+
+.staleEditsActions {
+    display: inline-flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.staleEditsBtn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid #8a6116;
+    background: #8a6116;
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.staleEditsBtn:hover {
+    background: #74510f;
+}
+
+.staleEditsBtnGhost {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid #c9a24f;
+    background: transparent;
+    color: #8a6116;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.staleEditsBtnGhost:hover {
+    background: rgba(138, 97, 22, 0.08);
+}

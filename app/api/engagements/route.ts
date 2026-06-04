@@ -9,6 +9,9 @@ import { fetchPipedriveContact, type PipedriveContact } from "@/lib/pipedrive/co
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// POST fetches contact details from Pipedrive inline; don't let a slow CRM
+// call hit the platform default timeout.
+export const maxDuration = 60;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/engagements?stage=CONSULTATION
@@ -34,6 +37,7 @@ export async function GET(req: Request) {
                     : { OR: [{ repId: userId }, { architectId: userId }] }),
             },
             orderBy: { updatedAt: "desc" },
+            take: 300,
             include: {
                 _count: {
                     select: { consultations: true, formalAnalyses: true, proposals: true },

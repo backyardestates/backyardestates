@@ -69,11 +69,24 @@ export default async function EngagementDetailPage({
     const { userId, role } = await ensureProposalContext();
     const { id } = await params;
 
+    // Select only what this page renders — the full rows carry large Json
+    // blobs (consultation transcripts/AI summaries, FPA siteVisit/cityInfo,
+    // drip message bodies) that made this query slow for active engagements.
     const engagement = await prisma.engagement.findUnique({
         where: { id },
         include: {
-            consultations: { orderBy: { createdAt: "desc" } },
-            formalAnalyses: { orderBy: { createdAt: "desc" } },
+            consultations: {
+                orderBy: { createdAt: "desc" },
+                take: 50,
+                select: { id: true, source: true, status: true, createdAt: true },
+            },
+            formalAnalyses: {
+                orderBy: { createdAt: "desc" },
+                take: 50,
+                // flagsJson stays — the "Architect findings" panel + cost-adder
+                // total below read it.
+                select: { id: true, status: true, createdAt: true, flagsJson: true },
+            },
             proposals: {
                 orderBy: { updatedAt: "desc" },
                 select: {
@@ -88,9 +101,27 @@ export default async function EngagementDetailPage({
             },
             dripEnrollments: {
                 orderBy: { createdAt: "desc" },
-                include: { messages: { orderBy: { stepIndex: "asc" } } },
+                take: 1, // only the latest enrollment is rendered
+                select: {
+                    id: true,
+                    status: true,
+                    messages: {
+                        orderBy: { stepIndex: "asc" },
+                        select: {
+                            id: true,
+                            subject: true,
+                            status: true,
+                            sentAt: true,
+                            scheduledFor: true,
+                        },
+                    },
+                },
             },
-            events: { orderBy: { createdAt: "desc" }, take: 100 },
+            events: {
+                orderBy: { createdAt: "desc" },
+                take: 50,
+                select: { id: true, message: true, type: true, createdAt: true },
+            },
         },
     });
 

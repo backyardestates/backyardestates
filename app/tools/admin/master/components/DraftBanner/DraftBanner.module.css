@@ -169,3 +169,17 @@
     font-family: 'Roboto Slab', Georgia, serif;
     font-style: italic;
 }
+
+/* Stale-draft warning — canonical was updated after this draft. */
+.staleWarning {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #fdf0d9;
+    border: 1px solid #e4c27a;
+    color: #8a6116;
+    font-size: 12px;
+    font-weight: 600;
+}

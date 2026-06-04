@@ -1,10 +1,5 @@
 import { notFound } from "next/navigation";
-import { client } from "@/sanity/client";
-import {
-    PRESENTER_COMPLETED_PROPERTIES_QUERY,
-    PRESENTER_ALL_FLOORPLANS_QUERY,
-    PRESENTER_STORIES_QUERY,
-} from "@/sanity/queries";
+import { getPresenterSanityCatalog } from "@/lib/presenter/sanityCatalog";
 import type {
     SanityFloorplan,
     SanityStory,
@@ -36,9 +31,7 @@ export default async function PrintByIdPage({
 
     const [
         proposal,
-        floorplans,
-        stories,
-        completedProperties,
+        sanityCatalog,
         inclusions,
         sidebar,
         taxTopics,
@@ -51,15 +44,19 @@ export default async function PrintByIdPage({
                 select: { id: true, presenterBroadcast: true },
             })
             .catch(() => null),
-        client.fetch<SanityFloorplan[]>(PRESENTER_ALL_FLOORPLANS_QUERY).catch(() => []),
-        client.fetch<SanityStory[]>(PRESENTER_STORIES_QUERY).catch(() => []),
-        client.fetch<SanityProperty[]>(PRESENTER_COMPLETED_PROPERTIES_QUERY).catch(() => []),
+        // Cached (5 min) — see lib/presenter/sanityCatalog.ts.
+        getPresenterSanityCatalog().catch(() => ({
+            floorplans: [] as SanityFloorplan[],
+            stories: [] as SanityStory[],
+            completedProperties: [] as SanityProperty[],
+        })),
         listInclusions().catch(() => []),
         getSidebarConfig().catch(() => null),
         listActiveTaxTopics().catch(() => []),
         listCities().catch(() => []),
         listDiscounts().catch(() => []),
     ]);
+    const { floorplans, stories, completedProperties } = sanityCatalog;
 
     if (!proposal?.presenterBroadcast) {
         // No saved presenter payload (proposal missing, or saved before this flow).
