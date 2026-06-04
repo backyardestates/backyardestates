@@ -1,124 +1,1087 @@
 .main {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 2rem 0;
 }
 
-.content {
-    margin: 0;
-    padding: 0 1.5rem;
-    grid-column: span 12;
+/* ---------- Shared section scaffold ---------- */
+.section {
+    padding: clamp(3.5rem, 8vw, 6.5rem) 1.5rem;
+    /* Fixed nav is 108px tall — keep anchor-jump targets clear of it. */
+    scroll-margin-top: 7.5rem;
+}
+
+.sectionCream {
+    background: var(--color-brand-beige-subtle);
+}
+
+.sectionInk {
+    background:
+        radial-gradient(
+            100% 100% at 0% 0%,
+            rgba(173, 141, 95, 0.12) 0%,
+            transparent 50%
+        ),
+        var(--color-brand-dark-blue);
+}
+
+.container {
+    max-width: 72rem;
+    margin: 0 auto;
     width: 100%;
-    overflow: hidden;
 }
 
-.factors {
+.sectionHead {
+    max-width: 44rem;
+    margin: 0 auto clamp(2.5rem, 5vw, 3.5rem);
+    text-align: center;
+}
+
+.eyebrow {
+    display: inline-block;
+    margin-bottom: 0.9rem;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige);
+}
+
+.eyebrowOnInk {
+    color: var(--color-brand-beige);
+}
+
+.sectionTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(1.85rem, 4.2vw, 2.85rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    color: var(--color-brand-dark-blue);
+    text-wrap: balance;
+}
+
+.titleOnInk {
+    color: var(--color-white);
+}
+
+.sectionLede {
+    margin-top: 1rem;
+    font-family: var(--font-sans);
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--color-neutral-600);
+    text-wrap: pretty;
+}
+
+.ledeOnInk {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+/* ---------- Hero ---------- */
+.hero {
+    /* Top padding must always exceed the 108px fixed nav so the eyebrow never
+       tucks underneath it — min 7.5rem (120px) clears it at every viewport. */
+    padding: clamp(7.5rem, 8vw, 9.5rem) 1.5rem clamp(3rem, 6vw, 4.5rem);
+    scroll-margin-top: 7.5rem;
+    background:
+        radial-gradient(
+            120% 90% at 50% 0%,
+            rgba(173, 141, 95, 0.1) 0%,
+            transparent 55%
+        ),
+        var(--color-brand-beige-subtle);
+}
+
+.heroInner {
+    max-width: 52rem;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.heroEyebrow {
+    display: inline-block;
+    margin-bottom: 1.1rem;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige);
+}
+
+.heroTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--color-brand-dark-blue);
+}
+
+.heroAccent {
+    color: var(--color-brand-beige);
+}
+
+.heroSub {
+    max-width: 40rem;
+    margin: 1.5rem auto 0;
+    font-family: var(--font-sans);
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    line-height: 1.65;
+    color: var(--color-neutral-600);
+}
+
+.heroActions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem 1.5rem;
+    margin-top: 2rem;
+}
+
+.heroLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-brand-light-blue);
+    transition: color 200ms ease;
+    /* Invisible touch-target expansion (≥44px) without layout shift. */
+    padding: 0.75rem 0.5rem;
+    margin: -0.75rem -0.5rem;
+}
+
+.heroLink:hover {
+    color: var(--color-brand-dark-blue);
+}
+
+.linkArrow {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 200ms ease;
+}
+
+.heroLink:hover .linkArrow {
+    transform: translateX(3px);
+}
+
+.heroStatWrap {
+    max-width: 60rem;
+    margin: clamp(2.5rem, 5vw, 3.5rem) auto 0;
+}
+
+/* ---------- "What all-in means" grid ---------- */
+.includesGrid {
     display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 1.5rem;
-    margin: 3rem 0 3rem 0;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.factor {
-    gap: 2rem;
-    margin: 0;
-    padding: 2rem;
-    border: 1px solid var(--color-neutral-100);
-    border-radius: 1rem;
-}
-
-.factor h3 {
-    margin: 0 0 0.5rem 0;
-    padding: 0;
-    /* border: 1px solid red; */
-
-    /* margin: 0 0 0.5rem 0; */
-    /* padding: 0; */
+.includeItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.15rem 1.35rem;
+    background: var(--color-white);
+    border: 1px solid rgba(54, 72, 75, 0.1);
+    border-radius: 0.9rem;
     font-family: var(--font-sans);
+    font-size: 1rem;
     font-weight: 500;
-    font-size: 1.25rem;
+    line-height: 1.4;
     color: var(--color-brand-dark-blue);
+    transition:
+        transform 200ms ease,
+        box-shadow 200ms ease,
+        border-color 200ms ease;
 }
 
-.factor p {
+.includeItem:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 10px 26px rgba(54, 72, 75, 0.08);
+}
+
+.includeIcon {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-brand-beige);
+    stroke-width: 1.6;
+}
+
+/* ---------- Financing option cards ---------- */
+.financeGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
     margin: 0;
     padding: 0;
-    /* border: 1px solid red; */
-    font-family: var(--font-sans);
-    color: var(--color-neutral-500);
-    line-height: 1.5rem;
+    list-style: none;
 }
 
-.cost_factors {
-    margin: 6rem 0 !important;
-}
-
-.icon {
-    margin: 0 0 1rem 0;
-    padding: 0;
-    color: var(--color-neutral-300);
-}
-
-.pricingByFloorplan th:nth-child(4),
-.pricingByFloorplan td:nth-child(4) {
-    display: none;
-}
-
-.link {
-    font-family: var(--font-sans);
-    color: var(--color-brand-light-blue);
-    text-underline-offset: 4px;
-    transition: color 300ms ease;
-}
-
-.link:hover {
-    color: var(--color-brand-dark-blue);
-}
-
-.centered {
+.financeCard {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: 0 0 6rem 0;
-    padding: 0;
+    gap: 0.75rem;
+    padding: 1.75rem;
+    background: var(--color-white);
+    border: 1px solid rgba(54, 72, 75, 0.12);
+    border-radius: 1.1rem;
+    transition:
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease;
 }
 
-.paragraph {
-    margin: 1.5rem 0;
-    padding: 0;
+.financeCard:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 14px 34px rgba(54, 72, 75, 0.1);
+}
+
+.financeBadge {
+    align-self: flex-start;
+    padding: 0.25rem 0.7rem;
     font-family: var(--font-sans);
-    color: var(--color-neutral-500);
-    line-height: 1.5rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige-hover);
+    background: var(--color-brand-beige-A010);
+    border-radius: 100px;
+}
+
+.financeName {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-brand-dark-blue);
+}
+
+.financeDesc {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-neutral-600);
+}
+
+.financeDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin: 0.25rem 0 0.5rem;
+    padding: 0;
+    list-style: none;
+}
+
+.financeDetails li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--color-neutral-700);
+}
+
+.financeCheck {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.15rem;
+    color: var(--color-brand-beige);
+    stroke-width: 2.5;
+}
+
+.financeBest {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(54, 72, 75, 0.1);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+}
+
+/* ---------- All-in vs itemized comparison ---------- */
+.comparison {
+    max-width: 48rem;
+    margin: 0 auto;
+    border: 1px solid rgba(54, 72, 75, 0.14);
+    border-radius: 1.1rem;
+    overflow: hidden;
+    background: var(--color-white);
+}
+
+.compHead,
+.compRow,
+.compTotal {
+    display: grid;
+    grid-template-columns: 1fr 7rem 7rem;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.95rem 1.1rem;
+}
+
+.compHead {
+    background: var(--color-brand-dark-blue);
+    padding-top: 1.1rem;
+    padding-bottom: 1.1rem;
+}
+
+.compHeadItem {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.compCol {
     text-align: center;
 }
 
-/* responsive */
+.compHeadUs {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--color-brand-beige);
+}
 
-/* fixed */
-@media only screen and (min-width: 1440px) {
-    .content {
-        /* border: 5px solid red; */
-        /* margin: 0 auto; */
-        /* padding: 0; */
-        /* width: 1440px; */
-        grid-column-start: 3;
-        grid-column-end: 11;
+.compHeadThem {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.compRow {
+    border-top: 1px solid rgba(54, 72, 75, 0.08);
+}
+
+.compRow:nth-child(even) {
+    background: rgba(250, 247, 238, 0.5);
+}
+
+.compItem {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-brand-dark-blue);
+}
+
+.compUs {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2e8b62;
+}
+
+.compCheck {
+    width: 0.95rem;
+    height: 0.95rem;
+    stroke-width: 2.5;
+}
+
+.compThem {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-neutral-500);
+    font-variant-numeric: tabular-nums;
+}
+
+.compTotal {
+    border-top: 2px solid rgba(54, 72, 75, 0.16);
+    background: var(--color-brand-beige-subtle);
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+}
+
+.compTotal .compItem {
+    font-weight: 700;
+}
+
+/* Mobile: tighten the value columns so all three fit without overflow. */
+@media only screen and (max-width: 599px) {
+    .compHead,
+    .compRow,
+    .compTotal {
+        grid-template-columns: 1fr 4.75rem 4.75rem;
+        gap: 0.4rem;
+        padding: 0.85rem 0.9rem;
     }
 
-    .factors {
+    .compHeadItem,
+    .compHeadUs,
+    .compHeadThem {
+        font-size: 0.7rem;
+        letter-spacing: 0.02em;
+    }
+
+    .compItem {
+        font-size: 0.875rem;
+    }
+
+    .compUs {
+        gap: 0.2rem;
+        font-size: 0.8rem;
+    }
+
+    .compCheck {
+        width: 0.8rem;
+        height: 0.8rem;
+    }
+
+    .compThem {
+        font-size: 0.875rem;
+    }
+
+    .compTotalUs,
+    .compTotalThem {
+        font-size: 1.15rem;
+    }
+}
+
+.compTotalUs {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-brand-dark-blue);
+    font-variant-numeric: tabular-nums;
+}
+
+.compTotalThem {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-neutral-400);
+    font-variant-numeric: tabular-nums;
+    text-decoration: line-through;
+    text-decoration-color: rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- Proof grid ---------- */
+.proofGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.proofCard {
+    min-width: 0;
+}
+
+.proofLink {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 1.1rem;
+    overflow: hidden;
+    background: var(--color-white);
+    box-shadow: 0 10px 30px rgba(54, 72, 75, 0.08);
+    text-decoration: none;
+    color: inherit;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.proofLink:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 38px rgba(54, 72, 75, 0.14);
+}
+
+.proofLink:focus-visible {
+    outline: 2px solid var(--color-brand-beige);
+    outline-offset: 3px;
+}
+
+.proofImageWrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    background: var(--color-neutral-50);
+}
+
+.proofImage {
+    object-fit: cover;
+}
+
+.proofBody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.1rem 1.25rem 1.35rem;
+}
+
+.proofName {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+}
+
+.proofMeta {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--color-neutral-500);
+}
+
+.proofCta {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+/* ---------- FPA: "How you get your exact price" ---------- */
+.titleAccent {
+    color: var(--color-brand-beige);
+}
+
+.fpaSteps {
+    counter-reset: fpa-step;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fpaStep {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.75rem 1.6rem 1.6rem;
+    background: var(--color-white);
+    border: 1px solid rgba(54, 72, 75, 0.12);
+    border-radius: 1.1rem;
+    transition:
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease;
+}
+
+.fpaStep:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 14px 34px rgba(54, 72, 75, 0.1);
+}
+
+/* Step 2 — the step the exhibit below unpacks. */
+.fpaStepFeatured {
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 10px 30px rgba(173, 141, 95, 0.18);
+}
+
+/* ---------- Connector: steps → "130+" exhibit ---------- */
+.fpaConnector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 1.5rem 0 1.75rem;
+}
+
+.fpaConnectorLine {
+    width: 2px;
+    height: clamp(2.25rem, 4vw, 3.25rem);
+    border-radius: 1px;
+    background: linear-gradient(
+        to bottom,
+        var(--color-brand-beige-A060),
+        var(--color-brand-beige)
+    );
+}
+
+.fpaConnectorLabel {
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    background: var(--color-brand-beige-A010);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige-hover);
+}
+
+.fpaConnectorTitle {
+    max-width: 34rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-brand-dark-blue);
+    text-wrap: balance;
+}
+
+/* ---------- The exhibit panel ---------- */
+.fpaPanel {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(1.75rem, 3vw, 2.75rem);
+    background: var(--color-white);
+    border: 1px solid rgba(54, 72, 75, 0.12);
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 60px rgba(54, 72, 75, 0.1);
+}
+
+/* Faint gold atmosphere behind the numeral — echoes the estimator panel. */
+.fpaPanel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+        55% 45% at 12% 18%,
+        rgba(173, 141, 95, 0.09) 0%,
+        transparent 70%
+    );
+    pointer-events: none;
+}
+
+.fpaPanelFooter {
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(54, 72, 75, 0.1);
+}
+
+.fpaStepNum {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    margin-bottom: 0.35rem;
+    border-radius: 50%;
+    background: var(--color-brand-beige-A010);
+    border: 1.5px solid var(--color-brand-beige);
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-brand-beige-hover);
+}
+
+.fpaStepTitle {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-brand-dark-blue);
+}
+
+.fpaStepDetail {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-neutral-600);
+}
+
+.fpaStepNote {
+    align-self: flex-start;
+    margin-top: auto;
+    padding: 0.3rem 0.75rem;
+    border-radius: 100px;
+    background: var(--color-brand-beige-A010);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--color-brand-beige-hover);
+}
+
+.fpaShowcase {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.fpaNumeralBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    text-align: center;
+    align-items: center;
+}
+
+/* Micro-kicker naming the analysis, flanked by drafting hairlines. */
+.fpaKicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.1rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige-hover);
+}
+
+.fpaKicker::before,
+.fpaKicker::after {
+    content: '';
+    width: 1.4rem;
+    height: 1px;
+    background: var(--color-brand-beige-A060);
+}
+
+/* On narrow screens the kicker wraps — drop the hairlines so it stays clean. */
+@media only screen and (max-width: 479px) {
+    .fpaKicker::before,
+    .fpaKicker::after {
+        display: none;
+    }
+}
+
+.fpaNumeral {
+    font-family: var(--font-serif);
+    font-size: clamp(4.5rem, 10vw, 7rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    /* Solid fallback first, then gradient gold via clipped background. */
+    color: var(--color-brand-beige);
+    background: linear-gradient(
+        135deg,
+        var(--color-brand-beige) 20%,
+        var(--color-brand-beige-hover) 90%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-variant-numeric: tabular-nums;
+}
+
+.fpaNumeralPlus {
+    font-size: 0.7em;
+    vertical-align: 0.12em;
+}
+
+/* Wide-tracked lockup line, tight under the numeral — magazine-stat style. */
+.fpaLockupLabel {
+    margin-top: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    text-indent: 0.3em; /* re-center: balances the trailing tracking */
+    text-transform: uppercase;
+    color: var(--color-brand-dark-blue);
+}
+
+.fpaLockupSub {
+    max-width: 17rem;
+    margin-top: 0.45rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--color-neutral-600);
+}
+
+/* Divider meta-row: 6 categories · 1 site visit · 0 assumptions */
+.fpaMetaRow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem 0.65rem;
+    margin: 1.2rem 0 0;
+    padding: 1.1rem 0 0;
+    border-top: 1px solid rgba(54, 72, 75, 0.12);
+    list-style: none;
+}
+
+.fpaMetaRow li {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+    font-variant-numeric: tabular-nums;
+}
+
+.fpaMetaRow li + li::before {
+    content: '·';
+    margin-right: 0.65rem;
+    color: var(--color-brand-beige);
+    font-weight: 700;
+}
+
+/* The fee as a credit-note card. */
+.fpaFeeCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    max-width: 21rem;
+    margin-top: 1.25rem;
+    padding: 1rem 1.2rem;
+    background: var(--color-brand-beige-subtle);
+    border: 1px solid var(--color-brand-beige-A040);
+    border-left: 3px solid var(--color-brand-beige);
+    border-radius: 0.75rem;
+    text-align: left;
+}
+
+.fpaFeePrice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-brand-dark-blue);
+    font-variant-numeric: tabular-nums;
+}
+
+.fpaFeeCredit {
+    width: fit-content;
+    padding: 0.25rem 0.65rem;
+    border-radius: 0.6rem;
+    background: var(--color-brand-beige-A010);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: var(--color-brand-beige-hover);
+}
+
+.fpaFeeNote {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--color-neutral-600);
+}
+
+.fpaFeeNote strong {
+    color: var(--color-brand-dark-blue);
+    font-variant-numeric: tabular-nums;
+}
+
+.fpaCats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fpaOutputs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.9rem 2.25rem;
+    margin: 0;
+}
+
+/* Inside the white panel, category cards switch to cream so they read as the
+   panel's contents; hover lifts the card and nudges its icon. */
+.fpaPanel .factorCard {
+    background: var(--color-brand-beige-subtle);
+    border-color: rgba(54, 72, 75, 0.08);
+    transition:
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease;
+}
+
+.fpaPanel .factorCard:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 12px 28px rgba(173, 141, 95, 0.14);
+}
+
+.fpaPanel .factorCard:hover .factorIcon {
+    transform: scale(1.08);
+    color: var(--color-brand-beige-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fpaPanel .factorCard,
+    .fpaPanel .factorCard:hover,
+    .factorIcon,
+    .fpaPanel .factorCard:hover .factorIcon {
+        transition: none;
+        transform: none;
+    }
+}
+
+.fpaOutput {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+}
+
+.fpaOutputCheck {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--color-brand-beige);
+    stroke-width: 2.5;
+}
+
+/* ---------- FPA category cards ---------- */
+.factorCard {
+    padding: 1.6rem;
+    background: var(--color-white);
+    border: 1px solid rgba(54, 72, 75, 0.12);
+    border-radius: 1rem;
+}
+
+.factorIcon {
+    width: 1.6rem;
+    height: 1.6rem;
+    margin-bottom: 0.85rem;
+    color: var(--color-brand-beige);
+    stroke-width: 1.6;
+    transition:
+        transform 200ms ease,
+        color 200ms ease;
+}
+
+.factorTitle {
+    margin-bottom: 0.4rem;
+    font-family: var(--font-sans);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+}
+
+.factorText {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--color-neutral-600);
+}
+
+/* ---------- FAQ ---------- */
+.faqContainer {
+    max-width: 46rem;
+}
+
+.faqList {
+    margin-top: 0.5rem;
+}
+
+.faqAnswer {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-neutral-600);
+}
+
+.faqHelp {
+    margin-top: 2rem;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-neutral-600);
+}
+
+/* ---------- Shared text link ---------- */
+.textLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--color-brand-light-blue);
+    text-underline-offset: 3px;
+    transition: color 200ms ease;
+    /* Invisible touch-target expansion (≥44px) without layout shift. */
+    padding: 0.75rem 0.35rem;
+    margin: -0.75rem -0.35rem;
+}
+
+.textLink:hover {
+    color: var(--color-brand-dark-blue);
+    text-decoration: underline;
+}
+
+/* ---------- Responsive ---------- */
+@media only screen and (min-width: 600px) {
+    .includesGrid {
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(2, 1fr);
-        gap: 2rem;
-        margin: 3rem 0 6rem 0;
-        padding: 0;
     }
 
-    .pricingByFloorplan th:nth-child(4),
-    .pricingByFloorplan td:nth-child(4) {
-        display: table-cell;
+    .financeGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fpaCats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .proofGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (min-width: 860px) {
+    .fpaSteps {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .fpaShowcase {
+        grid-template-columns: minmax(17rem, 0.75fr) 1.25fr;
+        gap: 3rem;
+    }
+
+    .fpaNumeralBlock {
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .fpaLockupLabel {
+        text-indent: 0;
+    }
+
+    .fpaMetaRow {
+        justify-content: flex-start;
+        align-self: stretch;
+    }
+}
+
+@media only screen and (min-width: 960px) {
+    .includesGrid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .financeGrid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .proofGrid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }

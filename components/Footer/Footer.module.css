@@ -2,7 +2,8 @@
     border-top: 1rem solid #ad8d5f;
     color: white;
     background: #36484b;
-    width: 100vw;
+    /* 100vw includes the scrollbar and forces horizontal overflow — use 100%. */
+    width: 100%;
     margin: 0;
     padding: 3rem 0;
 }
@@ -20,6 +21,15 @@
     grid-template-columns: repeat(12, 1fr);
     gap: 2rem;
     font-family: var(--font-sans);
+}
+
+/* The 11 column gaps alone total 352px — wider than a phone. Items span all
+   12 columns below 1300px, so a small column-gap changes nothing visually
+   while letting the grid fit narrow viewports. */
+@media only screen and (max-width: 959px) {
+    .container {
+        column-gap: 0.5rem;
+    }
 }
 
 .logo {

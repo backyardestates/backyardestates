@@ -1,0 +1,404 @@
+.card {
+    width: 100%;
+    background: var(--color-white);
+    border: 1px solid rgba(54, 72, 75, 0.12);
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 60px rgba(54, 72, 75, 0.1);
+    overflow: hidden;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+/* ---------------- Controls ---------------- */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.field {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.label {
+    display: block;
+    margin: 0 0 0.6rem;
+    padding: 0;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+}
+
+.legendNote {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--color-neutral-400);
+}
+
+.selectWrap {
+    position: relative;
+}
+
+.selectWrap::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    width: 0.7rem;
+    height: 0.7rem;
+    margin-top: -0.45rem;
+    border-right: 2px solid var(--color-brand-dark-blue);
+    border-bottom: 2px solid var(--color-brand-dark-blue);
+    transform: rotate(45deg);
+    pointer-events: none;
+}
+
+.select {
+    width: 100%;
+    padding: 0.9rem 2.5rem 0.9rem 1rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+    background: var(--color-brand-beige-subtle);
+    border: 1px solid rgba(54, 72, 75, 0.15);
+    border-radius: 0.75rem;
+    appearance: none;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    transition: border-color 200ms ease;
+}
+
+.select:hover {
+    border-color: var(--color-brand-beige);
+}
+
+.select:focus-visible {
+    outline: 2px solid var(--color-brand-dark-blue);
+    outline-offset: 2px;
+}
+
+.segment {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.segmentTerms .segItem {
+    min-width: 0;
+    flex: 1;
+}
+
+.segmentDisabled {
+    opacity: 0.45;
+}
+
+.segmentDisabled .segItem {
+    cursor: not-allowed;
+}
+
+.segItem {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    flex: 1 1 8rem;
+    min-height: 44px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid rgba(54, 72, 75, 0.18);
+    border-radius: 0.75rem;
+    background: var(--color-white);
+    cursor: pointer;
+    transition:
+        background-color 200ms ease,
+        border-color 200ms ease,
+        color 200ms ease;
+}
+
+.segItem input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+
+.segItem:hover {
+    border-color: var(--color-brand-beige);
+    background: var(--color-brand-beige-A010);
+}
+
+.segActive:hover {
+    background: var(--color-brand-dark-blue);
+}
+
+.segItem:focus-within {
+    outline: 2px solid var(--color-brand-dark-blue);
+    outline-offset: 2px;
+}
+
+.segActive {
+    background: var(--color-brand-dark-blue);
+    border-color: var(--color-brand-dark-blue);
+}
+
+.segLabel {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+}
+
+.segNote {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--color-neutral-600);
+    font-variant-numeric: tabular-nums;
+}
+
+.segActive .segLabel,
+.segActive .segNote {
+    color: var(--color-white);
+}
+
+.segActive .segNote {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* ---------------- Results (ink panel) ---------------- */
+.results {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    background:
+        radial-gradient(
+            120% 80% at 100% 0%,
+            rgba(173, 141, 95, 0.22) 0%,
+            transparent 55%
+        ),
+        var(--color-brand-dark-blue);
+    color: var(--color-white);
+}
+
+.resultItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.resultItem:first-child {
+    padding-top: 0;
+}
+
+.resultItem:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.resultLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.resultValue {
+    font-family: var(--font-serif);
+    font-size: clamp(2.25rem, 5.5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-white);
+}
+
+.rent {
+    /* Brand beige reads muddy on ink — lifted gold tuned for the dark panel. */
+    color: hsla(35, 48%, 68%, 1);
+}
+
+.resultNote {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.cashflowItem .resultValue {
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+}
+
+.cashPositive {
+    color: #5fbf8f;
+}
+
+.cashNegative {
+    color: #e8a0a0;
+}
+
+.cashflowItem.cashPositive .resultValue {
+    color: #6fd3a0;
+}
+
+.cashflowItem.cashNegative .resultValue {
+    color: #efb0b0;
+}
+
+.trendIcon {
+    width: 1rem;
+    height: 1rem;
+    stroke-width: 2;
+}
+
+/* ---------------- Pencils out ---------------- */
+.pencils {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem 2rem;
+    align-items: center;
+    padding: clamp(1.5rem, 3vw, 2rem) clamp(1.5rem, 3vw, 2.5rem);
+    background: var(--color-brand-beige-subtle);
+    border-top: 1px solid rgba(54, 72, 75, 0.1);
+}
+
+.pencilStat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.pencilLabel {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+}
+
+.pencilValue {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-brand-dark-blue);
+    font-variant-numeric: tabular-nums;
+}
+
+.pencilValue.cashPositive {
+    color: #2e8b62;
+}
+
+.pencilValue.cashNegative {
+    color: #b06a6a;
+}
+
+.gold {
+    color: var(--color-brand-beige);
+}
+
+.pencilUnit {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--color-neutral-500);
+}
+
+.pencilDivider {
+    display: none;
+}
+
+.pencilNote {
+    grid-column: 1 / -1;
+    max-width: 38rem;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-neutral-700);
+}
+
+/* ---------------- Disclaimer (sits on the dark section, below the card) ---------------- */
+.disclaimer {
+    max-width: 46rem;
+    margin: 1.5rem auto 0;
+    padding: 0 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    text-align: center;
+    text-wrap: pretty;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.disclaimerLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: hsla(35, 48%, 70%, 1);
+    font-weight: 600;
+    white-space: nowrap;
+    text-underline-offset: 3px;
+    transition: color 200ms ease;
+    /* Invisible touch-target expansion (≥44px) without layout shift. */
+    padding: 0.75rem 0.4rem;
+    margin: -0.75rem -0.4rem;
+}
+
+.disclaimerLink:hover {
+    color: var(--color-white);
+    text-decoration: underline;
+}
+
+.inlineArrow,
+.disclaimerLink .inlineArrow {
+    width: 0.85rem;
+    height: 0.85rem;
+}
+
+/* ---------------- Responsive ---------------- */
+@media only screen and (min-width: 860px) {
+    .grid {
+        grid-template-columns: 1.05fr 0.95fr;
+    }
+
+    /* Crisp seam between the light controls and the ink results. */
+    .controls {
+        border-right: 1px solid rgba(54, 72, 75, 0.08);
+    }
+
+    .pencils {
+        grid-template-columns: auto auto 1fr;
+        gap: 0 2.5rem;
+    }
+
+    .pencilDivider {
+        display: block;
+        width: 1px;
+        height: 2.75rem;
+        background: rgba(54, 72, 75, 0.18);
+    }
+
+    .pencilNote {
+        grid-column: 1 / -1;
+        margin-top: 0.25rem;
+    }
+}

@@ -11,10 +11,12 @@ export default function Button({
     href = '#',
     showIcon = true,
     newWindow = false,
+    onClick,
 }) {
     return (
         <Link
             href={href}
+            onClick={onClick}
             className={`${isPrimary ? style.primary : style.secondary} ${theme === 'blue' ? style.theme_blue : style.theme_beige
                 }`} target={newWindow ? '_blank' : '_self'}
         >

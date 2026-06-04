@@ -16,6 +16,8 @@
     padding: 0;
     border: 2px solid var(--color-white);
     border-radius: 0.5rem;
+    /* Never exceed the footer column — the email input shrinks instead. */
+    max-width: 100%;
 }
 
 .success {
@@ -47,6 +49,9 @@
     color: var(--color-white);
     border-top-left-radius: 0.5rem;
     border-bottom-left-radius: 0.5rem;
+    /* Shrink below the input's intrinsic size on narrow screens. */
+    flex: 1 1 0;
+    min-width: 0;
 }
 
 .inputEmail::placeholder {

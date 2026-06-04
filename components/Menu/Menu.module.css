@@ -1,97 +1,370 @@
+/* ── Overlay shell ──────────────────────────────────────────────
+   Full-screen, brand dark-blue canvas. Animated with opacity +
+   transform only; kept inert (no pointer events) while closed. */
 .base {
-    display: block;
     position: fixed;
-    top: 0;
-    padding: 1rem;
-    background-color: var(--color-brand-dark-blue);
+    inset: 0;
     z-index: 8888;
-    width: 100vw;
-    height: 100vh;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity 180ms ease-in,
+        visibility 0s linear 180ms;
 }
 
-.base_show {
-    composes: base;
+.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+        opacity 260ms ease-out,
+        visibility 0s;
 }
 
-.base_hide {
-    composes: base;
-    display: none;
+.scrim {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(16, 24, 26, 0.55);
 }
 
+/* ── Panel ──────────────────────────────────────────────────── */
 .modal {
-    padding: 1rem;
-    background-color: var(--color-white);
-    border-radius: 0.5rem;
-    /* Dropshadow */
-    box-shadow: 0px 4px 16px 0px rgba(54, 72, 75, 0.15);
+    position: absolute;
+    inset: 0;
     display: flex;
-    height: calc(100vh - 2rem);
-    padding: 2rem;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-shrink: 0;
+    padding: 1.5rem 1.5rem 2rem;
+    background-color: var(--color-brand-dark-blue);
+    color: var(--color-white);
+    overflow: hidden;
+    outline: none;
+    transform: translateY(-12px) scale(0.99);
+    transition: transform 180ms ease-in;
 }
 
-.modal ul {
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-sans);
-    list-style: none;
+.open .modal {
+    transform: translateY(0) scale(1);
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.modal ul li {
-    margin-bottom: 1.5rem;
+@media only screen and (min-width: 600px) {
+    .modal {
+        max-width: 30rem;
+        right: 0;
+        left: auto;
+        box-shadow: -16px 0 48px 0 rgba(16, 24, 26, 0.4);
+        transform: translateX(16px);
+    }
+    .open .modal {
+        transform: translateX(0);
+    }
 }
 
-.modal ul li ul li {
-    margin-left: 1rem;
-}
-
-.modal ul li ul li:first-child {
-    margin-left: 0rem;
-}
-
-.modal ul li a,
-.modal ul li ul li a {
-    text-decoration: none;
-    color: var(--color-brand-light-blue);
-}
-
+/* ── Top bar (logo + close) ─────────────────────────────────── */
 .top {
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2.5rem;
-}
-
-.bottom {
-    margin-top: auto;
-}
-
-.icon {
-    color: var(--color-neutral-500);
-    opacity: 0.75;
-}
-
-.icon:hover {
-    opacity: 1;
-    cursor: pointer;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    margin-bottom: 1.5rem;
 }
 
 .logo {
     display: flex;
     gap: 0.75rem;
     align-items: center;
+    font-family: var(--font-sans);
     font-weight: 700;
     text-decoration: none;
-    height: 3rem;
-    font-family: var(--font-sans);
-    fill: var(--color-brand-light-blue);
+    color: var(--color-white);
+    fill: var(--color-white);
 }
 
-.logo .logotype {
-    display: block;
-    color: var(--color-brand-dark-blue);
+.logotype {
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+}
+
+.close {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    color: var(--color-white);
+    opacity: 0.7;
+    cursor: pointer;
+    transition:
+        opacity 200ms ease,
+        background-color 200ms ease;
+}
+
+.close:hover,
+.close:focus-visible {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Question groups ───────────────────────────────────────── */
+.groups {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    /* Subtle scrollbar that blends into the dark canvas (Firefox) */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+/* Subtle scrollbar (WebKit / Chromium) */
+.groups::-webkit-scrollbar {
+    width: 4px;
+}
+
+.groups::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.groups::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+}
+
+.groups::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.28);
+}
+
+.group {
+    padding: 0.875rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.group:first-child {
+    padding-top: 0.25rem;
+}
+
+.group:last-child {
+    border-bottom: none;
+}
+
+/* Staggered reveal of each chapter when the menu opens */
+.open .group {
+    animation: rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.open .group:nth-child(1) { animation-delay: 60ms; }
+.open .group:nth-child(2) { animation-delay: 105ms; }
+.open .group:nth-child(3) { animation-delay: 150ms; }
+.open .group:nth-child(4) { animation-delay: 195ms; }
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Quiet category label — provides context without competing with the links */
+.groupHead {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.625rem;
+    padding-left: 0.75rem;
+}
+
+.eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-brand-beige);
+}
+
+.heading {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+/* Page links are the primary, obviously-tappable items */
+.link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 1.1875rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-white);
+    transition:
+        color 200ms ease,
+        background-color 200ms ease;
+}
+
+/* Chevron affordance so it clearly reads as a destination */
+.link::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition:
+        opacity 200ms ease,
+        transform 200ms ease;
+}
+
+.link:hover,
+.link:focus-visible {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.link:hover::after,
+.link:focus-visible::after {
+    opacity: 0.6;
+    transform: rotate(45deg) translate(1px, -1px);
+}
+
+/* Active route: unmistakable — gold text, gold bar, tinted pill */
+.linkActive {
+    color: var(--color-brand-beige);
+    background-color: var(--color-brand-beige-A010);
+}
+
+.linkActive::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 1.5rem;
+    border-radius: 999px;
+    background-color: var(--color-brand-beige);
+}
+
+.linkActive::after {
+    opacity: 1;
+    color: var(--color-brand-beige);
+}
+
+/* ── Contact panel (pinned) ─────────────────────────────────── */
+.contact {
+    flex-shrink: 0;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.contact :global(a) {
+    width: 100%;
+}
+
+.quickActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+}
+
+.quickActions :global(a) {
+    width: auto;
+}
+
+.quickAction {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 200ms ease;
+}
+
+.quickAction:hover,
+.quickAction:focus-visible {
+    color: var(--color-white);
+}
+
+.quickAction svg {
+    color: var(--color-brand-beige);
+}
+
+.phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    font-family: var(--font-sans);
+    text-decoration: none;
+    color: var(--color-white);
+}
+
+.phone svg {
+    color: var(--color-brand-beige);
+}
+
+.phoneNumber {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.phoneHours {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.phone:hover .phoneNumber {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--color-brand-beige);
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .base,
+    .open,
+    .modal,
+    .open .modal {
+        transition: opacity 150ms linear;
+        transform: none;
+    }
+    .open .group {
+        animation: none;
+    }
 }
