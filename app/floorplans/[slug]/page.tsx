@@ -11,6 +11,7 @@ import FloorplanInclusions from '@/components/FloorplanInclusions'
 import Footer from '@/components/Footer'
 import HomeownerQuotes from '@/components/HomeownerQuotes'
 import IncludedServices from '@/components/IncludedServices'
+import LotPlacementCTA from '@/components/LotPlacementCTA'
 import Nav from '@/components/Nav'
 import OfficeVisitShowcase from '@/components/OfficeVisitShowcase'
 import OtherFloorplans from '@/components/OtherFloorplans'
@@ -19,6 +20,11 @@ import SoftCTA from '@/components/SoftCTA'
 
 import { MapPin, CalendarDays, PencilRuler } from 'lucide-react'
 
+import {
+    OFFICE_VISIT_HREF,
+    PHONE_DISPLAY,
+    PHONE_HREF,
+} from '@/content/financing'
 import { getInclusions } from '@/content/inclusions'
 import { BUILD_PHASES } from '@/content/timeline'
 import { groupSelections } from '@/lib/groupSelections'
@@ -156,7 +162,7 @@ export default async function Floorplan({
         }
         for (let i = fillers.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1))
-            ;[fillers[i], fillers[j]] = [fillers[j], fillers[i]]
+                ;[fillers[i], fillers[j]] = [fillers[j], fillers[i]]
         }
         quotes.push(...fillers.slice(0, 3 - quotes.length))
     }
@@ -229,11 +235,15 @@ export default async function Floorplan({
                     </p>
                 </section>
 
+                {/* 7. Final CTA — office visit showcase */}
+                <OfficeVisitShowcase floorplanName={floorplan.name} />
+
+
+
                 {/* 6. What homeowners say */}
                 <HomeownerQuotes quotes={quotes} />
 
-                {/* 7. Final CTA — office visit showcase */}
-                <OfficeVisitShowcase floorplanName={floorplan.name} />
+
 
                 {/* 8. Finishes & selections */}
                 {groupedSelections && (
@@ -261,6 +271,16 @@ export default async function Floorplan({
                         />
                     </section>
                 )}
+
+                {/* 5b. See it on your lot — drag-and-rotate placement CTA */}
+                <section id="on-your-lot" className={style.lotCta}>
+                    <LotPlacementCTA
+                        plans={[{ name: floorplan.name, sqft }]}
+                        ctaHref={OFFICE_VISIT_HREF}
+                        phoneDisplay={PHONE_DISPLAY}
+                        phoneHref={PHONE_HREF}
+                    />
+                </section>
 
                 {/* 9. Keep exploring — other floorplans */}
                 <OtherFloorplans floorplans={otherFloorplans as any} />

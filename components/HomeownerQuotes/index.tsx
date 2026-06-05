@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Quote } from 'lucide-react'
+import { Quote, Star } from 'lucide-react'
 
 import style from './HomeownerQuotes.module.css'
 
@@ -31,10 +31,25 @@ export default function HomeownerQuotes({
                 {quotes.map((q, i) => {
                     const inner = (
                         <>
-                            <Quote
-                                className={style.mark}
-                                aria-hidden="true"
-                            />
+                            <div className={style.cardTop}>
+                                <span
+                                    className={style.stars}
+                                    role="img"
+                                    aria-label="Rated 5 out of 5 stars"
+                                >
+                                    {Array.from({ length: 5 }, (_, s) => (
+                                        <Star
+                                            key={s}
+                                            className={style.star}
+                                            aria-hidden="true"
+                                        />
+                                    ))}
+                                </span>
+                                <Quote
+                                    className={style.mark}
+                                    aria-hidden="true"
+                                />
+                            </div>
                             <p className={style.quote}>{q.quote}</p>
                             <div className={style.person}>
                                 {q.portraitUrl ? (

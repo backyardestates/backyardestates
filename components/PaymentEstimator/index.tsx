@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react'
+import { TrendingUp, TrendingDown, ArrowRight, Info } from 'lucide-react'
 
 import AnimatedNumber from '../AnimatedNumber'
 import {
@@ -11,6 +11,7 @@ import {
     DEFAULT_FINANCING,
     estimatedRent,
     monthlyPayment,
+    RATE_TOOLTIP,
     PROPERTY_VALUE_INCREASE,
     OFFICE_VISIT_HREF,
     type FinancingTypeKey,
@@ -53,6 +54,7 @@ export default function PaymentEstimator({
     const [financing, setFinancing] =
         useState<FinancingTypeKey>(DEFAULT_FINANCING)
     const [term, setTerm] = useState<number>(DEFAULT_TERM)
+    const [openTip, setOpenTip] = useState<FinancingTypeKey | null>(null)
 
     const plan = plans[planIndex]
     const ft =
@@ -123,7 +125,42 @@ export default function PaymentEstimator({
                                         {f.label}
                                     </span>
                                     <span className={style.segNote}>
-                                        {f.rate}% · {f.note}
+                                        {f.rate}%
+                                        <span className={style.tipWrap}>
+                                            <button
+                                                type="button"
+                                                className={style.tipButton}
+                                                aria-label={`About the ${f.label} rate`}
+                                                aria-describedby={`rate-tip-${f.key}`}
+                                                onClick={(e) => {
+                                                    e.preventDefault()
+                                                    e.stopPropagation()
+                                                    setOpenTip(
+                                                        openTip === f.key
+                                                            ? null
+                                                            : f.key
+                                                    )
+                                                }}
+                                                onBlur={() => setOpenTip(null)}
+                                            >
+                                                <Info
+                                                    className={style.tipIcon}
+                                                    aria-hidden="true"
+                                                />
+                                            </button>
+                                            <span
+                                                id={`rate-tip-${f.key}`}
+                                                role="tooltip"
+                                                className={`${style.tipBubble} ${
+                                                    openTip === f.key
+                                                        ? style.tipVisible
+                                                        : ''
+                                                }`}
+                                            >
+                                                {RATE_TOOLTIP}
+                                            </span>
+                                        </span>{' '}
+                                        · {f.note}
                                     </span>
                                 </label>
                             ))}
@@ -183,7 +220,8 @@ export default function PaymentEstimator({
                             format={formatMoney}
                         />
                         <span className={style.resultNote}>
-                            {plan.name} all-in · {ft.label} at {ft.rate}%
+                            {plan.name} all-in · {ft.label} at an illustrative{' '}
+                            {ft.rate}%
                         </span>
                     </div>
 
@@ -231,6 +269,15 @@ export default function PaymentEstimator({
                                 : 'Mostly offset by rent — and by equity you gain'}
                         </span>
                     </div>
+
+                    <p className={style.resultsDisclaimer}>
+                        <Info
+                            className={style.disclaimerIcon}
+                            aria-hidden="true"
+                        />
+                        All figures are prior to verifying site characteristics
+                        on your lot.
+                    </p>
                 </div>
             </div>
 
@@ -269,7 +316,9 @@ export default function PaymentEstimator({
         <p className={style.disclaimer}>
             Estimates only, for illustration. Rates, rents, and value
             increases vary — your exact all-in price comes from a Formal
-            Property Analysis of your property.{' '}
+            Property Analysis of your property. Please note Backyard Estates
+            is not a financial advisor or CPA; consult your own financial,
+            tax, or legal professional before making financing decisions.{' '}
             <a className={style.disclaimerLink} href={OFFICE_VISIT_HREF}>
                 Get your numbers <ArrowRight className={style.inlineArrow} />
             </a>

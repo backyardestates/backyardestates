@@ -52,7 +52,14 @@ export default async function FrequentlyAskedQuestions() {
         <div className={style.content}>
           <div className={style.faqs}>
             {faqs.map((faq, index) => (
-              <Faq key={index} question={faq.title}>
+              <Faq
+                key={index}
+                question={faq.title}
+                cta={{
+                  label: 'Still curious? Ask an ADU specialist',
+                  href: '/talk-to-an-adu-specialist',
+                }}
+              >
                 {Array.isArray(faq.body) && (
                   <PortableText value={faq.body} />
                 )}

@@ -98,11 +98,61 @@
     outline-offset: 3px;
 }
 
+.cardTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+/* Five gold stars — each pops in with a springy stagger after the card rises. */
+.stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.22rem;
+}
+
+.star {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--color-brand-beige);
+    fill: currentColor;
+    filter: drop-shadow(0 1px 1.5px rgba(145, 116, 74, 0.35));
+    animation: starPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.star:nth-child(1) {
+    animation-delay: 0.35s;
+}
+.star:nth-child(2) {
+    animation-delay: 0.42s;
+}
+.star:nth-child(3) {
+    animation-delay: 0.49s;
+}
+.star:nth-child(4) {
+    animation-delay: 0.56s;
+}
+.star:nth-child(5) {
+    animation-delay: 0.63s;
+}
+
+@keyframes starPop {
+    from {
+        opacity: 0;
+        transform: scale(0.3) rotate(-30deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
 .mark {
     width: 2rem;
     height: 2rem;
     color: var(--color-brand-beige);
-    opacity: 0.9;
+    opacity: 0.35;
 }
 
 .quote {
@@ -207,5 +257,8 @@
     }
     .cardLink:hover {
         transform: none;
+    }
+    .star {
+        animation: none;
     }
 }

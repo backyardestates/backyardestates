@@ -27,6 +27,7 @@ import Footer from '@/components/Footer'
 import AttentionCTA from '@/components/AttentionCTA'
 import Button from '@/components/Button'
 import FloorplansGrid from '@/components/FloorplansGrid'
+import LotPlacementCTA, { type LotPlan } from '@/components/LotPlacementCTA'
 import HomeownerQuotes, {
     type HomeownerQuote,
 } from '@/components/HomeownerQuotes'
@@ -37,7 +38,8 @@ import PaymentEstimator, {
 import Reveal from '@/components/Reveal'
 import Faq from '@/components/Faq'
 
-import { uniqueCities, formatCities } from '@/lib/estateFacts'
+import { uniqueCities } from '@/lib/estateFacts'
+import CityPopover from '@/components/CityPopover'
 import {
     FINANCING_OPTIONS,
     FINANCING_FAQS,
@@ -135,9 +137,10 @@ const INCLUDES = [
 
 // All-in vs. itemized: what others bill separately (from the current comparison).
 const COMPARISON = [
-    { item: 'The unit itself', others: '$155K' },
+    { item: 'The unit itself', others: '$140K' },
     { item: 'Design, plans & permits', others: '$15K+' },
-    { item: 'Site prep & utility connections', others: '$50K+' },
+    { item: 'Architectural, Structural, Title 24', others: '$20K' },
+    { item: 'Site prep & utility connections', others: '$45K' },
     { item: 'Appliances, fixtures & finishes', others: '$20K+' },
     { item: 'Project management & timeline', others: '$10K+' },
 ]
@@ -164,10 +167,38 @@ export default async function Pricing() {
         ? Math.min(...estimatorPlans.map((p) => p.price))
         : null
 
+    // Smallest / mid / largest plans for the lot-placement scene.
+    const lotSorted = floorplans
+        .filter((f) => f.sqft && f.name)
+        .sort((a, b) => a.sqft - b.sqft)
+    const lotPlans: LotPlan[] = (
+        lotSorted.length > 3
+            ? [
+                lotSorted[0],
+                lotSorted[Math.floor(lotSorted.length / 2)],
+                lotSorted[lotSorted.length - 1],
+            ]
+            : lotSorted
+    ).map((f) => ({ name: f.name, sqft: f.sqft }))
+
     // Proof: completed homes with photos.
     const proof = completed.filter((p) => p.photos && p.photos.length > 0).slice(0, 6)
-    const builtCount = completed.length
+    // Base of homes delivered before the properties CMS existed, plus every
+    // completed unit tracked in Sanity.
+    const BUILT_BASE = 60
+    const builtCount = BUILT_BASE + completed.length
     const cities = uniqueCities(completed)
+    // Lead with the cities we build in most; everything else lives in the
+    // hover popover so the lede stays one line.
+    const featuredCities = [
+        'Rancho Cucamonga',
+        'La Verne',
+        'Claremont',
+        'Glendora',
+    ]
+    const moreCities = cities
+        .filter((c) => !featuredCities.includes(c))
+        .sort((a, b) => a.localeCompare(b))
 
     // Testimonials -> HomeownerQuotes shape.
     const quotes: HomeownerQuote[] = testimonialRows
@@ -194,15 +225,14 @@ export default async function Pricing() {
             icon: 'shield' as const,
         },
         {
-            value: builtCount > 0 ? builtCount : null,
-            text: builtCount > 0 ? undefined : '50',
+            value: builtCount,
             suffix: '+',
             label: 'backyard homes delivered',
             icon: 'home' as const,
         },
         {
             value: null,
-            text: '8–12',
+            text: '7–12',
             label: 'week ground-up build',
             icon: 'clock' as const,
         },
@@ -307,6 +337,23 @@ export default async function Pricing() {
                     </div>
                 </section>
 
+                {/* ============ SEE THEM ON YOUR LOT ============ */}
+                <section
+                    id="on-your-lot"
+                    className={`${style.section} ${style.sectionCream}`}
+                >
+                    <div className={style.container}>
+                        <Reveal>
+                            <LotPlacementCTA
+                                plans={lotPlans}
+                                ctaHref={OFFICE_VISIT_HREF}
+                                phoneDisplay={PHONE_DISPLAY}
+                                phoneHref={PHONE_HREF}
+                            />
+                        </Reveal>
+                    </div>
+                </section>
+
                 {/* ============ PAYMENT ESTIMATOR ============ */}
                 <section
                     id="estimator"
@@ -355,9 +402,18 @@ export default async function Pricing() {
                             <p className={style.sectionLede}>
                                 Most homeowners fund their ADU with equity
                                 they&rsquo;ve already built. We&rsquo;ll connect
-                                you with ADU-specialized lenders at your free
-                                office visit.
+                                you with ADU-specialized lenders at your{' '}
+                                <Link
+                                    href={OFFICE_VISIT_HREF}
+                                    className={style.ledeLink}
+                                >
+                                    free office visit
+                                </Link>
+                                .
                             </p>
+                        </Reveal>
+                        <Reveal as="p" className={style.financeIntro}>
+                            Here are just a few of the most popular paths
                         </Reveal>
                         <ul className={style.financeGrid}>
                             {FINANCING_OPTIONS.map((opt, i) => (
@@ -395,6 +451,11 @@ export default async function Pricing() {
                                 </Reveal>
                             ))}
                         </ul>
+                        <Reveal as="p" className={style.financeMore}>
+                            <span className={style.financeMorePlus}>+</span>
+                            over a dozen additional loan options available
+                            through our ADU-specialized lending partners
+                        </Reveal>
                     </div>
                 </section>
 
@@ -486,17 +547,22 @@ export default async function Pricing() {
                         <div className={style.container}>
                             <Reveal className={style.sectionHead}>
                                 <span className={style.eyebrow}>
-                                    Not renders — real homes
+                                    Real homes — not renderings
                                 </span>
                                 <h2 className={style.sectionTitle}>
                                     Backyard homes we&rsquo;ve already delivered
                                 </h2>
-                                {cities.length > 0 && (
-                                    <p className={style.sectionLede}>
-                                        Built in {formatCities(cities, 4)} — and
-                                        counting.
-                                    </p>
-                                )}
+                                <p className={style.sectionLede}>
+                                    Built in {featuredCities.join(', ')}
+                                    {moreCities.length > 0 && (
+                                        <>
+                                            {' '}
+                                            and{' '}
+                                            <CityPopover cities={moreCities} />
+                                        </>
+                                    )}{' '}
+                                    — and counting.
+                                </p>
                             </Reveal>
                             <ul className={style.proofGrid}>
                                 {proof.map((p, i) => (
@@ -546,7 +612,7 @@ export default async function Pricing() {
                                     href="/properties"
                                     className={style.textLink}
                                 >
-                                    See every completed home{' '}
+                                    See some of our completed ADUs{' '}
                                     <ArrowRight className={style.linkArrow} />
                                 </Link>
                             </Reveal>
@@ -559,12 +625,24 @@ export default async function Pricing() {
                     <section className={style.section}>
                         <div className={style.container}>
                             <HomeownerQuotes quotes={quotes} />
+                            <Reveal className={style.proofCta}>
+                                <Link
+                                    href="/customer-stories"
+                                    className={style.textLink}
+                                >
+                                    Read more customer stories{' '}
+                                    <ArrowRight className={style.linkArrow} />
+                                </Link>
+                            </Reveal>
                         </div>
                     </section>
                 )}
 
                 {/* ============ HOW YOU GET YOUR EXACT PRICE (FPA) ============ */}
-                <section className={`${style.section} ${style.sectionCream}`}>
+                <section
+                    id="exact-price"
+                    className={`${style.section} ${style.sectionCream}`}
+                >
                     <div className={style.container}>
                         <Reveal className={style.sectionHead}>
                             <span className={style.eyebrow}>
@@ -578,10 +656,9 @@ export default async function Pricing() {
                                 </span>
                             </h2>
                             <p className={style.sectionLede}>
-                                The prices above cover the home and everything
-                                standard. What&rsquo;s unique to your lot —
+                                The prices above cover the ADU and all our standard inclusions. What&rsquo;s unique to your lot —
                                 utilities, site conditions, city rules — gets
-                                verified before construction ever starts.
+                                verified before being presented an agreement.
                                 Certainty without verification is just a guess.
                             </p>
                         </Reveal>
@@ -640,7 +717,7 @@ export default async function Pricing() {
                             </Reveal>
                         </div>
 
-                        {/* The exhibit: 130+ numeral, six categories, outputs */}
+                        {/* The exhibit: 250+ numeral, six categories, outputs */}
                         <Reveal delay={320} className={style.fpaPanel}>
                             <div className={style.fpaShowcase}>
                                 <div className={style.fpaNumeralBlock}>
@@ -664,7 +741,7 @@ export default async function Pricing() {
                                     </span>
                                     <span className={style.fpaLockupSub}>
                                         on your property, in person, by our
-                                        architects and engineers
+                                        architect and engineering team
                                     </span>
                                     <ul className={style.fpaMetaRow}>
                                         <li>{FPA_CATEGORIES.length} categories</li>
@@ -752,7 +829,10 @@ export default async function Pricing() {
                         </Reveal>
                         <Reveal className={style.faqList}>
                             {FINANCING_FAQS.map((f) => (
-                                <Faq key={f.question} question={f.question}>
+                                <Faq
+                                    key={f.question}
+                                    question={f.question}
+                                >
                                     <p className={style.faqAnswer}>{f.answer}</p>
                                 </Faq>
                             ))}
@@ -779,7 +859,7 @@ export default async function Pricing() {
                 {/* ============ FINAL CTA ============ */}
                 <AttentionCTA
                     eyebrow="Get Started"
-                    title="Get your exact, all-in number"
+                    title="Get your exact, all-in price"
                     description="It starts with a free, no-pressure office visit — we put floor plans on your actual lot. Then a Formal Property Analysis verifies everything, and your formal proposal locks in your exact all-in price."
                     primaryLabel="Schedule your free office visit"
                     primaryHref={OFFICE_VISIT_HREF}

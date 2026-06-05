@@ -1,0 +1,113 @@
+.wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.trigger {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-weight: 600;
+    color: var(--color-brand-beige);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color 200ms ease;
+}
+
+.trigger:hover {
+    color: var(--color-brand-beige-hover);
+}
+
+.trigger:focus-visible {
+    outline: 2px solid var(--color-brand-beige);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.panel {
+    position: absolute;
+    bottom: calc(100% + 0.75rem);
+    left: 50%;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: max-content;
+    max-width: min(24rem, 86vw);
+    padding: 1rem 1.1rem;
+    text-align: left;
+    background: var(--color-white);
+    border: 1px solid rgba(54, 72, 75, 0.12);
+    border-radius: 1rem;
+    box-shadow: 0 18px 44px rgba(54, 72, 75, 0.18);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 6px);
+    pointer-events: none;
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease,
+        visibility 180ms;
+}
+
+/* Caret pointing back at the trigger. */
+.panel::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border: 6px solid transparent;
+    border-top-color: var(--color-white);
+    filter: drop-shadow(0 1px 0 rgba(54, 72, 75, 0.12));
+}
+
+.panelOpen {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    pointer-events: auto;
+}
+
+.panelTitle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+}
+
+.panelIcon {
+    width: 0.85rem;
+    height: 0.85rem;
+    stroke-width: 2;
+    color: var(--color-brand-beige);
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.chip {
+    padding: 0.3rem 0.7rem;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+    color: var(--color-brand-dark-blue);
+    background: var(--color-brand-beige-subtle);
+    border: 1px solid rgba(173, 141, 95, 0.3);
+    border-radius: 999px;
+}

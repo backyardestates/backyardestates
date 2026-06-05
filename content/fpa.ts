@@ -1,7 +1,7 @@
 // Single source of truth for the Formal Property Analysis (FPA) story shown on
 // the pricing page (and reusable on /about-us/our-process later).
 //
-// Facts sourced from the canonical "130+ Checklist" spreadsheet (Google Drive
+// Facts sourced from the canonical "250+ Checklist" spreadsheet (Google Drive
 // id 1JItJL4s80AX94ekp0IQtWcTYTQSUw1P0YMfWb5vcr68 — 134 items across the six
 // categories below) and the FPA marketing docs: the office visit is FREE; the
 // FPA is $500, fully credited toward construction; outputs are a confirmed
@@ -11,7 +11,7 @@ export const FPA_FEE = 500
 export const FPA_FEE_CREDIT_NOTE = 'fully credited toward your build'
 export const FPA_POINTS_LABEL = '250+'
 // Numeric twin of FPA_POINTS_LABEL, used for the count-up animation.
-export const FPA_POINTS_VALUE = 130
+export const FPA_POINTS_VALUE = 250
 
 export interface FpaStep {
     title: string
@@ -28,12 +28,12 @@ export const FPA_STEPS: FpaStep[] = [
     },
     {
         title: 'Formal Property Analysis',
-        detail: 'Our architects and engineers visit your property and verify 130+ items — utilities, site conditions, and city rules.',
+        detail: 'Our architects and engineers visit your property and verify 250+ items — utilities, site conditions, and city rules.',
         note: '$500, fully credited toward your build',
     },
     {
         title: 'Your formal proposal',
-        detail: 'A confirmed buildable plan with your exact all-in price — a reliable number you can actually build on.',
+        detail: 'A confirmed buildable solution with your exact all-in price — a reliable price you can actually build on.',
         note: 'No assumptions, no surprises',
     },
 ]
@@ -58,7 +58,7 @@ export const FPA_CATEGORIES: FpaCategory[] = [
     {
         title: 'Utilities',
         examples:
-            'Sewer depth & material, panel size, water, gas, utility run lengths',
+            'Sewer depth & material, panel size, water, gas, utility run lengths and complexity',
     },
     {
         title: 'Fixtures & loads',
@@ -79,7 +79,7 @@ export const FPA_CATEGORIES: FpaCategory[] = [
 
 // What the customer walks away with.
 export const FPA_OUTPUTS = [
-    'A confirmed buildable plan',
+    'A confirmed buildable solution',
     'A reliable project cost',
     'A clear path forward',
 ]

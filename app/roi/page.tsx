@@ -146,7 +146,7 @@ export default function ReturnOnInvestment() {
                                 </p>
                                 <p>
                                     During Backyard Estates&rsquo; Formal
-                                    Property Analysis, we will assess 130+ key
+                                    Property Analysis, we will assess 250+ key
                                     aspects of your property to ensure you have
                                     an accurate price estimate for your ADU from
                                     today through move-in!

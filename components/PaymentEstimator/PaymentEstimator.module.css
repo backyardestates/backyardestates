@@ -177,6 +177,81 @@
     color: rgba(255, 255, 255, 0.85);
 }
 
+/* ---------------- Rate info tooltip ---------------- */
+.tipWrap {
+    display: inline-flex;
+    margin-left: 0.15rem;
+    vertical-align: middle;
+}
+
+.tipButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Expand the tap target without shifting layout. */
+    padding: 0.45rem;
+    margin: -0.45rem;
+    background: none;
+    border: 0;
+    color: inherit;
+    cursor: help;
+}
+
+.tipButton:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+    border-radius: 50%;
+}
+
+.tipIcon {
+    width: 0.85rem;
+    height: 0.85rem;
+    stroke-width: 2;
+    opacity: 0.7;
+    transition: opacity 150ms ease;
+}
+
+.tipButton:hover .tipIcon,
+.tipButton:focus-visible .tipIcon {
+    opacity: 1;
+}
+
+/* Anchored to .segItem (position: relative), opening above the option card. */
+.tipBubble {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 10;
+    width: max-content;
+    max-width: 16rem;
+    padding: 0.65rem 0.8rem;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1.55;
+    text-wrap: pretty;
+    color: var(--color-white);
+    background: var(--color-brand-dark-blue);
+    border-radius: 0.6rem;
+    box-shadow: 0 12px 28px rgba(54, 72, 75, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    pointer-events: none;
+    transition:
+        opacity 160ms ease,
+        transform 160ms ease,
+        visibility 160ms;
+}
+
+.tipWrap:hover .tipBubble,
+.tipButton:focus-visible ~ .tipBubble,
+.tipBubble.tipVisible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
 /* ---------------- Results (ink panel) ---------------- */
 .results {
     display: flex;
@@ -267,6 +342,33 @@
     width: 1rem;
     height: 1rem;
     stroke-width: 2;
+}
+
+/* Clear in-card disclaimer — sits at the bottom of the ink results panel. */
+.resultsDisclaimer {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 1.25rem 0 0;
+    padding: 0.75rem 0.9rem;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-wrap: pretty;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.75rem;
+}
+
+.disclaimerIcon {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.15rem;
+    stroke-width: 2;
+    color: hsla(35, 48%, 70%, 1);
 }
 
 /* ---------------- Pencils out ---------------- */

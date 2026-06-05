@@ -99,6 +99,11 @@ export const NAV_GROUPS: NavGroup[] = [
                 description: 'Who we are & how we work',
             },
             {
+                href: '/customer-stories',
+                label: 'Customer stories',
+                description: 'Hear from the families who built with us',
+            },
+            {
                 href: '/about-us/our-team',
                 label: 'Our team',
                 description: 'The people behind your build',

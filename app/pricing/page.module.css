@@ -78,6 +78,26 @@
     color: rgba(255, 255, 255, 0.72);
 }
 
+/* Inline gold link inside a section lede. */
+.ledeLink {
+    color: var(--color-brand-beige);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+    transition: color 200ms ease;
+}
+
+.ledeLink:hover {
+    color: var(--color-brand-beige-hover);
+}
+
+.ledeLink:focus-visible {
+    outline: 2px solid var(--color-brand-beige);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
 /* ---------- Hero ---------- */
 .hero {
     /* Top padding must always exceed the 108px fixed nav so the eyebrow never
@@ -218,6 +238,18 @@
 }
 
 /* ---------- Financing option cards ---------- */
+/* Small kicker between the section head and the loan cards. */
+.financeIntro {
+    margin: calc(-1 * clamp(1.5rem, 3vw, 2.25rem)) auto 1.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-neutral-500);
+}
+
 .financeGrid {
     display: grid;
     grid-template-columns: 1fr;
@@ -225,6 +257,30 @@
     margin: 0;
     padding: 0;
     list-style: none;
+}
+
+/* "And there's more" note below the loan cards. */
+.financeMore {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.45rem;
+    max-width: 38rem;
+    margin: 1.75rem auto 0;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    text-wrap: pretty;
+    color: var(--color-neutral-600);
+}
+
+.financeMorePlus {
+    font-family: var(--font-serif);
+    font-size: 1.2em;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-brand-beige);
 }
 
 .financeCard {
@@ -594,7 +650,7 @@
     box-shadow: 0 10px 30px rgba(173, 141, 95, 0.18);
 }
 
-/* ---------- Connector: steps → "130+" exhibit ---------- */
+/* ---------- Connector: steps → "250+" exhibit ---------- */
 .fpaConnector {
     display: flex;
     flex-direction: column;

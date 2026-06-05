@@ -1,27 +1,217 @@
-.base {
-    margin: 0;
-    padding: 0;
+/* =====================================================================
+   Faq — refined accordion card.
+
+   Closed: quiet white card, hairline border, gold plus chip.
+   Open:   gold rail draws down the left edge, the chip spins 135° into
+           an ×, and the answer unfolds via the 0fr → 1fr grid trick —
+           content fades and rises a beat behind the height change.
+   ===================================================================== */
+
+.item {
+    position: relative;
+    margin: 0 0 0.85rem;
+    background: var(--color-white);
+    border: 1px solid rgba(54, 72, 75, 0.1);
+    border-radius: 1rem;
+    overflow: hidden;
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.3s ease;
 }
 
-.base p {
-    /* color: var(--color-brand-beige); */
+/* Gold rail along the open card's left edge. */
+.item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(
+        180deg,
+        #c9ad7e 0%,
+        var(--color-brand-beige) 100%
+    );
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.4s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.item:hover {
+    border-color: rgba(173, 141, 95, 0.45);
+}
+
+.itemOpen {
+    border-color: rgba(173, 141, 95, 0.5);
+    box-shadow: 0 14px 36px rgba(54, 72, 75, 0.09);
+}
+
+.itemOpen::before {
+    transform: scaleY(1);
+}
+
+/* ---------- Question row ---------- */
+.trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 1.15rem 1.25rem 1.15rem 1.4rem;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.trigger:focus-visible {
+    outline: 2px solid var(--color-brand-beige);
+    outline-offset: -3px;
+    border-radius: 1rem;
+}
+
+.question {
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 1.6vw, 1.1rem);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-brand-dark-blue);
+}
+
+/* Plus chip — spins 135° into an × and fills gold when open. */
+.chip {
+    position: relative;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1.5px solid rgba(173, 141, 95, 0.45);
+    background: rgba(173, 141, 95, 0.07);
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.item:hover .chip {
+    background: rgba(173, 141, 95, 0.14);
+}
+
+.chipBar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.8rem;
+    height: 1.5px;
+    border-radius: 1px;
+    background: var(--color-brand-beige-hover);
+    transform: translate(-50%, -50%);
+    transition: background 0.25s ease;
+}
+
+.chipBarV {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.itemOpen .chip {
+    background: var(--color-brand-beige);
+    border-color: var(--color-brand-beige);
+    transform: rotate(135deg);
+}
+
+.itemOpen .chipBar {
+    background: var(--color-white);
+}
+
+/* ---------- Unfolding answer ---------- */
+.reveal {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.45s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.itemOpen .reveal {
+    grid-template-rows: 1fr;
+}
+
+.revealClip {
+    overflow: hidden;
+    min-height: 0;
+}
+
+.body {
+    padding: 0.1rem 1.4rem 1.35rem;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.itemOpen .body {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.12s;
+}
+
+/* Sensible defaults for answers (Sanity PortableText or plain <p>). */
+.answer {
     font-family: var(--font-sans);
     font-size: 1rem;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1.5rem;
+    line-height: 1.65;
+    color: var(--color-neutral-600);
 }
 
-.open {
-    display: block;
-    composes: base;
-    padding: 1rem 1.5rem 0rem 1.5rem;
-    border-bottom: 1px solid rgba(173, 141, 95, 0.5);
+.answer p {
+    margin: 0 0 0.75rem;
 }
 
-.closed {
-    composes: base;
-    /* border-bottom: none; */
-    /* border-bottom: 1px solid rgba(173, 141, 95, 1); */
-    display: none;
+.answer p:last-child {
+    margin-bottom: 0;
+}
+
+/* ---------- Subtle contextual CTA ---------- */
+.ctaRow {
+    margin-top: 1.05rem;
+    padding-top: 0.95rem;
+    border-top: 1px dashed rgba(173, 141, 95, 0.4);
+}
+
+.cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-brand-beige-hover);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.cta:hover {
+    color: var(--color-brand-dark-blue);
+}
+
+.ctaArrow {
+    transition: transform 0.25s ease;
+}
+
+.cta:hover .ctaArrow {
+    transform: translateX(4px);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .item,
+    .item::before,
+    .chip,
+    .chipBar,
+    .reveal,
+    .body,
+    .cta,
+    .ctaArrow {
+        transition: none !important;
+    }
 }

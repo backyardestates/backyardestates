@@ -54,6 +54,10 @@ export const FINANCING_TYPES: FinancingType[] = [
     },
 ]
 
+/** Shown in the ⓘ tooltip next to every rate in the estimator. */
+export const RATE_TOOLTIP =
+    'A typical rate for this loan type, shown for illustration. Your exact rate comes from your lender and depends on your financing qualifications and market conditions when you apply.'
+
 export const LOAN_TERMS = [10, 15, 20, 30] as const
 export const DEFAULT_TERM = 30
 export const DEFAULT_FINANCING: FinancingTypeKey = 'heloc'
@@ -180,35 +184,65 @@ export const FINANCING_OPTIONS: FinancingOption[] = [
 export interface FinancingFaq {
     question: string
     answer: string
+    /** Subtle contextual action rendered beneath the answer. */
+    cta?: { label: string; href: string }
 }
 
 export const FINANCING_FAQS: FinancingFaq[] = [
     {
         question: 'Is the price on this page my final price?',
-        answer: "It's your starting point — the standard all-in price that covers the home and everything standard. Your exact number is confirmed through a Formal Property Analysis, where our architects and engineers verify 130+ property-specific items (utilities, site conditions, city rules). Once that's done, you have a reliable price you can actually build on — no assumptions, no surprises.",
+        answer: "It's your starting point — the standard all-in price that covers the ADU and everything standard. Your exact number is confirmed through a Formal Property Analysis, where our architects and engineers verify 250+ property-specific items (utilities, site conditions, city rules). Once that's done, you have a reliable price you can actually build on — no assumptions, no surprises.",
+        cta: {
+            label: 'See the 3 steps to your exact price',
+            href: '#exact-price',
+        },
     },
     {
         question: 'What is the Formal Property Analysis?',
-        answer: "It's the on-site verification step that turns ideas into certainty. For $500 — fully credited toward your build — our architects and engineering team visits your property and confirms 130+ items: setbacks and property lines, easements, sewer and electrical capacity, site conditions, and every city-specific rule. You walk away with a confirmed buildable plan, a reliable project cost, and a clear path forward.",
+        answer: "It's the on-site verification step that turns ideas into certainty. For $500 — fully credited toward your build — our architects and engineering team visits your property and confirms 250+ items: setbacks and property lines, easements, sewer and electrical capacity, site conditions, and every city-specific rule. You walk away with a confirmed buildable plan, a reliable project cost, and a clear path forward.",
+        cta: {
+            label: 'Start with a free office visit',
+            href: OFFICE_VISIT_HREF,
+        },
     },
     {
         question: 'Can I build an ADU with no money out of pocket?',
         answer: "Often, yes. HELOC and cash-out refinance options draw on the equity you already have in your home, so there's no separate down payment required. During your free office visit we'll help you see what's possible for your situation.",
+        cta: {
+            label: 'Estimate my monthly payment',
+            href: '#estimator',
+        },
     },
     {
         question: 'What credit score do I need?',
         answer: 'Most lenders look for a score around 620 or higher, and 680+ typically earns the best rates and terms. We work with ADU-specialized lenders and can point you toward the right fit.',
+        cta: {
+            label: 'Talk it through with an ADU specialist',
+            href: SPECIALIST_HREF,
+        },
     },
     {
         question: 'How long does financing approval take?',
         answer: 'Pre-approval is usually just a few days; full approval typically takes 2–4 weeks. We recommend starting the conversation early so financing is ready by the time your plans are permit-ready.',
+        cta: {
+            label: 'Start the conversation early — book a visit',
+            href: OFFICE_VISIT_HREF,
+        },
     },
     {
         question: 'Does Backyard Estates help with financing?',
         answer: "Yes. We partner with lenders who specialize in ADUs and walk you through your options during your free office visit — no obligation, just clarity on what makes sense for you.",
+        cta: {
+            label: 'Schedule my free office visit',
+            href: OFFICE_VISIT_HREF,
+        },
     },
     {
         question: "What's included in the all-in price?",
         answer: 'Everything to get from your backyard today to a finished, permitted home: design, plans and permits, site prep and utility connections, appliances, fixtures and finishes, full project management, and solar on Estate 500 and larger. Anything unique to your property is verified up front in the Formal Property Analysis, so the price you sign is the price you pay.',
+        cta: {
+            label: 'See everything that comes standard',
+            href: '/standard-inclusions',
+        },
     },
 ]
