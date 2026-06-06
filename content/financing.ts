@@ -14,6 +14,8 @@ export const PHONE_HREF = 'tel:+14254944705'
 export const SPECIALIST_HREF = '/talk-to-an-adu-specialist'
 export const OFFICE_VISIT_HREF =
     '/talk-to-an-adu-specialist/office-consultation'
+export const FPA_HREF =
+    '/talk-to-an-adu-specialist/formal-property-analysis'
 
 // ---------------------------------------------------------------------------
 // Estimator: financing types + terms
@@ -191,7 +193,7 @@ export interface FinancingFaq {
 export const FINANCING_FAQS: FinancingFaq[] = [
     {
         question: 'Is the price on this page my final price?',
-        answer: "It's your starting point — the standard all-in price that covers the ADU and everything standard. Your exact number is confirmed through a Formal Property Analysis, where our architects and engineers verify 250+ property-specific items (utilities, site conditions, city rules). Once that's done, you have a reliable price you can actually build on — no assumptions, no surprises.",
+        answer: "It's your starting point — the standard all-in price that covers the ADU and everything standard. Your exact number is confirmed through a Formal Property Analysis, where our architect and engineering team verify 250+ property-specific items (utilities, site conditions, city rules). Once that's done, you have a reliable price you can actually build on — no assumptions, no surprises.",
         cta: {
             label: 'See the 3 steps to your exact price',
             href: '#exact-price',
@@ -199,10 +201,10 @@ export const FINANCING_FAQS: FinancingFaq[] = [
     },
     {
         question: 'What is the Formal Property Analysis?',
-        answer: "It's the on-site verification step that turns ideas into certainty. For $500 — fully credited toward your build — our architects and engineering team visits your property and confirms 250+ items: setbacks and property lines, easements, sewer and electrical capacity, site conditions, and every city-specific rule. You walk away with a confirmed buildable plan, a reliable project cost, and a clear path forward.",
+        answer: "It's the on-site verification step that turns ideas into certainty. For $500 — fully credited toward your build — our architect and engineering team visits your property and confirms 250+ items: setbacks and property lines, easements, sewer and electrical capacity, site conditions, and every city-specific rule. You walk away with a confirmed buildable plan, a reliable project cost, and a clear path forward.",
         cta: {
-            label: 'Start with a free office visit',
-            href: OFFICE_VISIT_HREF,
+            label: 'Schedule your Formal Property Analysis',
+            href: FPA_HREF,
         },
     },
     {
