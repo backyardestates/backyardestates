@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 import styles from "./ContactForms.module.css"
 import { isValidUSPhone } from "@/utils/isValidUSPhone"
 import { loadGoogleMaps } from "@/lib/googleMaps/loadGoogleMaps"
-type Intent = "INTRO_CALL" | "OFFICE_CONSULT" | "MESSAGE"
+import { FPA_FEE, FPA_FEE_CREDIT_NOTE, FPA_POINTS_LABEL } from "@/content/fpa"
+type Intent = "INTRO_CALL" | "OFFICE_CONSULT" | "MESSAGE" | "FPA"
 
 type Errors = Partial<
     Record<
@@ -112,6 +113,14 @@ export function ContactLeadForm({
                 title: "Schedule a free office consultation",
                 desc: "Come in for a consultation. We’ll review your property on the big screen with our advanced software and give you clear next steps.",
                 cardDesc: "Enter your info so we can reserve a time for your visit.",
+            }
+        }
+        if (intent === "FPA") {
+            return {
+                eyebrow: "Formal Property Analysis",
+                title: "Schedule a Formal Property Analysis",
+                desc: `Our architect and engineering team visit your property and verify ${FPA_POINTS_LABEL} items — utilities, site conditions, and city rules. $${FPA_FEE}, ${FPA_FEE_CREDIT_NOTE}.`,
+                cardDesc: "Enter your info so we can schedule your onsite visit.",
             }
         }
         return {

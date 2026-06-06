@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-type Intent = "INTRO_CALL" | "OFFICE_CONSULT" | "MESSAGE"
+type Intent = "INTRO_CALL" | "OFFICE_CONSULT" | "MESSAGE" | "FPA"
 
 function digitsOnly(v: string) {
     return (v ?? "").replace(/\D/g, "")
@@ -60,6 +60,12 @@ function mapIntentToDealMeta(intent: Intent) {
                 stage_id: undefined,
             }
         case "MESSAGE":
+            return {
+                sourceNumber: 56,
+                pipeline_id: undefined,
+                stage_id: undefined,
+            }
+        case "FPA":
             return {
                 sourceNumber: 56,
                 pipeline_id: undefined,

@@ -47,6 +47,7 @@ import {
     PHONE_HREF,
     OFFICE_VISIT_HREF,
     SPECIALIST_HREF,
+    FPA_HREF,
 } from '@/content/financing'
 import AnimatedNumber from '@/components/AnimatedNumber'
 import {
@@ -813,6 +814,21 @@ export default async function Pricing() {
                                 </div>
                             </div>
                         </Reveal>
+
+                        {/* Ready to verify? Book the FPA directly — or start
+                            with the free office visit if it's too early. */}
+                        <Reveal className={style.fpaCtaRow}>
+                            <Button isPrimary href={FPA_HREF}>
+                                Schedule your Formal Property Analysis
+                            </Button>
+                            <Link
+                                href={OFFICE_VISIT_HREF}
+                                className={style.heroLink}
+                            >
+                                Not ready yet? Start with a free office visit{' '}
+                                <ArrowRight className={style.linkArrow} />
+                            </Link>
+                        </Reveal>
                     </div>
                 </section>
 
@@ -832,6 +848,7 @@ export default async function Pricing() {
                                 <Faq
                                     key={f.question}
                                     question={f.question}
+                                    cta={f.cta}
                                 >
                                     <p className={style.faqAnswer}>{f.answer}</p>
                                 </Faq>

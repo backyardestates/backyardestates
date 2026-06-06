@@ -189,6 +189,16 @@
     transform: translateX(3px);
 }
 
+/* CTA row closing the FPA section. */
+.fpaCtaRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem 1.5rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+}
+
 .heroStatWrap {
     max-width: 60rem;
     margin: clamp(2.5rem, 5vw, 3.5rem) auto 0;

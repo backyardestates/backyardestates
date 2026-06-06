@@ -30,7 +30,7 @@ export default function Calendly() {
     }
 
     return (
-        <>
+        <div className={style.page}>
             <div className={style.topBar}>
                 <Logo />
                 <FontAwesomeIcon
@@ -44,35 +44,39 @@ export default function Calendly() {
             <main className={style.root}>
                 {/* <OpenGraph title={`Backyard Estates - Calendly form`} /> */}
                 <div className={style.calendly}>
-                    <h1 className={style.calendlyTitle}>
-                        Schedule your Backyard Estates call
-                    </h1>
-                    <p className={style.calendlySentence}>
-                        Pick a time that works best. We’ll review your goals and give you clear next steps.
-                    </p>
-                    {/* <Suspense> */}
-                    <InlineWidget
-                        url="https://calendly.com/backyard-estates/intro-call"
-                        styles={{
-                            margin: '0px',
-                            height: '1000px',
-                        }}
-                        pageSettings={{
-                            backgroundColor: 'ffffff',
-                            hideEventTypeDetails: true,
-                            hideLandingPageDetails: true,
-                            primaryColor: '36484b',
-                            textColor: '5e5e5e',
-                        }}
-                        prefill={{
-                            name: name!,
-                            email: email!,
-                            customAnswers: { a1: `1${phone}`, a2: address ?? '', a3: notes ?? '' },
-                        }}
-                    />
-                    {/* </Suspense> */}
+                    <div className={style.calendlyHeader}>
+                        <span className={style.calendlyEyebrow}>15-minute phone call</span>
+                        <h1 className={style.calendlyTitle}>
+                            Schedule your Backyard Estates call
+                        </h1>
+                        <p className={style.calendlySentence}>
+                            Pick a time that works best. We’ll review your goals and give you clear next steps.
+                        </p>
+                        <div className={style.calendlyDivider} />
+                    </div>
+                    <div className={style.calendlyCard}>
+                        <InlineWidget
+                            url="https://calendly.com/backyard-estates/intro-call"
+                            styles={{
+                                margin: '0px',
+                                height: '1000px',
+                            }}
+                            pageSettings={{
+                                backgroundColor: 'ffffff',
+                                hideEventTypeDetails: true,
+                                hideLandingPageDetails: true,
+                                primaryColor: '91744a',
+                                textColor: '36484b',
+                            }}
+                            prefill={{
+                                name: name!,
+                                email: email!,
+                                customAnswers: { a1: `1${phone}`, a2: address ?? '', a3: notes ?? '' },
+                            }}
+                        />
+                    </div>
                 </div>
             </main>
-        </>
+        </div>
     )
 }

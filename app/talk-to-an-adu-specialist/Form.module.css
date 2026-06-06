@@ -113,22 +113,22 @@
     margin: 0 auto !important;
     padding: 0;
     text-align: center;
-    max-width: 600px;
+    max-width: 640px;
 }
 
 .calendlyTitle {
     font-family: var(--font-serif);
-    font-size: 2rem;
+    font-size: clamp(2rem, 1.4rem + 2vw, 2.75rem);
     font-style: normal;
     font-weight: 600;
-    line-height: 1.5em;
-    /* 150% */
+    line-height: 1.25em;
+    letter-spacing: -0.01em;
     color: var(--color-brand-dark-blue);
-    margin: 0 auto 2rem auto !important;
+    margin: 0 auto 1rem auto !important;
 }
 
 .calendlySentence {
-    margin: 0 auto 2rem auto !important;
+    margin: 0 auto 1.75rem auto !important;
     color: var(--color-neutral-500);
     font-family: var(--font-sans);
     font-size: 1.25rem;
@@ -140,6 +140,100 @@
 
 .calendly {
     grid-column: span 12;
+}
+
+/* --- Calendly page atmosphere & framing --- */
+
+.page {
+    min-height: 100vh;
+    background:
+        radial-gradient(1100px 480px at 88% -8%, var(--color-brand-beige-A020), transparent 60%),
+        var(--color-brand-beige-subtle);
+}
+
+.calendlyHeader {
+    text-align: center;
+    padding: 0 1rem;
+}
+
+.calendlyEyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1.25rem;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--color-brand-beige-A040);
+    border-radius: 999px;
+    background: var(--color-brand-beige-A010);
+    color: var(--color-brand-beige-hover);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.calendlyDivider {
+    width: 64px;
+    height: 3px;
+    margin: 0 auto 2.5rem;
+    border-radius: 2px;
+    background: linear-gradient(90deg,
+            var(--color-brand-beige-A020),
+            var(--color-brand-beige) 50%,
+            var(--color-brand-beige-A020));
+}
+
+.calendlyCard {
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+@keyframes calendlyRise {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.calendlyEyebrow,
+.calendlyTitle,
+.calendlySentence,
+.calendlyDivider,
+.calendlyCard {
+    animation: calendlyRise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.calendlyTitle {
+    animation-delay: 0.08s;
+}
+
+.calendlySentence {
+    animation-delay: 0.16s;
+}
+
+.calendlyDivider {
+    animation-delay: 0.24s;
+}
+
+.calendlyCard {
+    animation-delay: 0.32s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .calendlyEyebrow,
+    .calendlyTitle,
+    .calendlySentence,
+    .calendlyDivider,
+    .calendlyCard {
+        animation: none;
+    }
 }
 
 .root {

@@ -4,7 +4,7 @@ import { TopBar } from "@/components/goBackButton"
 import Footer from "@/components/Footer"
 import LegalPrint from "@/components/LegalPrint"
 import { ContactOptionCard } from "@/components/Contact/Card/ContactOptionCard"
-import { Phone, HouseIcon, User2, MessageCircle } from "lucide-react"
+import { Phone, HouseIcon, User2, MessageCircle, ClipboardCheck } from "lucide-react"
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -74,6 +74,14 @@ export default function TalkToSpecialistHub() {
                             description="We’ll review your property on the big screen with our advanced software and give you clear next steps."
                             href="/talk-to-an-adu-specialist/office-consultation"
                             cta="Reserve a time →"
+                        />
+
+                        <ContactOptionCard
+                            Logo={ClipboardCheck}
+                            title="Schedule a Formal Property Analysis"
+                            description="Our architect and engineering team visit your property and verify 250+ items. $500, fully credited toward your build."
+                            href="/talk-to-an-adu-specialist/formal-property-analysis"
+                            cta="Schedule →"
                         />
 
                         <ContactOptionCard

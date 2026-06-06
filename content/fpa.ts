@@ -28,7 +28,7 @@ export const FPA_STEPS: FpaStep[] = [
     },
     {
         title: 'Formal Property Analysis',
-        detail: 'Our architects and engineers visit your property and verify 250+ items — utilities, site conditions, and city rules.',
+        detail: 'Our architect and engineering team visit your property and verify 250+ items — utilities, site conditions, and city rules.',
         note: '$500, fully credited toward your build',
     },
     {

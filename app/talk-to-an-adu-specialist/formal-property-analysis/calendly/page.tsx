@@ -10,15 +10,15 @@ import { faXmark } from "@fortawesome/pro-solid-svg-icons";
 import Logo from "@/components/Logo";
 import style from "../../Form.module.css";
 
-export default function OfficeConsultCalendly() {
+export default function FormalPropertyAnalysisCalendly() {
     return (
         <Suspense fallback={<div style={{ height: 1000 }} />}>
-            <OfficeConsultCalendlyInner />
+            <FormalPropertyAnalysisCalendlyInner />
         </Suspense>
     );
 }
 
-function OfficeConsultCalendlyInner() {
+function FormalPropertyAnalysisCalendlyInner() {
     const router = useRouter();
     const sp = useSearchParams();
 
@@ -47,17 +47,17 @@ function OfficeConsultCalendlyInner() {
             <main className={style.root}>
                 <div className={style.calendly}>
                     <div className={style.calendlyHeader}>
-                        <span className={style.calendlyEyebrow}>Free office consultation</span>
-                        <h1 className={style.calendlyTitle}>Schedule your office consultation</h1>
+                        <span className={style.calendlyEyebrow}>Formal Property Analysis</span>
+                        <h1 className={style.calendlyTitle}>Schedule your Formal Property Analysis</h1>
                         <p className={style.calendlySentence}>
-                            Pick a time that works best. We’ll review your goals and give you clear next steps.
+                            Pick a time for your onsite visit. We’ll verify everything about your property before your formal proposal.
                         </p>
                         <div className={style.calendlyDivider} />
                     </div>
 
                     <div className={style.calendlyCard}>
                         <InlineWidget
-                            url="https://calendly.com/backyard-estates/new-meeting"
+                            url="https://calendly.com/d/cr86-j2b-gcj/onsite-visit-fpa"
                             styles={{ margin: "0px", height: "1000px" }}
                             pageSettings={{
                                 backgroundColor: "ffffff",
