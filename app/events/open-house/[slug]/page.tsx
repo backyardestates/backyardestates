@@ -19,6 +19,24 @@ import calculateWeeks from '@/utils/calculateWeeks';
 import { Home } from "lucide-react";
 import { notFound } from 'next/navigation';
 import styles from "./page.module.css";
+import { buildMetadata } from '@/lib/seo';
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ slug: string }>
+}) {
+    const { slug } = await params
+    const res = await sanityFetch({ query: OPEN_HOUSE_QUERY, params: { slug } })
+    const oh = res?.data
+    const city = oh?.address?.city
+    const plan = oh?.floorplan?.name
+    return buildMetadata({
+        title: `ADU Open House${city ? ` in ${city}, CA` : ''}`,
+        description: `Tour a completed ${plan ? `${plan} ` : ''}ADU by Backyard Estates${city ? ` in ${city}` : ''}. Walk the floor plan, see the finishes, and ask the team your questions in person.`,
+        path: `/events/open-house/${slug}`,
+    })
+}
 
 export default async function ADUOpenHouse({
     params,

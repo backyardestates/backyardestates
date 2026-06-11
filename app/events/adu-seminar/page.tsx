@@ -11,6 +11,14 @@ import ADUSeminarFeatures from '@/components/ADUSeminarFeatures';
 import ADUSeminarTopics from '@/components/ADUSeminarTopics';
 import ADUSeminarRSVPSection from '@/components/ADUSeminarRSVPSection';
 import ADUSeminarHosts from '@/components/ADUSeminarHosts';
+import { buildMetadata } from '@/lib/seo'
+
+export const metadata = buildMetadata({
+    title: 'Free ADU Seminar in Upland, CA',
+    description:
+        'Join a free Backyard Estates ADU seminar in Upland. Learn how accessory dwelling units work — costs, financing, permitting, and rental income — from an experienced local team.',
+    path: '/events/adu-seminar',
+})
 
 
 export default async function ADUOpenHouse() {

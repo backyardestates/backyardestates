@@ -2,7 +2,7 @@ import Head from 'next/head'
 
 export default function OpenGraph({
     title = 'Backyard Estates',
-    description = 'Backyard Estates - Premier Accessory Dwelling Unit (ADU) builder for the greater Los Angeles area.',
+    description = 'Backyard Estates - Accessory Dwelling Unit (ADU) builder for the Inland Empire, San Bernardino, Riverside, and Los Angeles counties.',
     image = 'backyard-estates-OG.png',
     domain = 'backyardestates.com',
 }) {

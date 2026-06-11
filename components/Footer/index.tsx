@@ -4,7 +4,15 @@ import { FLOORPLANS_QUERY } from '@/sanity/queries'
 
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faPhone } from '@fortawesome/pro-regular-svg-icons'
+import {
+    faEnvelope,
+    faPhone,
+    faLocationDot,
+} from '@fortawesome/pro-regular-svg-icons'
+
+import { business } from '@/lib/business'
+import SocialLinks from '../SocialLinks'
+import ReviewStars from '../ReviewStars'
 
 import Newsletter from '../Newsletter'
 
@@ -51,31 +59,49 @@ export default async function Footer() {
                             Backyard Estates
                         </div>
                         <p className={style.intro}>
-                            Premier Accessory Dwelling Unit (ADU) builder for
-                            the greater Los Angeles area.
+                            Accessory Dwelling Unit (ADU) design-build
+                            contractor serving the Inland Empire, San Bernardino
+                            County, Riverside County, and Los Angeles County.
                         </p>
-                        <ul>
-                            <li className={style.contact}>
-                                <FontAwesomeIcon
-                                    icon={faEnvelope}
-                                    size="lg"
-                                    className={style.icon}
-                                />
-                                <Link href="mailto:contact@backyardestates.com">
-                                    contact@backyardestates.com
-                                </Link>
-                            </li>
-                            <li className={style.contact}>
-                                <FontAwesomeIcon
-                                    icon={faPhone}
-                                    size="lg"
-                                    className={style.icon}
-                                />
-                                <Link href="tel:+14254944705">
-                                    (425) 494-4705
-                                </Link>
-                            </li>
-                        </ul>
+                        <address className={style.address}>
+                            <ul>
+                                <li className={style.contact}>
+                                    <FontAwesomeIcon
+                                        icon={faLocationDot}
+                                        size="lg"
+                                        className={style.icon}
+                                    />
+                                    <span>
+                                        {business.address.street},{' '}
+                                        {business.address.city},{' '}
+                                        {business.address.state}{' '}
+                                        {business.address.zip}
+                                    </span>
+                                </li>
+                                <li className={style.contact}>
+                                    <FontAwesomeIcon
+                                        icon={faEnvelope}
+                                        size="lg"
+                                        className={style.icon}
+                                    />
+                                    <Link href={`mailto:${business.email}`}>
+                                        {business.email}
+                                    </Link>
+                                </li>
+                                <li className={style.contact}>
+                                    <FontAwesomeIcon
+                                        icon={faPhone}
+                                        size="lg"
+                                        className={style.icon}
+                                    />
+                                    <Link href={business.phone.href}>
+                                        {business.phone.display}
+                                    </Link>
+                                </li>
+                            </ul>
+                        </address>
+                        <ReviewStars className={style.reviewStars} />
+                        <SocialLinks />
                     </div>
                     <Newsletter />
                 </div>
@@ -107,6 +133,16 @@ export default async function Footer() {
                                 <li>
                                     <Link href="/properties">
                                         Completed ADUs
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/customer-stories">
+                                        Customer stories
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/adu-builder">
+                                        Service areas
                                     </Link>
                                 </li>
                                 <li>

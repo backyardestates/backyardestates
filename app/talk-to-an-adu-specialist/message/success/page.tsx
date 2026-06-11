@@ -1,6 +1,14 @@
 import Link from "next/link"
 import { TopBar } from "@/components/goBackButton"
 import Footer from "@/components/Footer"
+import { buildMetadata } from "@/lib/seo"
+
+export const metadata = buildMetadata({
+    title: "Message Received",
+    description: "Thanks for reaching out to Backyard Estates.",
+    path: "/talk-to-an-adu-specialist/message/success",
+    noindex: true,
+})
 
 export default function MessageSuccess() {
     return (

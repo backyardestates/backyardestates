@@ -21,9 +21,9 @@ const POST_QUERY_LG = defineQuery(
 )
 
 export const metadata: Metadata = {
-    title: 'Blog - Backyard Estates',
+    title: 'ADU Blog & Resources',
     description:
-        'Your go-to resource for everything related to Accessory Dwelling Units (ADUs) for the greater Los Angeles area.',
+        'Your go-to resource for everything about Accessory Dwelling Units (ADUs) — costs, permitting, financing, and design — across the Inland Empire and Los Angeles area.',
 }
 
 export default async function Blog() {
@@ -46,7 +46,7 @@ export default async function Blog() {
             <Nav />
             <Masthead
                 title="Blog"
-                explanation="Your go-to resource for everything related to Accessory Dwelling Units (ADUs) for the greater Los Angeles area."
+                explanation="Your go-to resource for everything about Accessory Dwelling Units (ADUs) — costs, permitting, financing, and design — across the Inland Empire and Los Angeles area."
             />
             <main className={style.main}>
                 <Breadcrumbs pages={pages} />

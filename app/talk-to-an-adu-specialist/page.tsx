@@ -8,7 +8,7 @@ import { Phone, HouseIcon, User2, MessageCircle, ClipboardCheck } from "lucide-r
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Talk to an ADU Specialist | Free Consultation | Backyard Estates",
+    title: "Talk to an ADU Specialist | Free Consultation",
     description:
         "Speak with a Backyard Estates ADU specialist about your property. Schedule a free phone call or in-office consultation to explore ADU options, rental income potential, and site feasibility in Southern California.",
     keywords: [
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
         canonical: "https://www.backyardestates.com/talk-to-an-adu-specialist",
     },
     openGraph: {
-        title: "Talk to an ADU Specialist | Backyard Estates",
+        title: "Talk to an ADU Specialist",
         description:
             "Schedule a free phone call or office consultation to explore building an ADU on your property.",
         url: "https://www.backyardestates.com/talk-to-an-adu-specialist",

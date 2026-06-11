@@ -200,6 +200,14 @@
     }
 }
 
+.address {
+    font-style: normal;
+}
+
+.reviewStars {
+    margin-top: 1.25rem;
+}
+
 .contact {
     display: flex;
     gap: 0.75rem;

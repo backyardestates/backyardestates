@@ -1,0 +1,48 @@
+.root {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-sans);
+    text-decoration: none;
+}
+
+.link {
+    transition: opacity 0.2s ease;
+}
+
+.link:hover {
+    opacity: 0.85;
+}
+
+/* Two stacked star rows: a muted track + a gold overlay clipped to the rating */
+.stars {
+    position: relative;
+    display: inline-block;
+    font-size: 1.05rem;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+}
+
+.starsTrack {
+    color: rgba(255, 255, 255, 0.28);
+}
+
+.starsFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    color: var(--color-brand-beige, #a8895c);
+}
+
+.text {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.text strong {
+    font-weight: 600;
+}

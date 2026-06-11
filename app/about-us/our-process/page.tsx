@@ -25,7 +25,7 @@ import style from './page.module.css'
 import AttentionCTA from '@/components/AttentionCTA'
 
 export const metadata: Metadata = {
-    title: 'Our process - Backyard Estates',
+    title: 'Our process',
     description:
         'We manage the entire project, from custom design to permitting, all the way to construction and installation.',
 }
@@ -253,8 +253,8 @@ export default function OurProcess() {
                     description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
                     primaryLabel="Talk to an ADU Specialist"
                     primaryHref="/talk-to-an-adu-specialist"
-                    secondaryText="Or call (425) 494-4705"
-                    secondaryHref="tel:+4254944705"
+                    secondaryText="Or call (909) 500-0917"
+                    secondaryHref="tel:+19095000917"
                 />
             </main>
             <Footer />

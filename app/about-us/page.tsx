@@ -1,5 +1,3 @@
-import type { Metadata } from 'next'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faCheck,
@@ -15,12 +13,14 @@ import Nav from '@/components/Nav'
 
 import style from './page.module.css'
 import AttentionCTA from '@/components/AttentionCTA'
+import { buildMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-    title: 'About us - Backyard Estates',
+export const metadata = buildMetadata({
+    title: 'About Our ADU Team',
     description:
-        'Our mission is to enable homeowners to make your ADU dreams a reality!',
-}
+        'Backyard Estates is an experienced ADU design-build team based in Upland, CA. Our mission is to make building your accessory dwelling unit (ADU) simple, transparent, and stress-free.',
+    path: '/about-us',
+})
 
 export default function AboutUs() {
     return (
@@ -239,8 +239,8 @@ export default function AboutUs() {
                     description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
                     primaryLabel="Talk to an ADU Specialist"
                     primaryHref="/talk-to-an-adu-specialist"
-                    secondaryText="Or call (425) 494-4705"
-                    secondaryHref="tel:+4254944705"
+                    secondaryText="Or call (909) 500-0917"
+                    secondaryHref="tel:+19095000917"
                 />
             </main>
 

@@ -1,0 +1,408 @@
+.main {
+    width: 100%;
+    background: var(--color-white);
+    overflow-x: clip;
+}
+
+.inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+    /* Top padding clears the fixed Nav (position: fixed; ~5.75rem + 0.75rem border). */
+    padding: clamp(6.5rem, 8vw, 8rem) clamp(1.25rem, 3vw, 2rem) 0;
+}
+
+/* ============================ HERO ============================ */
+.hero {
+    position: relative;
+    margin-top: 1.5rem;
+    padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 4vw, 3.5rem)
+        clamp(2.5rem, 5vw, 3.5rem);
+    border-radius: clamp(1.25rem, 3vw, 2rem);
+    overflow: hidden;
+    background:
+        radial-gradient(
+            120% 130% at 15% 0%,
+            var(--color-brand-beige-subtle) 0%,
+            #fff 55%
+        );
+    border: 1px solid var(--color-neutral-50);
+    isolation: isolate;
+}
+
+/* Faint blueprint grid — echoes the floorplan hero's drafting motif */
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: repeating-linear-gradient(
+            to bottom,
+            rgba(54, 72, 75, 0.05),
+            rgba(54, 72, 75, 0.05) 1px,
+            transparent 1px,
+            transparent 28px
+        ),
+        repeating-linear-gradient(
+            to right,
+            rgba(54, 72, 75, 0.05),
+            rgba(54, 72, 75, 0.05) 1px,
+            transparent 1px,
+            transparent 28px
+        );
+    mask-image: radial-gradient(80% 80% at 85% 110%, #000 0%, transparent 70%);
+    opacity: 0;
+    animation: blueprintIn 2s ease 0.3s forwards;
+}
+
+.heroInner {
+    position: relative;
+    max-width: 44rem;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige);
+    margin: 0 0 1rem;
+}
+
+.eyebrowDot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--color-brand-beige);
+}
+
+.h1 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    color: var(--color-brand-dark-blue);
+}
+
+.h1 .accent {
+    color: var(--color-brand-beige);
+}
+
+.lede {
+    margin: 1.1rem 0 0;
+    font-family: var(--font-sans);
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--color-neutral-700);
+    max-width: 40rem;
+}
+
+/* Stat pills under the hero copy */
+.heroStats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.6rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.statPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 1rem;
+    border: 1.5px solid var(--color-brand-beige);
+    border-radius: 2rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-brand-dark-blue);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.statPillIcon {
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--color-brand-beige);
+}
+
+.heroCtas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-top: 1.9rem;
+}
+
+.primaryBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 3rem;
+    padding: 0 1.5rem;
+    border-radius: 3rem;
+    background: var(--color-brand-dark-blue);
+    color: var(--color-white);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1vw, 1rem);
+    text-decoration: none;
+    transition: background-color 0.25s ease, transform 0.2s ease,
+        box-shadow 0.25s ease;
+    box-shadow: 0 10px 24px rgba(54, 72, 75, 0.18);
+}
+
+.primaryBtn:hover {
+    background: var(--color-brand-dark-blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(54, 72, 75, 0.24);
+}
+
+.primaryBtn:focus-visible {
+    outline: 2px solid var(--color-brand-beige);
+    outline-offset: 3px;
+}
+
+.ghostBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 3rem;
+    padding: 0 1.4rem;
+    border-radius: 3rem;
+    border: 1.5px solid var(--color-brand-dark-blue);
+    background: transparent;
+    color: var(--color-brand-dark-blue);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: clamp(0.875rem, 1vw, 1rem);
+    text-decoration: none;
+    transition: background-color 0.25s ease, color 0.25s ease,
+        transform 0.2s ease;
+}
+
+.ghostBtn:hover {
+    background: var(--color-brand-dark-blue);
+    color: var(--color-white);
+    transform: translateY(-1px);
+}
+
+.ghostBtn:focus-visible {
+    outline: 2px solid var(--color-brand-beige);
+    outline-offset: 3px;
+}
+
+/* ============================ SECTIONS ============================ */
+.section {
+    margin: clamp(3rem, 7vw, 5rem) 0;
+}
+
+.sectionHead {
+    max-width: 46rem;
+    margin-bottom: 1.75rem;
+}
+
+.kicker {
+    font-family: var(--font-sans);
+    font-size: clamp(0.78rem, 1.6vw, 0.9rem);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige);
+    margin: 0 0 0.6rem;
+}
+
+.h2 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(1.65rem, 3.4vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--color-brand-dark-blue);
+}
+
+.body {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--color-neutral-700);
+    margin: 0 0 1.1rem;
+    max-width: 46rem;
+}
+
+.body:last-child {
+    margin-bottom: 0;
+}
+
+/* Intro: a refined editorial column with a gold rule */
+.intro {
+    position: relative;
+    padding-left: clamp(1.25rem, 3vw, 2rem);
+    border-left: 3px solid var(--color-brand-beige);
+}
+
+/* Completed-build cards reuse PropertyCard; just lay them out */
+.cardGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* ---------- Permitting panel ---------- */
+.permitCard {
+    margin-top: 1.5rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: 1.6rem;
+    background: var(--color-brand-beige-subtle);
+    border: 1px solid var(--color-brand-beige-A020);
+    box-shadow: 0 8px 28px rgba(54, 72, 75, 0.06);
+}
+
+.permitDept {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+    margin: 0 0 1.25rem;
+    padding: 0.45rem 0.9rem 0.45rem 0.6rem;
+    background: var(--color-white);
+    border-radius: 2rem;
+    box-shadow: 0 2px 8px rgba(54, 72, 75, 0.08);
+}
+
+.permitDeptIcon {
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--color-brand-beige);
+}
+
+.checkList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+}
+
+.checkItem {
+    position: relative;
+    padding-left: 2.1rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-neutral-700);
+}
+
+.checkIcon {
+    position: absolute;
+    left: 0;
+    top: 0.05rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    color: var(--color-brand-beige);
+    flex-shrink: 0;
+}
+
+.fineprint {
+    margin: 1.4rem 0 0;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--color-neutral-500);
+}
+
+/* ---------- Floor-plan + nearby chips ---------- */
+.chipRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--color-neutral-100);
+    border-radius: 2rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-brand-dark-blue);
+    background: var(--color-white);
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.chip:hover {
+    border-color: var(--color-brand-beige);
+    background: var(--color-brand-beige-subtle);
+    transform: translateY(-1px);
+}
+
+.chipArrow {
+    color: var(--color-brand-beige);
+}
+
+.textLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.1rem;
+    color: var(--color-brand-beige);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+    transition: gap 0.2s ease;
+}
+
+.textLink:hover {
+    gap: 0.7rem;
+}
+
+.faqs {
+    margin-top: 1.25rem;
+}
+
+/* ============================ MOTION ============================ */
+@keyframes blueprintIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* ============================ RESPONSIVE ============================ */
+@media only screen and (min-width: 720px) {
+    .cardGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    .cardGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero::before {
+        animation: none;
+        opacity: 1;
+    }
+}

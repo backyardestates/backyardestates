@@ -6,6 +6,14 @@ import style from "./page.module.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { SaveToken } from "@/components/SaveToken";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+    title: "Event Check-In",
+    description: "Check in to your Backyard Estates event.",
+    path: "/events/checkin",
+    noindex: true,
+});
 
 export default async function CheckInPage({ searchParams }: any) {
     const token = (await searchParams).token;

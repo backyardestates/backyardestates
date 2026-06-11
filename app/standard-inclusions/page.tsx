@@ -12,6 +12,14 @@ import Nav from '@/components/Nav'
 // import db from '@/utils/db'
 import style from './StandardInclusions.module.css'
 import AttentionCTA from '@/components/AttentionCTA'
+import { buildMetadata } from '@/lib/seo'
+
+export const metadata = buildMetadata({
+    title: 'What Comes Standard in Every ADU',
+    description:
+        'Full transparency on what is included in a Backyard Estates ADU — appliances, fixtures, finishes, design, plans, permits, and project management, all in one price. No hidden costs.',
+    path: '/standard-inclusions',
+})
 
 // const getFloorplans = async () => {
 //     const floorplans = await db.floorplan.findMany({
@@ -41,8 +49,8 @@ export default async function StandardInclusions() {
                     description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
                     primaryLabel="Talk to an ADU Specialist"
                     primaryHref="/talk-to-an-adu-specialist"
-                    secondaryText="Or call (425) 494-4705"
-                    secondaryHref="tel:+4254944705"
+                    secondaryText="Or call (909) 500-0917"
+                    secondaryHref="tel:+19095000917"
                 />
             </main>
             <Footer />

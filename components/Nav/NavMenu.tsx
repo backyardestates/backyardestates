@@ -15,6 +15,7 @@ import {
     Users,
     CalendarDays,
     MessageSquareQuote,
+    MapPin,
     type LucideIcon,
 } from 'lucide-react'
 
@@ -33,6 +34,7 @@ const ICONS: Record<string, LucideIcon> = {
     '/frequently-asked-questions': HelpCircle,
     '/about-us': Building2,
     '/customer-stories': MessageSquareQuote,
+    '/adu-builder': MapPin,
     '/about-us/our-team': Users,
     '/events': CalendarDays,
 }

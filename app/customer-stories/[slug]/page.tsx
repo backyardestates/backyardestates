@@ -12,11 +12,13 @@ import RelatedProperties from '@/components/RelatedProperties'
 
 import style from './page.module.css'
 import AttentionCTA from '@/components/AttentionCTA'
+import JsonLd from '@/components/JsonLd'
+import { reviewSchema, videoObjectSchema, breadcrumbSchema } from '@/lib/jsonLd'
 
 const STORY_QUERY = defineQuery(`*[
     _type == "story" &&
     slug.current == $slug
-  ][0]{names, purpose, wistiaId, body, images, property->{thumbnail, floorplan->{name,bed,bath,sqft,price,relatedProperties[]->{name,bed,bath,sqft,thumbnail,slug}}}}`)
+  ][0]{names, quote, purpose, wistiaId, body, images, "slug": slug.current, "city": property->address.city, "location": property->location, property->{thumbnail, floorplan->{name,bed,bath,sqft,price,relatedProperties[]->{name,bed,bath,sqft,thumbnail,slug}}}}`)
 
 const PROPERTY_QUERY = defineQuery(`*[
     _type == "story" &&
@@ -34,7 +36,7 @@ export async function generateMetadata({
         params,
     })
 
-    const title = `${story.names}'s customer story - Backyard Estates`
+    const title = `${story.names}'s ADU Story`
     const description = `${story.names}'s Backyard Estates customer story. ${story.purpose}`
 
     // Cloudinary base URL
@@ -96,8 +98,31 @@ export default async function Story({
     if (!story) {
         notFound()
     }
+
+    const city = story.city || (typeof story.location === 'string' ? story.location.split(',')[0] : undefined)
+    const storyLd = [
+        reviewSchema({
+            names: story.names,
+            quote: story.quote || story.purpose,
+            city,
+            floorplan: story.property?.floorplan?.name,
+            slug: story.slug,
+        }),
+        videoObjectSchema({
+            name: `${story.names}'s ADU — Backyard Estates customer story`,
+            description: story.purpose,
+            wistiaId: story.wistiaId,
+        }),
+        breadcrumbSchema([
+            { name: 'Home', href: '/' },
+            { name: 'Customer stories', href: '/customer-stories' },
+            { name: story.names, href: `/customer-stories/${story.slug}` },
+        ]),
+    ].filter(Boolean) as Record<string, unknown>[]
+
     return (
         <>
+            <JsonLd data={storyLd} />
             <Nav />
             <main className={style.base}>
                 <div className={style.content}>
@@ -120,8 +145,8 @@ export default async function Story({
                     description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
                     primaryLabel="Talk to an ADU Specialist"
                     primaryHref="/talk-to-an-adu-specialist"
-                    secondaryText="Or call (425) 494-4705"
-                    secondaryHref="tel:+4254944705"
+                    secondaryText="Or call (909) 500-0917"
+                    secondaryHref="tel:+19095000917"
                 />
 
             </main>

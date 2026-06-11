@@ -13,7 +13,7 @@ import style from './Form.module.css'
 import MultiStepForm from '@/components/MultiStepForm'
 
 // export const metadata: Metadata = {
-//     title: 'Submit a referral - Backyard Estates',
+//     title: 'Submit a referral',
 // }
 
 export default function SubmitReferral() {

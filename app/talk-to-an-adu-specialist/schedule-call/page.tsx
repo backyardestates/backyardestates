@@ -5,7 +5,7 @@ import LegalPrint from "@/components/LegalPrint"
 import { ContactLeadForm } from "@/components/Contact/Forms/ContactLeadForm"
 import { Metadata } from "next"
 export const metadata: Metadata = {
-    title: "Schedule a Free ADU Phone Consultation | Backyard Estates",
+    title: "Schedule a Free ADU Phone Consultation",
     description:
         "Book a free 15-minute phone consultation with a Backyard Estates ADU specialist. Learn what can work on your property and get clear next steps.",
     keywords: [

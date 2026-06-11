@@ -38,7 +38,7 @@ export default function BlogCard({ post, tag, size = 'MD', featured = false }) {
                 >
                     <CldImage
                         src={post.image.public_id}
-                        alt="Blog Post Image"
+                        alt={post.title || 'Backyard Estates ADU blog post'}
                         fill
                         style={{ objectFit: 'cover' }}
                         sizes="100vw"

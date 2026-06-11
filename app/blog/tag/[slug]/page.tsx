@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     })
 
     return {
-        title: `${tag?.[0]?.title} tag - Blog - Backyard Estates`,
+        title: `${tag?.[0]?.title} tag - Blog`,
         description: `Posts tagged with ${tag?.[0]?.title || slug}`,
     }
 }

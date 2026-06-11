@@ -2,21 +2,23 @@ import { PortableText, type SanityDocument } from 'next-sanity'
 
 import { client } from '@/sanity/client'
 
-import type { Metadata } from 'next'
-
-import Catchall from '@/components/AttentionCTA'
 import Faq from '@/components/Faq'
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
 import Nav from '@/components/Nav'
+import JsonLd from '@/components/JsonLd'
 
 import style from './page.module.css'
 import AttentionCTA from '@/components/AttentionCTA'
+import { buildMetadata } from '@/lib/seo'
+import { faqSchema } from '@/lib/jsonLd'
 
-export const metadata: Metadata = {
-  title: 'FAQs - Backyard Estates',
-  description: '',
-}
+export const metadata = buildMetadata({
+  title: 'ADU Frequently Asked Questions',
+  description:
+    'Answers to the most common questions about building an ADU (accessory dwelling unit) with Backyard Estates — cost, financing, timeline, permitting, and what is included.',
+  path: '/frequently-asked-questions',
+})
 
 const FAQS_QUERY = `*[_type == "faq"]|order(publishedAt asc){_id, title, body, publishedAt}`
 
@@ -25,25 +27,21 @@ const options = { next: { revalidate: 30 } }
 export default async function FrequentlyAskedQuestions() {
   const faqs = await client.fetch<SanityDocument[]>(FAQS_QUERY, {}, options)
 
-  // Generate FAQ schema
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.title,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: Array.isArray(faq.body)
-          ? faq.body
-            .map((block) =>
-              block.children.map((child) => child.text).join('')
+  // Flatten PortableText answers to plain text for the FAQPage schema.
+  const faqLd = faqSchema(
+    faqs.map((faq) => ({
+      question: faq.title,
+      answer: Array.isArray(faq.body)
+        ? faq.body
+            .map((block: any) =>
+              Array.isArray(block.children)
+                ? block.children.map((child: any) => child.text).join('')
+                : ''
             )
             .join('\n')
-          : '',
-      },
-    })),
-  }
+        : '',
+    }))
+  )
   return (
     <>
       <Nav />
@@ -80,17 +78,13 @@ export default async function FrequentlyAskedQuestions() {
           description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
           primaryLabel="Talk to an ADU Specialist"
           primaryHref="/talk-to-an-adu-specialist"
-          secondaryText="Or call (425) 494-4705"
-          secondaryHref="tel:+4254944705"
+          secondaryText="Or call (909) 500-0917"
+          secondaryHref="tel:+19095000917"
         />
       </main>
       <Footer />
 
-      {/* Add FAQ schema as JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <JsonLd data={faqLd} />
     </>
   )
 }

@@ -5,6 +5,15 @@ import { groupSelections } from "@/lib/groupSelections";
 import SelectionsGallery from "@/components/SelectionsGallery";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+    title: "ADU Selections & Finishes",
+    description:
+        "Browse the finishes and selections available for a Backyard Estates ADU.",
+    path: "/selections",
+    noindex: true,
+});
 
 export default async function SelectionsPage() {
     const selections = await client.fetch(SELECTIONS_QUERY);

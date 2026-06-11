@@ -1,4 +1,3 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -59,12 +58,14 @@ import {
 } from '@/content/fpa'
 
 import style from './page.module.css'
+import { buildMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-    title: 'Pricing & financing - Backyard Estates',
+export const metadata = buildMetadata({
+    title: 'ADU Pricing & Financing',
     description:
-        'One all-in price covers everything — design, permits, site work, finishes, and solar. See your estimated monthly payment, how it pays you back, and the real homes we have built.',
-}
+        'One all-in price covers everything — design, permits, site work, finishes, and solar. See your estimated monthly ADU payment, how it pays you back, and the real homes we have built across the Inland Empire and LA area.',
+    path: '/pricing',
+})
 
 const options = { next: { revalidate: 30 } }
 

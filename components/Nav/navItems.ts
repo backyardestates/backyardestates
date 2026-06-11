@@ -104,6 +104,11 @@ export const NAV_GROUPS: NavGroup[] = [
                 description: 'Hear from the families who built with us',
             },
             {
+                href: '/adu-builder',
+                label: 'Service areas',
+                description: 'Cities we build in across the IE & LA',
+            },
+            {
                 href: '/about-us/our-team',
                 label: 'Our team',
                 description: 'The people behind your build',

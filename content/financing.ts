@@ -9,8 +9,11 @@
 // number a customer sees lives in THIS file, so updates happen in one place.
 
 // Company contact used across the pricing page CTAs.
-export const PHONE_DISPLAY = '(425) 494-4705'
-export const PHONE_HREF = 'tel:+14254944705'
+// Sourced from lib/business.ts so the phone number lives in exactly one place.
+import { business } from '@/lib/business'
+
+export const PHONE_DISPLAY = business.phone.display
+export const PHONE_HREF = business.phone.href
 export const SPECIALIST_HREF = '/talk-to-an-adu-specialist'
 export const OFFICE_VISIT_HREF =
     '/talk-to-an-adu-specialist/office-consultation'
@@ -95,7 +98,7 @@ export function estimatedRent(plan: {
 }
 
 /** Property-value increase the day the ADU is complete (PLACEHOLDER range). */
-export const PROPERTY_VALUE_INCREASE = { low: 150_000, high: 250_000 }
+export const PROPERTY_VALUE_INCREASE = { low: 250_000, high: 450_000 }
 
 // ---------------------------------------------------------------------------
 // Math

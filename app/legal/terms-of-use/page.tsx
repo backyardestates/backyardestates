@@ -10,7 +10,7 @@ import Nav from '@/components/Nav'
 import style from '../page.module.css'
 
 export const metadata: Metadata = {
-    title: 'Terms of use - Backyard Estates',
+    title: 'Terms of use',
 }
 
 export default function TermsOfUse() {

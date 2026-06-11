@@ -1,0 +1,249 @@
+.main {
+    width: 100%;
+    background: var(--color-white);
+    overflow-x: clip;
+}
+
+.inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+    /* Top padding clears the fixed Nav (position: fixed; ~5.75rem + 0.75rem border). */
+    padding: clamp(7rem, 9vw, 8.5rem) clamp(1.25rem, 3vw, 2rem) 0;
+}
+
+/* ============================ HERO ============================ */
+.hero {
+    position: relative;
+    padding: clamp(2.75rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3.5rem)
+        clamp(2.5rem, 5vw, 3.5rem);
+    border-radius: clamp(1.25rem, 3vw, 2rem);
+    overflow: hidden;
+    background: radial-gradient(
+        120% 130% at 12% 0%,
+        var(--color-brand-beige-subtle) 0%,
+        #fff 55%
+    );
+    border: 1px solid var(--color-neutral-50);
+    isolation: isolate;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: repeating-linear-gradient(
+            to bottom,
+            rgba(54, 72, 75, 0.05),
+            rgba(54, 72, 75, 0.05) 1px,
+            transparent 1px,
+            transparent 28px
+        ),
+        repeating-linear-gradient(
+            to right,
+            rgba(54, 72, 75, 0.05),
+            rgba(54, 72, 75, 0.05) 1px,
+            transparent 1px,
+            transparent 28px
+        );
+    mask-image: radial-gradient(80% 80% at 88% 115%, #000 0%, transparent 70%);
+    opacity: 0;
+    animation: blueprintIn 2s ease 0.3s forwards;
+}
+
+.heroInner {
+    position: relative;
+    max-width: 46rem;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige);
+    margin: 0 0 1rem;
+}
+
+.eyebrowDot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--color-brand-beige);
+}
+
+.h1 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    color: var(--color-brand-dark-blue);
+}
+
+.h1 .accent {
+    color: var(--color-brand-beige);
+}
+
+.lede {
+    margin: 1.15rem 0 0;
+    font-family: var(--font-sans);
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--color-neutral-700);
+    max-width: 44rem;
+}
+
+.heroCtas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-top: 1.9rem;
+}
+
+.primaryBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 3rem;
+    padding: 0 1.5rem;
+    border-radius: 3rem;
+    background: var(--color-brand-dark-blue);
+    color: var(--color-white);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1vw, 1rem);
+    text-decoration: none;
+    transition: background-color 0.25s ease, transform 0.2s ease,
+        box-shadow 0.25s ease;
+    box-shadow: 0 10px 24px rgba(54, 72, 75, 0.18);
+}
+
+.primaryBtn:hover {
+    background: var(--color-brand-dark-blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(54, 72, 75, 0.24);
+}
+
+.primaryBtn:focus-visible {
+    outline: 2px solid var(--color-brand-beige);
+    outline-offset: 3px;
+}
+
+/* ============================ COUNTY GROUPS ============================ */
+.section {
+    margin: clamp(2.75rem, 6vw, 4rem) 0;
+}
+
+.countyHead {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 1.4rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--color-neutral-50);
+}
+
+.h2 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-brand-dark-blue);
+}
+
+.countyCount {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-brand-beige);
+}
+
+.cityGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+}
+
+.cityCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1.1rem 1.3rem;
+    border-radius: 1rem;
+    border: 1px solid var(--color-neutral-50);
+    background: var(--color-white);
+    box-shadow: 0 4px 16px rgba(54, 72, 75, 0.05);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.25s ease,
+        border-color 0.2s ease;
+}
+
+.cityCard:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-brand-beige);
+    box-shadow: 0 12px 28px rgba(54, 72, 75, 0.12);
+}
+
+.cityName {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-brand-dark-blue);
+}
+
+.cityNameIcon {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--color-brand-beige);
+    flex-shrink: 0;
+}
+
+.cityArrow {
+    color: var(--color-brand-beige);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.cityCard:hover .cityArrow {
+    transform: translateX(3px);
+}
+
+@keyframes blueprintIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@media only screen and (min-width: 640px) {
+    .cityGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    .cityGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero::before {
+        animation: none;
+        opacity: 1;
+    }
+}

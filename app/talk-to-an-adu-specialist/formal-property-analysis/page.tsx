@@ -5,7 +5,7 @@ import LegalPrint from "@/components/LegalPrint"
 import { ContactLeadForm } from "@/components/Contact/Forms/ContactLeadForm"
 import { Metadata } from "next"
 export const metadata: Metadata = {
-    title: "Schedule a Formal Property Analysis | Onsite ADU Feasibility | Backyard Estates",
+    title: "Schedule a Formal Property Analysis | Onsite ADU Feasibility",
     description:
         "Schedule your Formal Property Analysis with Backyard Estates. Our architect and engineering team visit your property and verify 250+ items — utilities, site conditions, and city rules — so your proposal is built on facts, not assumptions. $500, fully credited toward your build.",
     keywords: [

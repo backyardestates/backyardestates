@@ -3,6 +3,9 @@ import { client } from '@/sanity/client'
 const options = { next: { revalidate: 30 } }
 
 import { notFound } from 'next/navigation'
+import { buildMetadata } from '@/lib/seo'
+import JsonLd from '@/components/JsonLd'
+import { productSchema, breadcrumbSchema, reviewSchemas } from '@/lib/jsonLd'
 
 import CustomerStory from '@/components/CustomerStory'
 import CustomFloorplanShowcase from '@/components/CustomFloorplanShowcase'
@@ -69,6 +72,35 @@ const HOW_IT_WORKS = [
         text: 'Our architects turn it into permit-ready custom plans, then we handle all 11 city departments and construction end-to-end.',
     },
 ]
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ slug: string }>
+}) {
+    const { slug } = await params
+    const fp = await client.fetch<SanityDocument>(FLOORPLAN_QUERY, { slug }, options)
+    if (!fp?.name) {
+        return buildMetadata({
+            title: 'ADU Floor Plan',
+            description:
+                'Explore this Backyard Estates ADU floor plan — all-in pricing, fully customizable, built across the Inland Empire and Los Angeles area.',
+            path: `/floorplans/${slug}`,
+        })
+    }
+    const specs = [
+        fp.bed ? `${fp.bed} bed` : null,
+        fp.bath ? `${fp.bath} bath` : null,
+        fp.sqft ? `${fp.sqft} sq ft` : null,
+    ]
+        .filter(Boolean)
+        .join(', ')
+    return buildMetadata({
+        title: `${fp.name} ADU Floor Plan${specs ? ` — ${specs}` : ''}`,
+        description: `The ${fp.name} is a ${specs ? `${specs} ` : ''}accessory dwelling unit (ADU) from Backyard Estates with all-in pricing. See the layout, inclusions, and real backyard homes built across the Inland Empire, San Bernardino, Riverside, and Los Angeles counties.`,
+        path: `/floorplans/${slug}`,
+    })
+}
 
 export default async function Floorplan({
     params,
@@ -167,8 +199,27 @@ export default async function Floorplan({
         quotes.push(...fillers.slice(0, 3 - quotes.length))
     }
 
+    const floorplanLd = [
+        productSchema({ ...floorplan, slug }),
+        breadcrumbSchema([
+            { name: 'Home', href: '/' },
+            { name: 'Floor plans', href: '/floorplans' },
+            { name: floorplan.name, href: `/floorplans/${slug}` },
+        ]),
+        ...reviewSchemas(
+            quotes.map((q) => ({
+                names: q.names,
+                quote: q.quote,
+                city: q.city,
+                floorplan: floorplan.name,
+                slug: q.slug,
+            }))
+        ),
+    ]
+
     return (
         <>
+            <JsonLd data={floorplanLd} />
             <Nav />
             <main className={style.main}>
                 <FloorplanHero

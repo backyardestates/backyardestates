@@ -7,6 +7,14 @@ import router from "next/navigation";
 import Footer from "@/components/Footer";
 import LegalPrint from "@/components/LegalPrint";
 import Link from "next/link";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+    title: "RSVP for the Open House",
+    description: "Reserve your spot at this Backyard Estates ADU open house.",
+    path: "/events/open-house/rsvp",
+    noindex: true,
+});
 
 export default async function Home({
     params,

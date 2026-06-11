@@ -4,6 +4,14 @@ import Footer from "@/components/Footer";
 import LegalPrint from "@/components/LegalPrint";
 import { ADUSeminarRSVPForm } from "@/components/ADUSeminarRSVPForm";
 import formatDate from "@/utils/dates";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+    title: "RSVP for the ADU Seminar",
+    description: "Reserve your spot at the Backyard Estates ADU seminar.",
+    path: "/events/adu-seminar/rsvp",
+    noindex: true,
+});
 
 export default async function Home({
     params,

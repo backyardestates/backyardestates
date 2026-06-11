@@ -22,7 +22,6 @@ const LEGACY_PROPERTIES_QUERY = `
 
 const options = { next: { revalidate: 30 } }
 
-import type { Metadata } from 'next'
 
 import Footer from '@/components/Footer'
 import Masthead from '@/components/Masthead'
@@ -31,12 +30,14 @@ import PropertiesGrid from '@/components/PropertiesGrid'
 
 import style from './page.module.css'
 import AttentionCTA from '@/components/AttentionCTA'
+import { buildMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-    title: 'Completed ADU properties - Backyard Estates',
+export const metadata = buildMetadata({
+    title: 'Completed ADUs & Backyard Homes',
     description:
-        'Browse completed ADU properties to discover the right Accessory Dwelling Unit (ADU) for your family',
-}
+        'Browse completed ADUs (accessory dwelling units, granny flats, and casitas) built by Backyard Estates across the Inland Empire and Los Angeles area to find the right fit for your family.',
+    path: '/properties',
+})
 import {
     normalizeLegacyProperty,
     normalizeNewProperty,

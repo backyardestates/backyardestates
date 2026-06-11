@@ -1,4 +1,51 @@
 export const FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){name,slug}`
+
+// Lean query for a property's <head> metadata (avoids the heavy PROPERTY_QUERY).
+export const PROPERTY_META_QUERY = `*[_type == "property" && slug.current == $slug][0]{
+  "city": address.city,
+  location,
+  bed, bath, sqft,
+  "floorplan": floorplan->name
+}`
+
+// ---------------------------------------------------------------------------
+// Lean slug + lastmod queries for app/sitemap.ts (metadata only, no blobs).
+// ---------------------------------------------------------------------------
+export const SITEMAP_FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate" && defined(slug.current)]{ "slug": slug.current, _updatedAt }`
+export const SITEMAP_PROPERTIES_QUERY = `*[_type == "property" && defined(slug.current) && defined(photos) && count(photos) > 0]{ "slug": slug.current, _updatedAt }`
+export const SITEMAP_STORIES_QUERY = `*[_type == "story" && defined(slug.current)]{ "slug": slug.current, _updatedAt }`
+export const SITEMAP_POSTS_QUERY = `*[_type == "post" && defined(slug.current)]{ "slug": slug.current, "category": categories->slug.current, _updatedAt }`
+export const SITEMAP_OPEN_HOUSES_QUERY = `*[_type == "property" && defined(openHouseDates) && count(openHouseDates) > 0 && defined(slug.current)]{ "slug": slug.current, _updatedAt }`
+
+// Completed builds in (or near) a given city — powers the "real local proof"
+// section on the /adu-builder/[city] service-area pages. Matches BOTH schemas:
+//   - new units: address.city + photos[]
+//   - legacy units: location "City, ST" string + a single thumbnail
+// $city is a token like "Rancho Cucamonga"; GROQ `match` is case-insensitive
+// and token-based, so this is intentionally loose (it can over-match e.g.
+// "West Covina" for "Covina"). The page does an exact, normalized city filter
+// in JS to drop those false positives — see app/adu-builder/[city]/page.tsx.
+export const PROPERTIES_BY_CITY_QUERY = `*[
+  _type == "property" &&
+  defined(slug.current) &&
+  ((defined(photos) && count(photos) > 0) || defined(thumbnail)) &&
+  (address.city match $city || location match $city)
+]
+| order(coalesce(publishedAt, _createdAt) desc){
+  _id,
+  name,
+  "slug": slug.current,
+  completed,
+  featured,
+  aduType,
+  sqft, bed, bath,
+  photos,
+  "image": coalesce(photos[0].url, thumbnail.secure_url, thumbnail.url),
+  "city": address.city,
+  location,
+  floorplan->{ name, bed, bath, sqft, "slug": slug.current },
+  "testimonial": testimonial->{ names, quote, "slug": slug.current }
+}`
 export const PRICING_FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){orderID, isClickable, slug, name, bed, bath, length, width, price}`
 export const CUSTOMER_STORIES_QUERY = `
   *[_type == "story" && featured] | order(publishedAt asc) {

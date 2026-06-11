@@ -24,14 +24,18 @@ import AttentionCTA from '@/components/AttentionCTA'
 import Annoucement from '@/components/Announcement'
 import Announcement from '@/components/Announcement'
 
-const title = 'Backyard Estates - Premier ADU builder'
+const title =
+    'Backyard Estates | ADU Builder in the Inland Empire & Los Angeles'
 const description =
-    'Backyard Estates specializes in custom Accessory Dwelling Units (ADUs) in Los Angeles. Transform your property with our expert ADU solutions.'
+    'Backyard Estates designs and builds custom ADUs (accessory dwelling units, also called granny flats, casitas, or backyard homes) across the Inland Empire, San Bernardino, Riverside, and Los Angeles counties — with all-in pricing and a fully managed process.'
 
 export const metadata = {
     metadataBase: new URL('https://www.backyardestates.com'),
-    title: title,
+    // Absolute so the root layout's "%s | Backyard Estates" template doesn't
+    // double the brand on the homepage.
+    title: { absolute: title },
     description: description,
+    alternates: { canonical: '/' },
     openGraph: {
         title: title,
         description: description,

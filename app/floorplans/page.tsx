@@ -3,8 +3,6 @@ import { client } from '@/sanity/client'
 const FLOORPLANS_QUERY = `*[_type == "floorplan" && isClickable != false && name != "Custom Estate"]|order(orderID asc){_id, bed, bath, sqft, price, name, body, publishedAt, drawing, slug}`
 const options = { next: { revalidate: 30 } }
 
-import type { Metadata } from 'next'
-
 import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
 import FloorplansGrid from '@/components/FloorplansGrid'
@@ -13,12 +11,14 @@ import AttentionCTA from '@/components/AttentionCTA'
 import { PackageCheck, Wand2, Home } from 'lucide-react'
 
 import style from './page.module.css'
+import { buildMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-    title: 'ADU floorplans - Backyard Estates',
+export const metadata = buildMetadata({
+    title: 'ADU Floor Plans & All-In Pricing',
     description:
-        'Browse our ADU floor plans — every plan is all-inclusive, fully customizable, and can be built on your property.',
-}
+        'Browse Backyard Estates ADU floor plans (accessory dwelling units, granny flats, and casitas) — every plan is all-inclusive, fully customizable, and can be built on your property across the Inland Empire and LA area.',
+    path: '/floorplans',
+})
 
 const VALUE_STRIP = [
     { icon: PackageCheck, label: 'All-inclusive pricing' },
@@ -86,8 +86,8 @@ export default async function Floorplan() {
                     description="Bring your address to a no-pressure office visit and we’ll show you exactly how any of these plans fits your lot — all-in pricing, customization, and timeline included."
                     primaryLabel="Schedule your office visit"
                     primaryHref="/talk-to-an-adu-specialist/office-consultation"
-                    secondaryText="Or call (425) 494-4705"
-                    secondaryHref="tel:+4254944705"
+                    secondaryText="Or call (909) 500-0917"
+                    secondaryHref="tel:+19095000917"
                 />
             </main>
             <Footer />

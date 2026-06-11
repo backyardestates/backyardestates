@@ -9,7 +9,7 @@ import AttentionCTA from '@/components/AttentionCTA'
 // import OpenGraph from '@/components/OpenGraph'
 
 export const metadata: Metadata = {
-    title: 'Our team - Backyard Estates',
+    title: 'Our team',
     description: 'Meet the people who make your ADU possible.',
 }
 
@@ -149,8 +149,8 @@ export default function OurTeam() {
                     description="Expand your income and livable space with a thoughtfully designed ADU. Our team handles everything — from feasibility to final build."
                     primaryLabel="Talk to an ADU Specialist"
                     primaryHref="/talk-to-an-adu-specialist"
-                    secondaryText="Or call (425) 494-4705"
-                    secondaryHref="tel:+4254944705"
+                    secondaryText="Or call (909) 500-0917"
+                    secondaryHref="tel:+19095000917"
                 />
             </main>
             <Footer />

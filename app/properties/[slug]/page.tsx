@@ -16,8 +16,25 @@ import styles from './page.module.css'
 import SoftCTA from '@/components/SoftCTA'
 import AttentionCTA from '@/components/AttentionCTA'
 import RelatedProperties from '@/components/RelatedProperties'
-import { PROPERTY_QUERY, RELATED_PROPERTIES_QUERY } from '@/sanity/queries'
+import { PROPERTY_QUERY, RELATED_PROPERTIES_QUERY, PROPERTY_META_QUERY } from '@/sanity/queries'
 import LegacyPropertiesPage from '@/components/LegacyPropertiesPage'
+import { buildMetadata } from '@/lib/seo'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const p = await client.fetch<SanityDocument>(PROPERTY_META_QUERY, { slug }, options)
+  const city = p?.city || (typeof p?.location === 'string' ? p.location.split(',')[0] : undefined)
+  const plan = p?.floorplan
+  const specs = [p?.bed && `${p.bed} bed`, p?.bath && `${p.bath} bath`, p?.sqft && `${p.sqft} sq ft`]
+    .filter(Boolean)
+    .join(', ')
+  const where = city ? ` in ${city}, CA` : ''
+  return buildMetadata({
+    title: `${plan ? `${plan} ADU` : 'Completed ADU'}${where}`,
+    description: `A completed ${plan ? `${plan} ` : ''}ADU (accessory dwelling unit)${where} by Backyard Estates${specs ? ` — ${specs}` : ''}. See photos, the build timeline, and what's included.`,
+    path: `/properties/${slug}`,
+  })
+}
 
 export default async function Property({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

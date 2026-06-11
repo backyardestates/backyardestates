@@ -25,9 +25,10 @@ const robotoSlab = Roboto_Slab({
 })
 
 export const metadata: Metadata = {
-    title: 'Backyard Estates',
+    title: { absolute: 'Standard Inclusions | Backyard Estates' },
     description:
-        'Backyard Estates - Premier Accessory Dwelling Unit (ADU) builder for the greater Los Angeles area.',
+        'See what comes standard in a Backyard Estates ADU build.',
+    robots: { index: false, follow: true },
 }
 
 import '/public/styles.css'

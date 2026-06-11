@@ -1,4 +1,3 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Play, Quote, Star } from 'lucide-react'
@@ -9,14 +8,18 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import AttentionCTA from '@/components/AttentionCTA'
 import Reveal from '@/components/Reveal'
+import JsonLd from '@/components/JsonLd'
+import { reviewSchemas } from '@/lib/jsonLd'
+import { buildMetadata } from '@/lib/seo'
 
 import style from './page.module.css'
 
-export const metadata: Metadata = {
-    title: 'Customer stories - Backyard Estates',
+export const metadata = buildMetadata({
+    title: 'ADU Customer Stories & Reviews',
     description:
-        'Real families, real backyard homes. Hear directly from the homeowners who built an ADU with Backyard Estates — why they built, how it went, and what it changed.',
-}
+        'Real families, real backyard homes. Hear directly from homeowners across the Inland Empire and Los Angeles area who built an ADU with Backyard Estates — why they built, how it went, and what it changed.',
+    path: '/customer-stories',
+})
 
 const options = { next: { revalidate: 30 } }
 
@@ -51,8 +54,21 @@ export default async function CustomerStories() {
     const rows = await client.fetch<StoryRow[]>(STORIES_QUERY, {}, options)
     const stories = rows.filter((s) => s.names)
 
+    const reviewsLd = reviewSchemas(
+        stories.map((s) => ({
+            names: s.names,
+            quote: (s.quote || s.purpose)?.replace(/^["“”']+|["“”']+$/g, ''),
+            city:
+                s.property?.address?.city ||
+                s.property?.location?.split(',')[0]?.trim(),
+            floorplan: s.property?.floorplan?.name,
+            slug: s.slug,
+        }))
+    )
+
     return (
         <>
+            <JsonLd data={reviewsLd} />
             <Nav />
             <main className={style.main}>
                 {/* ============ HERO ============ */}
@@ -235,8 +251,8 @@ export default async function CustomerStories() {
                     description="Every family on this page started with a single conversation. Expand your income and livable space with a thoughtfully designed ADU — our team handles everything, from feasibility to final build."
                     primaryLabel="Talk to an ADU Specialist"
                     primaryHref="/talk-to-an-adu-specialist"
-                    secondaryText="Or call (425) 494-4705"
-                    secondaryHref="tel:+14254944705"
+                    secondaryText="Or call (909) 500-0917"
+                    secondaryHref="tel:+19095000917"
                 />
             </main>
             <Footer />

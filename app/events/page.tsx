@@ -10,8 +10,16 @@ import formatTime from "@/utils/times";
 import { Calendar, MapPin } from "lucide-react";
 import { seedIncludedItems } from "@/sanity/seed";
 import Button from "@/components/Button";
+import { buildMetadata } from "@/lib/seo";
 // const seeded = await seedIncludedItems()
 // console.log(seeded)
+
+export const metadata = buildMetadata({
+    title: "ADU Events, Open Houses & Seminars",
+    description:
+        "Visit a completed ADU in person and meet the Backyard Estates team. See upcoming open houses and ADU seminars across the Inland Empire and Los Angeles area.",
+    path: "/events",
+});
 
 function splitEventsByDate(events: any[]) {
     const now = new Date();

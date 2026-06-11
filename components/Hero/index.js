@@ -76,8 +76,9 @@ export default function Hero() {
                     <span ref={cursorRef}>_</span>
                 </h1>
                 <p className={style.intro}>
-                    Backyard Estates - Premier Accessory Dwelling Unit (ADU)
-                    builder for the greater Los Angeles area.
+                    Custom Accessory Dwelling Units (ADUs) — granny flats,
+                    casitas, and backyard homes — built across the Inland
+                    Empire, San Bernardino, Riverside, and Los Angeles counties.
                 </p>
                 <Button href="/talk-to-an-adu-specialist" isPrimary={false}>
                     Talk to an ADU specialist

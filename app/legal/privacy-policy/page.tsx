@@ -7,7 +7,7 @@ import Nav from '@/components/Nav'
 import style from '../page.module.css'
 
 export const metadata: Metadata = {
-    title: 'Privacy policy - Backyard Estates',
+    title: 'Privacy policy',
 }
 
 export default function PrivacyPolicy() {
