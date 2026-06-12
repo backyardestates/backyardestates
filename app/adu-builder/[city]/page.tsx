@@ -330,14 +330,29 @@ export default async function CityPage({
     // The city (jurisdiction) side is filled per city in Sanity; our side falls
     // back to the company standard pace when a city doesn't override it.
     const tl = area.timeline
-    const beTimeline = tl?.backyardEstates ?? business.standardTimeline
-    const cityTimeline = tl?.city ?? business.industryTimeline
-    const effectiveTimeline = { city: cityTimeline, backyardEstates: beTimeline }
     const phaseKeys: (keyof PhaseDays)[] = [
         'plansDays',
         'permitsDays',
         'constructionDays',
     ]
+    // Fill each phase from Sanity when present, otherwise from the default pace.
+    // A side that's fully empty in Sanity therefore renders the complete default
+    // (BE → ~7.5 months, city → ~18.5 months); a partially-filled side keeps its
+    // real values and only borrows defaults for the missing phases. This avoids
+    // the comparison collapsing to the one phase both sides happen to share.
+    const fillTimeline = (
+        side: PhaseDays | undefined,
+        defaults: PhaseDays
+    ): PhaseDays =>
+        Object.fromEntries(
+            phaseKeys.map((k) => [
+                k,
+                typeof side?.[k] === 'number' ? side[k] : defaults[k],
+            ])
+        ) as PhaseDays
+    const beTimeline = fillTimeline(tl?.backyardEstates, business.standardTimeline)
+    const cityTimeline = fillTimeline(tl?.city, business.industryTimeline)
+    const effectiveTimeline = { city: cityTimeline, backyardEstates: beTimeline }
     const hasTimeline = phaseKeys.some(
         (k) =>
             typeof cityTimeline[k] === 'number' &&
