@@ -35,11 +35,11 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     );
 }
 
-function Row({ label, value }: { label: string; value: React.ReactNode }) {
+function Row({ label, value, valueClassName }: { label: string; value: React.ReactNode; valueClassName?: string }) {
     return (
         <div className={s.row}>
             <span className={s.rowLabel}>{label}</span>
-            <span className={s.rowValue}>{value}</span>
+            <span className={`${s.rowValue}${valueClassName ? ` ${valueClassName}` : ""}`}>{value}</span>
         </div>
     );
 }
@@ -177,7 +177,11 @@ export function Slide8_ROIComparison() {
                             <Section title="Monthly">
                                 <Row label="Estimated Rent" value={`${fmt$(sc.rentMonthly ?? 0)} / mo`} />
                                 <Row label="Loan Payment" value={`${fmt$(sc.monthlyCost)} / mo`} />
-                                <Row label="Net Cashflow" value={`${fmtSignedDollar(cf)} / mo`} />
+                                <Row
+                                    label="Net Cashflow"
+                                    value={`${fmtSignedDollar(cf)} / mo`}
+                                    valueClassName={cf < 0 ? s.rowValueNegative : cf > 0 ? s.rowValuePositive : undefined}
+                                />
                             </Section>
 
                             <Section title="Annual Return">

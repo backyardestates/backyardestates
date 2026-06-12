@@ -38,6 +38,23 @@ function AnimDollar({ n, active, delay = 0 }: { n: number; active: boolean; dela
     return <>{fmt$(v)}</>;
 }
 
+/**
+ * Hero cashflow cell that reflects the sign of the underlying value:
+ * positive → up arrow + green + "+", negative → down arrow + red + "−".
+ * `signed` is the real cashflow; `count` is its animated absolute magnitude.
+ */
+function CashflowCell({ signed, count }: { signed: number; count: number }) {
+    const negative = signed < 0;
+    return (
+        <div className={s.rowCfVal}>
+            <span className={`${s.cfArrow} ${negative ? s.down : s.up}`}>{negative ? "↓" : "↑"}</span>
+            <span className={negative ? s.cfValNeg : s.cfValPos}>
+                {negative ? "−" : "+"}{fmt$(count)}
+            </span>
+        </div>
+    );
+}
+
 function lastNameFromFull(full?: string) {
     if (!full) return "";
     const parts = full.trim().split(/\s+/);
@@ -187,14 +204,8 @@ export function Slide9_ADUvsHouse() {
                     {/* Hero cashflow row */}
                     <div className={s.rowCashflow}>
                         <div className={s.rowLabel}>Monthly cashflow</div>
-                        <div className={s.rowCfVal}>
-                            <span className={`${s.cfArrow} ${s.down}`}>↓</span>
-                            <span className={s.cfValNeg}>−{fmt$(hcfCount)}</span>
-                        </div>
-                        <div className={s.rowCfVal}>
-                            <span className={`${s.cfArrow} ${s.up}`}>↑</span>
-                            <span className={s.cfValPos}>+{fmt$(acfCount)}</span>
-                        </div>
+                        <CashflowCell signed={hcf} count={hcfCount} />
+                        <CashflowCell signed={acf} count={acfCount} />
                     </div>
                 </div>
             </div>

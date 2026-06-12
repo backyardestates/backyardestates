@@ -157,6 +157,17 @@
   text-align: right;
 }
 
+/* Cashflow reflects its sign: green when positive, red when negative. */
+.rowValuePositive {
+  color: var(--p-positive);
+  font-weight: var(--p-semi);
+}
+
+.rowValueNegative {
+  color: var(--p-negative);
+  font-weight: var(--p-semi);
+}
+
 /* ── Footer ── */
 .footer {
   display: flex;
