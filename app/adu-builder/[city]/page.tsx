@@ -331,21 +331,18 @@ export default async function CityPage({
     // back to the company standard pace when a city doesn't override it.
     const tl = area.timeline
     const beTimeline = tl?.backyardEstates ?? business.standardTimeline
-    const effectiveTimeline = tl?.city
-        ? { city: tl.city, backyardEstates: beTimeline }
-        : null
+    const cityTimeline = tl?.city ?? business.industryTimeline
+    const effectiveTimeline = { city: cityTimeline, backyardEstates: beTimeline }
     const phaseKeys: (keyof PhaseDays)[] = [
         'plansDays',
         'permitsDays',
         'constructionDays',
     ]
-    const hasTimeline =
-        !!effectiveTimeline &&
-        phaseKeys.some(
-            (k) =>
-                typeof effectiveTimeline.city?.[k] === 'number' &&
-                typeof beTimeline[k] === 'number'
-        )
+    const hasTimeline = phaseKeys.some(
+        (k) =>
+            typeof cityTimeline[k] === 'number' &&
+            typeof beTimeline[k] === 'number'
+    )
 
     // ---- ROI ----
     const rentLow = area.avgMonthlyRentLow ?? estimatedRent({ bed: 1 })
@@ -412,9 +409,30 @@ export default async function CityPage({
         label: `completed since ${business.foundingYear}`,
         icon: 'shield' as const,
     }
+
+    // Hero floating card: lead with the city count once it's strong enough
+    // (>= BUILDS_TARGET). Below that a 1–2 build number reads thin, so show the
+    // county figure instead (falling back to the city count if we have no county
+    // number). When the card shows the county figure, the strip drops it so it
+    // never appears twice.
+    const floatShowsCounty = cityBuilds < BUILDS_TARGET && !!countyBuilds
+    const heroFloat = floatShowsCounty
+        ? {
+              value: countyBuilds,
+              suffix: '+',
+              label: `ADUs across ${area.county} County`,
+          }
+        : {
+              value: cityBuilds,
+              suffix: '',
+              label: `ADUs built in ${area.city}`,
+          }
+
     const stripStats = (
         showHeroImage
-            ? [countyStat, companyStat]
+            ? floatShowsCounty
+                ? [cityBuilds > 0 ? cityStat : null, companyStat]
+                : [countyStat, companyStat]
             : [cityBuilds > 0 ? cityStat : null, countyStat, companyStat]
     ).filter(Boolean) as {
         value: number
@@ -509,10 +527,13 @@ export default async function CityPage({
                                 </div>
                                 <div className={style.heroFloatCard}>
                                     <span className={style.heroFloatNum}>
-                                        <AnimatedNumber value={cityBuilds} />
+                                        <AnimatedNumber
+                                            value={heroFloat.value}
+                                        />
+                                        {heroFloat.suffix}
                                     </span>
                                     <span className={style.heroFloatLabel}>
-                                        ADUs built in {area.city}
+                                        {heroFloat.label}
                                     </span>
                                 </div>
                             </div>
@@ -684,6 +705,7 @@ export default async function CityPage({
                             <TimelineComparison
                                 cityName={area.city}
                                 timeline={effectiveTimeline}
+                                source={business.timelineSource}
                             />
                         </Reveal>
                     )}

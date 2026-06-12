@@ -32,12 +32,20 @@ const fmtMo = (days: number) => {
  * local industry average (light gray, long). One hero number, two bars, minimal
  * detail — the contrast is meant to read in a glance.
  */
+export interface TimelineSource {
+    label: string
+    href: string
+    note?: string
+}
+
 export default function TimelineComparison({
     cityName,
     timeline,
+    source,
 }: {
     cityName: string
     timeline?: CityTimeline | null
+    source?: TimelineSource | null
 }) {
     const ref = useRef<HTMLDivElement | null>(null)
     const [inView, setInView] = useState(false)
@@ -196,6 +204,21 @@ export default function TimelineComparison({
                     The biggest gap is {biggest.label.toLowerCase()} — the
                     industry averages <strong>{biggest.city} days</strong>; we
                     clear it in <strong>{biggest.be}</strong>.
+                </p>
+            )}
+
+            {source && (
+                <p className={style.source}>
+                    Industry figures:{' '}
+                    <a
+                        href={source.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={style.sourceLink}
+                    >
+                        {source.label}
+                    </a>
+                    {source.note ? ` — ${source.note}` : ''}
                 </p>
             )}
         </div>

@@ -236,6 +236,29 @@
     font-weight: 700;
 }
 
+/* ---------- Source attribution ---------- */
+.source {
+    margin: 1.25rem 0 0;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--color-neutral-400);
+    max-width: 44rem;
+}
+
+.sourceLink {
+    color: var(--color-neutral-500);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--color-neutral-300);
+    transition: color 0.15s ease;
+}
+
+.sourceLink:hover {
+    color: var(--color-brand-dark-blue);
+}
+
 @media (prefers-reduced-motion: reduce) {
     .fill {
         transition: none;

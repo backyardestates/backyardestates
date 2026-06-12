@@ -64,9 +64,6 @@ export const business = {
     },
 
     // ---- Real Google review numbers (for AggregateRating schema) ----
-    // ⚠️  These MUST be the real, current Google Business Profile numbers.
-    //     Fabricated ratings risk a Google manual action. Until filled, schema
-    //     omits AggregateRating (see lib/jsonLd.ts).
     rating: {
         value: 4.9,
         count: 26,
@@ -88,12 +85,30 @@ export const business = {
     // Used as the "Backyard Estates" side of the per-city timeline comparison
     // whenever a serviceArea doc doesn't override it — so you only fill each
     // city's (slower) jurisdiction numbers, and our side renders automatically.
-    // ⚠️ TODO(real-data): confirm these are your real typical durations.
-    //    (Seeded from the Upland serviceArea's Backyard Estates timeline.)
+    // Totals ~225 days (~7.5 months) end-to-end to a finished ADU.
     standardTimeline: {
-        plansDays: 25,
-        permitsDays: 65,
-        constructionDays: 40,
+        plansDays: 45,
+        permitsDays: 105,
+        constructionDays: 75,
+    },
+
+    // ---- Industry baseline (days per phase) ----
+    // The "industry average" side of the per-city timeline comparison whenever a
+    // serviceArea doc doesn't carry a city-specific jurisdiction timeline. Totals
+    // ~555 days (~18.5 months) — a conservative statewide ADU baseline derived
+    // from the California HCD Annual Progress Report (APR) Dashboard. See
+    // `timelineSource` below for the attribution shown on the page.
+    industryTimeline: {
+        plansDays: 90,
+        permitsDays: 300,
+        constructionDays: 165,
+    },
+
+    // Public citation for the industry timeline figures (HCD APR Dashboard).
+    timelineSource: {
+        label: 'California HCD Annual Progress Report (APR) Dashboard',
+        href: 'https://www.hcd.ca.gov/housing-open-data-tools/apr-dashboard',
+        note: 'ADU permitting & construction timelines, self-reported by California jurisdictions and published by HCD.',
     },
 } as const
 
