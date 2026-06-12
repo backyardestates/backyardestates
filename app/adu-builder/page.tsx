@@ -7,12 +7,16 @@ import AttentionCTA from '@/components/AttentionCTA'
 import JsonLd from '@/components/JsonLd'
 import Reveal from '@/components/Reveal'
 
+import { client } from '@/sanity/client'
+import { SERVICE_AREAS_QUERY } from '@/sanity/queries'
+
 import { buildMetadata } from '@/lib/seo'
 import { business, COUNTIES_SERVED } from '@/lib/business'
 import { localBusinessSchema, breadcrumbSchema } from '@/lib/jsonLd'
-import { SERVICE_AREAS, type County } from '@/content/serviceAreas'
 
 import style from './page.module.css'
+
+const options = { next: { revalidate: 3600 } }
 
 export const metadata = buildMetadata({
     title: 'ADU Builder Serving the Inland Empire & Greater LA',
@@ -21,14 +25,17 @@ export const metadata = buildMetadata({
     path: '/adu-builder',
 })
 
-const COUNTY_ORDER: County[] = ['San Bernardino', 'Riverside', 'Los Angeles']
+type AreaRow = { slug: string; city: string; county: string }
+const COUNTY_ORDER = ['San Bernardino', 'Riverside', 'Los Angeles'] as const
 
-export default function ServiceAreasIndex() {
+export default async function ServiceAreasIndex() {
+    const areas = await client.fetch<AreaRow[]>(SERVICE_AREAS_QUERY, {}, options)
+
     const byCounty = COUNTY_ORDER.map((county) => ({
         county,
-        cities: SERVICE_AREAS.filter((a) => a.county === county).sort((a, b) =>
-            a.city.localeCompare(b.city)
-        ),
+        cities: areas
+            .filter((a) => a.county === county)
+            .sort((a, b) => a.city.localeCompare(b.city)),
     })).filter((g) => g.cities.length > 0)
 
     const ld = [

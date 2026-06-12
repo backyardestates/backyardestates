@@ -37,6 +37,30 @@
     color: var(--color-brand-dark-blue);
 }
 
+.subtitle {
+    margin: 0.75rem 0 0;
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--color-neutral-600);
+    max-width: 44rem;
+}
+
+.seeAll {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 1.5rem clamp(1.5rem, 3vw, 2rem) 0;
+    color: var(--color-brand-beige);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.seeAll:hover {
+    color: var(--color-brand-beige-hover, #91744a);
+}
+
 /* Full-bleed horizontal scroller, edges aligned with the section padding */
 .scroller {
     overflow-x: auto;

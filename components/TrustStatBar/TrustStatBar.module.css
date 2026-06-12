@@ -76,6 +76,7 @@
 
 @media only screen and (min-width: 700px) {
     .bar {
-        grid-template-columns: repeat(3, 1fr);
+        /* auto-fit so 2- or 3-stat bars both lay out evenly */
+        grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
     }
 }

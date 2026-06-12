@@ -7,11 +7,15 @@ import style from './ReviewStars.module.css'
 export default function ReviewStars({
     className = '',
     label = true,
+    tone = 'dark',
 }: {
     className?: string
     label?: boolean
+    /** 'dark' = white text (dark backgrounds, e.g. footer); 'light' = dark text. */
+    tone?: 'dark' | 'light'
 }) {
     if (!hasRealRating()) return null
+    const toneClass = tone === 'light' ? style.toneLight : ''
 
     const { value, count } = business.rating
     const pct = Math.max(0, Math.min(100, (value / 5) * 100))
@@ -53,7 +57,7 @@ export default function ReviewStars({
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${style.root} ${style.link} ${className}`}
+                className={`${style.root} ${style.link} ${toneClass} ${className}`}
                 aria-label={`Rated ${value} out of 5 from ${count} Google reviews — read them on Google`}
             >
                 {inner}
@@ -61,5 +65,5 @@ export default function ReviewStars({
         )
     }
 
-    return <div className={`${style.root} ${className}`}>{inner}</div>
+    return <div className={`${style.root} ${toneClass} ${className}`}>{inner}</div>
 }

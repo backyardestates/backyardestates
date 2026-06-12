@@ -71,6 +71,30 @@ export const business = {
         value: 4.9,
         count: 26,
     },
+
+    // ---- Build-volume proof (tiered: company + per-county) ----
+    // Company total mirrors the /pricing page: a baseline of builds completed
+    // before the CMS tracked them, PLUS the live count of completed properties
+    // in Sanity (computed per request — see app/adu-builder/[city]/page.tsx).
+
+    buildsBaseline: 60, // legacy builds completed before the CMS existed
+    countyBuilds: {
+        'San Bernardino': 60,
+        Riverside: 20,
+        'Los Angeles': 40,
+    } as Record<string, number>,
+
+    // ---- Our standard build pace (days per phase) ----
+    // Used as the "Backyard Estates" side of the per-city timeline comparison
+    // whenever a serviceArea doc doesn't override it — so you only fill each
+    // city's (slower) jurisdiction numbers, and our side renders automatically.
+    // ⚠️ TODO(real-data): confirm these are your real typical durations.
+    //    (Seeded from the Upland serviceArea's Backyard Estates timeline.)
+    standardTimeline: {
+        plansDays: 25,
+        permitsDays: 65,
+        constructionDays: 40,
+    },
 } as const
 
 /** Social profile URLs that are actually set — used for schema `sameAs`. */

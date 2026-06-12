@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server"
 
-type Intent = "INTRO_CALL" | "OFFICE_CONSULT" | "MESSAGE" | "FPA"
+type Intent =
+    | "INTRO_CALL"
+    | "OFFICE_CONSULT"
+    | "MESSAGE"
+    | "FPA"
+    | "CITY_BUILDER"
 
 function digitsOnly(v: string) {
     return (v ?? "").replace(/\D/g, "")
@@ -71,6 +76,12 @@ function mapIntentToDealMeta(intent: Intent) {
                 pipeline_id: undefined,
                 stage_id: undefined,
             }
+        case "CITY_BUILDER":
+            return {
+                sourceNumber: 56,
+                pipeline_id: undefined,
+                stage_id: undefined,
+            }
         default:
             return { sourceNumber: 56, pipeline_id: undefined, stage_id: undefined }
     }
@@ -97,7 +108,19 @@ export async function POST(req: Request) {
 
         const consentEmail = contact.consentEmail ?? "unsubscribed"
         const consentText = contact.consentText ?? "unsubscribed"
-        const message = (contact.message ?? "").trim()
+
+        // Per-city attribution for city-page lead forms. The Pipedrive source
+        // field is a numeric enum we can't extend on the fly, so we record the
+        // originating city in the deal title + message instead (keeps every
+        // /adu-builder/[city] lead traceable without new CRM fields).
+        const cityLabel = (body?.cityLabel ?? "").toString().trim()
+        const baseMessage = (contact.message ?? "").trim()
+        const message =
+            intent === "CITY_BUILDER" && cityLabel
+                ? [`ADU Builder page — ${cityLabel}`, baseMessage]
+                      .filter(Boolean)
+                      .join(" — ")
+                : baseMessage
 
         // --- 1) Create Person ---
         const personPayload: any = {
@@ -134,8 +157,13 @@ export async function POST(req: Request) {
         // --- 2) Create Deal (Lead) ---
         const meta = mapIntentToDealMeta(intent)
 
+        const dealTitle =
+            intent === "CITY_BUILDER" && cityLabel
+                ? `${name || "New Lead"} — ${cityLabel} ADU`
+                : name || "New Lead"
+
         const dealPayload: any = {
-            title: name || "New Lead",
+            title: dealTitle,
             person_id: personId,
             [PD_FIELDS.DEAL_SOURCE]: meta.sourceNumber,
             [PD_FIELDS.DEAL_ADDRESS]: addressString,

@@ -1,0 +1,243 @@
+/* ============================================================
+   Near-monochrome by design: ONE deep teal for "us", soft gray for
+   the industry. No stacked colors, no stripes — the length gap and a
+   single hero number carry the message at a glance.
+   ============================================================ */
+
+.panel {
+    margin-top: 1.5rem;
+    padding: clamp(1.75rem, 5vw, 3.25rem);
+    border-radius: 1.75rem;
+    background: var(--color-white);
+    border: 1px solid var(--color-neutral-50);
+    box-shadow: 0 18px 50px rgba(54, 72, 75, 0.08);
+}
+
+/* ---------- Head ---------- */
+.head {
+    margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+
+.eyebrow {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-brand-beige);
+    margin-bottom: 1rem;
+}
+
+.lead {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    margin: 0;
+}
+
+.leadNum {
+    font-family: var(--font-serif);
+    font-size: clamp(3.25rem, 9vw, 5.5rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    /* The single most important figure — our finished-ADU timeline — in gold. */
+    color: var(--color-brand-beige);
+    font-variant-numeric: tabular-nums;
+}
+
+.leadUnit {
+    font-family: var(--font-serif);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--color-brand-dark-blue);
+}
+
+.sub {
+    margin: 1.1rem 0 0;
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 1.4vw, 1.15rem);
+    line-height: 1.55;
+    color: var(--color-neutral-600);
+    max-width: 40rem;
+}
+
+.subStrong {
+    color: var(--color-brand-beige);
+    font-weight: 700;
+}
+
+/* Gold city accent in body copy */
+.cityAccent {
+    color: var(--color-brand-beige);
+    font-weight: 600;
+}
+
+/* ---------- Chart ---------- */
+.chart {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.rowTop {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    font-weight: 700;
+    color: var(--color-brand-dark-blue);
+    letter-spacing: -0.01em;
+}
+
+.dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: var(--color-brand-dark-blue);
+}
+
+.nameMuted {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-neutral-500);
+}
+
+.val {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    font-family: var(--font-sans);
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    font-weight: 800;
+    /* Our number in gold; the industry's stays muted gray (.valMuted). */
+    color: var(--color-brand-beige);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.valMuted {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-neutral-500);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.valDays {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-neutral-400);
+    letter-spacing: 0.01em;
+}
+
+/* ---------- Bars ---------- */
+.track {
+    position: relative;
+    height: 1.35rem;
+    border-radius: 999px;
+    background: var(--color-neutral-50);
+    overflow: hidden;
+}
+
+.fill {
+    position: relative;
+    height: 100%;
+    border-radius: 999px;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fillIn {
+    transform: scaleX(1);
+}
+
+/* Us — deep, confident teal with a little depth */
+.fillUs {
+    background: linear-gradient(
+        180deg,
+        #43585d 0%,
+        var(--color-brand-dark-blue) 100%
+    );
+    box-shadow: 0 6px 16px rgba(54, 72, 75, 0.3);
+}
+
+/* Them — soft warm gray, recedes */
+.fillThem {
+    background: #e7e3db;
+}
+
+/* Hairline phase boundaries on the industry bar only */
+.divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(54, 72, 75, 0.12);
+}
+
+/* Phase labels aligned under the industry bar's segments */
+.phaseRow {
+    display: flex;
+    margin-top: 0.5rem;
+}
+
+.phaseLabel {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-neutral-400);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 0.2rem;
+}
+
+/* ---------- Caption ---------- */
+.caption {
+    margin: clamp(1.75rem, 4vw, 2.5rem) 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-neutral-50);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-neutral-600);
+    max-width: 44rem;
+}
+
+.caption strong {
+    color: var(--color-brand-dark-blue);
+    font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fill {
+        transition: none;
+    }
+}

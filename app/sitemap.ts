@@ -1,13 +1,13 @@
 import type { MetadataRoute } from 'next'
 import { client } from '@/sanity/client'
 import { SITE_URL } from '@/lib/business'
-import { SERVICE_AREAS } from '@/content/serviceAreas'
 import {
     SITEMAP_FLOORPLANS_QUERY,
     SITEMAP_PROPERTIES_QUERY,
     SITEMAP_STORIES_QUERY,
     SITEMAP_POSTS_QUERY,
     SITEMAP_OPEN_HOUSES_QUERY,
+    SERVICE_AREAS_QUERY,
 } from '@/sanity/queries'
 
 const options = { next: { revalidate: 3600 } }
@@ -58,13 +58,15 @@ async function safeFetch(query: string): Promise<SlugRow[]> {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const now = new Date()
 
-    const [floorplans, properties, stories, posts, openHouses] = await Promise.all([
-        safeFetch(SITEMAP_FLOORPLANS_QUERY),
-        safeFetch(SITEMAP_PROPERTIES_QUERY),
-        safeFetch(SITEMAP_STORIES_QUERY),
-        safeFetch(SITEMAP_POSTS_QUERY),
-        safeFetch(SITEMAP_OPEN_HOUSES_QUERY),
-    ])
+    const [floorplans, properties, stories, posts, openHouses, serviceAreas] =
+        await Promise.all([
+            safeFetch(SITEMAP_FLOORPLANS_QUERY),
+            safeFetch(SITEMAP_PROPERTIES_QUERY),
+            safeFetch(SITEMAP_STORIES_QUERY),
+            safeFetch(SITEMAP_POSTS_QUERY),
+            safeFetch(SITEMAP_OPEN_HOUSES_QUERY),
+            safeFetch(SERVICE_AREAS_QUERY),
+        ])
 
     const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((r) => ({
         url: abs(r.path),
@@ -73,9 +75,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: r.priority,
     }))
 
-    const cityEntries: MetadataRoute.Sitemap = SERVICE_AREAS.map((c) => ({
+    const cityEntries: MetadataRoute.Sitemap = serviceAreas.map((c) => ({
         url: abs(`/adu-builder/${c.slug}`),
-        lastModified: now,
+        lastModified: c._updatedAt ? new Date(c._updatedAt) : now,
         changeFrequency: 'monthly',
         priority: 0.8,
     }))

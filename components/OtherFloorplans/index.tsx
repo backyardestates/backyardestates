@@ -25,16 +25,27 @@ export interface OtherFloorplan {
 
 export default function OtherFloorplans({
     floorplans,
+    eyebrow = 'Keep exploring',
+    title = 'Explore other plans',
+    subtitle,
+    seeAllHref,
+    seeAllLabel = 'See all ADU floor plans & pricing',
 }: {
     floorplans: OtherFloorplan[]
+    eyebrow?: string
+    title?: string
+    subtitle?: string
+    seeAllHref?: string
+    seeAllLabel?: string
 }) {
     if (!floorplans || floorplans.length === 0) return null
 
     return (
         <section className={style.section}>
             <div className={style.intro}>
-                <span className={style.eyebrow}>Keep exploring</span>
-                <h2 className={style.title}>Explore other plans</h2>
+                <span className={style.eyebrow}>{eyebrow}</span>
+                <h2 className={style.title}>{title}</h2>
+                {subtitle && <p className={style.subtitle}>{subtitle}</p>}
             </div>
 
             <div className={style.scroller}>
@@ -108,6 +119,11 @@ export default function OtherFloorplans({
                     ))}
                 </ul>
             </div>
+            {seeAllHref && (
+                <Link href={seeAllHref} className={style.seeAll}>
+                    {seeAllLabel} →
+                </Link>
+            )}
         </section>
     )
 }

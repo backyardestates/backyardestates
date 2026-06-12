@@ -1,0 +1,27 @@
+.frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: var(--color-brand-beige-subtle);
+    box-shadow: 0 12px 30px rgba(54, 72, 75, 0.14);
+}
+
+/* Force the Wistia player to fill the 16:9 box at any width. */
+.frame :global(wistia-player),
+.frame :global(.w-css-reset),
+.frame :global(.wistia_responsive_padding),
+.frame :global(.wistia_responsive_wrapper),
+.frame :global(.wistia_embed),
+.frame :global(iframe),
+.frame :global(video) {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    padding: 0 !important;
+    object-fit: cover;
+}

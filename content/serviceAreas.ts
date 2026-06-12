@@ -1,3 +1,8 @@
+// ⚠️ SUPERSEDED BY SANITY. The live /adu-builder pages now read the `serviceArea`
+// document type from Sanity (managed in the Studio). This file remains only as
+// the source for the one-time migration (scripts/seedServiceAreas.ts) and as a
+// backup of the originally-drafted copy. Editing it no longer changes the site.
+//
 // Service-area landing pages: one genuinely-unique page per city we build in,
 // served at /adu-builder/[slug]. This drives the biggest local-SEO lever, so
 // every entry must be REAL and DISTINCT (Google penalizes templated "doorway"

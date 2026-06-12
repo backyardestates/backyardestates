@@ -1,4 +1,20 @@
-export const FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){name,slug}`
+export const FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){name,slug,sqft}`
+
+// Company-wide count of completed builds tracked in the CMS (mirrors the
+// /pricing page's COMPLETED_QUERY). Added to business.buildsBaseline for the
+// "X+ completed since 2020" company proof tier.
+export const COMPLETED_COUNT_QUERY = `count(*[
+  _type == "property" &&
+  (completed == true || (defined(thumbnail) && !defined(photos)))
+])`
+
+// Floor plans with the drawing + specs for the visual city-page cards
+// (rendered via the OtherFloorplans component).
+export const CITY_FLOORPLANS_QUERY = `*[
+  _type == "floorplan" && name != "Custom Estate" && isClickable != false
+]|order(orderID asc){
+  _id, name, "slug": slug.current, bed, bath, sqft, price, drawing
+}`
 
 // Lean query for a property's <head> metadata (avoids the heavy PROPERTY_QUERY).
 export const PROPERTY_META_QUERY = `*[_type == "property" && slug.current == $slug][0]{
@@ -16,6 +32,64 @@ export const SITEMAP_PROPERTIES_QUERY = `*[_type == "property" && defined(slug.c
 export const SITEMAP_STORIES_QUERY = `*[_type == "story" && defined(slug.current)]{ "slug": slug.current, _updatedAt }`
 export const SITEMAP_POSTS_QUERY = `*[_type == "post" && defined(slug.current)]{ "slug": slug.current, "category": categories->slug.current, _updatedAt }`
 export const SITEMAP_OPEN_HOUSES_QUERY = `*[_type == "property" && defined(openHouseDates) && count(openHouseDates) > 0 && defined(slug.current)]{ "slug": slug.current, _updatedAt }`
+
+// ---------------------------------------------------------------------------
+// Service-area (city) pages — content managed in Sanity Studio.
+// ---------------------------------------------------------------------------
+// Lean list for generateStaticParams, the index page, and the sitemap.
+export const SERVICE_AREAS_QUERY = `*[
+  _type == "serviceArea" && defined(slug.current)
+]| order(coalesce(orderID, 999) asc, city asc){
+  "slug": slug.current,
+  city,
+  county,
+  _updatedAt
+}`
+
+// Full single-city document for /adu-builder/[city].
+export const SERVICE_AREA_QUERY = `*[
+  _type == "serviceArea" && slug.current == $slug
+][0]{
+  city,
+  "slug": slug.current,
+  county,
+  latitude,
+  longitude,
+  distanceFromUplandMi,
+  buildsCompleted,
+  maxAduSqft,
+  avgMonthlyRentLow,
+  avgMonthlyRentHigh,
+  timeline {
+    city { plansDays, permitsDays, constructionDays },
+    backyardEstates { plansDays, permitsDays, constructionDays }
+  },
+  blurb,
+  intro,
+  permittingDepartment,
+  permittingNotes,
+  neighborhoods,
+  localFaqs,
+  "featuredStory": featuredStory->{ names, quote, wistiaId, purpose, "slug": slug.current },
+  "nearby": nearby[]->{ city, "slug": slug.current }
+}`
+
+// All customer stories tied to a given city (via the linked property's
+// address.city or legacy location string). Powers the per-city testimonial +
+// quotes. $city is a token like "Upland" (GROQ match is token-based).
+export const STORIES_BY_CITY_QUERY = `*[
+  _type == "story" &&
+  (property->address.city match $city || property->location match $city)
+]{
+  names,
+  quote,
+  wistiaId,
+  purpose,
+  portrait,
+  "slug": slug.current,
+  "city": property->address.city,
+  "location": property->location
+}`
 
 // Completed builds in (or near) a given city — powers the "real local proof"
 // section on the /adu-builder/[city] service-area pages. Matches BOTH schemas:
@@ -46,6 +120,30 @@ export const PROPERTIES_BY_CITY_QUERY = `*[
   floorplan->{ name, bed, bath, sqft, "slug": slug.current },
   "testimonial": testimonial->{ names, quote, "slug": slug.current }
 }`
+// Recent completed builds across ALL cities (with an image), used to top up a
+// city's "completed builds" grid with same-county projects when that city has
+// fewer than a handful of its own. Same projection as PROPERTIES_BY_CITY_QUERY.
+export const PROPERTIES_POOL_QUERY = `*[
+  _type == "property" &&
+  defined(slug.current) &&
+  ((defined(photos) && count(photos) > 0) || defined(thumbnail))
+]
+| order(coalesce(publishedAt, _createdAt) desc)[0...60]{
+  _id,
+  name,
+  "slug": slug.current,
+  completed,
+  featured,
+  aduType,
+  sqft, bed, bath,
+  photos,
+  "image": coalesce(photos[0].url, thumbnail.secure_url, thumbnail.url),
+  "city": address.city,
+  location,
+  floorplan->{ name, bed, bath, sqft, "slug": slug.current },
+  "testimonial": testimonial->{ names, quote, "slug": slug.current }
+}`
+
 export const PRICING_FLOORPLANS_QUERY = `*[_type == "floorplan" && name != "Custom Estate"]|order(orderID asc){orderID, isClickable, slug, name, bed, bath, length, width, price}`
 export const CUSTOMER_STORIES_QUERY = `
   *[_type == "story" && featured] | order(publishedAt asc) {

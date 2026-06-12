@@ -46,3 +46,12 @@
 .text strong {
     font-weight: 600;
 }
+
+/* Light tone — for use on light/cream backgrounds (e.g. the city-page hero) */
+.toneLight .starsTrack {
+    color: var(--color-neutral-200);
+}
+
+.toneLight .text {
+    color: var(--color-neutral-700);
+}

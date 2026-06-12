@@ -13,19 +13,23 @@ export interface HomeownerQuote {
 
 export default function HomeownerQuotes({
     quotes,
+    hideHeader = false,
 }: {
     quotes: HomeownerQuote[]
+    hideHeader?: boolean
 }) {
     if (!quotes || quotes.length === 0) return null
 
     return (
         <section className={style.section}>
-            <div className={style.intro}>
-                <span className={style.eyebrow}>
-                    From the families who built with us
-                </span>
-                <h2 className={style.title}>What homeowners say</h2>
-            </div>
+            {!hideHeader && (
+                <div className={style.intro}>
+                    <span className={style.eyebrow}>
+                        From the families who built with us
+                    </span>
+                    <h2 className={style.title}>What homeowners say</h2>
+                </div>
+            )}
 
             <ul className={style.grid}>
                 {quotes.map((q, i) => {
